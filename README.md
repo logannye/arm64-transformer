@@ -8,6 +8,19 @@ same text, start from identical weights, and learn from identical batch schedule
 The experiment measures how implementation changes training time, inference
 latency, process memory and held-out prediction quality.
 
+A neural network's equations specify what must be calculated. They leave many
+choices about how values are arranged in memory, which operations share an
+instruction, where intermediate results live, and how work is scheduled. Those
+choices determine how much of a processor's capability the model actually uses.
+**The central idea is to preserve the learning algorithm while changing its
+execution on the machine, and to measure both correctness and cost.**
+
+Training makes that a demanding engineering problem. Predictions, gradients,
+optimizer memory and parameter updates all have to agree with the intended
+calculation. Similar final accuracy alone would not establish that agreement.
+This project checks those intermediate quantities before comparing complete
+training runs, then independently recomputes the saved model predictions.
+
 The native executable performs the complete forward pass, backpropagation, Adam
 updates, batching, checkpoint selection and evaluation in assembly. It calls
 macOS/libc for files, memory and clocks. Python prepares fixed inputs, runs the
@@ -26,15 +39,7 @@ residual connections and an untied output head. Context is 32 characters and the
 vocabulary is fixed ASCII-128. PyTorch uses its built-in scaled-dot-product
 attention, standard batched tensors, autograd, and `torch.optim.Adam`.
 
-```mermaid
-flowchart LR
-    T[32 input characters] --> E[Token + position embeddings]
-    E --> A[LayerNorm + causal attention + residual]
-    A --> F[LayerNorm + feed-forward + residual]
-    F --> N[Final LayerNorm]
-    N --> L[128 next-character logits at each position]
-    L --> B[Cross-entropy / backward / Adam]
-```
+![The same transformer from input characters through attention and training](docs/architecture.png)
 
 The pinned Tiny Shakespeare source is divided into disjoint contiguous train,
 validation and test partitions before selecting modest excerpts. The experiment
@@ -66,6 +71,13 @@ timing covers a complete 32-character context and excludes softmax/sampling/I/O.
 
 ![Matched training and whole-process times](experiments/matched-v1/training.png)
 
+![Process memory through training and at completion](experiments/matched-v1/memory.png)
+
+The large memory difference includes the cost of loading a general ML framework.
+Both implementations contain the same number of learned parameters. PyTorch's
+lower training time demonstrates how effective its optimized numerical kernels
+and batched execution already are on this workload.
+
 All within-implementation repeated numerical outputs matched exactly. Across
 implementations, mean test NLL differed by +0.001617 and top-one predictions
 disagreed on 8.850% of characters. Similar aggregate quality does not establish
@@ -76,6 +88,20 @@ gradients; PyTorch uses batched operations and optimized scaled-dot-product
 attention. That is an implementation difference this experiment measures, not a
 profile-based attribution of the performance gap. This version establishes a
 verified baseline for future kernel/batching improvements.
+
+![Training and validation loss across the eight epochs](experiments/matched-v1/learning.png)
+
+Negative log-likelihood measures how much probability the model assigns to the
+correct next character; lower is better. Perplexity is its exponential. The
+transformers' test losses of about 2.46 improve on **3.3623** for a unigram
+predictor fitted only to training-character counts. The closely tracking learning
+curves show similar aggregate learning behavior, while the retained prediction
+disagreement exposes differences hidden by those averages.
+
+The outcome gives this project a useful next question: which changes to batching,
+attention and memory access can improve execution while preserving the verified
+learning calculation? The current results provide the fixed baseline against
+which such changes can be tested.
 
 Read [the complete results and charts](experiments/matched-v1/README.md),
 [all 3,395 post-run audit checks](experiments/matched-v1/audit.json), and
