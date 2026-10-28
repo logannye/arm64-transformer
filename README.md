@@ -27,10 +27,6 @@ macOS/libc for files, memory and clocks. Python prepares fixed inputs, runs the
 comparison, and independently audits saved outputs. No Torch, BLAS, Accelerate,
 or compiled C numerical implementation is linked into the native executable.
 
-This follows the earlier
-[CNN comparison](https://github.com/logannye/low-latency-neural-decoding/blob/main/CNN_EXPERIMENT.md).
-The transformer is a separate experiment with its own source and evidence.
-
 ## Model and task
 
 The model has **17,952 parameters**: learned embeddings, one causal attention
