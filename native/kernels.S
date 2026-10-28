@@ -8,8 +8,8 @@
 .endm
 
 // x:[R,I], w:[O,I], b:[O], y:[R,O]; shape int32[R,I,O].
-.globl _tf_linear_forward
-_tf_linear_forward:
+.globl _tf_linear_forward_generic
+_tf_linear_forward_generic:
     ldr w9, [x4]
     ldr w10, [x4, #4]
     ldr w11, [x4, #8]
@@ -55,8 +55,8 @@ Llf_bias:
     ret
 
 // Overwrite dx; ADD dw and db. All dimensions support scalar tails.
-.globl _tf_linear_backward
-_tf_linear_backward:
+.globl _tf_linear_backward_generic
+_tf_linear_backward_generic:
     ldr w9, [x6]
     ldr w10, [x6, #4]
     ldr w11, [x6, #8]
@@ -122,8 +122,8 @@ Llb_next_out:
 
 // x0 x, x1 gamma, x2 beta, x3 y, x4 norm, x5 inv, x6 rows, x7 width.
 // Two-pass biased variance; scalar accumulation is deliberate and documented.
-.globl _tf_ln_forward
-_tf_ln_forward:
+.globl _tf_ln_forward_generic
+_tf_ln_forward_generic:
     scvtf s7, x7
     mov w9, #0xc5ac
     movk w9, #0x3727, lsl #16 // float32 1e-5
@@ -179,8 +179,8 @@ Llnf_normalize:
     ret
 
 // x0 dy, x1 norm, x2 inv, x3 gamma, x4 dx, x5 dg, x6 db, x7 shape[R,D].
-.globl _tf_ln_backward
-_tf_ln_backward:
+.globl _tf_ln_backward_generic
+_tf_ln_backward_generic:
     ldr w9, [x7]
     ldr w10, [x7, #4]
     scvtf s7, x10
@@ -233,8 +233,8 @@ Llnb_dx:
 
 // qkv:[T,3D], out:[T,D], probs:[H,T,T], shape int32[T,D,H].
 // Stack locals: t112,j120,probrow128,qptr136,scale144,max148,sum152.
-.globl _tf_attention_forward
-_tf_attention_forward:
+.globl _tf_attention_forward_generic
+_tf_attention_forward_generic:
     stp x29, x30, [sp, #-176]!
     mov x29, sp
     stp x19, x20, [sp, #16]
@@ -378,8 +378,8 @@ Laf_value_dot:
 
 // qkv,probs,dout,dqkv,shape. Recompute dA in the second pass, without a
 // temporary T*T tensor. Stack: t112, scale120, rowDot124, pointers128..152.
-.globl _tf_attention_backward
-_tf_attention_backward:
+.globl _tf_attention_backward_generic
+_tf_attention_backward_generic:
     stp x29, x30, [sp, #-176]!
     mov x29, sp
     stp x19, x20, [sp, #16]
@@ -571,8 +571,8 @@ Lrb_done:
 
 // Stable mean cross entropy, targets int32, dlogits = (softmax-one_hot)/rows.
 // Stack locals max112,sum116,loss_sum double120.
-.globl _tf_cross_entropy
-_tf_cross_entropy:
+.globl _tf_cross_entropy_generic
+_tf_cross_entropy_generic:
     stp x29, x30, [sp, #-144]!
     mov x29, sp
     stp x19, x20, [sp, #16]

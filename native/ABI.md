@@ -30,6 +30,11 @@ All widths used by the full model are multiples of four; primitive kernels must
 document smaller-shape restrictions. Test inputs to kernels are already validated.
 Native executable validates file sizes, indices, finiteness, and run bounds.
 
+V2 preserves these public signatures. Specialized tiled/vector paths dispatch to
+the original generic implementations when their shape requirements are not met;
+see `kernel_notes.md`. The internal `tf_exp4` helper has a private vector-register
+ABI and is not part of this C-callable interface.
+
 ## Complete model
 
 - `tf_forward(params,tokens,workspace)`; one sequence of 32 int32 tokens;

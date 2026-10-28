@@ -255,6 +255,15 @@ def charts(summary, output):
 
 
 def report_markdown(summary):
+    version = summary.get("protocol_version", "v1")
+    reuse_note = (
+        "This optimization study reuses v1's fixed train/validation/test fixtures. "
+        "It is an engineering regression benchmark, not a fresh untouched test set. "
+        "Kernel development used synthetic correctness and timing inputs; the model, "
+        "optimizer, seeds and stopping rule were unchanged.\n\n"
+        if version == "v2"
+        else ""
+    )
     aggregate = summary["aggregate"]["by_implementation"]
     ratio = summary["aggregate"]["geometric_mean_training_ratio_python_over_arm64"]
     speed = (
@@ -299,8 +308,9 @@ def report_markdown(summary):
         )
     table_text = "\n".join(table)
     per_run_text = "\n".join(per_run)
-    return f"""# Matched small-transformer CPU comparison, v1
+    return f"""# Matched small-transformer CPU comparison, {version}
 
+{reuse_note}\
 {speed}, using the geometric mean of six paired training-time ratios.
 This is the same 17,952-parameter causal transformer implemented with ordinary
 batched PyTorch (built-in scaled-dot-product attention and autograd) and handwritten
@@ -500,6 +510,7 @@ def create_report(results, inputs, output):
             summary.update(
                 status="completed",
                 revision=manifest["revision"],
+                protocol_version=manifest.get("protocol_version", "v1"),
                 source_sha256=manifest["source_sha256"],
                 preflight_check_count=manifest["preflight"]["check_count"],
                 platform=manifest["platform"],

@@ -31,6 +31,10 @@ DEFAULT_LIBRARY = ROOT / "native/build/libtransformer.dylib"
 DEFAULT_EXECUTABLE = ROOT / "native/build/transformer-arm64"
 SOURCE_FILES = (
     "native/kernels.S",
+    "native/linear.S",
+    "native/attention.S",
+    "native/softmax.S",
+    "native/normalization.S",
     "native/model.S",
     "native/runtime.S",
     "native/layout.inc",
@@ -507,6 +511,257 @@ def check_complete_model(native, checks, rng):
         checks.close(f"trajectory/{step}/v", v, optimizer.state[tp]["exp_avg_sq"], "trajectory")
 
 
+def guarded_array(shape, *, fill=np.nan):
+    """Contiguous tensor surrounded by finite sentinels to detect tail overwrites."""
+    count = int(np.prod(shape))
+    storage = np.full(count + 16, np.float32(12345.75), dtype=np.float32)
+    view = storage[8:-8].reshape(shape)
+    view.fill(fill)
+    return view, storage
+
+
+def guard_intact(storage):
+    return bool(
+        np.all(storage[:8] == np.float32(12345.75)) and np.all(storage[-8:] == np.float32(12345.75))
+    )
+
+
+def check_tiled_linear_boundaries(native, checks, rng):
+    # Fast forward: R/I/O divisible by 4; fast backward additionally I % 16 == 0.
+    # Other positive shapes must remain correct through the generic fallback.
+    shapes = (
+        (1, 1, 1),
+        (3, 5, 7),
+        (4, 12, 20),
+        (4, 32, 4),
+        (8, 32, 96),
+        (32, 32, 128),
+        (4, 64, 32),
+        (32, 64, 32),
+        (5, 32, 96),
+        (31, 32, 32),
+        (33, 64, 12),
+    )
+    for rows, width, output in shapes:
+        tag = f"v2/linear/{rows}x{width}x{output}"
+        x = rng.normal(0, 0.2, (rows, width)).astype(np.float32)
+        w = rng.normal(0, 0.15, (output, width)).astype(np.float32)
+        b = rng.normal(0, 0.1, output).astype(np.float32)
+        dy = rng.normal(0, 0.2, (rows, output)).astype(np.float32)
+        originals = [value.copy() for value in (x, w, b, dy)]
+        shape = arr([rows, width, output], np.int32)
+        y, y_storage = guarded_array((rows, output))
+        native.call("linear_forward", x, w, b, y, shape)
+        tx, tw, tb = [tensor(value, grad=True) for value in (x, w, b)]
+        expected = F.linear(tx, tw, tb)
+        (expected * tensor(dy)).sum().backward()
+        checks.close(tag + "/forward", y, expected)
+        checks.require(tag + "/output_guards", guard_intact(y_storage))
+        dx, dx_storage = guarded_array(x.shape)
+        dw, dw_storage = guarded_array(w.shape)
+        db, db_storage = guarded_array(b.shape)
+        initial_dw = rng.normal(0, 0.05, w.shape).astype(np.float32)
+        initial_db = rng.normal(0, 0.05, b.shape).astype(np.float32)
+        dw[...] = initial_dw
+        db[...] = initial_db
+        for accumulation in (1, 2):
+            native.call("linear_backward", x, w, dy, dx, dw, db, shape)
+            checks.close(f"{tag}/accumulation_{accumulation}/dx", dx, tx.grad, "gradient")
+            checks.close(
+                f"{tag}/accumulation_{accumulation}/dw",
+                dw,
+                initial_dw + tw.grad.numpy() * accumulation,
+                "gradient",
+            )
+            checks.close(
+                f"{tag}/accumulation_{accumulation}/db",
+                db,
+                initial_db + tb.grad.numpy() * accumulation,
+                "gradient",
+            )
+        checks.require(
+            tag + "/gradient_guards",
+            all(guard_intact(storage) for storage in (dx_storage, dw_storage, db_storage)),
+        )
+        checks.require(
+            tag + "/inputs_unchanged",
+            all(
+                np.array_equal(value, original)
+                for value, original in zip((x, w, b, dy), originals, strict=True)
+            ),
+        )
+
+
+def check_vector_norm_boundaries(native, checks, rng):
+    for rows, width, kind in (
+        (1, 1, "constant"),
+        (2, 3, "random"),
+        (3, 12, "near_constant"),
+        (4, 32, "random"),
+        (5, 64, "zero"),
+    ):
+        tag = f"v2/layernorm/{rows}x{width}/{kind}"
+        x = rng.normal(0, 0.3, (rows, width)).astype(np.float32)
+        if kind == "constant":
+            x.fill(0.25)
+        elif kind == "zero":
+            x.fill(0)
+        elif kind == "near_constant":
+            x = (0.25 + x * 1e-4).astype(np.float32)
+        gamma = rng.uniform(0.5, 1.5, width).astype(np.float32)
+        beta = rng.normal(0, 0.1, width).astype(np.float32)
+        dy = rng.normal(0, 0.1, x.shape).astype(np.float32)
+        y, sy = guarded_array(x.shape)
+        normalized, sn = guarded_array(x.shape)
+        inv, si = guarded_array((rows,))
+        native.call("ln_forward", x, gamma, beta, y, normalized, inv, rows, width)
+        tx, tg, tb = [tensor(value, grad=True) for value in (x, gamma, beta)]
+        expected = F.layer_norm(tx, (width,), tg, tb, spec.EPS)
+        (expected * tensor(dy)).sum().backward()
+        checks.close(tag + "/forward", y, expected)
+        variance, mean = torch.var_mean(tx, dim=-1, correction=0, keepdim=True)
+        checks.close(
+            tag + "/normalized", normalized, (tx - mean) * torch.rsqrt(variance + spec.EPS)
+        )
+        checks.close(tag + "/inv", inv, torch.rsqrt(variance + spec.EPS).squeeze(-1))
+        dx, sx = guarded_array(x.shape)
+        dg, sg = guarded_array((width,), fill=0.125)
+        db, sb = guarded_array((width,), fill=-0.125)
+        native.call(
+            "ln_backward", dy, normalized, inv, gamma, dx, dg, db, arr([rows, width], np.int32)
+        )
+        checks.close(tag + "/dx", dx, tx.grad, "gradient")
+        checks.close(tag + "/dgamma_add", dg, tg.grad + 0.125, "gradient")
+        checks.close(tag + "/dbeta_add", db, tb.grad - 0.125, "gradient")
+        checks.require(
+            tag + "/guards", all(guard_intact(storage) for storage in (sy, sn, si, sx, sg, sb))
+        )
+
+
+def check_vector_attention_boundaries(native, checks, rng):
+    shapes = [(tokens, 32, 4, "random") for tokens in (2, 3, 4, 5, 31)]
+    shapes += [
+        (32, 32, 4, "uniform"),
+        (32, 32, 4, "large_scores"),
+        (33, 32, 4, "random"),
+        (5, 15, 3, "random"),
+    ]
+    for tokens, width, heads, kind in shapes:
+        tag = f"v2/attention/{tokens}x{width}x{heads}/{kind}"
+        qkv = rng.normal(0, 0.3, (tokens, 3 * width)).astype(np.float32)
+        if kind == "uniform":
+            qkv[:, : 2 * width] = 0
+        elif kind == "large_scores":
+            qkv[:, :width] = 20
+            qkv[:, width : 2 * width] = np.linspace(-20, 20, tokens)[:, None]
+        original = qkv.copy()
+        output, so = guarded_array((tokens, width))
+        probs, sp = guarded_array((heads, tokens, tokens))
+        shape = arr([tokens, width, heads], np.int32)
+        native.call("attention_forward", qkv, output, probs, shape)
+        tqkv = tensor(qkv, grad=True)
+        q, k, v = [
+            part.reshape(tokens, heads, width // heads).transpose(0, 1)
+            for part in tqkv.chunk(3, dim=-1)
+        ]
+        mask = torch.ones(tokens, tokens, dtype=torch.bool).tril()
+        scores = (q @ k.transpose(-1, -2)) / math.sqrt(width // heads)
+        expected_probs = scores.masked_fill(~mask, -torch.inf).softmax(-1)
+        expected = (expected_probs @ v).transpose(0, 1).reshape(tokens, width)
+        checks.close(tag + "/forward", output, expected)
+        checks.close(tag + "/probabilities", probs, expected_probs)
+        checks.close(tag + "/mass", probs.sum(-1), np.ones((heads, tokens)))
+        checks.require(tag + "/masked_exact_zero", np.all(probs[:, ~mask.numpy()] == 0))
+        # Prefix outputs cannot depend on any future Q/K/V components.
+        dy = rng.normal(0, 0.2, output.shape).astype(np.float32)
+        prefix = (tokens + 1) // 2
+        dy[prefix:] = 0
+        (expected * tensor(dy)).sum().backward()
+        dqkv, sd = guarded_array(qkv.shape)
+        native.call("attention_backward", qkv, probs, dy, dqkv, shape)
+        checks.close(tag + "/dqkv", dqkv, tqkv.grad, "gradient")
+        checks.require(tag + "/future_gradient_exact_zero", np.all(dqkv[prefix:] == 0))
+        checks.require(tag + "/guards", all(guard_intact(storage) for storage in (so, sp, sd)))
+        checks.require(tag + "/qkv_unchanged", np.array_equal(qkv, original))
+
+
+def check_vector_softmax_boundaries(native, checks, rng):
+    for rows, vocab, kind in (
+        (1, 1, "constant"),
+        (3, 7, "random"),
+        (2, 128, "ties"),
+        (4, 128, "exp_boundaries"),
+        (5, 128, "extreme"),
+    ):
+        tag = f"v2/cross_entropy/{rows}x{vocab}/{kind}"
+        logits = rng.normal(0, 0.2, (rows, vocab)).astype(np.float32)
+        targets = rng.integers(0, vocab, rows, dtype=np.int32)
+        if kind == "constant":
+            logits.fill(0.5)
+        elif kind == "ties":
+            logits.fill(-1000)
+            logits[:, :2] = 1000
+            targets[:] = np.arange(rows) % 2
+        elif kind == "exp_boundaries":
+            boundary = arr([0, -0.0001, -0.1, -1, -10, -80, -88, -103.9, -104, -104.1, -120])
+            logits[...] = np.resize(boundary, vocab)
+            targets[:] = [0, 1, 8, 10]
+        elif kind == "extreme":
+            logits.fill(-1000)
+            logits[:, 0] = 1000
+            logits[:, 1] = 999.75
+            targets[:] = [0, 1, 127, 64, 2]
+        original = logits.copy()
+        gradients, storage = guarded_array(logits.shape)
+        loss = native.call("cross_entropy", logits, targets, gradients, rows, vocab)
+        reference = tensor(logits, grad=True)
+        expected = F.cross_entropy(reference, tensor(targets, dtype=torch.long))
+        expected.backward()
+        checks.close(tag + "/loss", loss, expected)
+        checks.close(tag + "/gradients", gradients, reference.grad, "gradient")
+        checks.close(tag + "/gradient_mass", gradients.sum(-1), np.zeros(rows))
+        checks.require(tag + "/guards", guard_intact(storage))
+        checks.require(tag + "/logits_unchanged", np.array_equal(logits, original))
+
+
+def check_vector_finite_boundaries(native, checks):
+    pattern = arr(
+        [
+            0,
+            -0.0,
+            np.finfo(np.float32).max,
+            -np.finfo(np.float32).max,
+            np.nextafter(np.float32(0), np.float32(1)),
+            -1,
+        ]
+    )
+    for count in (0, 1, 3, 4, 5, 17):
+        tag = f"v2/finite/count_{count}"
+        values, storage = guarded_array((count,))
+        if count:
+            values[...] = np.resize(pattern, count)
+        before = storage.view(np.uint32).copy()
+        checks.require(tag + "/all_finite", native.call("finite", values, count) == 1)
+        checks.require(tag + "/input_unchanged", np.array_equal(storage.view(np.uint32), before))
+        original = values.copy()
+        for index in range(count):
+            for label, invalid in (
+                ("nan", np.nan),
+                ("positive_inf", np.inf),
+                ("negative_inf", -np.inf),
+            ):
+                values[...] = original
+                values[index] = invalid
+                before = storage.view(np.uint32).copy()
+                checks.require(
+                    f"{tag}/{index}/{label}/reject", native.call("finite", values, count) == 0
+                )
+                checks.require(
+                    f"{tag}/{index}/{label}/input_unchanged",
+                    np.array_equal(storage.view(np.uint32), before),
+                )
+
+
 def numerical_checks(native, checks):
     torch.set_num_threads(1)
     rng = np.random.default_rng(1729)
@@ -517,6 +772,14 @@ def numerical_checks(native, checks):
     check_loss(native, checks, rng)
     check_adam(native, checks, rng)
     check_complete_model(native, checks, rng)
+    # Preserve the complete v1 fixture stream and thresholds. Additional v2
+    # boundary probes use a separate seed after every original check.
+    boundary_rng = np.random.default_rng(20261028)
+    check_tiled_linear_boundaries(native, checks, boundary_rng)
+    check_vector_norm_boundaries(native, checks, boundary_rng)
+    check_vector_attention_boundaries(native, checks, boundary_rng)
+    check_vector_softmax_boundaries(native, checks, boundary_rng)
+    check_vector_finite_boundaries(native, checks)
 
 
 def run_child(command, *, timeout=180):

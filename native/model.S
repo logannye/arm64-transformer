@@ -281,10 +281,27 @@ Lscale_done:
 .globl _tf_finite
 _tf_finite:
  cbz x1,Lfinite_yes
+ mov w10,#0x7f800000
+ dup v0.4s,w10
+ movi v2.4s,#0
+ lsr x11,x1,#2
+ cbz x11,Lfinite_tail
+Lfinite_vector:
+ ldr q1,[x0],#16
+ and v1.16b,v1.16b,v0.16b
+ cmeq v1.4s,v1.4s,v0.4s
+ orr v2.16b,v2.16b,v1.16b
+ subs x11,x11,#1
+ b.ne Lfinite_vector
+ umaxv s2,v2.4s
+ fmov w9,s2
+ cbnz w9,Lfinite_no
+Lfinite_tail:
+ and x1,x1,#3
+ cbz x1,Lfinite_yes
 Lfinite_loop:
  ldr w9,[x0],#4
  and w9,w9,#0x7f800000
- mov w10,#0x7f800000
  cmp w9,w10
  b.eq Lfinite_no
  subs x1,x1,#1

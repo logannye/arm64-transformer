@@ -13,6 +13,8 @@ from transformer.validate import (
     DEFAULT_LIBRARY,
     Checks,
     Native,
+    guard_intact,
+    guarded_array,
     numerical_checks,
     reference_forward,
     tensor,
@@ -29,6 +31,15 @@ def test_checks_reject_nan_and_wrong_shape():
     checks.close("shape", [1, 2], [[1, 2]])
     assert not checks.passed
     assert all(not item["passed"] for item in checks.records)
+
+
+def test_guarded_views_detect_vector_tail_overwrites():
+    values, storage = guarded_array((3, 5))
+    assert values.flags.c_contiguous
+    values.fill(0)
+    assert guard_intact(storage)
+    storage[-8] = 0
+    assert not guard_intact(storage)
 
 
 def test_independent_functional_reference_matches_production_model():

@@ -48,6 +48,7 @@ def main():
     parser.add_argument("--inputs", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--preflight", type=Path, required=True)
+    parser.add_argument("--protocol", choices=("v1", "v2"), default="v2")
     args = parser.parse_args()
     if platform.system() != "Darwin" or platform.machine() != "arm64":
         raise RuntimeError("Matched study requires macOS ARM64")
@@ -94,6 +95,10 @@ def main():
     tracked = {name: digest(ROOT / name) for name in names if name}
     manifest = {
         "status": "running",
+        "protocol_version": args.protocol,
+        "protocol_file": (
+            "experiments/PROTOCOL.md" if args.protocol == "v1" else "experiments/PROTOCOL-v2.md"
+        ),
         "revision": command(["git", "rev-parse", "HEAD"])["stdout"].strip(),
         "source_sha256": tracked,
         "preflight": preflight,
