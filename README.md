@@ -2,240 +2,246 @@
 
 [![Validation](https://github.com/logannye/arm64-transformer/actions/workflows/validate.yml/badge.svg)](https://github.com/logannye/arm64-transformer/actions/workflows/validate.yml)
 
-A complete small language-model training stack, implemented in ordinary PyTorch
-and handwritten Apple ARM64/NEON assembly. The central experiment is how much
-performance comes from organizing a model's execution around the processor's
-registers, vector instructions, and memory accesses.
+A complete small language-model training stack in ordinary PyTorch and handwritten
+Apple ARM64 assembly. The experiment asks how far we can improve execution by
+organizing the calculation around the processor's actual matrix instructions,
+registers, and memory access patterns, while preserving the model and checking
+its predictions, gradients, and optimizer updates.
 
-The latest experiment scales model width through **32, 64, 128, and 256**, from
-**17,952 to 601,472 parameters**, with matched data and training rules. Across
-48 fits on one Apple M4 Max, native training wins at width 32, and native
-full-context forward latency wins at widths 32 and 64. PyTorch is faster on both
-at widths 128 and 256. Native process memory remains much lower throughout.
+The latest profile-guided implementation trains faster than eager PyTorch and
+has lower full-context forward latency at **all four widths**. At width 256,
+the fresh matched comparison is **1.29× faster for training** and **1.43× faster
+for forward**, with native peak process memory of **14.56 MiB** versus
+**314.72 MiB**.
 
-**The useful finding is the crossover:** an implementation optimized for a tiny
-model does not keep its advantage automatically as the model grows. The complete
-[width-sweep report](experiments/width-sweep-v3/README.md) preserves every width,
-seed, repeat, and unfavorable result.
 
-![Implementation time ratios across all four model widths](experiments/width-sweep-v3/speedup-publication.png)
+![Matched training and forward time ratios](experiments/width-sweep-v4/speedup.png)
 
-## The width experiment
+## The result across four model widths
 
-Each model has one pre-LayerNorm causal decoder block, four attention heads,
-learned token/position embeddings, residual connections, a ReLU feed-forward
-network of width `2 × model_width`, final LayerNorm, and an untied output head.
-It predicts the next ASCII character from a 32-character context. PyTorch uses
-built-in scaled-dot-product attention, autograd, and `torch.optim.Adam`; its tensor
-operations already execute in optimized native code.
-
-Pinned Tiny Shakespeare excerpts supply **65,536 training, 8,192 validation, and
-8,192 test target characters** from disjoint contiguous partitions. These are the
-same known benchmark used in the earlier transformer versions. The sweep makes
-no fresh, untouched test-set claim.
-
-All widths use eight epochs, batch size 16, 1,024 Adam updates, learning rate
-0.001, and one CPU compute thread. For each width and seed, both implementations
-receive identical initial weights, token rows, and batch schedules. The lowest
-validation NLL selects the checkpoint before test evaluation. Three seeds and two
-repeats per implementation produce 48 fits, with width and implementation order
-reversed on the second pass. See the frozen [v3 protocol](experiments/PROTOCOL-v3.md).
+The latest study compares **32, 64, 128, and 256** hidden features, from **17,952
+to 601,472 parameters**. It contains 48 fresh matched fits on one Apple M4 Max:
+three seeds, two repeats, two implementations, and four widths. Width 32 uses
+revised NEON kernels; widths 64–256 use capability-guarded FP32 SME matrix kernels
+for all five dense projections. Other operations remain handwritten NEON/scalar
+assembly. Actual kernel counters verify these paths in every native run.
 
 | Width | Parameters | PyTorch training (s) | ARM64 training (s) | PyTorch / ARM64 |
 |---:|---:|---:|---:|---:|
-| 32 | 17,952 | 1.296 | 0.754 | 1.719× |
-| 64 | 52,160 | 1.649 | 1.846 | 0.893× |
-| 128 | 169,728 | 2.432 | 5.596 | 0.435× |
-| 256 | 601,472 | 5.232 | 19.758 | 0.265× |
+| 32 | 17,952 | 1.295 | 0.712 | 1.819× |
+| 64 | 52,160 | 1.595 | 0.890 | 1.792× |
+| 128 | 169,728 | 2.410 | 1.641 | 1.468× |
+| 256 | 601,472 | 5.163 | 4.000 | 1.291× |
 
-Training includes validation, finite checks, checkpoint selection/writes, and
-history bookkeeping; it excludes setup and final test evaluation. Times are means
-of three seed means, with repeats averaged within seed. The primary training ratio
-is the geometric mean of six paired time ratios. **Above one favors assembly;
-below one favors PyTorch.** The full report includes sample SD and every run.
+Training includes forward/backward, Adam, finite checks, epoch validation,
+checkpoint selection/writes, and history bookkeeping. It excludes setup and final
+test evaluation. Times are means of three seed means, with repeats averaged
+within seed. The primary ratio is the geometric mean of six paired PyTorch/ARM64
+times. **Above one favors assembly.** The [full report](experiments/width-sweep-v4/README.md)
+retains variation and every observation.
 
 | Width | PyTorch forward p50 (µs) | ARM64 forward p50 (µs) | PyTorch / ARM64 |
 |---:|---:|---:|---:|
-| 32 | 53.66 | 14.55 | 3.688× |
-| 64 | 63.54 | 34.58 | 1.837× |
-| 128 | 78.40 | 102.10 | 0.768× |
-| 256 | 121.67 | 359.74 | 0.338× |
+| 32 | 54.38 | 14.98 | 3.629× |
+| 64 | 62.59 | 19.85 | 3.154× |
+| 128 | 77.89 | 36.69 | 2.123× |
+| 256 | 120.99 | 84.42 | 1.433× |
 
-Forward ratios use the implementation means of p50 latency, a different statistic
-from the training ratio. Each run takes 100 samples after 20 warmups. This is a
-batch-one forward pass over a complete 32-character context, excluding loss,
-softmax, sampling, token loading, and I/O. It is not cached next-token generation.
+Forward ratios use the implementation means of per-run p50 latency. Each run
+uses 20 warmups and 100 samples of a batch-one forward pass over the complete
+32-character context. This excludes token loading, loss, softmax, sampling, and
+I/O; it is not cached next-token generation or application latency.
 
-![Training and forward cost as model width grows](experiments/width-sweep-v3/scaling.png)
+![Training and forward cost across model widths](experiments/width-sweep-v4/scaling.png)
 
-At width 256, native training takes **3.78× as long** and its forward pass takes
-**2.96× as long** as PyTorch. The same benchmark that demonstrates the small-model
-wins also establishes this larger-model limitation.
+## Why these changes worked
 
-## Why the advantage changes with size
+The previous [v3 width sweep](experiments/width-sweep-v3/README.md) exposed a
+scaling limit: NEON assembly won on the smallest model but lost both training and
+forward comparisons at widths 128 and 256. Python was already dispatching its
+matrix operations to optimized native code. Removing Python overhead alone could
+not compensate for inefficient dense arithmetic.
 
-For these fixed-context models, dense projection and feed-forward arithmetic grow
-roughly with the square of width. Dispatch and other fixed costs become a smaller
-fraction of the work as those matrices grow. PyTorch can amortize overhead and use
-its optimized matrix kernels on larger operations. During training it also handles
-the full batch together; the native runtime accumulates gradients one sequence at
-a time, retaining a much smaller workspace.
+We profiled the actual native training process on synthetic data. Dense linear
+kernels accounted for roughly **71%, 86%, and 92%** of post-loader sampled execution at widths
+64, 128, and 256. This made the next target clear: change how those matrices are
+computed. The M4 Max exposes Arm's **Scalable Matrix Extension (SME)** with a
+64-byte streaming vector length. SME supplies matrix accumulators and outer-product
+instructions in the CPU instruction set. The new implementation uses those
+instructions directly, with float32 inputs and accumulation.
 
-The handwritten kernels reuse data within small register tiles. They do not yet
-have batch-wide execution or a larger matrix-packing and cache-blocking strategy.
-That gives a concrete direction for further engineering: profile the wider
-projection/backward operations, then test larger-scale data reuse and batching.
-The forward crossover shows that training batching alone cannot explain the
-whole gap. These are implementation-based explanations consistent with the data;
-the sweep does not measure cache misses or isolate individual bottlenecks.
+**Pack once for a panel, then reuse values across a matrix tile.** The old NEON
+forward path holds sixteen four-lane dot-product accumulators for a 4-by-4 output
+tile. The new path computes a **32-by-32 output tile in four 16-by-16 ZA matrix
+accumulators**. At each reduction step, four `FMOPA` instructions accumulate 1,024
+scalar multiply-adds. Loaded input and weight values contribute to many outputs,
+and partial results stay in ZA until the reduction finishes.
 
-## The engineering idea
+The original tensors remain ordinary row-major arrays. A handwritten transpose
+helper loads horizontal ZA slices and stores vertical slices to pack 32 rows into
+contiguous reduction-major vectors. Forward packs the 32-token input once and
+one 32-output weight panel at a time. Bias addition and row-major output stores
+complete the public call. This is a change in data layout during execution;
+checkpoint files and optimizer state keep their canonical representation.
 
-A network's equations specify what must be calculated. They leave many choices
-about which calculations run together, how often inputs are loaded, and where
-partial results live. **This project reorganizes execution around the hardware
-while checking that predictions, gradients, and optimizer updates still implement
-the intended learning calculation.**
+![How the SME kernels pack and reuse matrix values](docs/sme-dataflow.png)
 
-Writing assembly was the starting point. The gains came from changing the work
-done between memory accesses and making more calculations available together.
+**Backward uses the same matrix hardware with a different dataflow.** Input
+gradients pack `dY` once and combine it with contiguous weight rows. Weight
+gradients directly multiply contiguous `dY` and input vectors as outer products,
+loading the existing gradient tile and adding each token's contribution before
+writing it back. Input gradients overwrite their destination; parameter and bias
+gradients accumulate in the existing order. The native runtime still accumulates
+complete per-sequence gradients within each batch.
 
-**Tiled matrix kernels reuse inputs and keep partial sums in registers.** The
-original forward kernel completed one output dot product at a time. The tiled
-implementation computes four token rows and four output channels together. For each four-feature chunk,
-eight vector loads feed sixteen `FMLA` instructions. Each instruction multiplies
-and accumulates four float32 lanes, so a loaded input vector contributes to four
-outputs and a loaded weight vector contributes to four token rows.
+**Packing and state transitions are paid for inside the measured call.** Each
+eligible dense call enters and leaves streaming mode once. Scratch is private
+stack memory, bounded by 128 KiB for forward and 96 KiB for backward; stack growth
+touches each page. There is no hidden persistent packed-weight cache, excluded
+preprocessing phase, heap allocation in the numerical kernel, or deferred repacking
+cost after Adam changes the weights.
 
-Sixteen vector registers hold the tile's partial dot products until the reduction
-finishes. This reduces repeated loads and provides independent accumulator chains
-that the processor can overlap, instead of making all progress wait on one sum.
-Backward uses four-by-sixteen tiles for input and weight gradients. It loads an
-existing weight-gradient tile once, accumulates contributions across token rows,
-then writes the tile once. Input-gradient tiles likewise stay in registers across
-the output-channel reduction. The original code repeatedly loaded and stored
-those partial gradients inside the reduction loops.
+**Small matrices keep NEON, with a cheaper backward loop.** SME is selected only
+for the supported 32-token shapes and hardware. Width 32 keeps the existing NEON
+tiles. Its weight-gradient FMLAs now read coefficients directly from vector lanes,
+removing separate broadcasts. Its input-gradient loop loads four coefficients at
+once and processes four output channels in order, reducing load and loop overhead
+without changing the accumulation sequence. Other shapes retain generic tails.
 
-![How matrix tiles share loads and retain partial results in NEON registers](docs/kernel-tiling.png)
+The same synthetic before/after comparison reduced width-256 full native forward
+from **348.2 to 84.0 µs (4.15×)** and backward including loss from **756.1 to 114.9 µs
+(6.58×)**, including packing and FFI. Width 32 backward improved about 1.10×;
+its forward was slightly slower in that diagnostic. These measurements explain
+the implementation improvement separately from the matched PyTorch comparison.
 
-**Attention specializes the head width, with vectorized forward and backward.**
-Model widths 32, 64, 128, and 256 have heads of 8, 16, 32, and 64 values.
-Those heads occupy 2, 4, 8, or 16 NEON registers. The wider paths unroll the
-feature loops, keep query and output-gradient vectors in registers across key
-visits, and use four independent dot-product accumulators. Weighted values and
-Q/K/V derivatives also use vector arithmetic, while causal masking remains exact.
-Backward computes each dot product between an output gradient and a value
-vector once, stores it in a 32-float, **128-byte** stack row, and reuses it for
-the softmax derivative and Q/K gradients. Only one derivative row is cached;
-this adds no quadratic backward buffer.
+![Synthetic native kernel comparisons and runtime profiling](experiments/kernel-profiles-v4/kernel-diagnostics.png)
 
-**Softmax evaluates four exponentials per call.** The original scalar routine
-used a degree-12 polynomial for one value. The vector helper range-reduces four
-values together, evaluates a degree-nine polynomial in two pairs of float64 lanes, and rounds back
-to float32. Subtracting the row maximum before exponentiation preserves stable
-softmax normalization. The ASCII-128 cross-entropy kernel also vectorizes its
-maximum, exponential sum, and logit-gradient calculations. The shared `exp4`
-helper benefits both attention and loss. Out-of-range or nonfinite inputs fall
-back to the original scalar exponential behavior.
+The [profiling report](experiments/kernel-profiles-v4/README.md) preserves the
+sample denominators, complete timing blocks, library hashes, and attribution
+limits. Current dense sample shares are about 26%, 36%, and 52% at widths
+64/128/256, including packing. A sample share is not an elapsed-time saving.
+The combined changes are measured together; this is not an isolated instruction
+ablation or a cache-miss study.
 
-**LayerNorm vectorizes both statistics and derivatives.** The first pass computes
-the mean and the second sums squared deviations from that mean, four values per
-instruction. Keeping the centered two-pass variance avoids the cancellation risk
-of subtracting squared means from mean squares. Normalization and backward's
-reductions, input gradients, and accumulated scale/bias gradients also use vectors.
-Finiteness checks use integer exponent-bit masks on four floats at once, followed
-by a scalar remainder. Every original runtime check remains in place.
+## The vector work around the matrix kernels
 
-Specialization has explicit boundaries. Linear tiles require compatible row and
-feature dimensions; attention specializes the four declared model widths, four
-heads, and up to 32 tokens. Other supported shapes use the original generic kernels. Partial softmax
-vectors load only valid lanes and mask unused lanes. The original numerical
-tolerances are unchanged, with additional tests for tails, extreme values,
-causality and accumulated gradients. See the [kernel notes](native/kernel_notes.md).
+The earlier optimizations remain important after dense arithmetic gets faster.
 
-These mechanisms are visible in the code. Their combined performance effect is
-measured in the width sweep; this experiment does not isolate each change in a separate
-ablation. Native training still accumulates gradients one sequence at a time.
-The tiles share work within a sequence; batch-wide native execution is not yet
-implemented.
+**Attention specializes each head width.** Heads of 8, 16, 32, or 64 values use
+2, 4, 8, or 16 NEON vectors. QK dot products, weighted values, and Q/K/V derivatives
+use vector arithmetic; wider paths retain query and output-gradient vectors
+across key visits and use independent accumulators. Backward computes each
+output-gradient/value dot product once and reuses a **128-byte stack row** for
+the softmax derivative. Causal masking remains exact, with no quadratic backward
+scratch tensor.
 
-**Width is an authenticated build configuration.** A shared specification derives
-parameter offsets, embedding strides, workspace sizes, and loop bounds. Each
-width gets its own generated layout and native binary. Only constants are
-generated; the numerical instructions and training runtime remain handwritten.
-The library exports its width and parameter count, and the executable checks a
-versioned fixture header before loading model buffers. Separate Python processes
-select their width before imports, preventing accidental configuration mixing.
+**Softmax shares a vector exponential.** Four values are range-reduced together,
+evaluated with a degree-nine polynomial in pairs of float64 lanes, then rounded
+to float32. Subtracting the row maximum keeps the softmax stable. The ASCII-128
+cross-entropy path vectorizes its maximum, exponential sum, and gradient. Tails
+load only valid elements; out-of-range or nonfinite inputs retain the original
+scalar math behavior.
+
+**LayerNorm vectorizes statistics and derivatives.** A first pass computes the
+mean; a second sums squared deviations. This avoids subtracting two nearly equal
+mean-square terms. Normalization, derivative reductions, and accumulated scale
+and bias gradients use NEON. Finiteness checks inspect four float exponent fields
+at once, with scalar remainders. Runtime validation remains enabled.
+
+The engineering idea is to make the equations' dataflow fit the processor. The
+model architecture, dataset, precision, and training budget stay fixed within a
+matched comparison. The [kernel notes](native/kernel_notes.md) explain every path,
+and the [ABI](native/ABI.md) defines its shape and caller requirements.
+
+## Matched model and training rules
+
+Each model is one pre-LayerNorm causal decoder block with four heads, learned
+token/position embeddings, residual connections, a ReLU feed-forward network of
+width `2 × model_width`, final LayerNorm, and an untied ASCII-128 output head.
+It predicts the next character from 32-character contexts. PyTorch uses built-in
+scaled-dot-product attention, autograd, and `torch.optim.Adam` in eager mode.
+
+Pinned Tiny Shakespeare excerpts provide **65,536 training, 8,192 validation,
+and 8,192 test target characters**, in disjoint contiguous partitions. The data
+are a known engineering benchmark used in earlier transformer versions, not a
+newly untouched test set. No test quality guided kernel development.
+
+Every fit uses eight epochs, batch size 16, **1,024 Adam updates**, learning rate
+0.001, and one CPU compute thread. Within a width and seed, both implementations
+receive identical initial weights, token rows, and schedules. The lowest validation
+NLL selects the checkpoint before test evaluation. Width and implementation order
+reverse on the second repeat, with a 15-second pause between fits and recorded
+power/thermal/load conditions. See the frozen [v4 protocol](experiments/PROTOCOL-v4.md).
 
 ## Memory and learning quality
 
 | Width | Implementation | Peak process RSS (MiB) | Test NLL | Accuracy (%) |
 |---:|---|---:|---:|---:|
-| 32 | PyTorch | 277.09 | 2.4585 | 35.046 |
+| 32 | PyTorch | 277.52 | 2.4585 | 35.046 |
 | 32 | ARM64 | 2.34 | 2.4621 | 35.042 |
-| 64 | PyTorch | 280.93 | 2.4145 | 36.869 |
-| 64 | ARM64 | 3.11 | 2.4122 | 36.877 |
-| 128 | PyTorch | 287.15 | 2.3862 | 37.964 |
-| 128 | ARM64 | 5.64 | 2.3901 | 37.455 |
-| 256 | PyTorch | 314.36 | 2.3962 | 37.203 |
-| 256 | ARM64 | 14.45 | 2.3984 | 36.788 |
+| 64 | PyTorch | 278.47 | 2.4145 | 36.869 |
+| 64 | ARM64 | 3.11 | 2.4138 | 36.589 |
+| 128 | PyTorch | 288.28 | 2.3862 | 37.964 |
+| 128 | ARM64 | 5.67 | 2.3859 | 37.691 |
+| 256 | PyTorch | 314.72 | 2.3962 | 37.203 |
+| 256 | ARM64 | 14.56 | 2.3969 | 37.557 |
 
-RSS is measured through training and includes framework, runtime, and data. It
-is not isolated parameter storage. At width 256, the native process used **14.45
-MiB versus 314.36 MiB** for PyTorch, despite having the same parameter count.
+Process peak RSS includes the framework, runtime, data, and model state; it is
+not isolated parameter storage. The compact assembly runtime and per-sequence
+workspace keep native process memory much lower throughout this family.
 
-![Memory and quality at each width, including seed variation](experiments/width-sweep-v3/memory-quality.png)
-
-Lower NLL means more probability assigned to the correct next character. Both
-implementations improve on the training-only unigram baseline's NLL of **3.3623**.
-Mean NLL improves through width 128, with no further improvement observed at 256
-under this fixed training budget. This does not establish an optimal width or
-convergence; the larger models received the same small dataset and 1,024 updates.
+![Process memory and descriptive quality at each width](experiments/width-sweep-v4/memory-quality.png)
 
 | Width | Mean ARM64 minus PyTorch NLL | Top-one prediction disagreement |
 |---:|---:|---:|
 | 32 | +0.003609 | 8.610% |
-| 64 | -0.002369 | 15.055% |
-| 128 | +0.003875 | 28.918% |
-| 256 | +0.002282 | 19.832% |
+| 64 | -0.000695 | 20.121% |
+| 128 | -0.000250 | 23.751% |
+| 256 | +0.000723 | 26.453% |
 
-The implementations have similar aggregate NLL here, but their trained predictions
-are not identical. Floating-point grouping can alter long training trajectories;
-width 128 has about 29% top-one disagreement despite a small mean NLL difference.
-Numerical admission checks and these descriptive observations do not establish
-statistical equivalence of prediction quality. Per-seed differences, perplexity,
-bits per character, accuracy, and learning curves are retained in each width's
-report.
+Both implementations beat the training-only unigram baseline's test NLL of
+3.3623. Aggregate quality similarity does not establish statistical equivalence:
+floating-point grouping changes long training trajectories and individual
+predictions. The same small dataset and update budget at every width also do not
+establish convergence or an optimal model size. Per-seed NLL, accuracy, perplexity,
+bits per character, learning curves, and disagreement remain in the reports.
 
-## Correctness and retained evidence
+## Correctness, portability, and evidence
 
-Each exact native binary passed **923 numerical/runtime checks**, for **3,692**
-across the four widths, with all original tolerances unchanged. The gates cover
-primitive derivatives, every model parameter gradient, Adam states, finite
-differences, causal masking, partial batches, malformed input, width identity,
-vector tails, extreme scores, and buffer guards.
+All **12,480 numerical/runtime checks passed** with unchanged tolerances:
+4,162 automatic-policy checks and 8,318 supplemental forced-NEON/forced-SME checks.
+The exact four executable/library pairs passed gradients for every model parameter,
+multiple Adam steps, finite differences, causal interventions, partial batches,
+input rejection, vector tails, tile boundaries, nonzero accumulated gradients,
+misaligned pointers, changed weights at the same address, and buffer guards.
+The repository test suite also passed **115 tests at each width** locally.
 
-The independent post-run audit passed **14,113 checks**: 3,399 per width plus
-517 sweep consistency checks. It recomputed all **393,216 retained test prediction
-rows** from saved checkpoints and checked selected-checkpoint validation loss
-against selection history. Within each implementation/width/seed, repeat
-checkpoints, optimizer states, predictions, and non-timing histories matched exactly.
+SME admission checks OS capability before the first SME instruction, then verifies
+the required vector length before entering the matrix path. Unsupported hardware or shapes use NEON; explicitly requesting
+unavailable SME fails. The normal public ABI requires non-streaming entry and
+preserves callee-saved state. Live ZA or a pending TPIDR2 save block routes to NEON
+without overwriting caller state. Separate probes checked all 64 seeded ZA slices
+and a nonnull TPIDR2 block. Float32 matrix grouping has its own NaN/exception
+semantics; the numerical comparison covers the declared finite-input model domain.
 
-Read the [complete report](experiments/width-sweep-v3/README.md),
-[summary](experiments/width-sweep-v3/summary.json), and
-[all audit records](experiments/width-sweep-v3/audit.json). The
-[v3 release](https://github.com/logannye/arm64-transformer/releases/tag/matched-transformer-width-sweep-v3)
-contains raw fixtures, schedules, initial/selected/final weights, optimizer states,
-predictions, latency samples, all four binaries and generated layouts, and the
-exact measured source revision `e11243f454d7b42bfb044883089e2df23c5a59e0`.
-The archive has an internal payload checksum manifest, an external SHA256, and a
-verification record. Publication changes are separate from the measured source.
+The independent post-run audit passed **14,185 checks** and recomputed all **393,216 retained test prediction rows** from saved selected checkpoints. It also recomputed selected validation losses and confirmed bit-identical repeated checkpoints, Adam states, logits, and non-timing histories within each implementation, width, and seed. The measured source revision is `276c6d091a7ebdc5f7831be2169683db4715f748`.
+
+Read the [complete report](experiments/width-sweep-v4/README.md),
+[summary](experiments/width-sweep-v4/summary.json), and
+[audit records](experiments/width-sweep-v4/audit.json). The
+[v4 release](https://github.com/logannye/arm64-transformer/releases/tag/matched-transformer-sme-v4)
+contains all fixtures, schedules, weights, Adam states, predictions, latency
+samples, four binaries/layouts, exact measured source, and separately labeled
+development/profiling evidence. The archive is checked internally and externally
+with SHA256. Publication changes are separate from the measured source.
 
 ## Reproduce
 
-Native execution requires an Apple silicon Mac and Xcode Command Line Tools.
-Python reference tests also run on Linux. Use Python 3.12 and prebuilt dependencies;
-a compatible existing environment can be reused.
+Native execution requires Apple silicon, macOS, and Xcode Command Line Tools with
+SME assembler support. Runtime SME use additionally requires the capabilities
+above; the measured host is an M4 Max with 64-byte streaming vectors. The NEON
+fallback supports older Apple silicon. Python reference tests also run on Linux.
+Use Python 3.12 and prebuilt dependencies, or reuse a compatible environment.
 
 ```sh
 git clone https://github.com/logannye/arm64-transformer.git
@@ -249,63 +255,65 @@ python -m transformer.fetch_data --output data/tinyshakespeare.txt
 make -C native widths PYTHON=python
 for width in 32 64 128 256; do
   export ARM64_TRANSFORMER_WIDTH=$width
+  export ARM64_TRANSFORMER_BACKEND=auto
   python -m pytest -q
-  python -m transformer.validate --output results/preflight-v3/width-$width.json \
-    --runtime --work-dir results/smoke-v3/width-$width
+  python -m transformer.validate --output results/preflight-v4/width-$width.json \
+    --runtime --work-dir results/smoke-v4/width-$width
+  ARM64_TRANSFORMER_BACKEND=neon python -m transformer.validate \
+    --output results/preflight-v4/width-$width-neon.json \
+    --runtime --work-dir results/smoke-v4/width-$width-neon
+  supported=$(python -c "import json; print(json.load(open('results/preflight-v4/width-$width.json'))['backend']['sme_supported'])")
+  if [ "$supported" = 1 ]; then
+    ARM64_TRANSFORMER_BACKEND=sme python -m transformer.validate \
+      --output results/preflight-v4/width-$width-sme.json \
+      --runtime --work-dir results/smoke-v4/width-$width-sme
+  fi
   python -m transformer.prepare --source data/tinyshakespeare.txt \
-    --output results/inputs-v3/width-$width
+    --output results/inputs-v4/width-$width
 done
 unset ARM64_TRANSFORMER_WIDTH
-python -m transformer.sweep --inputs results/inputs-v3 \
-  --preflight-dir results/preflight-v3 --output results/width-sweep-v3
-python -m transformer.sweep_report --inputs results/inputs-v3 \
-  --results results/width-sweep-v3 --output results/report-v3
+python -m transformer.sweep --protocol v4 --inputs results/inputs-v4 \
+  --preflight-dir results/preflight-v4 --output results/width-sweep-v4
+python -m transformer.sweep_report --inputs results/inputs-v4 \
+  --results results/width-sweep-v4 --output results/report-v4
 ```
 
-The source must be committed and clean, the Mac must use AC power, and all four
-binaries must match their passing preflights. The coordinator checks source and
-input hashes around every child, runs only one fit at a time, pauses 15 seconds
-between fits, and retains failures. Output directories refuse overwrites.
-CI runs synthetic correctness checks at every width; it does not run the full
-benchmark. [requirements-benchmark.txt](requirements-benchmark.txt) records the
-measured package versions.
+Use fresh output paths. The source must be committed and clean, and the Mac must
+use AC power. The runner authenticates source, binary, layout, preflight, and
+fixture hashes around every child; only one fit runs at a time. CI covers Linux
+reference tests and macOS ARM64 gates at every width, including forced NEON and
+SME where supported. [requirements-benchmark.txt](requirements-benchmark.txt)
+records the measured package versions. No external numerical library performs
+work inside the native executable: macOS/libc supplies files, memory, clocks,
+and feature queries.
 
 ## Earlier transformer versions
 
-The original native implementation took **2.23× as long** as PyTorch to train.
-Tiled matrix kernels, vectorized attention/normalization, and shared vector
-exponentials changed the width-32 result to a **1.751× training speedup** in v2.
-The fresh v3 width-32 comparison above is **1.719×**. These are separate campaigns
-whose machine conditions may differ; each primary ratio uses its own paired runs.
-
-The [v1 report](experiments/matched-v1/README.md),
-[v2 report and kernel diagnostics](experiments/matched-v2/README.md),
-[v1 release](https://github.com/logannye/arm64-transformer/releases/tag/matched-transformer-cpu-v1),
-and [v2 release](https://github.com/logannye/arm64-transformer/releases/tag/matched-transformer-cpu-v2)
-preserve the slower starting point and the optimization evidence. Individual
-kernel diagnostics are distinct from full-model and end-to-end training timings.
+The [v1](experiments/matched-v1/README.md), [v2](experiments/matched-v2/README.md),
+and [v3](experiments/width-sweep-v3/README.md) reports preserve the initial slower
+implementation, the first vector/tile improvements, and the wider-model crossover.
+Their release archives remain available. Historical campaign times can differ
+with machine conditions; the primary v4 conclusions use fresh matched PyTorch
+and ARM64 runs. The synthetic v3/v4 kernel comparison separately measures the
+implementation change in one balanced session.
 
 ## Code map
 
 | Path | Purpose |
 |---|---|
-| `transformer/spec.py` | Process-local width, parameters, workspace, generated constants |
-| `transformer/reference.py`, `python_train.py` | Standard PyTorch model and training runtime |
-| `transformer/prepare.py` | Fixed data partitions, weights, schedules, versioned fixtures |
-| `native/linear.S` | Tiled linear forward and backward |
-| `native/attention.S`, `softmax.S`, `normalization.S` | Specialized vector kernels |
-| `native/kernels.S` | Generic fallbacks, ReLU, Adam, and scalar math |
-| `native/model.S`, `runtime.S` | Complete native model, training, files, and measurements |
-| `transformer/validate.py`, `audit.py` | Numerical gates and independent checkpoint audit |
-| `transformer/sweep.py`, `sweep_report.py` | Matched width study, consistency audit, and charts |
-| `scripts/package_sweep_evidence.py` | Verified streaming release archive |
+| `transformer/spec.py` | Width, parameter/workspace layouts, generated constants |
+| `transformer/reference.py`, `python_train.py` | Standard PyTorch model and training |
+| `native/linear_sme.S` | Packed FP32 matrix forward/backward with ZA tiles |
+| `native/backend.S` | Capability/policy dispatch, ABI probe, observed-path counters |
+| `native/linear.S` | NEON matrix tiles and lane-based backward kernels |
+| `native/attention.S`, `softmax.S`, `normalization.S` | Vector attention, exponential/loss, normalization |
+| `native/kernels.S` | Generic tails, ReLU, Adam, scalar math |
+| `native/model.S`, `runtime.S` | Full native model and standalone training runtime |
+| `transformer/validate.py`, `audit.py`, `backend.py` | Admission, independent checkpoint audit, backend identity |
+| `transformer/sweep.py`, `sweep_report.py` | Matched study and audited plots |
+| `scripts/benchmark_kernels.py`, `profile_native.py` | Separate synthetic diagnostics |
+| `scripts/package_sweep_evidence.py` | Verified release archive |
 
-All native numerical work and training control are handwritten assembly. macOS/libc
-provides files, memory, and clocks; no Torch, BLAS, Accelerate, or compiled C
-numerical implementation is linked into the native executable. See the
-[ABI](native/ABI.md), [kernel notes](native/kernel_notes.md), and
-[static model diagram](docs/architecture.png).
-
-The measured scope is this short-context float32 family on one CPU machine against
-eager PyTorch. GPU performance, graph-compiled PyTorch, long contexts, energy,
-cached decoding, and production serving remain outside the experiment.
+This is a short-context float32 CPU experiment against eager PyTorch. It does not
+establish results for graph-compiled PyTorch, GPUs, long contexts, quantization,
+energy consumption, cached decoding, or production serving.
