@@ -1,0 +1,70 @@
+[
+  {
+    "width": 32,
+    "command": [
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/.venv/bin/python",
+      "-m",
+      "transformer.report",
+      "--results",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/results/width-sweep-v3/width-32",
+      "--inputs",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/results/inputs-v3/width-32",
+      "--output",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/experiments/width-sweep-v3/width-32"
+    ],
+    "returncode": 0,
+    "stdout": "{\"auditing\": \"seed-42-repeat-1-python\"}\n{\"auditing\": \"seed-42-repeat-1-arm64\"}\n{\"auditing\": \"seed-43-repeat-1-arm64\"}\n{\"auditing\": \"seed-43-repeat-1-python\"}\n{\"auditing\": \"seed-44-repeat-1-python\"}\n{\"auditing\": \"seed-44-repeat-1-arm64\"}\n{\"auditing\": \"seed-42-repeat-2-arm64\"}\n{\"auditing\": \"seed-42-repeat-2-python\"}\n{\"auditing\": \"seed-43-repeat-2-python\"}\n{\"auditing\": \"seed-43-repeat-2-arm64\"}\n{\"auditing\": \"seed-44-repeat-2-arm64\"}\n{\"auditing\": \"seed-44-repeat-2-python\"}\n{\"passed\": true, \"check_count\": 3399, \"failed_checks\": [], \"error\": null}\n",
+    "stderr": ""
+  },
+  {
+    "width": 64,
+    "command": [
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/.venv/bin/python",
+      "-m",
+      "transformer.report",
+      "--results",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/results/width-sweep-v3/width-64",
+      "--inputs",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/results/inputs-v3/width-64",
+      "--output",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/experiments/width-sweep-v3/width-64"
+    ],
+    "returncode": 0,
+    "stdout": "{\"auditing\": \"seed-42-repeat-1-arm64\"}\n{\"auditing\": \"seed-42-repeat-1-python\"}\n{\"auditing\": \"seed-43-repeat-1-python\"}\n{\"auditing\": \"seed-43-repeat-1-arm64\"}\n{\"auditing\": \"seed-44-repeat-1-arm64\"}\n{\"auditing\": \"seed-44-repeat-1-python\"}\n{\"auditing\": \"seed-42-repeat-2-python\"}\n{\"auditing\": \"seed-42-repeat-2-arm64\"}\n{\"auditing\": \"seed-43-repeat-2-arm64\"}\n{\"auditing\": \"seed-43-repeat-2-python\"}\n{\"auditing\": \"seed-44-repeat-2-python\"}\n{\"auditing\": \"seed-44-repeat-2-arm64\"}\n{\"passed\": true, \"check_count\": 3399, \"failed_checks\": [], \"error\": null}\n",
+    "stderr": ""
+  },
+  {
+    "width": 128,
+    "command": [
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/.venv/bin/python",
+      "-m",
+      "transformer.report",
+      "--results",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/results/width-sweep-v3/width-128",
+      "--inputs",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/results/inputs-v3/width-128",
+      "--output",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/experiments/width-sweep-v3/width-128"
+    ],
+    "returncode": 0,
+    "stdout": "{\"auditing\": \"seed-42-repeat-1-python\"}\n{\"auditing\": \"seed-42-repeat-1-arm64\"}\n{\"auditing\": \"seed-43-repeat-1-arm64\"}\n{\"auditing\": \"seed-43-repeat-1-python\"}\n{\"auditing\": \"seed-44-repeat-1-python\"}\n{\"auditing\": \"seed-44-repeat-1-arm64\"}\n{\"auditing\": \"seed-42-repeat-2-arm64\"}\n{\"auditing\": \"seed-42-repeat-2-python\"}\n{\"auditing\": \"seed-43-repeat-2-python\"}\n{\"auditing\": \"seed-43-repeat-2-arm64\"}\n{\"auditing\": \"seed-44-repeat-2-arm64\"}\n{\"auditing\": \"seed-44-repeat-2-python\"}\n{\"passed\": true, \"check_count\": 3399, \"failed_checks\": [], \"error\": null}\n",
+    "stderr": ""
+  },
+  {
+    "width": 256,
+    "command": [
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/.venv/bin/python",
+      "-m",
+      "transformer.report",
+      "--results",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/results/width-sweep-v3/width-256",
+      "--inputs",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/results/inputs-v3/width-256",
+      "--output",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/experiments/width-sweep-v3/width-256"
+    ],
+    "returncode": 0,
+    "stdout": "{\"auditing\": \"seed-42-repeat-1-arm64\"}\n{\"auditing\": \"seed-42-repeat-1-python\"}\n{\"auditing\": \"seed-43-repeat-1-python\"}\n{\"auditing\": \"seed-43-repeat-1-arm64\"}\n{\"auditing\": \"seed-44-repeat-1-arm64\"}\n{\"auditing\": \"seed-44-repeat-1-python\"}\n{\"auditing\": \"seed-42-repeat-2-python\"}\n{\"auditing\": \"seed-42-repeat-2-arm64\"}\n{\"auditing\": \"seed-43-repeat-2-arm64\"}\n{\"auditing\": \"seed-43-repeat-2-python\"}\n{\"auditing\": \"seed-44-repeat-2-python\"}\n{\"auditing\": \"seed-44-repeat-2-arm64\"}\n{\"passed\": true, \"check_count\": 3399, \"failed_checks\": [], \"error\": null}\n",
+    "stderr": ""
+  }
+]

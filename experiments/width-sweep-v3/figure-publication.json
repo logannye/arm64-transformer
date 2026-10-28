@@ -1,0 +1,13 @@
+{
+  "kind": "publication_only_figure_layout",
+  "reason": "Separate bar rows avoid overlapping labels in the original line chart.",
+  "measured_revision": "e11243f454d7b42bfb044883089e2df23c5a59e0",
+  "summary_sha256": "4e933b9d24cdec271d14fd8e6b4642c9dc4213427024da079df7f2271d416817",
+  "original_figure": "speedup.png",
+  "original_figure_sha256": "8bfdd0951a1c8e2ccd04a4cde56550d43568a4a7b9beb79b2aff78e64b522cdc",
+  "publication_figure": "speedup-publication.png",
+  "publication_figure_sha256": "5f05afe856b9b94b28d4a7fe0059cf1bfc21546e2c12c4c8c87f45f4e8fc9227",
+  "renderer": "figure-publication.py",
+  "renderer_sha256": "72d43a3b8f6272e5abd489ccbcc0cf0d3a5dfdeebc3db7bbbebc6e57ad72aacf",
+  "numerical_summaries_audits_and_original_figures_unchanged": true
+}

@@ -1,4 +1,4 @@
-# Versions used for the retained macOS ARM64 v1 experiment; prebuilt wheels only.
+# Versions used for the retained macOS ARM64 v1/v2/v3 experiments; prebuilt wheels only.
 torch==2.14.1
 numpy==2.5.2
 pytest==9.1.1
