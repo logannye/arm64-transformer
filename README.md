@@ -11,7 +11,7 @@ its predictions, gradients, and optimizer updates.
 The latest profile-guided implementation trains faster than eager PyTorch and
 has lower full-context forward latency at **all four widths**. At width 256,
 the fresh matched comparison is **1.29× faster for training** and **1.43× faster
-for forward**, with native peak process memory of **14.56 MiB** versus
+for forward**, with native peak process RSS through training of **14.56 MiB** versus
 **314.72 MiB**.
 
 
@@ -49,8 +49,9 @@ retains variation and every observation.
 
 Forward ratios use the implementation means of per-run p50 latency. Each run
 uses 20 warmups and 100 samples of a batch-one forward pass over the complete
-32-character context. This excludes token loading, loss, softmax, sampling, and
-I/O; it is not cached next-token generation or application latency.
+32-character context. This excludes token loading, loss, output probability softmax, sampling, and
+I/O; causal attention softmax is included. It is not cached next-token generation
+or application latency.
 
 ![Training and forward cost across model widths](experiments/width-sweep-v4/scaling.png)
 
@@ -175,7 +176,7 @@ power/thermal/load conditions. See the frozen [v4 protocol](experiments/PROTOCOL
 
 ## Memory and learning quality
 
-| Width | Implementation | Peak process RSS (MiB) | Test NLL | Accuracy (%) |
+| Width | Implementation | Peak RSS through training (MiB) | Test NLL | Accuracy (%) |
 |---:|---|---:|---:|---:|
 | 32 | PyTorch | 277.52 | 2.4585 | 35.046 |
 | 32 | ARM64 | 2.34 | 2.4621 | 35.042 |
@@ -186,7 +187,7 @@ power/thermal/load conditions. See the frozen [v4 protocol](experiments/PROTOCOL
 | 256 | PyTorch | 314.72 | 2.3962 | 37.203 |
 | 256 | ARM64 | 14.56 | 2.3969 | 37.557 |
 
-Process peak RSS includes the framework, runtime, data, and model state; it is
+Peak process RSS through training includes the framework, runtime, data, and model state; it is
 not isolated parameter storage. The compact assembly runtime and per-sequence
 workspace keep native process memory much lower throughout this family.
 
@@ -214,7 +215,8 @@ The exact four executable/library pairs passed gradients for every model paramet
 multiple Adam steps, finite differences, causal interventions, partial batches,
 input rejection, vector tails, tile boundaries, nonzero accumulated gradients,
 misaligned pointers, changed weights at the same address, and buffer guards.
-The repository test suite also passed **115 tests at each width** locally.
+At the measured revision, the repository test suite also passed **115 tests at
+each width** locally.
 
 SME admission checks OS capability before the first SME instruction, then verifies
 the required vector length before entering the matrix path. Unsupported hardware or shapes use NEON; explicitly requesting

@@ -460,3 +460,15 @@ def test_extra_evidence_rejects_unsafe_archive_names(tmp_path, name):
     with pytest.raises(ValueError, match="simple unique name"):
         packager.package(args)
     assert not args.output.exists()
+
+
+@pytest.mark.parametrize("case", ["matching", "changed", "outside"])
+def test_packaging_tool_source_identity(tmp_path, case):
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    tool = (tmp_path if case == "outside" else repo) / "package.py"
+    tool.write_text("# packaging tool\n")
+    expected = packager.digest(tool) if case != "changed" else "0" * 64
+    assert packager.tool_is_measured_source(tool, repo, {"package.py": expected}) == (
+        case == "matching"
+    )

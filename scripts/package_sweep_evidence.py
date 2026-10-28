@@ -61,6 +61,13 @@ def digest(path):
         return stream_digest(handle)
 
 
+def tool_is_measured_source(tool, repo, source_hashes):
+    tool, repo = Path(tool).resolve(), Path(repo).resolve()
+    return tool.is_relative_to(repo) and source_hashes.get(
+        tool.relative_to(repo).as_posix()
+    ) == digest(tool)
+
+
 def read_json(path):
     return json.loads(Path(path).read_text())
 
@@ -632,7 +639,9 @@ def package(args):
             "raw_manifest_sha256": digest(results / "manifest.json"),
             "global_report_sha256": digest(report / "summary.json"),
             "packaging_tool_sha256": digest(tool),
-            "packaging_tool_is_measured_source": False,
+            "packaging_tool_is_measured_source": tool_is_measured_source(
+                tool, repo, manifest["source_sha256"]
+            ),
             "verification_scope": (
                 "All payload bytes rehashed from the archive and inputs; measured source, "
                 "binary/layout, fixture, raw-run and report identity chains checked. "
