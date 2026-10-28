@@ -405,6 +405,20 @@ def create_report(results, inputs, output):
     error = None
     try:
         manifest = json.loads((results / "manifest.json").read_text())
+        hardware = manifest["hardware"]["stdout"].strip()
+        hardware_supplement = results / "hardware-verification.json"
+        hardware_evidence = None
+        if hardware_supplement.exists():
+            hardware_evidence = json.loads(hardware_supplement.read_text())
+            if hardware_evidence.get("phase") != "post-measurement":
+                raise ValueError("Supplementary hardware verification must identify its timing")
+            hardware = (
+                hardware_evidence["hardware"][0]["chip_type"]
+                + " (verified after measurement; the original sandboxed sysctl query failed)"
+            )
+            write_json(output / "hardware-verification.json", hardware_evidence)
+        if not hardware:
+            hardware = "unavailable from the measurement subprocess"
         if manifest.get("status") != "completed":
             raise ValueError(
                 "Runner manifest is not completed; incomplete studies cannot be reported"
@@ -489,7 +503,8 @@ def create_report(results, inputs, output):
                 source_sha256=manifest["source_sha256"],
                 preflight_check_count=manifest["preflight"]["check_count"],
                 platform=manifest["platform"],
-                hardware=manifest["hardware"]["stdout"].strip(),
+                hardware=hardware,
+                supplementary_hardware_evidence=hardware_evidence,
                 torch=manifest["torch"],
                 numpy=manifest["numpy"],
                 aggregate=aggregate_runs(summary["runs"]),

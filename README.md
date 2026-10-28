@@ -42,11 +42,48 @@ uses **65,536 training, 8,192 validation and 8,192 test target characters**. Con
 resets every 32 characters and never crosses a split boundary. The full data,
 timing and statistical contract is in [the protocol](experiments/PROTOCOL.md).
 
-## Measurement status
+## Measured comparison
 
-Implementation and preflight checks are complete; the matched study is being
-prepared. No transformer speedup or final quality result is claimed yet.
-The experiment will retain every run, including an assembly performance loss.
+The completed 12-run experiment found that **ARM64 training took 2.23× as long
+as PyTorch**. Full-context forward latency was also slightly higher. The native
+process used substantially less resident memory. Both models learned useful
+next-character predictions, with similar observed held-out loss across three seeds.
+
+| Measurement | PyTorch | ARM64 assembly |
+|---|---:|---:|
+| Test negative log-likelihood | 2.4585 ± 0.0292 | 2.4601 ± 0.0189 |
+| Test perplexity | 11.691 ± 0.341 | 11.707 ± 0.221 |
+| Next-character accuracy | 35.046% ± 0.532 pp | 34.981% ± 0.092 pp |
+| Training + validation | 1.328 ± 0.034 s | 2.964 ± 0.018 s |
+| Full-context forward p50 | 0.0545 ± 0.0013 ms | 0.0609 ± 0.0043 ms |
+| Peak process RSS through training | 276.64 ± 0.44 MiB | 2.33 ± 0.00 MiB |
+
+Values are mean ± sample SD of three seed means, with two timing repeats averaged
+within each seed. Measured on one Apple M4 Max, CPU float32, one compute thread.
+The primary training ratio is the geometric mean of six paired runs. RSS includes
+the framework, runtime and data; it is not the model's memory footprint. Forward
+timing covers a complete 32-character context and excludes softmax/sampling/I/O.
+
+![Matched training and whole-process times](experiments/matched-v1/training.png)
+
+All within-implementation repeated numerical outputs matched exactly. Across
+implementations, mean test NLL differed by +0.001617 and top-one predictions
+disagreed on 8.850% of characters. Similar aggregate quality does not establish
+statistical equivalence or bitwise-identical learning trajectories.
+
+The native implementation processes sequences individually and accumulates batch
+gradients; PyTorch uses batched operations and optimized scaled-dot-product
+attention. That is an implementation difference this experiment measures, not a
+profile-based attribution of the performance gap. This version establishes a
+verified baseline for future kernel/batching improvements.
+
+Read [the complete results and charts](experiments/matched-v1/README.md),
+[all 3,395 post-run audit checks](experiments/matched-v1/audit.json), and
+[the 254-check numerical/runtime preflight](experiments/matched-v1/preflight.json).
+The audit independently recomputed all 98,304 retained test prediction rows.
+The [release](https://github.com/logannye/arm64-transformer/releases/tag/matched-transformer-cpu-v1)
+preserves raw data, schedules, checkpoints, optimizer states, predictions, timing
+samples, executable and the measured source snapshot.
 
 ## Reproduce
 
@@ -80,6 +117,10 @@ overwrite prior evidence. The runner executes 12 fits sequentially: three seeds,
 two timing repeats per implementation, reversed implementation order, eight
 epochs and one CPU compute thread. There is a fixed 15-second pause between fits.
 CI uses synthetic preflight data and does not run the complete measured study.
+Use `requirements-benchmark.txt` for the package versions used by the retained
+experiment. The measured numerical source is revision
+`542bba1246a1def1388760ec20d2be3a944b359f`; later changes correct hosted workflow
+syntax and add reporting/provenance, without changing the measured model/runtime.
 
 ## How the implementation is organized
 

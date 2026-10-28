@@ -1,0 +1,14 @@
+{
+  "phase": "post-measurement",
+  "method": "system_profiler SPHardwareDataType -json, filtered to non-identifying hardware fields",
+  "reason": "The runner retained a failed sandboxed sysctl query; raw runner evidence remains unchanged.",
+  "hardware": [
+    {
+      "chip_type": "Apple M4 Max",
+      "machine_model": "Mac16,5",
+      "machine_name": "MacBook Pro",
+      "number_processors": "proc 16:12:4",
+      "physical_memory": "128 GB"
+    }
+  ]
+}
