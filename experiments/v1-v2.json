@@ -1,0 +1,106 @@
+{
+  "comparison_scope": "historical across separate campaigns; not a new paired experiment",
+  "forward_scope": "batch one, full context of 32 characters; not cached token generation",
+  "summary_sha256": {
+    "v1": "f421e076e901b19a965d283cd224ef5428445ad5c82951d0754068c1734f5a89",
+    "v2": "098fc8af36a1f97596780fefcf1f952d5493b11d1a5ea22e525eed71231c1564"
+  },
+  "source_revisions": {
+    "v1": "542bba1246a1def1388760ec20d2be3a944b359f",
+    "v2": "375af274085af1c5b55e2f9be091749a7d863bcd"
+  },
+  "statistics": {
+    "v1": {
+      "python": {
+        "training_seconds": {
+          "mean": 1.3284805762426306,
+          "sample_sd": 0.0339547266340117,
+          "n_seeds": 3,
+          "seed_values": [
+            1.3546153118368238,
+            1.2901020417921245,
+            1.3407243750989437
+          ]
+        },
+        "forward_p50_ms": {
+          "mean": 0.05454507966836294,
+          "sample_sd": 0.001307197937270803,
+          "n_seeds": 3,
+          "seed_values": [
+            0.05396874621510506,
+            0.053625088185071945,
+            0.056041404604911804
+          ]
+        }
+      },
+      "arm64": {
+        "training_seconds": {
+          "mean": 2.96410055559439,
+          "sample_sd": 0.01827557890599481,
+          "n_seeds": 3,
+          "seed_values": [
+            2.9430553540587425,
+            2.9732735625002533,
+            2.975972750224173
+          ]
+        },
+        "forward_p50_ms": {
+          "mean": 0.06089584591488043,
+          "sample_sd": 0.004337726838925841,
+          "n_seeds": 3,
+          "seed_values": [
+            0.057166675105690956,
+            0.06565626244992018,
+            0.05986460018903017
+          ]
+        }
+      }
+    },
+    "v2": {
+      "python": {
+        "training_seconds": {
+          "mean": 1.2799653958063573,
+          "sample_sd": 0.006003612290639122,
+          "n_seeds": 3,
+          "seed_values": [
+            1.2797482705209404,
+            1.2860746253281832,
+            1.2740732915699482
+          ]
+        },
+        "forward_p50_ms": {
+          "mean": 0.05374635414530834,
+          "sample_sd": 0.00023520753790199272,
+          "n_seeds": 3,
+          "seed_values": [
+            0.05377037450671196,
+            0.05350005812942982,
+            0.05396862979978323
+          ]
+        }
+      },
+      "arm64": {
+        "training_seconds": {
+          "mean": 0.7309506389622887,
+          "sample_sd": 0.0061716418253547674,
+          "n_seeds": 3,
+          "seed_values": [
+            0.7372755624819547,
+            0.730631708400324,
+            0.7249446460045874
+          ]
+        },
+        "forward_p50_ms": {
+          "mean": 0.014409849730630716,
+          "sample_sd": 0.0004030056546978881,
+          "n_seeds": 3,
+          "seed_values": [
+            0.01487520057708025,
+            0.014177174307405949,
+            0.014177174307405949
+          ]
+        }
+      }
+    }
+  }
+}
