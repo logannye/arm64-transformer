@@ -1,9 +1,31 @@
-"""Frozen tensor layout shared by binary interfaces (no numerical implementation)."""
+"""Process-local model layout shared by binary interfaces, with no model math.
+
+Select a supported width before Python starts with ARM64_TRANSFORMER_WIDTH.
+Separate processes and native build directories keep configurations isolated.
+"""
+
+import argparse
+import json
+import os
+from pathlib import Path
+
+WIDTHS = (32, 64, 128, 256)
+
+
+def selected_width(value):
+    try:
+        width = int(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("ARM64_TRANSFORMER_WIDTH must be 32, 64, 128, or 256") from exc
+    if width not in WIDTHS:
+        raise ValueError("ARM64_TRANSFORMER_WIDTH must be 32, 64, 128, or 256")
+    return width
+
 
 CONTEXT = 32
-WIDTH = 32
+WIDTH = selected_width(os.environ.get("ARM64_TRANSFORMER_WIDTH", "32"))
 HEADS = 4
-HIDDEN = 64
+HIDDEN = 2 * WIDTH
 VOCAB = 128
 EPS = 1e-5
 LR = 0.001
@@ -92,6 +114,7 @@ def assembly_constants():
     for name, value in {
         "CONTEXT": CONTEXT,
         "WIDTH": WIDTH,
+        "WIDTH_SHIFT": WIDTH.bit_length() - 1,
         "HEADS": HEADS,
         "HIDDEN": HIDDEN,
         "VOCAB": VOCAB,
@@ -104,3 +127,27 @@ def assembly_constants():
         for name, (offset, _) in values.items():
             lines.append(f".equ {prefix}_{name.upper()}, {offset * 4}")
     return "\n".join(lines) + "\n"
+
+
+def model_metadata():
+    return {
+        "width": WIDTH,
+        "heads": HEADS,
+        "head_width": WIDTH // HEADS,
+        "hidden": HIDDEN,
+        "context": CONTEXT,
+        "vocab": VOCAB,
+        "parameters": PARAM_COUNT,
+        "workspace_floats": WORK_COUNT,
+    }
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+    if args.output:
+        args.output.parent.mkdir(parents=True, exist_ok=True)
+        args.output.write_text(assembly_constants())
+    else:
+        print(json.dumps(model_metadata()))

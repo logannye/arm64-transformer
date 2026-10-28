@@ -41,6 +41,7 @@ def package(args):
             if digest((args.inputs / run["fixture"] / name).read_bytes()) != expected:
                 raise ValueError(f"Audited input changed: {run['fixture']}/{name}")
     root = Path(__file__).resolve().parents[1]
+    model_width = manifest.get("model", {}).get("width", 32)
     source = subprocess.check_output(
         ["git", "archive", "--format=tar", manifest["revision"]], cwd=root
     )
@@ -53,7 +54,10 @@ def package(args):
         ("transformer-arm64", "executable_sha256"),
         ("libtransformer.dylib", "library_sha256"),
     ):
-        data = (root / "native/build" / name).read_bytes()
+        path = root / f"native/build/width-{model_width}" / name
+        if not path.exists():
+            path = root / "native/build" / name
+        data = path.read_bytes()
         if digest(data) != preflight[key]:
             raise ValueError(f"Native binary changed: {name}")
         payload["bin/" + name] = data

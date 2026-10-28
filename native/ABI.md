@@ -4,7 +4,10 @@ Apple arm64 Darwin ABI, float32 arrays, row-major tensors; symbols have the Darw
 leading underscore in assembly. All integer arguments/pointers are 64-bit unless
 otherwise noted. Preserve x19-x28 and the low 64 bits of v8-v15. Never use x18.
 Shape arrays are int32. All tensors supplied by the caller; no hidden state.
-The fixed model/layout is transformer/spec.py; layout.inc contains byte offsets.
+The model/layout is transformer/spec.py; the build-specific layout.inc contains
+byte offsets. The supported width ladder is 32, 64, 128, 256, with context 32,
+four heads, feed-forward width twice model width, and vocabulary 128. Each width
+has its own compiled executable/library and matching binary fixtures.
 
 ## Numerical primitives
 
@@ -37,6 +40,9 @@ ABI and is not part of this C-callable interface.
 
 ## Complete model
 
+- `tf_model_width()` returns the compiled width as uint64.
+- `tf_parameter_count()` returns the compiled parameter count as uint64.
+  FFI callers must check both before passing model arrays to the library.
 - `tf_forward(params,tokens,workspace)`; one sequence of 32 int32 tokens;
   writes intermediate tensors and logits at W_LOGITS.
 - `tf_backward(params,tokens,targets,workspace,grads)`; forward already complete;
@@ -46,11 +52,15 @@ ABI and is not part of this C-callable interface.
 
 ## Binary fixture/runtime
 
-Executable: `native/build/transformer-arm64 INPUT_DIRECTORY OUTPUT_DIRECTORY`.
-Output directory must not exist. Input contains `config.bin` (8 little-endian
-uint32: magic=0x54465231, version=1, epochs, batch, train_sequences,
-validation_sequences, test_sequences, seed); limits epochs 1..100, batch 1..128,
-train 1..8192, validation/test 1..2048.
+Executable: `native/build/width-32/transformer-arm64 INPUT_DIRECTORY OUTPUT_DIRECTORY`
+for width 32; other widths use the corresponding `width-W` build directory.
+Output directory must not exist. Input contains `config.bin` (9 little-endian
+uint32, exactly 36 bytes: magic=0x54465231, version=2, epochs, batch,
+train_sequences, validation_sequences, test_sequences, seed, width); limits
+epochs 1..100, batch 1..128, train 1..8192, validation/test 1..2048. Width must
+match the compiled binary and is checked before loading model/data arrays or
+performing numerical work. The new runtime accepts version 2 only; preserved
+version 1 release binaries remain available for their original 32-byte fixtures.
 `initial.f32` has PARAM_COUNT finite floats. `train.i32`, `validation.i32`,
 `test.i32` have [sequence_count,33] int32 ASCII IDs in 0..127. First 32 are
 inputs, last 32 are next-character targets. `schedule.i32` contains

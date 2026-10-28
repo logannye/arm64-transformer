@@ -1,6 +1,7 @@
 """Native tests use an explicitly built library; they never invoke a compiler."""
 
 import platform
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -18,11 +19,65 @@ from transformer.validate import (
     numerical_checks,
     reference_forward,
     tensor,
+    verify_library_model,
 )
 
 NATIVE_AVAILABLE = (
     platform.system() == "Darwin" and platform.machine() == "arm64" and DEFAULT_LIBRARY.is_file()
 )
+
+
+class FakeSymbol:
+    def __init__(self, result):
+        self.result = result
+
+    def __call__(self):
+        return self.result
+
+
+def model_library(width=spec.WIDTH, parameter_count=spec.PARAM_COUNT):
+    return SimpleNamespace(
+        tf_model_width=FakeSymbol(width), tf_parameter_count=FakeSymbol(parameter_count)
+    )
+
+
+def test_native_identity_requires_both_matching_model_dimensions():
+    library = model_library()
+    assert verify_library_model(library) == {
+        "width": spec.WIDTH,
+        "parameter_count": spec.PARAM_COUNT,
+        "verified": True,
+    }
+    assert library.tf_model_width.argtypes == []
+    assert library.tf_parameter_count.argtypes == []
+    for wrong in (model_library(width=spec.WIDTH + 1), model_library(parameter_count=1)):
+        with pytest.raises(RuntimeError, match="Native model mismatch"):
+            verify_library_model(wrong)
+        with pytest.raises(RuntimeError, match="Native model mismatch"):
+            verify_library_model(wrong, allow_legacy=True)
+
+
+def test_native_identity_legacy_mode_is_explicit_and_width_32_only(monkeypatch):
+    missing = SimpleNamespace()
+    with pytest.raises(RuntimeError, match="identity symbols"):
+        verify_library_model(missing)
+    monkeypatch.setattr(spec, "WIDTH", 32)
+    monkeypatch.setattr(spec, "PARAM_COUNT", 17952)
+    assert verify_library_model(missing, allow_legacy=True) == {
+        "width": 32,
+        "parameter_count": 17952,
+        "verified": False,
+    }
+    partial = SimpleNamespace(tf_model_width=FakeSymbol(32))
+    with pytest.raises(RuntimeError, match="identity symbols"):
+        verify_library_model(partial, allow_legacy=True)
+    monkeypatch.setattr(spec, "WIDTH", 64)
+    with pytest.raises(RuntimeError, match="identity symbols"):
+        verify_library_model(missing, allow_legacy=True)
+
+
+def test_native_default_paths_are_width_specific():
+    assert DEFAULT_LIBRARY.parent.name == f"width-{spec.WIDTH}"
 
 
 def test_checks_reject_nan_and_wrong_shape():

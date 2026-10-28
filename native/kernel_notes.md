@@ -24,7 +24,7 @@ caller before their first use.
 Darwin callee-saved x19-x28 and the low 64 bits of v8-v15 are saved/restored where
 used. The reserved x18 register is never used. Stack frames are 16-byte aligned.
 
-## V2 execution changes
+## Tiled and vectorized execution
 
 - `linear.S` computes four token rows by four output columns together, using
   sixteen independent NEON dot-product accumulators. Loaded input/weight vectors
@@ -33,11 +33,13 @@ used. The reserved x18 register is never used. Stack frames are 16-byte aligned.
   sums. Forward requires row/input/output counts divisible by four; backward
   additionally requires input width divisible by sixteen. Other positive shapes
   tail-call the preserved v1 generic implementations in `kernels.S`.
-- `attention.S` specializes the actual width-32/four-head model for 1..32 tokens.
-  Each eight-element head uses two NEON vectors. QK, weighted values, and their
-  derivatives are vectorized. Backward caches one row of attention derivatives
-  in a 32-float stack buffer instead of recomputing those dot products. Other
-  shapes use the original generic implementation.
+- `attention.S` specializes four-head models of width 32, 64, 128, and 256 for
+  1..32 tokens. Heads of 8, 16, 32, or 64 elements use 2, 4, 8, or 16 NEON
+  vectors. QK, weighted values, and their derivatives are vectorized. Wider
+  paths retain query/output-gradient vectors in registers, use four independent
+  dot-product accumulators, and unroll the feature loops. Backward caches one
+  row of attention derivatives in a 32-float stack buffer instead of recomputing
+  those dot products. Other shapes use the original generic implementation.
 - `softmax.S` evaluates four exponentials at a time, using pairs of float64 lanes
   for range reduction and a degree-nine polynomial, then rounding to float32.
   Inputs outside the finite interval [-104,88] use the original scalar behavior.
@@ -52,10 +54,25 @@ used. The reserved x18 register is never used. Stack frames are 16-byte aligned.
   operations and a scalar remainder. The same checks remain in the runtime.
 
 The native runtime still accumulates complete per-sequence gradients within each
-training batch. V2 changes kernel execution, not this scheduling rule. It does
+training batch. These optimizations change kernel execution, not this scheduling rule. It does
 not add batch-wide model workspaces, mixed precision, a KV cache, or a new model.
 This keeps the one-sequence workspace while making its hot operations efficient.
 Whether batch-wide execution helps further remains a separate measured question.
+
+## Width specialization and identity
+
+`ARM64_TRANSFORMER_WIDTH` selects 32, 64, 128, or 256 before Python imports the
+model specification. Four heads, a 32-token context, and a feed-forward width of
+twice the model width remain fixed. `make widths` builds separate native binaries
+under `native/build/width-W`; generated `layout.inc` files contain parameter and
+workspace offsets. The arithmetic kernels remain handwritten assembly.
+
+Model code derives embedding strides, loop bounds, parameter counts, and buffer
+sizes from that layout. Each library exports its width and parameter count; the
+Python validator checks both before allocating or calling through the ABI. The
+standalone executable requires a version-2 fixture header with the matching width
+before it allocates model state or creates an output directory. This prevents
+accidentally loading a wider fixture into a smaller compiled model.
 
 ## Arithmetic
 
@@ -78,14 +95,14 @@ Whether batch-wide execution helps further remains a separate measured question.
   finite losses even when the target probability underflows. Returned gradients
   are divided by the number of token rows. Individual token losses are float32;
   their reporting sum uses float64 before conversion of the mean to float32.
-- Adam matches the former CNN implementation's operation order: float32 moments
+- Adam uses float32 moments
   and updates, float64 scalar bias-correction powers, and float32-rounded derived
   coefficients. Four parameters are processed per NEON iteration, with scalar tails.
 
 The scalar exponential uses float64 range reduction and a degree-12 polynomial before
 rounding to float32. The logarithm normalizes the exactly converted float32 input
 in float64 and evaluates an atanh series through the 23rd power. Their documented
-nonfinite/domain behavior follows the historical CNN routines. These methods are
+nonfinite/domain behavior is covered by the numerical admission checks. These methods are
 not a claim of a correctly rounded general-purpose math library.
 
 Fused operations, reduction order, LayerNorm variance evaluation, and reporting

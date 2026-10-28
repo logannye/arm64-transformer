@@ -1,5 +1,5 @@
 // Complete handwritten one-block transformer forward/backward and embeddings.
-#include "layout.inc"
+#include <layout.inc>
 .text
 .p2align 2
 .macro ADDR reg, symbol
@@ -9,6 +9,12 @@
 .macro PTR reg, base, offset
  add \reg, \base, #(\offset >> 12), lsl #12
  add \reg, \reg, #(\offset & 4095)
+.endm
+.macro IMM reg, value
+ mov \reg,#(\value & 65535)
+ .if (\value >> 16)
+ movk \reg,#((\value >> 16) & 65535),lsl #16
+ .endif
 .endm
 .macro ENTER
  stp x29,x30,[sp,#-96]!
@@ -29,6 +35,17 @@
  ret
 .endm
 
+// Query the compiled layout before passing any caller-owned arrays.
+.globl _tf_model_width
+_tf_model_width:
+ mov x0,#WIDTH
+ ret
+
+.globl _tf_parameter_count
+_tf_parameter_count:
+ IMM x0,PARAM_COUNT
+ ret
+
 .globl _tf_forward
 _tf_forward:
  ENTER
@@ -41,8 +58,8 @@ _tf_forward:
  mov x12,x20
 Lembed:
  ldr w13,[x12],#4
- add x13,x19,x13,lsl #7
- mov w14,#8
+ add x13,x19,x13,lsl #(WIDTH_SHIFT+2)
+ mov w14,#(WIDTH/4)
 Lembed_vec:
  ldr q0,[x13],#16
  ldr q1,[x9],#16
@@ -81,7 +98,7 @@ Lembed_vec:
  PTR x0,x21,W_X
  PTR x1,x21,W_PROJECTED
  PTR x2,x21,W_R1
- mov x3,#1024
+ mov x3,#(CONTEXT*WIDTH)
  bl Ladd
  PTR x0,x21,W_R1
  PTR x1,x19,P_LN2_WEIGHT
@@ -100,7 +117,7 @@ Lembed_vec:
  bl _tf_linear_forward
  PTR x0,x21,W_FF1
  PTR x1,x21,W_RELU
- mov x2,#2048
+ mov x2,#(CONTEXT*HIDDEN)
  bl _tf_relu_forward
  PTR x0,x21,W_RELU
  PTR x1,x19,P_FF2_WEIGHT
@@ -111,7 +128,7 @@ Lembed_vec:
  PTR x0,x21,W_R1
  PTR x1,x21,W_FF2
  PTR x2,x21,W_R2
- mov x3,#1024
+ mov x3,#(CONTEXT*WIDTH)
  bl Ladd
  PTR x0,x21,W_R2
  PTR x1,x19,P_LN3_WEIGHT
@@ -172,7 +189,7 @@ _tf_backward:
  PTR x0,x21,W_FF1
  PTR x1,x21,W_DRELU
  PTR x2,x21,W_DFF1
- mov x3,#2048
+ mov x3,#(CONTEXT*HIDDEN)
  bl _tf_relu_backward
  PTR x0,x21,W_N2
  PTR x1,x19,P_FF1_WEIGHT
@@ -194,7 +211,7 @@ _tf_backward:
  PTR x0,x21,W_DR2
  PTR x1,x21,W_TEMP
  PTR x2,x21,W_DR1
- mov x3,#1024
+ mov x3,#(CONTEXT*WIDTH)
  bl Ladd
  PTR x0,x21,W_ATTENTION
  PTR x1,x19,P_ATTENTION_WEIGHT
@@ -230,7 +247,7 @@ _tf_backward:
  PTR x0,x21,W_DX
  PTR x1,x21,W_DR1
  PTR x2,x21,W_DX
- mov x3,#1024
+ mov x3,#(CONTEXT*WIDTH)
  bl Ladd
  PTR x9,x22,P_POSITION
  PTR x10,x21,W_DX
@@ -238,8 +255,8 @@ _tf_backward:
  mov w11,#CONTEXT
 Lscatter:
  ldr w13,[x12],#4
- add x13,x22,x13,lsl #7
- mov w14,#8
+ add x13,x22,x13,lsl #(WIDTH_SHIFT+2)
+ mov w14,#(WIDTH/4)
 Lscatter_vec:
  ldr q0,[x10],#16
  ldr q1,[x13]

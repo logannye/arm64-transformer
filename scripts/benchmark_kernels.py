@@ -177,7 +177,7 @@ def create_cases(libraries, np, torch):
     )
 
     for label, path in libraries.items():
-        native = Native(path)
+        native = Native(path, verify_model=label != "baseline")
         keepalive.append(native)
         workspace = native.forward(params, tokens)
         check(f"{label}/full_forward", workspace_tensor(workspace, "logits"), logits.squeeze(0))
@@ -253,10 +253,15 @@ def create_cases(libraries, np, torch):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--library", type=Path, default=ROOT / "native/build/libtransformer.dylib")
+    parser.add_argument("--library", type=Path)
     parser.add_argument("--baseline-library", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    sys.path.insert(0, str(ROOT))
+    from transformer import spec
+
+    if args.library is None:
+        args.library = ROOT / f"native/build/width-{spec.WIDTH}/libtransformer.dylib"
     if args.output.exists():
         parser.error("Output exists; choose a fresh diagnostic JSON path")
     if platform.system() != "Darwin" or platform.machine() != "arm64":
@@ -270,7 +275,6 @@ def main():
     library_hashes = {name: sha256(path) for name, path in libraries.items()}
     for key in THREAD_KEYS:
         os.environ[key] = "1"
-    sys.path.insert(0, str(ROOT))
     import numpy as np
     import torch
 

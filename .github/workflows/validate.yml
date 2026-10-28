@@ -24,7 +24,11 @@ jobs:
       - run: >-
           python -m pip install --only-binary=:all: -e '.[dev,report]'
       - run: ruff check . && ruff format --check .
-      - run: python -m pytest -q
+      - name: Reference checks at every model width
+        run: |
+          for width in 32 64 128 256; do
+            ARM64_TRANSFORMER_WIDTH=$width python -m pytest -q
+          done
   native:
     runs-on: macos-26
     timeout-minutes: 15
@@ -41,9 +45,15 @@ jobs:
       - run: test "$(uname -m)" = arm64
       - run: >-
           python -m pip install --only-binary=:all: -e '.[dev,report]'
-      - run: make -C native
-      - run: python -m pytest -q
-      - run: python -m transformer.validate --output results/preflight.json --runtime --work-dir results/smoke
+      - run: make -C native widths PYTHON=python
+      - name: Numerical and executable checks at every width
+        run: |
+          for width in 32 64 128 256; do
+            export ARM64_TRANSFORMER_WIDTH=$width
+            python -m pytest -q
+            python -m transformer.validate --output results/width-$width.json \
+              --runtime --work-dir results/smoke-width-$width
+          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -60,13 +60,23 @@ def audit_run(fixture_dir, run_dir, checks=None, *, recompute=True):
     fixture, run = Path(fixture_dir), Path(run_dir)
     name = run.name
     raw_config = (fixture / "config.bin").read_bytes()
-    if len(raw_config) != 32:
+    if len(raw_config) == 36:
+        magic, version, epochs, batch, train_count, val_count, test_count, seed, width = (
+            struct.unpack("<9I", raw_config)
+        )
+        if version != 2:
+            raise ValueError("Fixture config version mismatch")
+    elif len(raw_config) == 32:
+        magic, version, epochs, batch, train_count, val_count, test_count, seed = struct.unpack(
+            "<8I", raw_config
+        )
+        width = 32
+        if version != 1:
+            raise ValueError("Legacy config version mismatch")
+    else:
         raise ValueError("Malformed fixture config")
-    magic, version, epochs, batch, train_count, val_count, test_count, seed = struct.unpack(
-        "<8I", raw_config
-    )
-    if magic != 0x54465231 or version != 1:
-        raise ValueError("Fixture magic/version mismatch")
+    if magic != 0x54465231 or width != spec.WIDTH:
+        raise ValueError("Fixture magic/model width mismatch")
     if not (
         1 <= epochs <= 100
         and 1 <= batch <= 128

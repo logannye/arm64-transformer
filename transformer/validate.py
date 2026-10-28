@@ -27,8 +27,10 @@ import torch.nn.functional as F
 from transformer import spec
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_LIBRARY = ROOT / "native/build/libtransformer.dylib"
-DEFAULT_EXECUTABLE = ROOT / "native/build/transformer-arm64"
+DEFAULT_BUILD = ROOT / f"native/build/width-{spec.WIDTH}"
+DEFAULT_LIBRARY = DEFAULT_BUILD / "libtransformer.dylib"
+DEFAULT_EXECUTABLE = DEFAULT_BUILD / "transformer-arm64"
+GENERATED_LAYOUT = DEFAULT_BUILD / "layout.inc"
 SOURCE_FILES = (
     "native/kernels.S",
     "native/linear.S",
@@ -37,7 +39,7 @@ SOURCE_FILES = (
     "native/normalization.S",
     "native/model.S",
     "native/runtime.S",
-    "native/layout.inc",
+    "native/Makefile",
     "transformer/spec.py",
     "transformer/reference.py",
     "transformer/prepare.py",
@@ -60,6 +62,11 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def artifact_path(path: Path) -> str:
+    resolved = path.resolve()
+    return str(resolved.relative_to(ROOT)) if resolved.is_relative_to(ROOT) else str(resolved)
+
+
 def arr(value, dtype=np.float32):
     return np.ascontiguousarray(value, dtype=dtype)
 
@@ -74,16 +81,41 @@ def as_numpy(value):
     return np.asarray(value)
 
 
+def verify_library_model(library, *, allow_legacy=False):
+    """Reject incompatible model buffers before any native numerical call.
+
+    Historical diagnostics can explicitly admit pre-identity width-32 binaries.
+    A library that exports identity symbols is always checked, even in that mode.
+    """
+    width_fn = getattr(library, "tf_model_width", None)
+    count_fn = getattr(library, "tf_parameter_count", None)
+    if width_fn is None or count_fn is None:
+        if width_fn is None and count_fn is None and allow_legacy and spec.WIDTH == 32:
+            return {"width": 32, "parameter_count": spec.PARAM_COUNT, "verified": False}
+        raise RuntimeError("Native library lacks required model identity symbols")
+    for function in (width_fn, count_fn):
+        function.argtypes = []
+        function.restype = ct.c_uint64
+    width, count = int(width_fn()), int(count_fn())
+    if (width, count) != (spec.WIDTH, spec.PARAM_COUNT):
+        raise RuntimeError(
+            f"Native model mismatch: library width={width}, parameters={count}; "
+            f"Python width={spec.WIDTH}, parameters={spec.PARAM_COUNT}"
+        )
+    return {"width": width, "parameter_count": count, "verified": True}
+
+
 class Native:
     """Typed FFI into the independently built handwritten assembly library."""
 
-    def __init__(self, path: Path | str = DEFAULT_LIBRARY):
+    def __init__(self, path: Path | str = DEFAULT_LIBRARY, *, verify_model=True):
         self.path = Path(path).resolve()
         if platform.system() != "Darwin" or platform.machine() != "arm64":
             raise RuntimeError("Native validation requires macOS ARM64")
         if not self.path.is_file():
             raise FileNotFoundError(f"Native library missing: {self.path}; build it explicitly")
         self.lib = ct.CDLL(str(self.path))
+        self.model_identity = verify_library_model(self.lib, allow_legacy=not verify_model)
         p, n = ct.c_void_p, ct.c_uint64
         signatures = {
             "linear_forward": [p] * 5,
@@ -526,10 +558,10 @@ def guard_intact(storage):
     )
 
 
-def check_tiled_linear_boundaries(native, checks, rng):
+def check_tiled_linear_boundaries(native, checks, rng, *, shapes=None, prefix="v2"):
     # Fast forward: R/I/O divisible by 4; fast backward additionally I % 16 == 0.
     # Other positive shapes must remain correct through the generic fallback.
-    shapes = (
+    shapes = shapes or (
         (1, 1, 1),
         (3, 5, 7),
         (4, 12, 20),
@@ -543,7 +575,7 @@ def check_tiled_linear_boundaries(native, checks, rng):
         (33, 64, 12),
     )
     for rows, width, output in shapes:
-        tag = f"v2/linear/{rows}x{width}x{output}"
+        tag = f"{prefix}/linear/{rows}x{width}x{output}"
         x = rng.normal(0, 0.2, (rows, width)).astype(np.float32)
         w = rng.normal(0, 0.15, (output, width)).astype(np.float32)
         b = rng.normal(0, 0.1, output).astype(np.float32)
@@ -592,15 +624,16 @@ def check_tiled_linear_boundaries(native, checks, rng):
         )
 
 
-def check_vector_norm_boundaries(native, checks, rng):
-    for rows, width, kind in (
+def check_vector_norm_boundaries(native, checks, rng, *, shapes=None, prefix="v2"):
+    shapes = shapes or (
         (1, 1, "constant"),
         (2, 3, "random"),
         (3, 12, "near_constant"),
         (4, 32, "random"),
         (5, 64, "zero"),
-    ):
-        tag = f"v2/layernorm/{rows}x{width}/{kind}"
+    )
+    for rows, width, kind in shapes:
+        tag = f"{prefix}/layernorm/{rows}x{width}/{kind}"
         x = rng.normal(0, 0.3, (rows, width)).astype(np.float32)
         if kind == "constant":
             x.fill(0.25)
@@ -638,16 +671,17 @@ def check_vector_norm_boundaries(native, checks, rng):
         )
 
 
-def check_vector_attention_boundaries(native, checks, rng):
-    shapes = [(tokens, 32, 4, "random") for tokens in (2, 3, 4, 5, 31)]
-    shapes += [
-        (32, 32, 4, "uniform"),
-        (32, 32, 4, "large_scores"),
-        (33, 32, 4, "random"),
-        (5, 15, 3, "random"),
-    ]
+def check_vector_attention_boundaries(native, checks, rng, *, shapes=None, prefix="v2"):
+    if shapes is None:
+        shapes = [(tokens, 32, 4, "random") for tokens in (2, 3, 4, 5, 31)]
+        shapes += [
+            (32, 32, 4, "uniform"),
+            (32, 32, 4, "large_scores"),
+            (33, 32, 4, "random"),
+            (5, 15, 3, "random"),
+        ]
     for tokens, width, heads, kind in shapes:
-        tag = f"v2/attention/{tokens}x{width}x{heads}/{kind}"
+        tag = f"{prefix}/attention/{tokens}x{width}x{heads}/{kind}"
         qkv = rng.normal(0, 0.3, (tokens, 3 * width)).astype(np.float32)
         if kind == "uniform":
             qkv[:, : 2 * width] = 0
@@ -762,8 +796,73 @@ def check_vector_finite_boundaries(native, checks):
                 )
 
 
+def check_width_boundaries(native, checks, rng):
+    """Exercise every selected-width projection and attention head boundary."""
+    width = spec.WIDTH
+    check_tiled_linear_boundaries(
+        native,
+        checks,
+        rng,
+        shapes=(
+            (4, width, 3 * width),
+            (32, width, 3 * width),
+            (32, width, width),
+            (32, width, 2 * width),
+            (32, 2 * width, width),
+            (32, width, spec.VOCAB),
+            (5, width, 3 * width),
+            (4, width + 1, 3 * width),
+        ),
+        prefix="v3",
+    )
+    check_vector_norm_boundaries(
+        native,
+        checks,
+        rng,
+        shapes=(
+            (4, width, "random"),
+            (3, width, "near_constant"),
+            (2, width, "zero"),
+            (1, width + 1, "random"),
+        ),
+        prefix="v3",
+    )
+    attention_shapes = [(tokens, width, spec.HEADS, "random") for tokens in (1, 2, 3, 4, 5, 31, 32)]
+    attention_shapes += [
+        (32, width, spec.HEADS, "uniform"),
+        (32, width, spec.HEADS, "large_scores"),
+        (33, width, spec.HEADS, "random"),
+        (3, width + spec.HEADS, spec.HEADS, "random"),
+        (5, width, 8, "random"),
+    ]
+    check_vector_attention_boundaries(native, checks, rng, shapes=attention_shapes, prefix="v3")
+
+    # The public whole-model layout must remain within its declared buffers.
+    params, sp = guarded_array((spec.PARAM_COUNT,))
+    params[...] = initial_parameters(rng)
+    original = params.copy()
+    workspace, sw = guarded_array((spec.WORK_COUNT,))
+    gradients, sg = guarded_array((spec.PARAM_COUNT,), fill=0.125)
+    tokens = rng.integers(0, spec.VOCAB, spec.CONTEXT, dtype=np.int32)
+    tokens[::3] = 32
+    targets = rng.integers(0, spec.VOCAB, spec.CONTEXT, dtype=np.int32)
+    original_tokens, original_targets = tokens.copy(), targets.copy()
+    native.call("forward", params, tokens, workspace)
+    checks.require("v3/model/forward_workspace_guards", guard_intact(sw))
+    native.call("backward", params, tokens, targets, workspace, gradients)
+    checks.require("v3/model/backward_guards", all(guard_intact(value) for value in (sp, sw, sg)))
+    checks.require("v3/model/gradients_finite", np.isfinite(gradients).all())
+    checks.require(
+        "v3/model/inputs_unchanged",
+        np.array_equal(params, original)
+        and np.array_equal(tokens, original_tokens)
+        and np.array_equal(targets, original_targets),
+    )
+
+
 def numerical_checks(native, checks):
     torch.set_num_threads(1)
+    checks.require("model/library_identity_verified", native.model_identity["verified"])
     rng = np.random.default_rng(1729)
     check_linear(native, checks, rng)
     check_norm(native, checks, rng)
@@ -780,6 +879,8 @@ def numerical_checks(native, checks):
     check_vector_attention_boundaries(native, checks, boundary_rng)
     check_vector_softmax_boundaries(native, checks, boundary_rng)
     check_vector_finite_boundaries(native, checks)
+    # V3 fixtures do not perturb either historical random stream.
+    check_width_boundaries(native, checks, np.random.default_rng(20261029))
 
 
 def run_child(command, *, timeout=180):
@@ -818,6 +919,9 @@ def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE):
         validation_sequences=2,
         test_sequences=2,
     )
+    config = struct.unpack("<9I", (fixture / "config.bin").read_bytes())
+    checks.require("runtime/fixture_version_two", config[1] == 2)
+    checks.require("runtime/fixture_model_width", config[8] == spec.WIDTH)
     executable = Path(executable).resolve()
     if not executable.is_file():
         raise FileNotFoundError(f"Native executable missing: {executable}")
@@ -882,6 +986,14 @@ def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE):
         "duplicate_schedule": ("schedule.i32", lambda data: data[4:8] + data[4:]),
         "zero_batch": ("config.bin", lambda data: data[:12] + struct.pack("<I", 0) + data[16:]),
         "bad_magic": ("config.bin", lambda data: b"BAD!" + data[4:]),
+        "old_version": ("config.bin", lambda data: data[:4] + struct.pack("<I", 1) + data[8:]),
+        "truncated_config": ("config.bin", lambda data: data[:-4]),
+        "extra_config": ("config.bin", lambda data: data + b"\x00\x00\x00\x00"),
+        "unsupported_width": ("config.bin", lambda data: data[:32] + struct.pack("<I", 33)),
+        "mismatched_width": (
+            "config.bin",
+            lambda data: data[:32] + struct.pack("<I", 64 if spec.WIDTH == 32 else 32),
+        ),
     }
     for name, (filename, corrupt) in corruptions.items():
         bad = directory / ("bad-" + name)
@@ -894,6 +1006,10 @@ def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE):
             "runtime/reject/" + name,
             result["returncode"] > 0,
             {"returncode": result["returncode"], "stderr": result["stderr"]},
+        )
+        checks.require(
+            "runtime/rejected_output_absent/" + name,
+            not (directory / ("rejected-" + name)).exists(),
         )
     (directory / "child-processes.json").write_text(json.dumps(records, indent=2) + "\n")
 
@@ -912,11 +1028,18 @@ def main():
         parser.error("--runtime requires a fresh --work-dir")
     checks = Checks()
     error = None
+    identity = None
     source_before = {
         name: sha256(ROOT / name) if (ROOT / name).is_file() else None for name in SOURCE_FILES
     }
+    layout_before = sha256(GENERATED_LAYOUT) if GENERATED_LAYOUT.is_file() else None
+    binary_before = {
+        "library": sha256(args.library) if args.library.is_file() else None,
+        "executable": sha256(args.executable) if args.executable.is_file() else None,
+    }
     try:
         native = Native(args.library)
+        identity = native.model_identity
         numerical_checks(native, checks)
         if args.runtime:
             runtime_checks(checks, args.work_dir, args.executable)
@@ -928,16 +1051,35 @@ def main():
     }
     checks.require("audit/source_files_present", all(source_after.values()))
     checks.require("audit/source_unchanged_during_checks", source_before == source_after)
+    layout_after = sha256(GENERATED_LAYOUT) if GENERATED_LAYOUT.is_file() else None
+    checks.require("audit/generated_layout_present", layout_after is not None)
+    checks.require("audit/generated_layout_unchanged", layout_before == layout_after)
+    checks.require(
+        "audit/generated_layout_matches_spec",
+        GENERATED_LAYOUT.is_file() and GENERATED_LAYOUT.read_text() == spec.assembly_constants(),
+    )
+    binary_after = {
+        "library": sha256(args.library) if args.library.is_file() else None,
+        "executable": sha256(args.executable) if args.executable.is_file() else None,
+    }
+    checks.require("audit/binaries_unchanged_during_checks", binary_before == binary_after)
     result = {
         "schema_version": 1,
+        "model_width": spec.WIDTH,
+        "parameter_count": spec.PARAM_COUNT,
+        "model_identity": identity,
+        "library_path": artifact_path(args.library),
+        "executable_path": artifact_path(args.executable),
         "passed": checks.passed,
         "check_count": len(checks.records),
         "failed_checks": [record["name"] for record in checks.records if not record["passed"]],
         "tolerances": TOLERANCES,
-        "library_sha256": sha256(args.library) if args.library.is_file() else None,
-        "executable_sha256": sha256(args.executable) if args.executable.is_file() else None,
+        "library_sha256": binary_after["library"],
+        "executable_sha256": binary_after["executable"],
         "runtime_included": args.runtime,
         "source_sha256": source_after,
+        "generated_layout_path": str(GENERATED_LAYOUT.relative_to(ROOT)),
+        "generated_layout_sha256": layout_after,
         "environment": {
             "platform": platform.platform(),
             "python": sys.version,
@@ -948,7 +1090,8 @@ def main():
         "error": error,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(result, indent=2, allow_nan=False) + "\n")
+    with args.output.open("x") as handle:
+        handle.write(json.dumps(result, indent=2, allow_nan=False) + "\n")
     print(
         json.dumps(
             {key: result[key] for key in ("passed", "check_count", "failed_checks", "error")}

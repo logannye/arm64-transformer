@@ -14,7 +14,7 @@ from torch.nn import functional as F
 
 from transformer.prepare import load_fixture
 from transformer.reference import Transformer
-from transformer.spec import CONTEXT, LR, PARAM_SHAPES, VOCAB
+from transformer.spec import CONTEXT, LR, PARAM_SHAPES, VOCAB, model_metadata
 
 
 def usage():
@@ -200,6 +200,7 @@ def run(input_dir, output_dir):
                 "platform": platform.platform(),
                 "threads": torch.get_num_threads(),
                 "interop_threads": torch.get_num_interop_threads(),
+                "model": model_metadata(),
                 "best_epoch": best_epoch,
                 "steps": steps,
                 "optimizer_setup": "Zero step and first/second moments allocated before timing",

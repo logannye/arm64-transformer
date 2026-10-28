@@ -19,10 +19,11 @@ from transformer.spec import (
     TRAIN_SEQUENCES,
     VALID_SEQUENCES,
     VOCAB,
+    WIDTH,
 )
 
 MAGIC = 0x54465231
-VERSION = 1
+VERSION = 2
 CONFIG_NAMES = (
     "magic",
     "version",
@@ -32,6 +33,7 @@ CONFIG_NAMES = (
     "validation_sequences",
     "test_sequences",
     "seed",
+    "width",
 )
 SOURCE_URL = (
     "https://raw.githubusercontent.com/karpathy/char-rnn/"
@@ -45,8 +47,10 @@ def sha256(path):
 
 
 def validate_config(config):
-    if config["magic"] != MAGIC or config["version"] != VERSION:
+    if config["magic"] != MAGIC or config["version"] not in (1, VERSION):
         raise ValueError("Wrong fixture magic/version")
+    if config.get("width", 32) != WIDTH or (config["version"] == 1 and WIDTH != 32):
+        raise ValueError("Fixture width does not match the selected model")
     if not 0 <= config["seed"] <= 0xFFFFFFFF:
         raise ValueError("Invalid seed")
     for name, upper in (
@@ -70,9 +74,16 @@ def _read_exact(path, dtype, shape):
 def load_fixture(path, verify_manifest=True):
     path = Path(path)
     raw = (path / "config.bin").read_bytes()
-    if len(raw) != 32:
+    if len(raw) == 36:
+        config = dict(zip(CONFIG_NAMES, struct.unpack("<9I", raw), strict=True))
+        if config["version"] != VERSION:
+            raise ValueError("Wrong fixture version for width-aware config")
+    elif len(raw) == 32:
+        config = dict(zip(CONFIG_NAMES[:-1], struct.unpack("<8I", raw), strict=True))
+        if config["version"] != 1:
+            raise ValueError("Wrong fixture version for legacy config")
+    else:
         raise ValueError("Invalid config.bin length")
-    config = dict(zip(CONFIG_NAMES, struct.unpack("<8I", raw), strict=True))
     validate_config(config)
     result = {"config": config}
     initial = _read_exact(path / "initial.f32", "<f4", (PARAM_COUNT,))
@@ -141,6 +152,7 @@ def prepare_fixture(
                 validation_sequences,
                 test_sequences,
                 seed,
+                WIDTH,
             ),
             strict=True,
         )
@@ -176,7 +188,7 @@ def prepare_fixture(
     schedule = np.stack([rng.permutation(train_sequences) for _ in range(epochs)]).astype("<i4")
     initial = Transformer(seed).flat_parameters()
     output.mkdir(parents=True, exist_ok=False)
-    (output / "config.bin").write_bytes(struct.pack("<8I", *config.values()))
+    (output / "config.bin").write_bytes(struct.pack("<9I", *config.values()))
     initial.astype("<f4").tofile(output / "initial.f32")
     for split, values in prepared.items():
         values.tofile(output / f"{split}.i32")
@@ -184,7 +196,7 @@ def prepare_fixture(
     files = ("config.bin", "initial.f32", "train.i32", "validation.i32", "test.i32", "schedule.i32")
     source_hash = hashlib.sha256(raw).hexdigest()
     manifest = {
-        "schema": 1,
+        "schema": 2,
         "config": config,
         "source": {
             "url": SOURCE_URL if source_hash == SOURCE_SHA256 else None,

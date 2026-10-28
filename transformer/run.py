@@ -58,9 +58,16 @@ def main():
     preflight = json.loads(args.preflight.read_text())
     if not preflight.get("passed") or not preflight.get("runtime_included"):
         raise RuntimeError("Passing numerical AND executable preflight is required")
+    if (preflight.get("model_width"), preflight.get("parameter_count")) != (
+        spec.WIDTH,
+        spec.PARAM_COUNT,
+    ):
+        raise RuntimeError("Preflight model identity does not match this process")
+    if digest(ROOT / preflight["generated_layout_path"]) != preflight["generated_layout_sha256"]:
+        raise RuntimeError("Generated layout changed since preflight")
     for name in ("libtransformer.dylib", "transformer-arm64"):
         key = "library_sha256" if name.endswith("dylib") else "executable_sha256"
-        if digest(ROOT / "native/build" / name) != preflight[key]:
+        if digest(ROOT / f"native/build/width-{spec.WIDTH}" / name) != preflight[key]:
             raise RuntimeError("Native binary changed since preflight")
     source_hashes = preflight.get("source_sha256", {})
     if not source_hashes:
@@ -69,6 +76,7 @@ def main():
         if digest(ROOT / path) != expected:
             raise RuntimeError(f"Source changed since preflight: {path}")
     expected = {
+        "width": spec.WIDTH,
         "epochs": spec.EPOCHS,
         "batch": spec.BATCH,
         "train_sequences": spec.TRAIN_SEQUENCES,
@@ -95,6 +103,7 @@ def main():
     tracked = {name: digest(ROOT / name) for name in names if name}
     manifest = {
         "status": "running",
+        "model": spec.model_metadata(),
         "protocol_version": args.protocol,
         "protocol_file": (
             "experiments/PROTOCOL.md" if args.protocol == "v1" else "experiments/PROTOCOL-v2.md"
@@ -143,7 +152,7 @@ def main():
         cmd = (
             [sys.executable, "-m", "transformer.python_train"]
             if impl == "python"
-            else [str(ROOT / "native/build/transformer-arm64")]
+            else [str(ROOT / f"native/build/width-{spec.WIDTH}/transformer-arm64")]
         )
         cmd += [str(fixture), str(child)]
         entry = {
@@ -175,7 +184,8 @@ def main():
             digest(ROOT / path) == expected for path, expected in tracked.items()
         )
         entry["binary_unchanged"] = (
-            digest(ROOT / "native/build/transformer-arm64") == preflight["executable_sha256"]
+            digest(ROOT / f"native/build/width-{spec.WIDTH}/transformer-arm64")
+            == preflight["executable_sha256"]
         )
         manifest["runs"].append(entry)
         if entry["returncode"] != 0 or not all(

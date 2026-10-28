@@ -6367,7 +6367,7 @@
       "passed": true,
       "detail": {
         "command": [
-          "/Users/logannye/Documents/Codex/2026-10-02/what/outputs/simple-cnn/.venv/bin/python",
+          "python",
           "-m",
           "transformer.python_train",
           "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/results/smoke-v2-final/fixture",
@@ -6665,5 +6665,6 @@
       "detail": null
     }
   ],
-  "error": null
+  "error": null,
+  "publication_note": "Local interpreter path normalized to 'python'; original raw evidence remains in the versioned release."
 }

@@ -256,12 +256,13 @@ def charts(summary, output):
 
 def report_markdown(summary):
     version = summary.get("protocol_version", "v1")
+    model = summary.get("model", {"width": 32, "parameters": 17952})
     reuse_note = (
         "This optimization study reuses v1's fixed train/validation/test fixtures. "
         "It is an engineering regression benchmark, not a fresh untouched test set. "
         "Kernel development used synthetic correctness and timing inputs; the model, "
         "optimizer, seeds and stopping rule were unchanged.\n\n"
-        if version == "v2"
+        if version in ("v2", "v3")
         else ""
     )
     aggregate = summary["aggregate"]["by_implementation"]
@@ -308,11 +309,11 @@ def report_markdown(summary):
         )
     table_text = "\n".join(table)
     per_run_text = "\n".join(per_run)
-    return f"""# Matched small-transformer CPU comparison, {version}
+    return f"""# Matched transformer CPU comparison, {version}, width {model["width"]}
 
 {reuse_note}\
 {speed}, using the geometric mean of six paired training-time ratios.
-This is the same 17,952-parameter causal transformer implemented with ordinary
+This is the same {model["parameters"]:,}-parameter causal transformer implemented with ordinary
 batched PyTorch (built-in scaled-dot-product attention and autograd) and handwritten
 Apple ARM64/NEON assembly. The experiment contains **12 complete fits**: three
 initialization seeds, two timing repeats, and both implementations.
@@ -415,6 +416,8 @@ def create_report(results, inputs, output):
     error = None
     try:
         manifest = json.loads((results / "manifest.json").read_text())
+        if manifest.get("model", {"width": 32})["width"] != spec.WIDTH:
+            raise ValueError("Report process width does not match the measured model")
         hardware = manifest["hardware"]["stdout"].strip()
         hardware_supplement = results / "hardware-verification.json"
         hardware_evidence = None
@@ -511,6 +514,7 @@ def create_report(results, inputs, output):
                 status="completed",
                 revision=manifest["revision"],
                 protocol_version=manifest.get("protocol_version", "v1"),
+                model=spec.model_metadata(),
                 source_sha256=manifest["source_sha256"],
                 preflight_check_count=manifest["preflight"]["check_count"],
                 platform=manifest["platform"],

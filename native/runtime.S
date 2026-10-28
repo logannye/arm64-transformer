@@ -1,6 +1,6 @@
 // Standalone handwritten Darwin ARM64 training, selection, evaluation and timing.
 // libc calls are restricted to process, memory, files and clocks. No C math.
-#include "layout.inc"
+#include <layout.inc>
 .text
 .p2align 2
 .macro ADDR reg, sym
@@ -21,7 +21,9 @@
 .endm
 .macro IMM reg, value
  mov \reg,#(\value & 65535)
+ .if (\value >> 16)
  movk \reg,#((\value >> 16) & 65535),lsl #16
+ .endif
 .endm
 .macro PTR reg, base, offset
  add \reg,\base,#(\offset >> 12),lsl #12
@@ -187,11 +189,11 @@ Rwrite:
  LEAVE
 
 Rtokens:
- mov x2,#33
+ mov x2,#(CONTEXT+1)
  mul x1,x1,x2
 Rtokenloop:
  ldr w2,[x0],#4
- cmp w2,#128
+ cmp w2,#VOCAB
  b.hs Rfail
  subs x1,x1,#1
  b.ne Rtokenloop
@@ -199,7 +201,7 @@ Rtokenloop:
 
 Rcheckparams:
  stp x29,x30,[sp,#-16]!
- mov x1,#PARAM_COUNT
+ IMM x1,PARAM_COUNT
  bl _tf_finite
  cbz w0,Rfail
  ldp x29,x30,[sp],#16
@@ -220,7 +222,7 @@ Reval_loop:
  bl _tf_forward
  LD x9,Rworkspace
  PTR x0,x9,W_LOGITS
- mov x1,#4096
+ mov x1,#(CONTEXT*VOCAB)
  bl _tf_finite
  cbz w0,Rfail
  LD x9,Rworkspace
@@ -241,13 +243,14 @@ Reval_loop:
  LD x9,Rworkspace
  PTR x0,x9,W_LOGITS
  mov x1,#1
- mov x2,#16384
+ mov x2,#(CONTEXT*VOCAB*4)
  mov x3,x21
  bl _fwrite
- cmp x0,#4,lsl #12
+ mov x9,#(CONTEXT*VOCAB*4)
+ cmp x0,x9
  b.ne Rfail
 Reval_next:
- add x19,x19,#132
+ add x19,x19,#((CONTEXT+1)*4)
  add x22,x22,#1
  cmp x22,x20
  b.lo Reval_loop
@@ -275,7 +278,7 @@ Rbatch:
 Rsample:
  add x9,x22,x24
  ldr w9,[x19,x9,lsl #2]
- mov x10,#132
+ mov x10,#((CONTEXT+1)*4)
  mul x25,x9,x10
  LD x9,Rtrain
  add x25,x25,x9
@@ -285,7 +288,7 @@ Rsample:
  bl _tf_forward
  LD x9,Rworkspace
  PTR x0,x9,W_LOGITS
- mov x1,#4096
+ mov x1,#(CONTEXT*VOCAB)
  bl _tf_finite
  cbz w0,Rfail
  LD x0,Rparams
@@ -305,7 +308,7 @@ Rsample:
  cmp x24,x23
  b.lo Rsample
  LD x0,Rgrads
- mov x1,#PARAM_COUNT
+ IMM x1,PARAM_COUNT
  ucvtf s1,x23
  fmov s0,#1.0
  fdiv s0,s0,s1
@@ -319,7 +322,7 @@ Rsample:
  LD x1,Rgrads
  LD x2,Rm
  LD x3,Rv
- mov x5,#PARAM_COUNT
+ IMM x5,PARAM_COUNT
  bl _tf_adam
  LD x0,Rparams
  bl Rcheckparams
@@ -367,7 +370,7 @@ _main:
  bl Rnow
  ST d0,Rstart
  ADDR x0,Lconfig
- mov x1,#32
+ mov x1,#36
  bl Rread
  ST x0,Rconfig
  mov x23,x0
@@ -376,7 +379,10 @@ _main:
  cmp w9,w10
  b.ne Rfail
  ldr w9,[x23,#4]
- cmp w9,#1
+ cmp w9,#2
+ b.ne Rfail
+ ldr w9,[x23,#32]
+ cmp w9,#WIDTH
  b.ne Rfail
  ldr w9,[x23,#8]
  sub w9,w9,#1
@@ -405,7 +411,7 @@ _main:
  bl Rcheckparams
  ADDR x0,Ltrain
  CFG w1,16
- mov x10,#132
+ mov x10,#((CONTEXT+1)*4)
  mul x1,x1,x10
  bl Rread
  ST x0,Rtrain
@@ -413,7 +419,7 @@ _main:
  bl Rtokens
  ADDR x0,Lvalidation
  CFG w1,20
- mov x10,#132
+ mov x10,#((CONTEXT+1)*4)
  mul x1,x1,x10
  bl Rread
  ST x0,Rvalidation
@@ -421,7 +427,7 @@ _main:
  bl Rtokens
  ADDR x0,Ltest
  CFG w1,24
- mov x10,#132
+ mov x10,#((CONTEXT+1)*4)
  mul x1,x1,x10
  bl Rread
  ST x0,Rtest

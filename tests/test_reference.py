@@ -1,6 +1,7 @@
 """Behavioral tests for causality, reduction contracts and fixture isolation."""
 
 import math
+import struct
 
 import numpy as np
 import pytest
@@ -72,7 +73,7 @@ def test_batch_gradients_are_mean_of_sequence_gradients_including_repeats():
         F.cross_entropy(model(x[None]).reshape(-1, VOCAB), y).backward()
         individual.append(model.flat_gradients())
     np.testing.assert_allclose(batched, np.mean(individual, axis=0), atol=3e-7, rtol=3e-4)
-    assert np.linalg.norm(batched[: VOCAB * 32].reshape(VOCAB, 32)[4]) > 0
+    assert np.linalg.norm(batched[: VOCAB * WIDTH].reshape(VOCAB, WIDTH)[4]) > 0
 
 
 def test_flat_checkpoint_roundtrip_and_layout():
@@ -85,6 +86,21 @@ def test_flat_checkpoint_roundtrip_and_layout():
     torch.testing.assert_close(a(x), b(x), atol=0, rtol=0)
     with pytest.raises(ValueError):
         a.load_flat(np.full(PARAM_COUNT, np.nan))
+
+
+def test_declared_model_family_parameter_counts():
+    assert PARAM_COUNT == {32: 17952, 64: 52160, 128: 169728, 256: 601472}[WIDTH]
+
+
+def test_wrong_width_fixture_rejected_even_without_hash_verification(tmp_path):
+    _, output = tiny_fixture(tmp_path)
+    path = output / "config.bin"
+    data = path.read_bytes()
+    assert len(data) == 36
+    other_width = 64 if WIDTH == 32 else 32
+    path.write_bytes(data[:32] + struct.pack("<I", other_width))
+    with pytest.raises(ValueError, match="width"):
+        load_fixture(output, verify_manifest=False)
 
 
 def test_preallocated_adam_matches_lazy_state_without_an_initial_update():
