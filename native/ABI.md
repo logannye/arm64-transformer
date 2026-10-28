@@ -3,7 +3,10 @@
 Apple arm64 Darwin ABI, float32 arrays, row-major tensors; symbols have the Darwin
 leading underscore in assembly. All integer arguments/pointers are 64-bit unless
 otherwise noted. Preserve x19-x28 and the low 64 bits of v8-v15. Never use x18.
-Shape arrays are int32. All tensors supplied by the caller; no hidden state.
+Shape arrays are int32. Model tensors and outputs are supplied by the caller.
+Kernels can use private stack scratch. The backend has an immutable selection
+policy after initialization and mutable diagnostic call counters; model parameters,
+gradients, optimizer state, and numerical scratch are never shared globals.
 The model/layout is transformer/spec.py; the build-specific layout.inc contains
 byte offsets. The supported width ladder is 32, 64, 128, 256, with context 32,
 four heads, feed-forward width twice model width, and vocabulary 128. Each width
@@ -33,10 +36,63 @@ All widths used by the full model are multiples of four; primitive kernels must
 document smaller-shape restrictions. Test inputs to kernels are already validated.
 Native executable validates file sizes, indices, finiteness, and run bounds.
 
-V2 preserves these public signatures. Specialized tiled/vector paths dispatch to
-the original generic implementations when their shape requirements are not met;
+The optimized backends preserve these public signatures. SME, NEON tiles, and
+generic kernels are selected according to hardware, execution state, and shape;
 see `kernel_notes.md`. The internal `tf_exp4` helper has a private vector-register
-ABI and is not part of this C-callable interface.
+ABI. `tf_linear_pack32_sme` is named for profiling but has a private streaming ABI.
+Neither helper is a public C-callable interface. The `_neon`, `_sme`, and `_generic`
+linear entry points are implementation details; callers use the public dispatchers.
+
+## Backend policy and execution state
+
+Public functions use the ordinary **non-streaming ABI: PSTATE.SM must be zero on
+entry**. This is not a streaming-compatible API. SME kernels save d8-d15 before
+entering streaming mode and restore them after leaving it; public calls return
+with SM zero. The dispatcher selects SME only when ZA is off and TPIDR2_EL0 is
+null. With SM zero, active ZA or a pending lazy-save block routes to NEON while
+leaving that state untouched. Callers with live SME state must still obey their
+platform's ZA calling convention.
+
+`ARM64_TRANSFORMER_BACKEND` is captured once at library/executable initialization:
+
+| Value | Policy |
+| --- | --- |
+| unset or `auto` | Select SME when the required capability is present; otherwise NEON. |
+| `neon` | Use NEON, including its generic shape fallbacks. |
+| `sme` | Require SME capability; unsupported shapes or live ZA state still use NEON. |
+
+Any other value, or forced `sme` without the required capability, fails
+initialization. A library constructor performs initialization, and FFI callers
+must also call `tf_backend_init()` and require a zero result before numerical
+calls. It is idempotent and returns signed int64: zero on success, -1 on failure.
+The executable rejects initialization failure. A fresh process is required to
+choose a different policy; changing the environment after initialization has no
+effect on that loaded library.
+
+Detection queries Darwin `hw.optional.arm.FEAT_SME` and
+`hw.optional.arm.FEAT_SME2` before executing any SME instruction, including RDSVL.
+The current implementation also requires a streaming vector length of **64 bytes**,
+or 16 float32 lanes. Before dispatch, it checks the current vector length and
+execution state again. SME linear shapes are exactly `rows=32`,
+`input in {64,128,256,512}`, and `output` a multiple of 32 in `[64,768]`.
+All five projections in full models of width 64, 128, and 256 satisfy this rule;
+the width-32 model uses NEON. Other positive shapes retain the NEON/generic path.
+
+`tf_backend_info(out)` writes ten uint64 words (80 bytes), with word 1 interpreted
+as signed int64:
+
+`[version=1, init_status, requested_policy, selected_kind, sme_supported,
+streaming_vector_bytes, sme_forward_calls, sme_backward_calls,
+neon_forward_calls, neon_backward_calls]`
+
+Policies encode `auto=0`, `neon=1`, `sme=2`; selected kind encodes `NEON=0`,
+`SME=1`. The capability flag means the checks above succeeded, not merely that
+one architectural feature exists. Counters increment atomically on actual public
+linear dispatches, never reset, and do not affect arithmetic. A snapshot reads
+the counters individually; it is not a transactional snapshot of concurrent
+calls. The study uses one compute thread. `tf_backend_abi_check()` is a diagnostic
+helper that returns 1 on success and 0 on failure; it allocates temporary buffers
+and calls linear forward/backward, so it also increments the counters.
 
 ## Complete model
 
@@ -77,8 +133,11 @@ Outputs: `history.f64` [epochs,3] trainNLL,validationNLL,epochWallSeconds;
 peakRSSfinal,bestEpoch(1based),optimizerSteps,totalNativeWall;
 `best.f32`, `last.f32`, `adam_m.f32`, `adam_v.f32`;
 `test_logits.f32` [test_sequences,32,128] from selected checkpoint;
+`backend.u64` the 80-byte backend identity/counter snapshot described above;
 `timings.f64` [100] warmed full-context single-sequence forward times (seconds),
 20 warmups. Timer excludes cross entropy/softmax, I/O and input token loading.
 Training timer includes epochs, validation, best checkpoint writes and history
 bookkeeping; excludes input setup, final test, last checkpoint exports and timings.
 Parent runner independently records whole child process wall time.
+SME packing, stack-page touching, mode transitions, and dispatch bookkeeping are
+inside the relevant numerical calls and therefore inside these measured scopes.

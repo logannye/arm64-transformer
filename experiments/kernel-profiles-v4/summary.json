@@ -1,0 +1,824 @@
+{
+  "scope": "Seed-777 synthetic diagnostics, separate from the 48-fit matched study. Kernel times are fresh balanced v3/v4 comparisons including dispatch, FFI and packing. Native stack samples are separate approximate process windows; percentages describe shares, not absolute time saved. Final v4 sampling deliberately stops each owned process and retains its partial outputs.",
+  "rows": [
+    {
+      "width": 32,
+      "libraries": {
+        "candidate": {
+          "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/native/build/width-32/libtransformer.dylib",
+          "sha256": "8611f0b27b77d8ac74d58703bdba3a5b6c9f40c0dcbaefeeb5cd6bb4d5556dff"
+        },
+        "baseline": {
+          "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/work/baseline-v3/native/width-32/libtransformer.dylib",
+          "sha256": "7c3bf8e2a68be898e78f3dd1fe9daaf90ecba00c9375cc0e294ad2f30a93c973"
+        }
+      },
+      "kernels": {
+        "full_forward": {
+          "v3_us": 14.8953125,
+          "v4_us": 15.028125,
+          "v3_over_v4": 0.9911624038261593
+        },
+        "full_backward_including_cross_entropy": {
+          "v3_us": 25.61323,
+          "v4_us": 23.2647925,
+          "v3_over_v4": 1.1009438403544756
+        }
+      },
+      "runtime_samples": {
+        "v3": {
+          "all_thread_samples": 2576,
+          "post_loader_samples": 2376,
+          "startup_segment_samples_excluded": 200,
+          "dense_linear_exclusive_samples": 1360,
+          "dense_linear_percent_of_post_loader_samples": 57.23905723905724,
+          "unattributed_leaf_samples": 0,
+          "dense_attribution_is_lower_bound": false,
+          "collapsed_leaf_records": [
+            {
+              "symbol": "tf_linear_backward",
+              "image": "transformer-arm64",
+              "samples": 852
+            },
+            {
+              "symbol": "tf_linear_forward",
+              "image": "transformer-arm64",
+              "samples": 508
+            },
+            {
+              "symbol": "tf_exp4",
+              "image": "transformer-arm64",
+              "samples": 365
+            },
+            {
+              "symbol": "_dyld_start",
+              "image": "dyld",
+              "samples": 191
+            },
+            {
+              "symbol": "tf_attention_backward",
+              "image": "transformer-arm64",
+              "samples": 191
+            },
+            {
+              "symbol": "tf_attention_forward",
+              "image": "transformer-arm64",
+              "samples": 161
+            },
+            {
+              "symbol": "tf_cross_entropy",
+              "image": "transformer-arm64",
+              "samples": 66
+            },
+            {
+              "symbol": "tf_ln_forward",
+              "image": "transformer-arm64",
+              "samples": 53
+            },
+            {
+              "symbol": "tf_finite",
+              "image": "transformer-arm64",
+              "samples": 51
+            },
+            {
+              "symbol": "tf_ln_backward",
+              "image": "transformer-arm64",
+              "samples": 44
+            },
+            {
+              "symbol": "tf_adam",
+              "image": "transformer-arm64",
+              "samples": 25
+            },
+            {
+              "symbol": "tf_backward",
+              "image": "transformer-arm64",
+              "samples": 20
+            },
+            {
+              "symbol": "tf_relu_backward",
+              "image": "transformer-arm64",
+              "samples": 12
+            },
+            {
+              "symbol": "tf_forward",
+              "image": "transformer-arm64",
+              "samples": 9
+            },
+            {
+              "symbol": "mach_msg2_trap",
+              "image": "dyld",
+              "samples": 8
+            },
+            {
+              "symbol": "tf_log",
+              "image": "transformer-arm64",
+              "samples": 8
+            },
+            {
+              "symbol": "tf_relu_forward",
+              "image": "transformer-arm64",
+              "samples": 7
+            }
+          ],
+          "scope": "Exclusive top-of-stack counts from macOS sample; denominator is the post-loader main dispatch-queue segment. Includes training, validation and runtime work present in the sampled window, not a full-fit timer. Leaf table omits symbols with fewer than five samples. Anonymous assembly helpers may resolve to a nearby exported symbol, so only the combined linear family is attributed; forward/backward attention names are not interpreted as phases. Unknown-address leaves remain explicitly unattributed; when present, the dense attribution is a lower bound."
+        },
+        "v4": {
+          "all_thread_samples": 2333,
+          "post_loader_samples": 2333,
+          "startup_segment_samples_excluded": 0,
+          "dense_linear_exclusive_samples": 1266,
+          "dense_linear_percent_of_post_loader_samples": 54.26489498499786,
+          "unattributed_leaf_samples": 0,
+          "dense_attribution_is_lower_bound": false,
+          "collapsed_leaf_records": [
+            {
+              "symbol": "tf_linear_backward_neon",
+              "image": "transformer-arm64",
+              "samples": 767
+            },
+            {
+              "symbol": "tf_linear_forward_neon",
+              "image": "transformer-arm64",
+              "samples": 499
+            },
+            {
+              "symbol": "tf_exp4",
+              "image": "transformer-arm64",
+              "samples": 409
+            },
+            {
+              "symbol": "tf_attention_forward",
+              "image": "transformer-arm64",
+              "samples": 184
+            },
+            {
+              "symbol": "tf_attention_backward",
+              "image": "transformer-arm64",
+              "samples": 176
+            },
+            {
+              "symbol": "tf_cross_entropy",
+              "image": "transformer-arm64",
+              "samples": 73
+            },
+            {
+              "symbol": "tf_finite",
+              "image": "transformer-arm64",
+              "samples": 52
+            },
+            {
+              "symbol": "tf_ln_forward",
+              "image": "transformer-arm64",
+              "samples": 48
+            },
+            {
+              "symbol": "tf_ln_backward",
+              "image": "transformer-arm64",
+              "samples": 43
+            },
+            {
+              "symbol": "tf_adam",
+              "image": "transformer-arm64",
+              "samples": 27
+            },
+            {
+              "symbol": "tf_backward",
+              "image": "transformer-arm64",
+              "samples": 21
+            },
+            {
+              "symbol": "tf_relu_forward",
+              "image": "transformer-arm64",
+              "samples": 11
+            },
+            {
+              "symbol": "tf_forward",
+              "image": "transformer-arm64",
+              "samples": 6
+            },
+            {
+              "symbol": "tf_log",
+              "image": "transformer-arm64",
+              "samples": 5
+            },
+            {
+              "symbol": "tf_scale",
+              "image": "transformer-arm64",
+              "samples": 5
+            }
+          ],
+          "scope": "Exclusive top-of-stack counts from macOS sample; denominator is the post-loader main dispatch-queue segment. Includes training, validation and runtime work present in the sampled window, not a full-fit timer. Leaf table omits symbols with fewer than five samples. Anonymous assembly helpers may resolve to a nearby exported symbol, so only the combined linear family is attributed; forward/backward attention names are not interpreted as phases. Unknown-address leaves remain explicitly unattributed; when present, the dense attribution is a lower bound."
+        }
+      }
+    },
+    {
+      "width": 64,
+      "libraries": {
+        "candidate": {
+          "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/native/build/width-64/libtransformer.dylib",
+          "sha256": "5bef525c2ad1ae520e41a2017bd0cfbbac9b8d9a15b2a2be09921933b3b591d5"
+        },
+        "baseline": {
+          "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/work/baseline-v3/native/width-64/libtransformer.dylib",
+          "sha256": "d609a8da71a81c0785e9f545897020602aef5c3fefe55a01d558a0b173362463"
+        }
+      },
+      "kernels": {
+        "full_forward": {
+          "v3_us": 33.706145,
+          "v4_us": 20.504377499999997,
+          "v3_over_v4": 1.6438511727556715
+        },
+        "full_backward_including_cross_entropy": {
+          "v3_us": 67.75177,
+          "v4_us": 27.1457275,
+          "v3_over_v4": 2.4958539055547506
+        }
+      },
+      "runtime_samples": {
+        "v3": {
+          "all_thread_samples": 2577,
+          "post_loader_samples": 2415,
+          "startup_segment_samples_excluded": 162,
+          "dense_linear_exclusive_samples": 1718,
+          "dense_linear_percent_of_post_loader_samples": 71.13871635610766,
+          "unattributed_leaf_samples": 0,
+          "dense_attribution_is_lower_bound": false,
+          "collapsed_leaf_records": [
+            {
+              "symbol": "tf_linear_backward",
+              "image": "transformer-arm64",
+              "samples": 1024
+            },
+            {
+              "symbol": "tf_linear_forward",
+              "image": "transformer-arm64",
+              "samples": 694
+            },
+            {
+              "symbol": "tf_attention_backward",
+              "image": "transformer-arm64",
+              "samples": 285
+            },
+            {
+              "symbol": "tf_exp4",
+              "image": "transformer-arm64",
+              "samples": 229
+            },
+            {
+              "symbol": "_dyld_start",
+              "image": "dyld",
+              "samples": 153
+            },
+            {
+              "symbol": "tf_ln_forward",
+              "image": "transformer-arm64",
+              "samples": 52
+            },
+            {
+              "symbol": "tf_finite",
+              "image": "transformer-arm64",
+              "samples": 41
+            },
+            {
+              "symbol": "tf_cross_entropy",
+              "image": "transformer-arm64",
+              "samples": 24
+            },
+            {
+              "symbol": "tf_backward",
+              "image": "transformer-arm64",
+              "samples": 20
+            },
+            {
+              "symbol": "tf_ln_backward",
+              "image": "transformer-arm64",
+              "samples": 16
+            },
+            {
+              "symbol": "tf_adam",
+              "image": "transformer-arm64",
+              "samples": 11
+            },
+            {
+              "symbol": "mach_msg2_trap",
+              "image": "dyld",
+              "samples": 9
+            },
+            {
+              "symbol": "tf_relu_backward",
+              "image": "transformer-arm64",
+              "samples": 5
+            },
+            {
+              "symbol": "tf_relu_forward",
+              "image": "transformer-arm64",
+              "samples": 5
+            }
+          ],
+          "scope": "Exclusive top-of-stack counts from macOS sample; denominator is the post-loader main dispatch-queue segment. Includes training, validation and runtime work present in the sampled window, not a full-fit timer. Leaf table omits symbols with fewer than five samples. Anonymous assembly helpers may resolve to a nearby exported symbol, so only the combined linear family is attributed; forward/backward attention names are not interpreted as phases. Unknown-address leaves remain explicitly unattributed; when present, the dense attribution is a lower bound."
+        },
+        "v4": {
+          "all_thread_samples": 2331,
+          "post_loader_samples": 2331,
+          "startup_segment_samples_excluded": 0,
+          "dense_linear_exclusive_samples": 598,
+          "dense_linear_percent_of_post_loader_samples": 25.654225654225655,
+          "unattributed_leaf_samples": 0,
+          "dense_attribution_is_lower_bound": false,
+          "collapsed_leaf_records": [
+            {
+              "symbol": "tf_attention_backward",
+              "image": "transformer-arm64",
+              "samples": 716
+            },
+            {
+              "symbol": "tf_exp4",
+              "image": "transformer-arm64",
+              "samples": 402
+            },
+            {
+              "symbol": "tf_linear_backward_sme",
+              "image": "transformer-arm64",
+              "samples": 252
+            },
+            {
+              "symbol": "tf_linear_forward_sme",
+              "image": "transformer-arm64",
+              "samples": 228
+            },
+            {
+              "symbol": "tf_ln_forward",
+              "image": "transformer-arm64",
+              "samples": 126
+            },
+            {
+              "symbol": "tf_linear_pack32_sme",
+              "image": "transformer-arm64",
+              "samples": 118
+            },
+            {
+              "symbol": "tf_ln_backward",
+              "image": "transformer-arm64",
+              "samples": 96
+            },
+            {
+              "symbol": "tf_finite",
+              "image": "transformer-arm64",
+              "samples": 93
+            },
+            {
+              "symbol": "tf_backward",
+              "image": "transformer-arm64",
+              "samples": 76
+            },
+            {
+              "symbol": "tf_cross_entropy",
+              "image": "transformer-arm64",
+              "samples": 74
+            },
+            {
+              "symbol": "tf_adam",
+              "image": "transformer-arm64",
+              "samples": 66
+            },
+            {
+              "symbol": "tf_relu_forward",
+              "image": "transformer-arm64",
+              "samples": 31
+            },
+            {
+              "symbol": "tf_relu_backward",
+              "image": "transformer-arm64",
+              "samples": 25
+            },
+            {
+              "symbol": "tf_forward",
+              "image": "transformer-arm64",
+              "samples": 10
+            },
+            {
+              "symbol": "tf_scale",
+              "image": "transformer-arm64",
+              "samples": 10
+            },
+            {
+              "symbol": "tf_log",
+              "image": "transformer-arm64",
+              "samples": 6
+            }
+          ],
+          "scope": "Exclusive top-of-stack counts from macOS sample; denominator is the post-loader main dispatch-queue segment. Includes training, validation and runtime work present in the sampled window, not a full-fit timer. Leaf table omits symbols with fewer than five samples. Anonymous assembly helpers may resolve to a nearby exported symbol, so only the combined linear family is attributed; forward/backward attention names are not interpreted as phases. Unknown-address leaves remain explicitly unattributed; when present, the dense attribution is a lower bound."
+        }
+      }
+    },
+    {
+      "width": 128,
+      "libraries": {
+        "candidate": {
+          "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/native/build/width-128/libtransformer.dylib",
+          "sha256": "db126624d365af6cba63191c454585b6db827e07c3673aff092bc2cf66cde840"
+        },
+        "baseline": {
+          "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/work/baseline-v3/native/width-128/libtransformer.dylib",
+          "sha256": "000334f78725ae325d7450c3d90a5d2c90228e1842a69a6ffb198d12dacd8449"
+        }
+      },
+      "kernels": {
+        "full_forward": {
+          "v3_us": 102.52437499999999,
+          "v4_us": 37.6234375,
+          "v3_over_v4": 2.725013497238257
+        },
+        "full_backward_including_cross_entropy": {
+          "v3_us": 215.21229,
+          "v4_us": 47.067814999999996,
+          "v3_over_v4": 4.572387522131631
+        }
+      },
+      "runtime_samples": {
+        "v3": {
+          "all_thread_samples": 2571,
+          "post_loader_samples": 2429,
+          "startup_segment_samples_excluded": 142,
+          "dense_linear_exclusive_samples": 2087,
+          "dense_linear_percent_of_post_loader_samples": 85.9201317414574,
+          "unattributed_leaf_samples": 0,
+          "dense_attribution_is_lower_bound": false,
+          "collapsed_leaf_records": [
+            {
+              "symbol": "tf_linear_backward",
+              "image": "transformer-arm64",
+              "samples": 1377
+            },
+            {
+              "symbol": "tf_linear_forward",
+              "image": "transformer-arm64",
+              "samples": 710
+            },
+            {
+              "symbol": "_dyld_start",
+              "image": "dyld",
+              "samples": 136
+            },
+            {
+              "symbol": "tf_attention_backward",
+              "image": "transformer-arm64",
+              "samples": 121
+            },
+            {
+              "symbol": "tf_finite",
+              "image": "transformer-arm64",
+              "samples": 53
+            },
+            {
+              "symbol": "tf_exp4",
+              "image": "transformer-arm64",
+              "samples": 46
+            },
+            {
+              "symbol": "tf_ln_forward",
+              "image": "transformer-arm64",
+              "samples": 36
+            },
+            {
+              "symbol": "tf_ln_backward",
+              "image": "transformer-arm64",
+              "samples": 24
+            },
+            {
+              "symbol": "tf_adam",
+              "image": "transformer-arm64",
+              "samples": 22
+            },
+            {
+              "symbol": "tf_backward",
+              "image": "transformer-arm64",
+              "samples": 12
+            },
+            {
+              "symbol": "tf_relu_backward",
+              "image": "transformer-arm64",
+              "samples": 7
+            },
+            {
+              "symbol": "tf_cross_entropy",
+              "image": "transformer-arm64",
+              "samples": 6
+            },
+            {
+              "symbol": "mach_msg2_trap",
+              "image": "dyld",
+              "samples": 5
+            },
+            {
+              "symbol": "tf_scale",
+              "image": "transformer-arm64",
+              "samples": 5
+            }
+          ],
+          "scope": "Exclusive top-of-stack counts from macOS sample; denominator is the post-loader main dispatch-queue segment. Includes training, validation and runtime work present in the sampled window, not a full-fit timer. Leaf table omits symbols with fewer than five samples. Anonymous assembly helpers may resolve to a nearby exported symbol, so only the combined linear family is attributed; forward/backward attention names are not interpreted as phases. Unknown-address leaves remain explicitly unattributed; when present, the dense attribution is a lower bound."
+        },
+        "v4": {
+          "all_thread_samples": 2314,
+          "post_loader_samples": 2314,
+          "startup_segment_samples_excluded": 0,
+          "dense_linear_exclusive_samples": 838,
+          "dense_linear_percent_of_post_loader_samples": 36.214347450302505,
+          "unattributed_leaf_samples": 0,
+          "dense_attribution_is_lower_bound": false,
+          "collapsed_leaf_records": [
+            {
+              "symbol": "tf_attention_backward",
+              "image": "transformer-arm64",
+              "samples": 582
+            },
+            {
+              "symbol": "tf_linear_backward_sme",
+              "image": "transformer-arm64",
+              "samples": 444
+            },
+            {
+              "symbol": "tf_linear_pack32_sme",
+              "image": "transformer-arm64",
+              "samples": 233
+            },
+            {
+              "symbol": "tf_exp4",
+              "image": "transformer-arm64",
+              "samples": 202
+            },
+            {
+              "symbol": "tf_ln_forward",
+              "image": "transformer-arm64",
+              "samples": 192
+            },
+            {
+              "symbol": "tf_linear_forward_sme",
+              "image": "transformer-arm64",
+              "samples": 161
+            },
+            {
+              "symbol": "tf_finite",
+              "image": "transformer-arm64",
+              "samples": 140
+            },
+            {
+              "symbol": "tf_ln_backward",
+              "image": "transformer-arm64",
+              "samples": 100
+            },
+            {
+              "symbol": "tf_adam",
+              "image": "transformer-arm64",
+              "samples": 93
+            },
+            {
+              "symbol": "tf_backward",
+              "image": "transformer-arm64",
+              "samples": 63
+            },
+            {
+              "symbol": "tf_cross_entropy",
+              "image": "transformer-arm64",
+              "samples": 32
+            },
+            {
+              "symbol": "tf_scale",
+              "image": "transformer-arm64",
+              "samples": 20
+            },
+            {
+              "symbol": "tf_relu_backward",
+              "image": "transformer-arm64",
+              "samples": 17
+            },
+            {
+              "symbol": "tf_forward",
+              "image": "transformer-arm64",
+              "samples": 13
+            },
+            {
+              "symbol": "tf_relu_forward",
+              "image": "transformer-arm64",
+              "samples": 10
+            },
+            {
+              "symbol": "__bzero",
+              "image": "libsystem_platform.dylib",
+              "samples": 6
+            },
+            {
+              "symbol": "tf_log",
+              "image": "transformer-arm64",
+              "samples": 5
+            }
+          ],
+          "scope": "Exclusive top-of-stack counts from macOS sample; denominator is the post-loader main dispatch-queue segment. Includes training, validation and runtime work present in the sampled window, not a full-fit timer. Leaf table omits symbols with fewer than five samples. Anonymous assembly helpers may resolve to a nearby exported symbol, so only the combined linear family is attributed; forward/backward attention names are not interpreted as phases. Unknown-address leaves remain explicitly unattributed; when present, the dense attribution is a lower bound."
+        }
+      }
+    },
+    {
+      "width": 256,
+      "libraries": {
+        "candidate": {
+          "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/native/build/width-256/libtransformer.dylib",
+          "sha256": "10b539e8fd3d64d2cd84de36df8e960db5b4a804b0431f099c6589c2166940c1"
+        },
+        "baseline": {
+          "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/work/baseline-v3/native/width-256/libtransformer.dylib",
+          "sha256": "3d60983f3b5deae49084e2ba87c73f366634ae728e574794c6af74e137dc3a2e"
+        }
+      },
+      "kernels": {
+        "full_forward": {
+          "v3_us": 348.2371875,
+          "v4_us": 83.96187499999999,
+          "v3_over_v4": 4.147563254155532
+        },
+        "full_backward_including_cross_entropy": {
+          "v3_us": 756.1235425,
+          "v4_us": 114.86239499999999,
+          "v3_over_v4": 6.582864152362486
+        }
+      },
+      "runtime_samples": {
+        "v3": {
+          "all_thread_samples": 2346,
+          "post_loader_samples": 2204,
+          "startup_segment_samples_excluded": 142,
+          "dense_linear_exclusive_samples": 2020,
+          "dense_linear_percent_of_post_loader_samples": 91.65154264972777,
+          "unattributed_leaf_samples": 0,
+          "dense_attribution_is_lower_bound": false,
+          "collapsed_leaf_records": [
+            {
+              "symbol": "tf_linear_backward",
+              "image": "transformer-arm64",
+              "samples": 1325
+            },
+            {
+              "symbol": "tf_linear_forward",
+              "image": "transformer-arm64",
+              "samples": 695
+            },
+            {
+              "symbol": "_dyld_start",
+              "image": "dyld",
+              "samples": 131
+            },
+            {
+              "symbol": "tf_attention_backward",
+              "image": "transformer-arm64",
+              "samples": 59
+            },
+            {
+              "symbol": "tf_finite",
+              "image": "transformer-arm64",
+              "samples": 38
+            },
+            {
+              "symbol": "tf_adam",
+              "image": "transformer-arm64",
+              "samples": 18
+            },
+            {
+              "symbol": "tf_ln_forward",
+              "image": "transformer-arm64",
+              "samples": 17
+            },
+            {
+              "symbol": "tf_exp4",
+              "image": "transformer-arm64",
+              "samples": 15
+            },
+            {
+              "symbol": "tf_ln_backward",
+              "image": "transformer-arm64",
+              "samples": 10
+            },
+            {
+              "symbol": "mach_msg2_trap",
+              "image": "dyld",
+              "samples": 8
+            },
+            {
+              "symbol": "tf_relu_backward",
+              "image": "transformer-arm64",
+              "samples": 8
+            },
+            {
+              "symbol": "tf_scale",
+              "image": "transformer-arm64",
+              "samples": 5
+            }
+          ],
+          "scope": "Exclusive top-of-stack counts from macOS sample; denominator is the post-loader main dispatch-queue segment. Includes training, validation and runtime work present in the sampled window, not a full-fit timer. Leaf table omits symbols with fewer than five samples. Anonymous assembly helpers may resolve to a nearby exported symbol, so only the combined linear family is attributed; forward/backward attention names are not interpreted as phases. Unknown-address leaves remain explicitly unattributed; when present, the dense attribution is a lower bound."
+        },
+        "v4": {
+          "all_thread_samples": 2323,
+          "post_loader_samples": 2323,
+          "startup_segment_samples_excluded": 0,
+          "dense_linear_exclusive_samples": 1200,
+          "dense_linear_percent_of_post_loader_samples": 51.65733964700818,
+          "unattributed_leaf_samples": 0,
+          "dense_attribution_is_lower_bound": false,
+          "collapsed_leaf_records": [
+            {
+              "symbol": "tf_linear_backward_sme",
+              "image": "transformer-arm64",
+              "samples": 617
+            },
+            {
+              "symbol": "tf_attention_backward",
+              "image": "transformer-arm64",
+              "samples": 346
+            },
+            {
+              "symbol": "tf_linear_pack32_sme",
+              "image": "transformer-arm64",
+              "samples": 309
+            },
+            {
+              "symbol": "tf_linear_forward_sme",
+              "image": "transformer-arm64",
+              "samples": 274
+            },
+            {
+              "symbol": "tf_finite",
+              "image": "transformer-arm64",
+              "samples": 185
+            },
+            {
+              "symbol": "tf_ln_forward",
+              "image": "transformer-arm64",
+              "samples": 151
+            },
+            {
+              "symbol": "tf_adam",
+              "image": "transformer-arm64",
+              "samples": 115
+            },
+            {
+              "symbol": "tf_ln_backward",
+              "image": "transformer-arm64",
+              "samples": 97
+            },
+            {
+              "symbol": "tf_exp4",
+              "image": "transformer-arm64",
+              "samples": 89
+            },
+            {
+              "symbol": "tf_backward",
+              "image": "transformer-arm64",
+              "samples": 51
+            },
+            {
+              "symbol": "tf_scale",
+              "image": "transformer-arm64",
+              "samples": 27
+            },
+            {
+              "symbol": "tf_cross_entropy",
+              "image": "transformer-arm64",
+              "samples": 19
+            },
+            {
+              "symbol": "tf_relu_backward",
+              "image": "transformer-arm64",
+              "samples": 14
+            },
+            {
+              "symbol": "tf_forward",
+              "image": "transformer-arm64",
+              "samples": 11
+            },
+            {
+              "symbol": "tf_relu_forward",
+              "image": "transformer-arm64",
+              "samples": 11
+            }
+          ],
+          "scope": "Exclusive top-of-stack counts from macOS sample; denominator is the post-loader main dispatch-queue segment. Includes training, validation and runtime work present in the sampled window, not a full-fit timer. Leaf table omits symbols with fewer than five samples. Anonymous assembly helpers may resolve to a nearby exported symbol, so only the combined linear family is attributed; forward/backward attention names are not interpreted as phases. Unknown-address leaves remain explicitly unattributed; when present, the dense attribution is a lower bound."
+        }
+      }
+    }
+  ],
+  "source_sha256": {
+    "results/profiles-v4-final/width-32-kernels.json": "609182929ddb0b0b47ab94afe82ab41dbf473e33390cebea221072537b32a27f",
+    "results/profiles-v4-baseline/width-32-sample.txt": "d92968954d61fc20d1d1e4905ce55a15add6e0a1e59369aa6b2a1f82eb8b95c3",
+    "results/profiles-v4-final/width-32-runtime/sample.txt": "126dd3e846abba048a90c8e111cc3e5c65137c3189949b4dc64eeac18dcafb65",
+    "results/profiles-v4-final/width-64-kernels.json": "04a71d3a26d787ea67762ee2ca3c69f5264ae6f06f3f241b45fa35f4d262eb46",
+    "results/profiles-v4-baseline/width-64-sample.txt": "840eb770f019dc8bcc39a0e160fa78c92fb15d89fd68daa47bf92573009f6f2c",
+    "results/profiles-v4-final/width-64-runtime/sample.txt": "64fc34043f66ac7d7f94330327369e2f8b3b3205c95bb6139ec7bb1e2b9a0277",
+    "results/profiles-v4-final/width-128-kernels.json": "e2852901023faf0281014bcff531d78e513f0b0b130eae8cc432f2e0da4a2701",
+    "results/profiles-v4-baseline/width-128-sample.txt": "26c249022bb55b33bdaba4c6a959c1bccf28abe95bdd6d006f9e44cd18909f3c",
+    "results/profiles-v4-final/width-128-runtime/sample.txt": "675e6a19d581608df37f1ad02c57e625738e9e520b0b7f8fe52d80ffacec7529",
+    "results/profiles-v4-final/width-256-kernels.json": "bd0b33cc170147b1fefe75c0a27f84f067fb8b0b4bdf0e4a310f42e37ecf311c",
+    "results/profiles-v4-baseline/width-256-sample.txt": "e5c66716a6fa08be130c10afe83da4fffb23bf027d6cd3e5add0a2463609a7ef",
+    "results/profiles-v4-final/width-256-runtime/sample.txt": "92cc91230c81c581281a98571cb84ef24fc664f265a19c9045132727317dc4a1"
+  },
+  "renderer_sha256": "52ebdf545cda3d7f252d0e891e9d889f27269bd704bac520fa3dd48d5cbfdc7e"
+}

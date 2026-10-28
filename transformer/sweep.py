@@ -15,6 +15,7 @@ import time
 from pathlib import Path
 
 from transformer import spec
+from transformer.backend import read_backend, validate_backend_preflights, validate_runtime_backend
 
 ROOT = Path(__file__).resolve().parents[1]
 PAUSE_SECONDS = 15
@@ -247,7 +248,9 @@ def measured_child(cmd, env, *, timeout=CHILD_TIMEOUT):
     return record
 
 
-def run_sweep(inputs, output, preflight_directory):
+def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
+    if protocol not in ("v3", "v4"):
+        raise ValueError("Unsupported width-study protocol")
     inputs, output, preflight_directory = (
         Path(value).resolve() for value in (inputs, output, preflight_directory)
     )
@@ -255,8 +258,8 @@ def run_sweep(inputs, output, preflight_directory):
     manifest = {
         "schema_version": 1,
         "status": "validating",
-        "protocol_version": "v3",
-        "protocol_file": "experiments/PROTOCOL-v3.md",
+        "protocol_version": protocol,
+        "protocol_file": f"experiments/PROTOCOL-{protocol}.md",
         "inputs": str(inputs),
         "preflight_directory": str(preflight_directory),
         "widths": list(spec.WIDTHS),
@@ -266,6 +269,7 @@ def run_sweep(inputs, output, preflight_directory):
         "runs": [],
         "inspections": {},
         "preflights": {},
+        "backend_preflights": {},
     }
     width_manifests = {}
 
@@ -321,6 +325,16 @@ def run_sweep(inputs, output, preflight_directory):
             preflight = json.loads(preflight_path.read_text())
             manifest["preflights"][str(width)] = preflight
             authenticated.update(validate_preflight(preflight, inspection))
+            if protocol == "v4":
+                modes = ("neon", "sme") if preflight["backend"]["sme_supported"] else ("neon",)
+                supplements = {}
+                for mode in modes:
+                    mode_path = preflight_directory / f"width-{width}-{mode}.json"
+                    supplements[mode] = json.loads(mode_path.read_text())
+                    authenticated.update(validate_preflight(supplements[mode], inspection))
+                    authenticated[str(mode_path)] = digest(mode_path)
+                validate_backend_preflights(preflight, supplements)
+                manifest["backend_preflights"][str(width)] = supplements
             authenticated[str(preflight_path)] = digest(preflight_path)
             fixture_files.update(inspection["fixture_files"])
         inspections = {width: entry["result"] for width, entry in manifest["inspections"].items()}
@@ -369,6 +383,10 @@ def run_sweep(inputs, output, preflight_directory):
                 "order": [list(row[1:]) for row in manifest["order"] if row[0] == width],
                 "runs": [],
             }
+            if protocol == "v4":
+                width_manifests[width]["backend_preflights"] = manifest["backend_preflights"][
+                    str(width)
+                ]
         manifest["status"] = "running"
         persist()
         for index, (width, seed, repeat, implementation) in enumerate(manifest["order"]):
@@ -408,7 +426,11 @@ def run_sweep(inputs, output, preflight_directory):
                 json.dumps({"starting": entry["relative_run"], "index": index + 1, "total": 48}),
                 flush=True,
             )
-            entry.update(measured_child(cmd, child_environment(width)))
+            child_env = child_environment(width)
+            if protocol == "v4":
+                child_env["ARM64_TRANSFORMER_BACKEND"] = "auto"
+                entry["backend_environment"] = "auto"
+            entry.update(measured_child(cmd, child_env))
             entry["after"] = snapshot()
             entry["conditions_valid"] = on_ac_power(entry["after"])
             entry["source_after"] = source_state(tracked, manifest["revision"])
@@ -437,6 +459,16 @@ def run_sweep(inputs, output, preflight_directory):
             performance = struct.unpack("<8d", raw_performance)
             if not all(math.isfinite(value) for value in performance) or performance[0] <= 0:
                 raise ValueError("Child performance file contains invalid measurements")
+            if protocol == "v4" and implementation == "arm64":
+                backend_path = child / "backend.u64"
+                entry["backend"] = read_backend(backend_path, policy="auto")
+                validate_runtime_backend(
+                    entry["backend"],
+                    manifest["fixtures"][str(width)][str(seed)]["config"],
+                    admitted=manifest["preflights"][str(width)]["backend"],
+                )
+                entry["backend_sha256"] = digest(backend_path)
+                entry["backend_valid"] = True
             entry["status"] = "completed"
             persist()
             print(
@@ -472,6 +504,7 @@ def main():
     parser.add_argument("--inputs", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--preflight-dir", type=Path)
+    parser.add_argument("--protocol", choices=("v3", "v4"), default="v3")
     parser.add_argument("--inspect-inputs", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
     if args.inspect_inputs is not None:
@@ -479,7 +512,7 @@ def main():
         return 0
     if args.inputs is None or args.output is None or args.preflight_dir is None:
         parser.error("--inputs, --output, and --preflight-dir are required")
-    run_sweep(args.inputs, args.output, args.preflight_dir)
+    run_sweep(args.inputs, args.output, args.preflight_dir, protocol=args.protocol)
     return 0
 
 

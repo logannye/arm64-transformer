@@ -16,6 +16,7 @@ from pathlib import Path
 import numpy as np
 
 from transformer import spec
+from transformer.backend import validate_backend_preflights, validate_runtime_backend
 from transformer.prepare import SOURCE_SHA256
 from transformer.report import COLORS, IMPLEMENTATIONS, LABELS, aggregate_runs, seed_statistics
 from transformer.sweep import child_environment, on_ac_power, study_order
@@ -55,8 +56,8 @@ def validate_manifest(manifest, width_manifests, checks):
     """Reject incomplete, duplicated or internally inconsistent campaign records."""
     require(
         checks,
-        "manifest/completed_v3",
-        manifest.get("status") == "completed" and manifest.get("protocol_version") == "v3",
+        "manifest/completed_width_protocol",
+        manifest.get("status") == "completed" and manifest.get("protocol_version") in ("v3", "v4"),
     )
     require(checks, "manifest/four_widths", manifest.get("widths") == list(spec.WIDTHS))
     require(
@@ -159,7 +160,7 @@ def validate_manifest(manifest, width_manifests, checks):
             checks,
             f"width-{width}/manifest_status",
             child.get("status") == "completed"
-            and child.get("protocol_version") == "v3"
+            and child.get("protocol_version") == manifest["protocol_version"]
             and child.get("width") == width
             and child.get("model_width") == width
             and child.get("parameter_count") == model["parameters"],
@@ -176,6 +177,26 @@ def validate_manifest(manifest, width_manifests, checks):
             require(
                 checks, f"width-{width}/manifest_matches_global/{field}", child[field] == expected
             )
+        if manifest["protocol_version"] == "v4":
+            supplements = manifest["backend_preflights"][key]
+            validate_backend_preflights(manifest["preflights"][key], supplements)
+            require(
+                checks, f"width-{width}/backend_gates", child["backend_preflights"] == supplements
+            )
+            for entry in child["runs"]:
+                if entry["implementation"] == "arm64":
+                    validate_runtime_backend(
+                        entry["backend"],
+                        child["fixtures"][str(entry["seed"])]["config"],
+                        admitted=child["preflight"]["backend"],
+                    )
+                    require(
+                        checks,
+                        f"width-{width}/{entry['name']}/backend_admitted",
+                        entry.get("backend_valid") is True
+                        and bool(entry.get("backend_sha256"))
+                        and entry.get("backend_environment") == "auto",
+                    )
         preflight = manifest["preflights"][key]
         records = preflight.get("checks", [])
         require(
@@ -268,7 +289,8 @@ def aggregate_summaries(manifest, summaries, checks):
         require(
             checks,
             tag + "/completed",
-            summary.get("status") == "completed" and summary.get("protocol_version") == "v3",
+            summary.get("status") == "completed"
+            and summary.get("protocol_version") == manifest["protocol_version"],
         )
         require(
             checks,
@@ -309,6 +331,18 @@ def aggregate_summaries(manifest, summaries, checks):
             tag + "/preflight_count",
             summary["preflight_check_count"] == manifest["preflights"][str(width)]["check_count"],
         )
+        if manifest["protocol_version"] == "v4":
+            forced = validate_backend_preflights(
+                manifest["preflights"][str(width)], manifest["backend_preflights"][str(width)]
+            )
+            require(
+                checks,
+                tag + "/forced_backend_counts",
+                summary.get("forced_backend_preflight_check_count") == forced
+                and summary.get("all_backend_preflight_check_count")
+                == forced + summary["preflight_check_count"]
+                and summary.get("backend") == manifest["preflights"][str(width)]["backend"],
+            )
         throughput = {}
         for impl in IMPLEMENTATIONS:
             seed_values = [
@@ -334,6 +368,10 @@ def aggregate_summaries(manifest, summaries, checks):
             "paired_predictions": summary["paired_predictions"],
             "audit_check_count": summary["audit_check_count"],
             "preflight_check_count": summary["preflight_check_count"],
+            "forced_backend_preflight_check_count": summary.get(
+                "forced_backend_preflight_check_count", 0
+            ),
+            "backend": summary.get("backend"),
             "retained_test_prediction_rows": retained_rows,
             "raw_manifest_sha256": summary["raw_manifest_sha256"],
         }
@@ -419,45 +457,93 @@ def charts(summary, output):
     fig.savefig(output / "scaling.png")
     plt.close(fig)
 
-    fig, axis = plt.subplots(figsize=(9, 5))
-    training = [
-        summary["by_width"][str(w)]["aggregate"]["geometric_mean_training_ratio_python_over_arm64"]
-        for w in widths
-    ]
-    forward = [
-        summary["by_width"][str(w)]["forward_p50_mean_ratio_python_over_arm64"] for w in widths
-    ]
-    for values, label, color, marker in (
-        (training, "Training: geometric mean of six paired ratios", "#3568ad", "o"),
-        (forward, "Forward p50: ratio of implementation means", "#d66b34", "s"),
-    ):
-        axis.plot(widths, values, marker=marker, color=color, label=label, linewidth=2)
-        for width, value in zip(widths, values, strict=True):
-            axis.annotate(
-                f"{value:.2f}×",
-                (width, value),
-                textcoords="offset points",
-                xytext=(0, 8 if marker == "o" else -16),
-                ha="center",
-                color=color,
+    if summary["protocol_version"] == "v4":
+        training = [
+            summary["by_width"][str(width)]["aggregate"][
+                "geometric_mean_training_ratio_python_over_arm64"
+            ]
+            for width in widths
+        ]
+        forward = [
+            summary["by_width"][str(width)]["forward_p50_mean_ratio_python_over_arm64"]
+            for width in widths
+        ]
+        fig, axis = plt.subplots(figsize=(10, 5.8))
+        positions = np.arange(len(widths))
+        for values, offset, color, label in (
+            (training, -0.18, "#3568ad", "Training: geometric mean of six paired ratios"),
+            (forward, 0.18, "#d66b34", "Forward p50: ratio of implementation means"),
+        ):
+            bars = axis.barh(positions + offset, values, height=0.30, color=color, label=label)
+            labels = axis.bar_label(
+                bars, labels=[f"{value:.3f}×" for value in values], padding=6, fontsize=10
             )
-    axis.axhline(1, color="#333333", linestyle="--", linewidth=1, label="Equal time")
-    decorate(axis)
-    axis.set_ylim(bottom=0, top=max(1, *training, *forward) * 1.18)
-    axis.set_ylabel("PyTorch time / ARM64 time")
-    axis.set_title("Implementation time ratios at each width", fontweight="bold")
-    axis.legend(frameon=False, fontsize=9)
-    fig.text(
-        0.5,
-        0.015,
-        "Above 1 favors assembly; below 1 favors PyTorch. "
-        "Descriptive ratios, not confidence intervals.",
-        ha="center",
-        fontsize=9,
-    )
-    fig.tight_layout(rect=(0, 0.05, 1, 1))
-    fig.savefig(output / "speedup.png")
-    plt.close(fig)
+            for label in labels:
+                label.set_bbox({"facecolor": "white", "edgecolor": "none", "pad": 1})
+        axis.axvline(1, color="#333333", linestyle="--", linewidth=1)
+        axis.set_yticks(positions, [f"Width {width}" for width in widths])
+        axis.invert_yaxis()
+        axis.set_xlim(0, max(1, *training, *forward) * 1.20)
+        axis.set_xlabel("PyTorch time / ARM64 time", labelpad=10)
+        axis.set_title("Implementation time ratios at every width", pad=16, weight="bold")
+        axis.grid(axis="x", alpha=0.18)
+        axis.set_axisbelow(True)
+        axis.spines["left"].set_visible(False)
+        axis.tick_params(axis="y", length=0)
+        fig.legend(loc="lower center", bbox_to_anchor=(0.5, 0.065), frameon=False, fontsize=9)
+        fig.text(
+            0.5,
+            0.025,
+            "Above 1 favors assembly; below 1 favors PyTorch. "
+            "48 fits · 3 seeds · 2 repeats · 1 CPU thread",
+            ha="center",
+            fontsize=9,
+        )
+        fig.tight_layout(rect=(0, 0.16, 1, 1))
+        fig.savefig(output / "speedup.png")
+        plt.close(fig)
+    else:
+        fig, axis = plt.subplots(figsize=(9, 5))
+        training = [
+            summary["by_width"][str(w)]["aggregate"][
+                "geometric_mean_training_ratio_python_over_arm64"
+            ]
+            for w in widths
+        ]
+        forward = [
+            summary["by_width"][str(w)]["forward_p50_mean_ratio_python_over_arm64"] for w in widths
+        ]
+        for values, label, color, marker in (
+            (training, "Training: geometric mean of six paired ratios", "#3568ad", "o"),
+            (forward, "Forward p50: ratio of implementation means", "#d66b34", "s"),
+        ):
+            axis.plot(widths, values, marker=marker, color=color, label=label, linewidth=2)
+            for width, value in zip(widths, values, strict=True):
+                axis.annotate(
+                    f"{value:.2f}×",
+                    (width, value),
+                    textcoords="offset points",
+                    xytext=(0, 8 if marker == "o" else -16),
+                    ha="center",
+                    color=color,
+                )
+        axis.axhline(1, color="#333333", linestyle="--", linewidth=1, label="Equal time")
+        decorate(axis)
+        axis.set_ylim(bottom=0, top=max(1, *training, *forward) * 1.18)
+        axis.set_ylabel("PyTorch time / ARM64 time")
+        axis.set_title("Implementation time ratios at each width", fontweight="bold")
+        axis.legend(frameon=False, fontsize=9)
+        fig.text(
+            0.5,
+            0.015,
+            "Above 1 favors assembly; below 1 favors PyTorch. "
+            "Descriptive ratios, not confidence intervals.",
+            ha="center",
+            fontsize=9,
+        )
+        fig.tight_layout(rect=(0, 0.05, 1, 1))
+        fig.savefig(output / "speedup.png")
+        plt.close(fig)
 
     fig, axes = plt.subplots(1, 3, figsize=(15, 4.8))
     metric(
@@ -523,18 +609,42 @@ def report_markdown(summary):
         f"({summary['by_width'][str(width)]['preflight_check_count']:,} checks)."
         for width in summary["widths"]
     )
-    return f"""# Transformer width sweep, v3
+    backend_note = ""
+    prior = "v1/v2/v3" if summary["protocol_version"] == "v4" else "v1/v2"
+    if summary["protocol_version"] == "v4":
+        rows = []
+        for width in summary["widths"]:
+            native = next(
+                run["backend"]
+                for run in summary["runs"]
+                if run["width"] == width and run["implementation"] == "arm64"
+            )
+            rows.append(
+                f"| {width} | {native['sme_forward_calls']:,} / "
+                f"{native['sme_backward_calls']:,} | {native['neon_forward_calls']:,} / "
+                f"{native['neon_backward_calls']:,} |"
+            )
+        backend_note = (
+            "All measured native processes requested automatic dispatch. The table "
+            "records actual dense calls per fit, including validation, final test and "
+            "inference samples; it does not imply every transformer operation used SME. "
+            "Hardware capability, vector length and exact counters are authenticated "
+            "against each width's numerical gate.\n\n"
+            "| Width | SME forward / backward | NEON forward / backward |\n"
+            "|---:|---:|---:|\n" + "\n".join(rows) + "\n\n"
+        )
+    return f"""# Transformer width sweep, {summary["protocol_version"]}
 
 The complete sweep contains **{len(summary["runs"])} fits** at widths 32, 64, 128 and 256:
 three seeds, two timing repeats and both implementations at each width.
 Each comparison uses the same initial weights, token rows and schedules within
 its width/seed pair. Source revision: `{summary["revision"]}`.
 
-This is the reused engineering benchmark from v1/v2, not a fresh untouched test
+This is the reused engineering benchmark from {prior}, not a fresh untouched test
 set. Widths and training rules were fixed before timing. Wider models change
 capacity and computational cost; this report does not select a width from test quality.
 
-## Training and forward timing
+{backend_note}## Training and forward timing
 
 | Width | Parameters | PyTorch training (s) | ARM64 training (s) | Paired training ratio |
 |---:|---:|---:|---:|---:|
@@ -589,8 +699,9 @@ tuning used this test set during the sweep.
 
 The post-run audit contains **{summary["audit_check_count"]:,} checks**:
 {summary["sweep_audit_check_count"]:,} sweep consistency checks plus all per-width
-post-run records. The separate numerical/runtime preflights contain
-**{summary["preflight_check_count"]:,} checks** in total. All
+post-run records. The primary automatic-policy numerical/runtime preflights contain
+**{summary["preflight_check_count"]:,} checks** in total. Forced-policy gates add
+**{summary.get("forced_backend_preflight_check_count", 0):,} checks**. All
 **{summary["retained_test_prediction_rows"]:,} retained test prediction rows** were
 independently recomputed from selected checkpoints; selected validation losses
 were also checked against checkpoint-selection histories. Within-implementation
@@ -627,6 +738,7 @@ def create_report(results, inputs, output):
         manifest_path = results / "manifest.json"
         manifest_hash = sha256(manifest_path)
         manifest = read_json(manifest_path)
+        summary["protocol_version"] = manifest.get("protocol_version")
         width_manifests = {
             width: read_json(results / f"width-{width}/manifest.json") for width in spec.WIDTHS
         }
@@ -705,6 +817,8 @@ def create_report(results, inputs, output):
             )
             summaries[width] = child_summary
             write_json(destination / "preflight.json", manifest["preflights"][str(width)])
+            for mode, gate in manifest.get("backend_preflights", {}).get(str(width), {}).items():
+                write_json(destination / f"preflight-{mode}.json", gate)
         aggregate = aggregate_summaries(manifest, summaries, checks)
         require(
             checks,
@@ -737,6 +851,10 @@ def create_report(results, inputs, output):
             preflight_check_count=sum(
                 item["preflight_check_count"] for item in aggregate["by_width"].values()
             ),
+            forced_backend_preflight_check_count=sum(
+                item["forced_backend_preflight_check_count"]
+                for item in aggregate["by_width"].values()
+            ),
             training_target_tokens_per_fit=TRAINING_TOKENS_PER_FIT,
             throughput_scope=(
                 "Training target tokens / training-plus-validation seconds; "
@@ -745,6 +863,9 @@ def create_report(results, inputs, output):
             evaluation_scope=(
                 "Reused fixed engineering benchmark; no fresh untouched test-set claim"
             ),
+        )
+        summary["all_backend_preflight_check_count"] = (
+            summary["preflight_check_count"] + summary["forced_backend_preflight_check_count"]
         )
         charts(summary, output)
         (output / "README.md").write_text(report_markdown(summary))

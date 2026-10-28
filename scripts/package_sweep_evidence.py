@@ -1,4 +1,4 @@
-"""Stream a completed v3 width sweep into a deterministic, verified release archive.
+"""Stream a completed v3/v4 width sweep into a deterministic, verified release archive.
 
 This utility reads saved evidence only. It performs no training or numerical audit.
 Temporary disk use is one Git source tar plus the eventual compressed archive;
@@ -13,7 +13,9 @@ import hashlib
 import io
 import json
 import os
+import re
 import shutil
+import struct
 import subprocess
 import tarfile
 import tempfile
@@ -134,10 +136,12 @@ def validate_evidence(inputs, results, report, preflight_dir, repo):
     summary = read_json(file_in(report, "summary.json"))
     audit = read_json(file_in(report, "audit.json"))
     check_audit(audit, "global report")
+    protocol = manifest.get("protocol_version")
+    require(protocol in ("v3", "v4"), "Unsupported study protocol")
     for value in (manifest, summary):
         require(
-            value.get("status") == "completed" and value.get("protocol_version") == "v3",
-            "Only completed v3 studies and reports can be packaged",
+            value.get("status") == "completed" and value.get("protocol_version") == protocol,
+            "Only completed matching-protocol studies and reports can be packaged",
         )
         require(value.get("widths") == list(WIDTHS), "Wrong width ladder")
     require(bool(manifest.get("source_sha256")), "Missing measured source hashes")
@@ -160,7 +164,7 @@ def validate_evidence(inputs, results, report, preflight_dir, repo):
         "Global prediction count mismatch",
     )
     natives, preflights = {}, {}
-    total_preflight = total_child_audit = 0
+    total_preflight = total_child_audit = total_forced = 0
     for width in WIDTHS:
         key, tag = str(width), f"width-{width}"
         model = manifest["models"][key]
@@ -185,7 +189,7 @@ def validate_evidence(inputs, results, report, preflight_dir, repo):
         check_audit(child_audit, tag)
         for value in (selected, child_summary):
             require(
-                value.get("status") == "completed" and value.get("protocol_version") == "v3",
+                value.get("status") == "completed" and value.get("protocol_version") == protocol,
                 f"Incomplete {tag}",
             )
             for field in ("revision", "source_sha256"):
@@ -276,6 +280,49 @@ def validate_evidence(inputs, results, report, preflight_dir, repo):
             natives[f"bin/{tag}/{filename}"] = native
         preflights[f"preflights/{tag}.json"] = preflight_path
         total_preflight += preflight["check_count"]
+        if protocol == "v4":
+            modes = ("neon", "sme") if preflight["backend"]["sme_supported"] else ("neon",)
+            supplements = manifest["backend_preflights"][key]
+            require(
+                set(supplements) == set(modes) and selected["backend_preflights"] == supplements,
+                f"{tag} forced backend gate set mismatch",
+            )
+            forced_count = 0
+            for mode in modes:
+                mode_path = file_in(preflight_dir, f"{tag}-{mode}.json")
+                gate = read_json(mode_path)
+                require(
+                    gate
+                    == supplements[mode]
+                    == read_json(file_in(width_report, f"preflight-{mode}.json")),
+                    f"{tag} forced backend gate identity mismatch",
+                )
+                check_audit(gate, f"{tag} {mode} preflight")
+                require(
+                    gate.get("runtime_included") is True
+                    and gate["backend"]["requested_policy"] == {"neon": 1, "sme": 2}[mode],
+                    "Wrong forced backend policy",
+                )
+                for field in (
+                    "model_width",
+                    "parameter_count",
+                    "model_identity",
+                    "source_sha256",
+                    "library_sha256",
+                    "executable_sha256",
+                    "generated_layout_sha256",
+                    "tolerances",
+                ):
+                    require(gate.get(field) == preflight.get(field), f"Forced gate {field} differs")
+                forced_count += gate["check_count"]
+                preflights[f"preflights/{tag}-{mode}.json"] = mode_path
+            require(
+                child_summary["forced_backend_preflight_check_count"] == forced_count
+                and child_summary["all_backend_preflight_check_count"]
+                == preflight["check_count"] + forced_count,
+                f"{tag} backend gate count mismatch",
+            )
+            total_forced += forced_count
         total_child_audit += child_audit["check_count"]
         require(
             len(child_summary["runs"]) == 12
@@ -323,6 +370,29 @@ def validate_evidence(inputs, results, report, preflight_dir, repo):
             for filename, expected in hashes.items():
                 check_hash(file_in(directory, filename), expected)
         for row in selected_entries:
+            if protocol == "v4" and row["implementation"] == "arm64":
+                backend_path = file_in(Path(results) / tag / row["name"], "backend.u64")
+                check_hash(backend_path, row["backend_sha256"])
+                words = struct.unpack("<10Q", backend_path.read_bytes())
+                names = (
+                    "version",
+                    "init_status",
+                    "requested_policy",
+                    "selected_kind",
+                    "sme_supported",
+                    "streaming_vector_bytes",
+                    "sme_forward_calls",
+                    "sme_backward_calls",
+                    "neon_forward_calls",
+                    "neon_backward_calls",
+                )
+                metadata = dict(zip(names, words, strict=True))
+                require(
+                    metadata == row["backend"] == global_runs[identity(row)]["backend"]
+                    and row.get("backend_valid") is True
+                    and row.get("backend_environment") == "auto",
+                    "Native backend identity changed after audit",
+                )
             require(
                 row.get("status") == "completed"
                 and row.get("returncode") == 0
@@ -337,6 +407,12 @@ def validate_evidence(inputs, results, report, preflight_dir, repo):
                 ),
                 f"Invalid measured child: {row['name']}",
             )
+    if protocol == "v4":
+        require(
+            summary["forced_backend_preflight_check_count"] == total_forced
+            and summary["all_backend_preflight_check_count"] == total_preflight + total_forced,
+            "Global backend preflight count mismatch",
+        )
     require(summary["preflight_check_count"] == total_preflight, "Total preflight count mismatch")
     require(
         summary["audit_check_count"] == summary["sweep_audit_check_count"] + total_child_audit,
@@ -472,7 +548,18 @@ def package(args):
         Path(value).resolve()
         for value in (args.inputs, args.results, args.report, args.preflight_dir)
     )
-    for directory in (inputs, results, report, preflight_dir):
+    extras = {}
+    for item in getattr(args, "extra_evidence", []):
+        name, separator, value = item.partition("=")
+        require(
+            separator and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]*", name),
+            "Extra evidence must be NAME=DIRECTORY with a simple unique name",
+        )
+        require(name not in extras, "Duplicate extra-evidence name")
+        directory = Path(value).resolve()
+        require(directory.is_dir(), "Extra-evidence directory is missing")
+        extras[name] = directory
+    for directory in (inputs, results, report, preflight_dir, *extras.values()):
         require(
             not output.is_relative_to(directory),
             "Archive output must be outside all input evidence directories",
@@ -488,6 +575,13 @@ def package(args):
         add_tree(payload, inputs, "inputs")
         add_tree(payload, results, "results")
         add_tree(payload, report, "report")
+        extra_records = []
+        for name, directory in extras.items():
+            before = set(payload)
+            add_tree(payload, directory, "development/" + name)
+            count = len(set(payload) - before)
+            require(count > 0, "Extra-evidence directory contains no files")
+            extra_records.append({"name": name, "directory": str(directory), "files": count})
         tool = Path(__file__).resolve()
         payload["packaging/package_sweep_evidence.py"] = tool
         raw_bytes = sum(path.stat().st_size for path in payload.values())
@@ -511,7 +605,7 @@ def package(args):
         evidence = {
             "verified": True,
             "schema_version": 1,
-            "protocol_version": "v3",
+            "protocol_version": manifest["protocol_version"],
             "archive": output.name,
             "sha256": archive_hash,
             "archive_bytes": partial.stat().st_size,
@@ -521,7 +615,18 @@ def package(args):
             "widths": list(WIDTHS),
             "measured_fits": 48,
             "models": manifest["models"],
+            "extra_evidence": extra_records,
+            "extra_evidence_scope": (
+                "Separately labeled development/profiling bytes are authenticated and preserved; "
+                "they are not additional formal matched fits or independent quality seeds."
+            ),
             "preflight_checks": summary["preflight_check_count"],
+            "forced_backend_preflight_checks": summary.get(
+                "forced_backend_preflight_check_count", 0
+            ),
+            "all_backend_preflight_checks": summary.get(
+                "all_backend_preflight_check_count", summary["preflight_check_count"]
+            ),
             "postrun_checks": summary["audit_check_count"],
             "retained_test_prediction_rows": summary["retained_test_prediction_rows"],
             "raw_manifest_sha256": digest(results / "manifest.json"),
@@ -556,6 +661,13 @@ def main():
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--preflight-dir", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument(
+        "--extra-evidence",
+        action="append",
+        default=[],
+        metavar="NAME=DIRECTORY",
+        help="Retain a named development/profiling directory; repeat as needed",
+    )
     args = parser.parse_args()
     print(json.dumps(package(args), indent=2))
 

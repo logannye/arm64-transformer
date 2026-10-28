@@ -11,6 +11,7 @@ import numpy as np
 
 from transformer import spec
 from transformer.audit import audit_run, compare_repeats, paired_predictions, read_exact
+from transformer.backend import read_backend, validate_backend_preflights, validate_runtime_backend
 from transformer.validate import ROOT, SOURCE_FILES, Checks, sha256
 
 IMPLEMENTATIONS = ("python", "arm64")
@@ -262,9 +263,25 @@ def report_markdown(summary):
         "It is an engineering regression benchmark, not a fresh untouched test set. "
         "Kernel development used synthetic correctness and timing inputs; the model, "
         "optimizer, seeds and stopping rule were unchanged.\n\n"
-        if version in ("v2", "v3")
+        if version in ("v2", "v3", "v4")
         else ""
     )
+    backend_note = ""
+    if version == "v4":
+        actual = next(run["backend"] for run in summary["runs"] if run["implementation"] == "arm64")
+        backend_note = (
+            f"Native processes requested automatic dispatch. Hardware SME capability: "
+            f"{bool(actual['sme_supported'])}; streaming vector length: "
+            f"{actual['streaming_vector_bytes']} bytes. Actual dense calls per native fit were "
+            f"SME {actual['sme_forward_calls']:,} forward / "
+            f"{actual['sme_backward_calls']:,} backward, "
+            f"and NEON {actual['neon_forward_calls']:,} forward / "
+            f"{actual['neon_backward_calls']:,} backward. These authenticated counters cover the "
+            "whole process, including evaluation and inference samples.\n\n"
+            f"The auto-policy preflight contains {summary['preflight_check_count']:,} checks; "
+            f"forced-policy gates add {summary['forced_backend_preflight_check_count']:,}, "
+            f"for {summary['all_backend_preflight_check_count']:,} admission checks.\n\n"
+        )
     aggregate = summary["aggregate"]["by_implementation"]
     ratio = summary["aggregate"]["geometric_mean_training_ratio_python_over_arm64"]
     speed = (
@@ -315,13 +332,13 @@ def report_markdown(summary):
 {speed}, using the geometric mean of six paired training-time ratios.
 This is the same {model["parameters"]:,}-parameter causal transformer implemented with ordinary
 batched PyTorch (built-in scaled-dot-product attention and autograd) and handwritten
-Apple ARM64/NEON assembly. The experiment contains **12 complete fits**: three
+Apple ARM64 assembly. The experiment contains **12 complete fits**: three
 initialization seeds, two timing repeats, and both implementations.
 
 Measured source revision: `{summary["revision"]}`. Hardware: {summary["hardware"]}.
 Platform: `{summary["platform"]}`. PyTorch: `{summary["torch"]}`.
 
-{table_text}
+{backend_note}{table_text}
 
 Entries are mean ± sample SD of three seed means. Timing repeats are averaged
 within seed; they are not six independent quality seeds. The primary ratio is
@@ -452,6 +469,12 @@ def create_report(results, inputs, output):
             manifest["preflight"].get("passed") is True
             and manifest["preflight"].get("runtime_included") is True,
         )
+        forced_count = 0
+        if manifest.get("protocol_version") == "v4":
+            forced_count = validate_backend_preflights(
+                manifest["preflight"], manifest["backend_preflights"]
+            )
+            checks.require("manifest/forced_backend_gates", forced_count > 0)
         for name in SOURCE_FILES:
             checks.require(
                 "source/" + name, sha256(ROOT / name) == manifest["source_sha256"].get(name)
@@ -471,6 +494,22 @@ def create_report(results, inputs, output):
                 entry["name"] + "/runner_fixture_identity",
                 run["fixture_sha256"] == manifest["fixtures"][str(entry["seed"])]["sha256"],
             )
+            if manifest.get("protocol_version") == "v4" and entry["implementation"] == "arm64":
+                backend_path = results / entry["name"] / "backend.u64"
+                backend = read_backend(backend_path, policy="auto")
+                validate_runtime_backend(
+                    backend,
+                    manifest["fixtures"][str(entry["seed"])]["config"],
+                    admitted=manifest["preflight"]["backend"],
+                )
+                checks.require(
+                    entry["name"] + "/backend_authenticated",
+                    backend == entry.get("backend")
+                    and entry.get("backend_valid") is True
+                    and sha256(backend_path) == entry.get("backend_sha256")
+                    and entry.get("backend_environment") == "auto",
+                )
+                run["backend"] = backend
             run.update(
                 name=entry["name"],
                 implementation=entry["implementation"],
@@ -517,6 +556,10 @@ def create_report(results, inputs, output):
                 model=spec.model_metadata(),
                 source_sha256=manifest["source_sha256"],
                 preflight_check_count=manifest["preflight"]["check_count"],
+                forced_backend_preflight_check_count=forced_count,
+                all_backend_preflight_check_count=manifest["preflight"]["check_count"]
+                + forced_count,
+                backend=manifest["preflight"].get("backend"),
                 platform=manifest["platform"],
                 hardware=hardware,
                 supplementary_hardware_evidence=hardware_evidence,

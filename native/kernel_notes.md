@@ -5,8 +5,12 @@ numerical primitive declared under **Numerical primitives** in `ABI.md`.
 There are no calls to C numerical routines, BLAS, Accelerate, PyTorch, or libm.
 Cross-entropy and attention call the handwritten scalar/vector exponentials;
 cross-entropy also calls the handwritten logarithm.
-All buffers and tensor dimensions come from the caller; no dynamic allocation,
-mutable global state, or shared scratch storage is used.
+Model buffers and tensor dimensions come from the caller. Numerical kernels use
+registers and private stack scratch, with no heap allocation or shared numerical
+scratch. `backend.S` separately owns an immutable initialized policy and atomic,
+mutable diagnostic counters. Its system calls detect capabilities and read the
+policy; they do not compute model values. The optional ABI diagnostic allocates
+its own temporary test buffers, outside ordinary model execution.
 
 ## Layout and caller requirements
 
@@ -23,6 +27,65 @@ caller before their first use.
 
 Darwin callee-saved x19-x28 and the low 64 bits of v8-v15 are saved/restored where
 used. The reserved x18 register is never used. Stack frames are 16-byte aligned.
+All public interfaces require non-streaming entry, PSTATE.SM=0. See the backend
+and ZA-state contract in `ABI.md`; no streaming-compatible public ABI is provided.
+
+## SME dispatch and matrix execution
+
+The library constructor initializes `ARM64_TRANSFORMER_BACKEND` once: `auto`
+selects the available backend, `neon` forces NEON, and `sme` requires SME
+capability. Invalid policy or unavailable forced SME returns an initialization
+error. Changing the environment afterward does not change a loaded library's
+policy. Capability detection checks Darwin's FEAT_SME and FEAT_SME2 selectors
+before any SME instruction, then requires RDSVL to report 64 bytes. At this
+streaming vector length, each FP32 ZA tile is 16 by 16. The implementation uses
+non-widening FP32 FMOPA; it does not convert operands to lower precision.
+
+The public linear dispatchers require 32 rows, input width 64/128/256/512, and
+output width divisible by 32 between 64 and 768 for the SME path. They also
+require the current vector length to remain 64 bytes, ZA to be off, and
+TPIDR2_EL0 to be null. Under the public SM=0 precondition, live ZA or pending
+lazy-save state takes the NEON path without changing that state. Unsupported
+shapes also take NEON, whose existing generic kernels cover scalar tails.
+Width 32 therefore stays on NEON; all five linear layers at widths 64, 128,
+and 256 are eligible for SME. Selection and actual dispatch counts are recorded
+separately, so selecting SME does not imply every primitive used it.
+
+`linear_sme.S` holds a 32-by-32 result in four FP32 ZA tiles. Each reduction step
+loads two 16-lane vectors from each operand and issues four outer products.
+Forward first packs the 32 input rows into contiguous vectors along the reduction
+dimension. It then packs one 32-output weight panel at a time, reusing the packed
+input for every panel. Horizontal ZA loads followed by vertical ZA stores perform
+these transposes. Bias is added after the dot products, when storing the result.
+
+Backward packs dY once for dX, then streams contiguous weight-row segments while
+overwriting each dX tile. For dW it loads the caller's existing gradient tile into
+ZA and accumulates outer products of contiguous dY and input rows. Bias gradients
+are added in token-row order. dX reduction visits output channels in order; dW
+visits token rows in order. This preserves the contract of overwriting dX while
+adding to dW/db across the runtime's sequence-by-sequence batch accumulation.
+
+Forward scratch is `256 * input_width` bytes, at most **128 KiB**, plus a
+160-byte saved-register frame. Backward scratch is `128 * output_width` bytes,
+at most **96 KiB**, plus a 192-byte frame. The validated shapes make every
+scratch allocation a positive multiple of 4 KiB. The assembly lowers the stack
+and touches memory at each 4 KiB step, then restores it exactly on return.
+Packing is repeated inside each call; there is no persistent packed-weight cache
+to invalidate after Adam updates. Packing, page touches, and the single
+SMSTART/SMSTOP pair per call are included in measured execution time.
+
+The symbol `tf_linear_pack32_sme` names the transpose helper for sampled profiling.
+It is an internal streaming entry, not a normal public function: it requires
+SM=1, ZA enabled, a 64-byte streaming vector length, and p0.s all true. Its private
+arguments are source, destination, source stride in bytes, and column count in
+x0-x3; it packs exactly 32 source rows, with columns a positive multiple of 16.
+It clobbers scratch GPRs and ZA0/ZA1. Public kernels establish these conditions
+and save d8-d15 before switching modes; d8-d15 are restored after SMSTOP.
+
+These rules follow the distinctions between ordinary and streaming interfaces
+and between active/dormant ZA state in the
+[Arm procedure-call standard](https://github.com/ARM-software/abi-aa/blob/main/aapcs64/aapcs64.rst)
+and [LLVM's SME ABI documentation](https://www.llvm.org/docs/AArch64SME.html).
 
 ## Tiled and vectorized execution
 
@@ -30,7 +93,11 @@ used. The reserved x18 register is never used. Stack frames are 16-byte aligned.
   sixteen independent NEON dot-product accumulators. Loaded input/weight vectors
   contribute to multiple outputs. Its backward kernels retain four-by-sixteen
   gradient tiles in registers, reducing repeated loads and stores of partial
-  sums. Forward requires row/input/output counts divisible by four; backward
+  sums. dW uses scalar-lane FMLAs directly from each loaded four-channel dY
+  vector, avoiding four separate broadcasts. dX loads four consecutive
+  coefficients for each token row and unrolls four output-channel steps, using
+  each lane in its original order. Its per-accumulator FMA sequence is unchanged.
+  Forward requires row/input/output counts divisible by four; backward
   additionally requires input width divisible by sixteen. Other positive shapes
   tail-call the preserved v1 generic implementations in `kernels.S`.
 - `attention.S` specializes four-head models of width 32, 64, 128, and 256 for
@@ -54,10 +121,9 @@ used. The reserved x18 register is never used. Stack frames are 16-byte aligned.
   operations and a scalar remainder. The same checks remain in the runtime.
 
 The native runtime still accumulates complete per-sequence gradients within each
-training batch. These optimizations change kernel execution, not this scheduling rule. It does
-not add batch-wide model workspaces, mixed precision, a KV cache, or a new model.
-This keeps the one-sequence workspace while making its hot operations efficient.
-Whether batch-wide execution helps further remains a separate measured question.
+training batch. The model workspace holds one sequence, supplemented by private
+per-call SME packing scratch. Batch-wide execution remains a separate measured
+question.
 
 ## Width specialization and identity
 
@@ -76,10 +142,13 @@ accidentally loading a wider fixture into a smaller compiled model.
 
 ## Arithmetic
 
-- Linear forward uses four-lane NEON fused multiply-add and horizontal reduction,
-  then bias addition. The tiled and generic implementations preserve the same
-  per-output arithmetic order. Linear backward overwrites input gradients and
-  accumulates parameter/bias gradients in fixed row order.
+- NEON linear forward uses four-lane fused multiply-add and horizontal reduction,
+  then bias addition. Its tiled and generic paths preserve the same per-output
+  arithmetic order. SME forward accumulates one FP32 fused multiply-add per
+  reduction element into ZA, changing the grouping relative to NEON's four
+  partial sums. SME and NEON backward visit the same output-channel/token-row
+  reduction orders. Every backend overwrites input gradients and adds to the
+  caller's parameter/bias gradients.
 - LayerNorm uses float32 two-pass mean and biased variance, epsilon `1e-5`, and
   scalar or vector arithmetic. It retains normalized inputs and inverse standard deviations.
   Backward applies `inv * (dy*gamma - mean(dy*gamma) - norm*mean(dy*gamma*norm))`.
@@ -109,3 +178,12 @@ Fused operations, reduction order, LayerNorm variance evaluation, and reporting
 accumulation may differ from PyTorch. Numerical parity must be established by the
 independent audit for the exact linked binary; successful assembly is only a syntax
 check and does not establish numerical correctness or speed.
+
+The kernels leave FPCR unchanged. FP32 FMOPA uses a single rounding for each
+multiply-add, but its ZA arithmetic forces default NaNs and suppresses floating-point
+exceptions internally, as specified by FPMulAdd_ZA in the
+[Arm SME architecture supplement, section E2.1.21](https://documentation-service.arm.com/static/6526e1bd9e189a266cef8412).
+Consequently this project does not claim identical NaN payloads or exception-status
+behavior across SME and NEON. Matched arithmetic claims concern the validated
+finite inputs under the study's floating-point environment and fixed tolerances.
+The runtime retains its nonfinite parameter, gradient, loss, and logit checks.

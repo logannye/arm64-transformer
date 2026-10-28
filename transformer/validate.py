@@ -12,6 +12,7 @@ import ctypes as ct
 import hashlib
 import json
 import math
+import os
 import platform
 import shutil
 import struct
@@ -25,6 +26,7 @@ import torch
 import torch.nn.functional as F
 
 from transformer import spec
+from transformer.backend import library_backend, read_backend, validate_runtime_backend
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_BUILD = ROOT / f"native/build/width-{spec.WIDTH}"
@@ -34,6 +36,8 @@ GENERATED_LAYOUT = DEFAULT_BUILD / "layout.inc"
 SOURCE_FILES = (
     "native/kernels.S",
     "native/linear.S",
+    "native/linear_sme.S",
+    "native/backend.S",
     "native/attention.S",
     "native/softmax.S",
     "native/normalization.S",
@@ -45,6 +49,7 @@ SOURCE_FILES = (
     "transformer/prepare.py",
     "transformer/python_train.py",
     "transformer/validate.py",
+    "transformer/backend.py",
 )
 
 # Fixed admission limits, not selected from observed discrepancies.
@@ -116,6 +121,8 @@ class Native:
             raise FileNotFoundError(f"Native library missing: {self.path}; build it explicitly")
         self.lib = ct.CDLL(str(self.path))
         self.model_identity = verify_library_model(self.lib, allow_legacy=not verify_model)
+        self._allow_legacy_backend = not verify_model
+        library_backend(self.lib, allow_legacy=self._allow_legacy_backend)
         p, n = ct.c_void_p, ct.c_uint64
         signatures = {
             "linear_forward": [p] * 5,
@@ -144,6 +151,10 @@ class Native:
                 fn.restype = ct.c_uint64
             else:
                 fn.restype = None
+
+    @property
+    def backend_identity(self):
+        return library_backend(self.lib, allow_legacy=self._allow_legacy_backend)
 
     def call(self, name, *args):
         converted = []
@@ -860,6 +871,81 @@ def check_width_boundaries(native, checks, rng):
     )
 
 
+def check_backend_boundaries(native, checks):
+    """V4 independent stream: alignment, panel boundaries, stale-pack and ABI probes."""
+    rng = np.random.default_rng(20261030)
+    cases = [
+        (16, 64, 64),
+        (31, 64, 64),
+        (32, 64, 64),
+        (33, 64, 64),
+        (32, 63, 64),
+        (32, 65, 64),
+        (32, 64, 63),
+        (32, 64, 65),
+        (32, spec.WIDTH, 3 * spec.WIDTH),
+    ]
+    for index, (rows, inputs, outputs) in enumerate(cases):
+        tag = f"backend/linear/{rows}x{inputs}x{outputs}"
+        stores = []
+
+        def guarded(shape):
+            count = math.prod(shape)
+            start = 8 + 1 + index % 3  # Exercise 4/8/12-byte offsets from 16-byte alignment.
+            storage = np.full(start + count + 8, -12345.25, dtype=np.float32)
+            value = storage[start : start + count].reshape(shape)
+            stores.append((storage, start, count))
+            return value
+
+        x, w, b, dout = [
+            guarded(shape)
+            for shape in ((rows, inputs), (outputs, inputs), (outputs,), (rows, outputs))
+        ]
+        for value in (x, w, b, dout):
+            value[:] = rng.normal(0, 0.1, value.shape)
+        out, dx, dw, db = [guarded(shape) for shape in ((rows, outputs), x.shape, w.shape, b.shape)]
+        shape = arr([rows, inputs, outputs], np.int32)
+        for iteration in range(2):
+            # Change weights at the SAME address; a hidden stale packing cache must fail.
+            w += np.float32(0.01 * iteration)
+            tx, tw, tb = (tensor(value, grad=True) for value in (x, w, b))
+            expected = F.linear(tx, tw, tb)
+            expected.backward(tensor(dout))
+            dw[:] = rng.normal(0, 0.03, dw.shape)
+            db[:] = rng.normal(0, 0.03, db.shape)
+            dw_before, db_before = dw.copy(), db.copy()
+            originals = [value.copy() for value in (x, w, b, dout, shape)]
+            out.fill(np.nan)
+            dx.fill(np.nan)
+            native.call("linear_forward", x, w, b, out, shape)
+            native.call("linear_backward", x, w, dout, dx, dw, db, shape)
+            checks.close(f"{tag}/{iteration}/forward", out, expected)
+            checks.close(f"{tag}/{iteration}/dx", dx, tx.grad, "gradient")
+            checks.close(f"{tag}/{iteration}/dw", dw, tw.grad.numpy() + dw_before, "gradient")
+            checks.close(f"{tag}/{iteration}/db", db, tb.grad.numpy() + db_before, "gradient")
+            checks.require(
+                f"{tag}/{iteration}/inputs_immutable",
+                all(
+                    np.array_equal(value, before)
+                    for value, before in zip((x, w, b, dout, shape), originals, strict=True)
+                ),
+            )
+            checks.require(
+                f"{tag}/{iteration}/guards",
+                all(
+                    np.all(storage[:start] == -12345.25)
+                    and np.all(storage[start + count :] == -12345.25)
+                    for storage, start, count in stores
+                ),
+            )
+    abi_check = getattr(native.lib, "tf_backend_abi_check")
+    abi_check.argtypes, abi_check.restype = [], ct.c_uint64
+    checks.require("backend/callee_saved_FP_and_streaming_state", abi_check() == 1)
+    before = native.backend_identity
+    # Init is idempotent and captures the process policy exactly once.
+    checks.require("backend/repeated_init_identity", before == native.backend_identity)
+
+
 def numerical_checks(native, checks):
     torch.set_num_threads(1)
     checks.require("model/library_identity_verified", native.model_identity["verified"])
@@ -881,11 +967,14 @@ def numerical_checks(native, checks):
     check_vector_finite_boundaries(native, checks)
     # V3 fixtures do not perturb either historical random stream.
     check_width_boundaries(native, checks, np.random.default_rng(20261029))
+    check_backend_boundaries(native, checks)
 
 
-def run_child(command, *, timeout=180):
+def run_child(command, *, timeout=180, env=None):
     started = time.perf_counter()
-    result = subprocess.run(command, capture_output=True, text=True, timeout=timeout, cwd=ROOT)
+    result = subprocess.run(
+        command, capture_output=True, text=True, timeout=timeout, cwd=ROOT, env=env
+    )
     return {
         "command": [str(item) for item in command],
         "returncode": result.returncode,
@@ -936,6 +1025,36 @@ def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE):
         checks.require("runtime/" + name + "/exit", result["returncode"] == 0, result)
         if result["returncode"] != 0:
             raise RuntimeError(f"{name} smoke failed: {result}")
+    backend_config = {
+        "epochs": 2,
+        "train_sequences": 5,
+        "validation_sequences": 2,
+        "test_sequences": 2,
+        "width": spec.WIDTH,
+    }
+    policy = os.environ.get("ARM64_TRANSFORMER_BACKEND", "auto")
+    for name in ("native", "native-repeat"):
+        metadata = read_backend(directory / name / "backend.u64", policy=policy)
+        validate_runtime_backend(metadata, backend_config, policy=policy)
+        checks.require(f"runtime/{name}/backend_dispatch_counts", True, metadata)
+    checks.require(
+        "runtime/backend_repeat_exact",
+        (directory / "native/backend.u64").read_bytes()
+        == (directory / "native-repeat/backend.u64").read_bytes(),
+    )
+    rejected_modes = ["invalid"] + ([] if metadata["sme_supported"] else ["sme"])
+    for mode in rejected_modes:
+        destination = directory / f"rejected-backend-{mode}"
+        result = run_child(
+            [str(executable), str(fixture), str(destination)],
+            env=os.environ | {"ARM64_TRANSFORMER_BACKEND": mode},
+        )
+        records.append(result)
+        checks.require(
+            f"runtime/reject_backend_{mode}",
+            result["returncode"] > 0 and not destination.exists(),
+            result,
+        )
     for filename in ("best.f32", "last.f32", "adam_m.f32", "adam_v.f32", "test_logits.f32"):
         python_values = np.fromfile(directory / "python" / filename, dtype="<f4")
         native_values = np.fromfile(directory / "native" / filename, dtype="<f4")
@@ -1029,6 +1148,7 @@ def main():
     checks = Checks()
     error = None
     identity = None
+    backend = None
     source_before = {
         name: sha256(ROOT / name) if (ROOT / name).is_file() else None for name in SOURCE_FILES
     }
@@ -1041,6 +1161,15 @@ def main():
         native = Native(args.library)
         identity = native.model_identity
         numerical_checks(native, checks)
+        backend = native.backend_identity
+        checks.require("backend/identity", backend is not None)
+        if backend["selected_kind"] and spec.WIDTH >= 64:
+            checks.require("backend/SME_forward_executed", backend["sme_forward_calls"] > 0)
+            checks.require("backend/SME_backward_executed", backend["sme_backward_calls"] > 0)
+        checks.require(
+            "backend/NEON_fallback_executed",
+            backend["neon_forward_calls"] > 0 and backend["neon_backward_calls"] > 0,
+        )
         if args.runtime:
             runtime_checks(checks, args.work_dir, args.executable)
     except Exception as exc:
@@ -1068,6 +1197,8 @@ def main():
         "model_width": spec.WIDTH,
         "parameter_count": spec.PARAM_COUNT,
         "model_identity": identity,
+        "backend": backend,
+        "backend_environment": os.environ.get("ARM64_TRANSFORMER_BACKEND", "auto"),
         "library_path": artifact_path(args.library),
         "executable_path": artifact_path(args.executable),
         "passed": checks.passed,

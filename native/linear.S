@@ -4,24 +4,25 @@
 .p2align 4
 
 // Four independent rows, sixteen contiguous columns. v0-v15 are the tile;
-// v16-v19 are four adjacent vectors, v20-v23 are broadcast row coefficients.
-.macro OUTER4X16
-    fmla v0.4s, v16.4s, v20.4s
-    fmla v1.4s, v17.4s, v20.4s
-    fmla v2.4s, v18.4s, v20.4s
-    fmla v3.4s, v19.4s, v20.4s
-    fmla v4.4s, v16.4s, v21.4s
-    fmla v5.4s, v17.4s, v21.4s
-    fmla v6.4s, v18.4s, v21.4s
-    fmla v7.4s, v19.4s, v21.4s
-    fmla v8.4s, v16.4s, v22.4s
-    fmla v9.4s, v17.4s, v22.4s
-    fmla v10.4s, v18.4s, v22.4s
-    fmla v11.4s, v19.4s, v22.4s
-    fmla v12.4s, v16.4s, v23.4s
-    fmla v13.4s, v17.4s, v23.4s
-    fmla v14.4s, v18.4s, v23.4s
-    fmla v15.4s, v19.4s, v23.4s
+// v16-v19 are four adjacent vectors. Coefficients use their source lanes
+// directly, avoiding scalar replicate loads and separate DUP instructions.
+.macro OUTER4X16 c0,l0,c1,l1,c2,l2,c3,l3
+    fmla v0.4s, v16.4s, \c0\().s[\l0]
+    fmla v1.4s, v17.4s, \c0\().s[\l0]
+    fmla v2.4s, v18.4s, \c0\().s[\l0]
+    fmla v3.4s, v19.4s, \c0\().s[\l0]
+    fmla v4.4s, v16.4s, \c1\().s[\l1]
+    fmla v5.4s, v17.4s, \c1\().s[\l1]
+    fmla v6.4s, v18.4s, \c1\().s[\l1]
+    fmla v7.4s, v19.4s, \c1\().s[\l1]
+    fmla v8.4s, v16.4s, \c2\().s[\l2]
+    fmla v9.4s, v17.4s, \c2\().s[\l2]
+    fmla v10.4s, v18.4s, \c2\().s[\l2]
+    fmla v11.4s, v19.4s, \c2\().s[\l2]
+    fmla v12.4s, v16.4s, \c3\().s[\l3]
+    fmla v13.4s, v17.4s, \c3\().s[\l3]
+    fmla v14.4s, v18.4s, \c3\().s[\l3]
+    fmla v15.4s, v19.4s, \c3\().s[\l3]
 .endm
 
 .macro ZERO_TILE
@@ -73,8 +74,8 @@
 
 // x0 X[R,I], x1 W[O,I], x2 bias[O], x3 Y[R,O], x4 shape[R,I,O].
 // Four token rows x four output columns, sixteen independent dot accumulators.
-.globl _tf_linear_forward
-_tf_linear_forward:
+.globl _tf_linear_forward_neon
+_tf_linear_forward_neon:
     ldr w9, [x4]
     ldr w10, [x4, #4]
     ldr w11, [x4, #8]
@@ -174,8 +175,8 @@ Ltf_reduce:
 // x0 X,x1 W,x2 dY,x3 dX,x4 dW,x5 db,x6 shape[R,I,O].
 // dX overwrite, dW/db ADD. Fast tiles require R,O %4 ==0 and I %16 ==0.
 .p2align 4
-.globl _tf_linear_backward
-_tf_linear_backward:
+.globl _tf_linear_backward_neon
+_tf_linear_backward_neon:
     ldr w9, [x6]
     ldr w10, [x6, #4]
     ldr w11, [x6, #8]
@@ -214,17 +215,31 @@ Ltb_dx_columns:
     add x12, x11, x14
     ldr x8, [sp, #176]
     add x13, x20, x8, lsl #2
-    mov x15, x27
+    lsr x15, x27, #2
     ZERO_TILE
 Ltb_dx_reduce:
+    // Four consecutive coefficients per row; process lanes in the original
+    // output-channel order so every accumulator has the same FMA sequence.
+    ldr q20, [x9], #16
+    ldr q21, [x10], #16
+    ldr q22, [x11], #16
+    ldr q23, [x12], #16
     ldp q16, q17, [x13]
     ldp q18, q19, [x13, #32]
     add x13, x13, x28
-    ld1r {v20.4s}, [x9], #4
-    ld1r {v21.4s}, [x10], #4
-    ld1r {v22.4s}, [x11], #4
-    ld1r {v23.4s}, [x12], #4
-    OUTER4X16
+    OUTER4X16 v20,0,v21,0,v22,0,v23,0
+    ldp q16, q17, [x13]
+    ldp q18, q19, [x13, #32]
+    add x13, x13, x28
+    OUTER4X16 v20,1,v21,1,v22,1,v23,1
+    ldp q16, q17, [x13]
+    ldp q18, q19, [x13, #32]
+    add x13, x13, x28
+    OUTER4X16 v20,2,v21,2,v22,2,v23,2
+    ldp q16, q17, [x13]
+    ldp q18, q19, [x13, #32]
+    add x13, x13, x28
+    OUTER4X16 v20,3,v21,3,v22,3,v23,3
     subs x15, x15, #1
     b.ne Ltb_dx_reduce
     ldr x8, [sp, #168]
@@ -284,11 +299,7 @@ Ltb_dw_reduce:
     add x9, x9, x28
     ldr q24, [x10]
     add x10, x10, x12
-    dup v20.4s, v24.s[0]
-    dup v21.4s, v24.s[1]
-    dup v22.4s, v24.s[2]
-    dup v23.4s, v24.s[3]
-    OUTER4X16
+    OUTER4X16 v24,0,v24,1,v24,2,v24,3
     subs x15, x15, #1
     b.ne Ltb_dw_reduce
     ldr x8, [sp, #184]

@@ -301,3 +301,92 @@ def test_failed_report_preserves_error_evidence_and_refuses_overwrite(tmp_path, 
     with pytest.raises(FileExistsError):
         sweep_report.create_report(results, tmp_path / "inputs", output)
     assert (output / "audit.json").read_bytes() == before
+
+
+def v4_campaign():
+    from transformer.backend import FIELDS
+
+    manifest, children = synthetic_campaign()
+    manifest["protocol_version"] = "v4"
+    manifest["backend_preflights"] = {}
+    for width in spec.WIDTHS:
+        key = str(width)
+        values = [1, 0, 0, 1, 1, 64, 0, 0, 0, 0]
+        values[6 if width >= 64 else 8] = 94040
+        values[7 if width >= 64 else 9] = 81920
+        backend = dict(zip(FIELDS, values, strict=True))
+        main = manifest["preflights"][key]
+        main["backend"] = backend
+        modes = {}
+        for policy, number in (("neon", 1), ("sme", 2)):
+            selected = copy.deepcopy(main)
+            selected["backend"]["requested_policy"] = number
+            if policy == "neon":
+                selected["backend"].update(
+                    selected_kind=0,
+                    sme_forward_calls=0,
+                    sme_backward_calls=0,
+                    neon_forward_calls=94040,
+                    neon_backward_calls=81920,
+                )
+            modes[policy] = selected
+        manifest["backend_preflights"][key] = modes
+        for entry in manifest["runs"]:
+            if entry["width"] == width and entry["implementation"] == "arm64":
+                entry.update(
+                    backend=copy.deepcopy(backend),
+                    backend_environment="auto",
+                    backend_valid=True,
+                    backend_sha256="authenticated",
+                )
+        children[width].update(
+            protocol_version="v4",
+            preflight=copy.deepcopy(main),
+            backend_preflights=copy.deepcopy(modes),
+            runs=copy.deepcopy([row for row in manifest["runs"] if row["width"] == width]),
+        )
+    return manifest, children
+
+
+def test_v4_requires_complete_forced_mode_gates_and_actual_dispatch():
+    manifest, children = v4_campaign()
+    checks = Checks()
+    sweep_report.validate_manifest(manifest, children, checks)
+    assert checks.passed
+    manifest["backend_preflights"]["64"].pop("sme")
+    with pytest.raises(ValueError, match="forced-backend"):
+        sweep_report.validate_manifest(manifest, children, Checks())
+
+
+def test_v4_rejects_backend_counter_and_nested_protocol_mismatches():
+    manifest, children = v4_campaign()
+    children[128]["protocol_version"] = "v3"
+    with pytest.raises(ValueError, match="manifest_status"):
+        sweep_report.validate_manifest(manifest, children, Checks())
+    manifest, children = v4_campaign()
+    entry = next(row for row in manifest["runs"] if row["implementation"] == "arm64")
+    entry["backend"]["neon_forward_calls"] -= 1
+    children[entry["width"]]["runs"] = copy.deepcopy(
+        [row for row in manifest["runs"] if row["width"] == entry["width"]]
+    )
+    with pytest.raises(ValueError, match="counters"):
+        sweep_report.validate_manifest(manifest, children, Checks())
+
+
+def test_v4_aggregation_preserves_separate_auto_forced_and_combined_counts():
+    manifest, _ = v4_campaign()
+    summaries = synthetic_summaries(manifest)
+    for width, summary in summaries.items():
+        summary.update(
+            protocol_version="v4",
+            forced_backend_preflight_check_count=2,
+            all_backend_preflight_check_count=3,
+            backend=manifest["preflights"][str(width)]["backend"],
+        )
+    aggregate = sweep_report.aggregate_summaries(manifest, summaries, Checks())
+    assert all(
+        item["forced_backend_preflight_check_count"] == 2 for item in aggregate["by_width"].values()
+    )
+    summaries[64]["forced_backend_preflight_check_count"] = 99
+    with pytest.raises(ValueError, match="forced_backend_counts"):
+        sweep_report.aggregate_summaries(manifest, summaries, Checks())

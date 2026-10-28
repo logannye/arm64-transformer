@@ -61,10 +61,14 @@ def create_cases(libraries, np, torch):
     ttargets = torch.from_numpy(targets.astype(np.int64))
     with torch.no_grad():
         logits, trace = model(ttokens, return_trace=True)
+    model.zero_grad(set_to_none=True)
+    F.cross_entropy(model(ttokens).reshape(-1, spec.VOCAB), ttargets).backward()
+    expected_model_gradients = model.flat_gradients()
 
     cases = {}
     keepalive = []
     sanity = []
+    native_instances = {}
 
     def add(name, call, scope):
         cases[name] = {"call": call, "scope": scope}
@@ -89,9 +93,9 @@ def create_cases(libraries, np, torch):
     def feature(name):
         return np.ascontiguousarray(trace[name].squeeze(0).numpy(), dtype=np.float32)
 
-    def check(name, actual, expected):
+    def check(name, actual, expected, tolerance="forward"):
         expected = expected.detach().numpy() if isinstance(expected, torch.Tensor) else expected
-        np.testing.assert_allclose(actual, expected, **TOLERANCES["forward"])
+        np.testing.assert_allclose(actual, expected, **TOLERANCES[tolerance])
         sanity.append(
             {"name": name, "max_absolute_error": float(np.max(np.abs(actual - expected)))}
         )
@@ -111,7 +115,11 @@ def create_cases(libraries, np, torch):
         tx, tw, tb = map(torch.from_numpy, (x, w, b))
         with torch.no_grad():
             expected = F.linear(tx, tw, tb)
-        linear_inputs[prefix] = (x, w, b, shape, dy, expected)
+        differentiable = [value.detach().clone().requires_grad_() for value in (tx, tw, tb)]
+        expected_gradients = torch.autograd.grad(
+            F.linear(*differentiable), differentiable, torch.from_numpy(dy)
+        )
+        linear_inputs[prefix] = (x, w, b, shape, dy, expected, expected_gradients)
         add(
             f"pytorch/linear_forward_{prefix}",
             lambda x=tx, w=tw, b=tb: F.linear(x, w, b),
@@ -178,10 +186,14 @@ def create_cases(libraries, np, torch):
 
     for label, path in libraries.items():
         native = Native(path, verify_model=label != "baseline")
+        native_instances[label] = native
         keepalive.append(native)
         workspace = native.forward(params, tokens)
         check(f"{label}/full_forward", workspace_tensor(workspace, "logits"), logits.squeeze(0))
         gradients = np.zeros_like(params)
+        native.backward(params, tokens, targets, workspace, gradients)
+        check(f"{label}/full_backward", gradients, expected_model_gradients, "gradient")
+        gradients.fill(0)
         add(
             f"{label}/ffi_zero_length_relu",
             bind(native, "relu_forward", workspace, workspace, 0),
@@ -197,7 +209,7 @@ def create_cases(libraries, np, torch):
             bind(native, "backward", params, tokens, targets, workspace, gradients),
             "Native backward plus loss, reusing saved forward activations; gradients accumulate",
         )
-        for prefix, (x, w, b, shape, dy, expected) in linear_inputs.items():
+        for prefix, (x, w, b, shape, dy, expected, expected_gradients) in linear_inputs.items():
             y = np.empty(dy.shape, dtype=np.float32)
             call = bind(native, "linear_forward", x, w, b, y, shape)
             call()
@@ -208,9 +220,17 @@ def create_cases(libraries, np, torch):
                 "Native linear forward; preallocated output",
             )
             dx, dw, db = np.empty_like(x), np.zeros_like(w), np.zeros_like(b)
+            backward = bind(native, "linear_backward", x, w, dy, dx, dw, db, shape)
+            backward()
+            for suffix, actual, wanted in zip(
+                ("dx", "dw", "db"), (dx, dw, db), expected_gradients, strict=True
+            ):
+                check(f"{label}/linear_backward_{prefix}/{suffix}", actual, wanted, "gradient")
+            dw.fill(0)
+            db.fill(0)
             add(
                 f"{label}/linear_backward_{prefix}",
-                bind(native, "linear_backward", x, w, dy, dx, dw, db, shape),
+                backward,
                 "Native linear backward; dX overwritten, dW/db accumulate in preallocated buffers",
             )
 
@@ -248,7 +268,7 @@ def create_cases(libraries, np, torch):
             bind(native, "cross_entropy", loss_logits, targets, dlogits, spec.CONTEXT, spec.VOCAB),
             "Native mean cross-entropy and logit gradient together; preallocated gradient",
         )
-    return cases, keepalive, sanity
+    return cases, keepalive, sanity, native_instances
 
 
 def main():
@@ -256,6 +276,9 @@ def main():
     parser.add_argument("--library", type=Path)
     parser.add_argument("--baseline-library", type=Path)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--phase", default="Synthetic kernel diagnostic")
+    parser.add_argument("--blocks", type=int, default=BLOCKS)
+    parser.add_argument("--calls", type=int, default=CALLS)
     args = parser.parse_args()
     sys.path.insert(0, str(ROOT))
     from transformer import spec
@@ -264,6 +287,8 @@ def main():
         args.library = ROOT / f"native/build/width-{spec.WIDTH}/libtransformer.dylib"
     if args.output.exists():
         parser.error("Output exists; choose a fresh diagnostic JSON path")
+    if not 2 <= args.blocks <= 100 or not 1 <= args.calls <= 10000:
+        parser.error("Require 2..100 blocks and 1..10000 calls per block")
     if platform.system() != "Darwin" or platform.machine() != "arm64":
         parser.error("Native kernel diagnostics require macOS ARM64")
     libraries = {"candidate": args.library.resolve()}
@@ -281,7 +306,8 @@ def main():
     torch.set_num_threads(1)
     torch.set_num_interop_threads(1)
     torch.use_deterministic_algorithms(True)
-    cases, keepalive, sanity = create_cases(libraries, np, torch)
+    cases, keepalive, sanity, native_instances = create_cases(libraries, np, torch)
+    backend_before = {name: native.backend_identity for name, native in native_instances.items()}
     samples = {name: [] for name in cases}
     keys = list(cases)
     block_orders = []
@@ -289,7 +315,7 @@ def main():
         for value in cases.values():
             for _ in range(WARMUPS):
                 value["call"]()
-        for block in range(BLOCKS):
+        for block in range(args.blocks):
             rotation = block // 2
             order = keys[rotation:] + keys[:rotation]
             if block % 2:
@@ -298,14 +324,14 @@ def main():
             for name in order:
                 call = cases[name]["call"]
                 start = time.perf_counter_ns()
-                for _ in range(CALLS):
+                for _ in range(args.calls):
                     call()
-                samples[name].append((time.perf_counter_ns() - start) / CALLS / 1000)
+                samples[name].append((time.perf_counter_ns() - start) / args.calls / 1000)
     if any(sha256(path) != library_hashes[name] for name, path in libraries.items()):
         raise RuntimeError("A native library changed during measurement; diagnostic rejected")
     result = {
         "scope": (
-            "Synthetic seed-777, post-study kernel diagnostics; no study data or checkpoints. "
+            "Synthetic seed-777 kernel diagnostics; no study data or checkpoints. "
             "Native buffers and ctypes pointers are preallocated; one CPU compute thread. "
             "Every observation includes Python/FFI or PyTorch dispatch. No FFI subtraction. "
             "Native backward repeats reuse saved activations and accumulate parameter gradients. "
@@ -313,10 +339,12 @@ def main():
             "cannot be treated as additive runtime shares or as replacements for matched-study "
             "timings. The PyTorch loss-only case excludes the gradient produced by native loss."
         ),
+        "phase": args.phase,
+        "model": spec.model_metadata(),
         "seed": SEED,
         "warmups": WARMUPS,
-        "blocks": BLOCKS,
-        "calls_per_block": CALLS,
+        "blocks": args.blocks,
+        "calls_per_block": args.calls,
         "order_rule": "Paired forward/reverse blocks, rotated left by block index // 2",
         "block_orders": block_orders,
         "case_order": keys,
@@ -330,11 +358,16 @@ def main():
         "torch_threads": torch.get_num_threads(),
         "torch_interop_threads": torch.get_num_interop_threads(),
         "thread_environment": {key: os.environ[key] for key in THREAD_KEYS},
+        "backend_environment": os.environ.get("ARM64_TRANSFORMER_BACKEND", "auto"),
+        "backend_before_timing": backend_before,
+        "backend_after_timing": {
+            name: native.backend_identity for name, native in native_instances.items()
+        },
         "libraries": {
             name: {"path": str(path), "sha256": library_hashes[name]}
             for name, path in libraries.items()
         },
-        "forward_sanity_checks": sanity,
+        "sanity_checks": sanity,
         "cases": {
             name: {
                 "scope": cases[name]["scope"],

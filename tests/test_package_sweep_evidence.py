@@ -6,6 +6,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import struct
 import subprocess
 import tarfile
 from pathlib import Path
@@ -35,7 +36,26 @@ def audit(name="passed"):
     }
 
 
-def evidence_tree(tmp_path):
+def synthetic_backend(width, policy=0):
+    names = (
+        "version",
+        "init_status",
+        "requested_policy",
+        "selected_kind",
+        "sme_supported",
+        "streaming_vector_bytes",
+        "sme_forward_calls",
+        "sme_backward_calls",
+        "neon_forward_calls",
+        "neon_backward_calls",
+    )
+    values = [1, 0, policy, int(policy != 1), 1, 64, 0, 0, 0, 0]
+    active = 6 if width >= 64 and policy != 1 else 8
+    values[active : active + 2] = [94040, 81920]
+    return dict(zip(names, values, strict=True))
+
+
+def evidence_tree(tmp_path, protocol="v3"):
     """Build tiny fake payload bytes with real, internally consistent identity hashes."""
     repo = tmp_path / "repository"
     repo.mkdir()
@@ -63,13 +83,14 @@ def evidence_tree(tmp_path):
     )
     manifest = {
         "status": "completed",
-        "protocol_version": "v3",
+        "protocol_version": protocol,
         "widths": list(packager.WIDTHS),
         "revision": revision,
         "source_sha256": {"source.txt": packager.digest(repo / "source.txt")},
         "models": {},
         "fixtures": {},
         "preflights": {},
+        "backend_preflights": {},
         "runs": [],
         "order": packager.expected_order(),
     }
@@ -107,6 +128,15 @@ def evidence_tree(tmp_path):
             path.write_text(f"{width} {filename}\n")
             preflight[stem + "_path"] = relative
             preflight[stem + "_sha256"] = packager.digest(path)
+        if protocol == "v4":
+            preflight["backend"] = synthetic_backend(width)
+            modes = {}
+            for mode, number in (("neon", 1), ("sme", 2)):
+                modes[mode] = copy.deepcopy(preflight)
+                modes[mode]["backend"] = synthetic_backend(width, number)
+                write_json(preflights / f"{tag}-{mode}.json", modes[mode])
+                write_json(reports / tag / f"preflight-{mode}.json", modes[mode])
+            manifest["backend_preflights"][key] = modes
         manifest["preflights"][key] = preflight
         write_json(preflights / f"{tag}.json", preflight)
         manifest["fixtures"][key] = {}
@@ -139,12 +169,22 @@ def evidence_tree(tmp_path):
         )
         directory = results / f"width-{width}" / name
         directory.mkdir(parents=True)
+        if protocol == "v4" and impl == "arm64":
+            backend = synthetic_backend(width)
+            backend_path = directory / "backend.u64"
+            backend_path.write_bytes(struct.pack("<10Q", *backend.values()))
+            manifest["runs"][-1].update(
+                backend=backend,
+                backend_sha256=packager.digest(backend_path),
+                backend_valid=True,
+                backend_environment="auto",
+            )
         for artifact in packager.RUN_FILES:
             (directory / artifact).write_bytes(f"{width} {name} {artifact}\n".encode())
     write_json(results / "manifest.json", manifest)
     summary = {
         "status": "completed",
-        "protocol_version": "v3",
+        "protocol_version": protocol,
         "widths": list(packager.WIDTHS),
         "revision": revision,
         "source_sha256": manifest["source_sha256"],
@@ -157,6 +197,8 @@ def evidence_tree(tmp_path):
         "by_width": {},
         "runs": [],
     }
+    if protocol == "v4":
+        summary.update(forced_backend_preflight_check_count=8, all_backend_preflight_check_count=12)
     for width in packager.WIDTHS:
         key, tag = str(width), f"width-{width}"
         selected = {
@@ -173,6 +215,8 @@ def evidence_tree(tmp_path):
             runs=[row for row in manifest["runs"] if row["width"] == width],
             order=[list(row[1:]) for row in packager.expected_order() if row[0] == width],
         )
+        if protocol == "v4":
+            selected["backend_preflights"] = manifest["backend_preflights"][key]
         write_json(results / tag / "manifest.json", selected)
         child = {
             field: selected[field]
@@ -186,6 +230,10 @@ def evidence_tree(tmp_path):
             aggregate={"synthetic": width},
             runs=[],
         )
+        if protocol == "v4":
+            child.update(
+                forced_backend_preflight_check_count=2, all_backend_preflight_check_count=3
+            )
         for row in selected["runs"]:
             name = row["name"]
             directory = results / tag / name
@@ -203,6 +251,8 @@ def evidence_tree(tmp_path):
                 "checkpoint_predictions_recomputed": True,
                 "quality": {"tokens": 256 * 32},
             }
+            if protocol == "v4" and row["implementation"] == "arm64":
+                run["backend"] = row["backend"]
             child["runs"].append(run)
             summary["runs"].append(run | {"width": width, "relative_run": tag + "/" + name})
         write_json(reports / tag / "summary.json", child)
@@ -369,3 +419,44 @@ def test_archive_verifier_rejects_corrupted_payload(tmp_path):
                 archive.addfile(info, io.BytesIO(data))
     with pytest.raises(ValueError, match="Archive checksum failed"):
         packager.verify_archive(path)
+
+
+def test_v4_packaging_requires_forced_gates_and_raw_backend_bytes(tmp_path):
+    args = evidence_tree(tmp_path, protocol="v4")
+    manifest, summary, extra = packager.validate_evidence(
+        args.inputs, args.results, args.report, args.preflight_dir, args.repo
+    )
+    assert manifest["protocol_version"] == "v4"
+    assert summary["all_backend_preflight_check_count"] == 12
+    assert "preflights/width-256-sme.json" in extra
+    path = args.results / "width-64/seed-42-repeat-1-arm64/backend.u64"
+    path.write_bytes(path.read_bytes()[:-1])
+    with pytest.raises(ValueError):
+        packager.validate_evidence(
+            args.inputs, args.results, args.report, args.preflight_dir, args.repo
+        )
+
+
+def test_extra_evidence_is_labeled_retained_and_hashed(tmp_path):
+    args = evidence_tree(tmp_path)
+    extra = tmp_path / "profile"
+    extra.mkdir()
+    (extra / "samples.txt").write_text("synthetic CPU profile")
+    args.extra_evidence = [f"baseline-profile={extra}"]
+    result = packager.package(args)
+    assert result["extra_evidence"] == [
+        {"name": "baseline-profile", "directory": str(extra), "files": 1}
+    ]
+    members = packager.verify_archive(args.output)
+    assert members["development/baseline-profile/samples.txt"] == packager.digest(
+        extra / "samples.txt"
+    )
+
+
+@pytest.mark.parametrize("name", ["../escape", "nested/name", "", "a.b"])
+def test_extra_evidence_rejects_unsafe_archive_names(tmp_path, name):
+    args = evidence_tree(tmp_path)
+    args.extra_evidence = [f"{name}={args.results}"]
+    with pytest.raises(ValueError, match="simple unique name"):
+        packager.package(args)
+    assert not args.output.exists()

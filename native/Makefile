@@ -3,7 +3,8 @@ PYTHON ?= python3
 WIDTH ?= 32
 BUILD := build/width-$(WIDTH)
 FLAGS := -arch arm64 -O2 -I$(BUILD)
-OBJECTS := $(BUILD)/kernels.o $(BUILD)/linear.o $(BUILD)/attention.o \
+SME_FLAGS := -march=armv9-a+sme
+OBJECTS := $(BUILD)/kernels.o $(BUILD)/linear.o $(BUILD)/linear_sme.o $(BUILD)/backend.o $(BUILD)/attention.o \
            $(BUILD)/softmax.o $(BUILD)/normalization.o $(BUILD)/model.o
 .PHONY: all widths clean
 all: $(BUILD)/transformer-arm64 $(BUILD)/libtransformer.dylib
@@ -18,6 +19,10 @@ $(BUILD)/layout.inc: ../transformer/spec.py | $(BUILD)
 	ARM64_TRANSFORMER_WIDTH=$(WIDTH) PYTHONPATH=.. $(PYTHON) -m transformer.spec --output $@
 $(BUILD)/%.o: %.S $(BUILD)/layout.inc | $(BUILD)
 	$(CLANG) $(FLAGS) -c $< -o $@
+$(BUILD)/linear_sme.o: linear_sme.S $(BUILD)/layout.inc | $(BUILD)
+	$(CLANG) $(FLAGS) $(SME_FLAGS) -c $< -o $@
+$(BUILD)/backend.o: backend.S $(BUILD)/layout.inc | $(BUILD)
+	$(CLANG) $(FLAGS) $(SME_FLAGS) -c $< -o $@
 $(BUILD)/libtransformer.dylib: $(OBJECTS)
 	$(CLANG) -arch arm64 -dynamiclib $(OBJECTS) -o $@
 $(BUILD)/transformer-arm64: $(OBJECTS) $(BUILD)/runtime.o

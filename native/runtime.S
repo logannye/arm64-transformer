@@ -354,6 +354,8 @@ _main:
  bl _strlen
  cmp x0,#1800
  b.hi Rfail
+ bl _tf_backend_init
+ cbnz x0,Rfail
  ADDR x0,Rtimebase
  bl _mach_timebase_info
  cbnz w0,Rfail
@@ -632,6 +634,12 @@ Rtime:
  ADDR x1,Rperformance
  mov x2,#64
  bl Rwrite
+ ADDR x0,Rbackend
+ bl _tf_backend_info
+ ADDR x0,Lbackend
+ ADDR x1,Rbackend
+ mov x2,#80
+ bl Rwrite
  mov w0,#0
  LEAVE
 
@@ -654,6 +662,7 @@ Lhistory: .asciz "history.f64"
 Llogits: .asciz "test_logits.f32"
 Ltimings: .asciz "timings.f64"
 Lperformance: .asciz "performance.f64"
+Lbackend: .asciz "backend.u64"
 .section __TEXT,__const
 .p2align 3
 Lmillion: .double 1000000
@@ -683,4 +692,5 @@ Linf: .quad 0x7ff0000000000000
 .zerofill __DATA,__bss,Rtrainstart,8,3
 .zerofill __DATA,__bss,Rusagebuf,256,4
 .zerofill __DATA,__bss,Rperformance,64,3
+.zerofill __DATA,__bss,Rbackend,80,3
 .zerofill __DATA,__bss,Rtimings,800,3
