@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "arm64-transformer"
+version = "0.1.0"
+description = "A matched small-transformer comparison: PyTorch and handwritten Apple ARM64 assembly."
+requires-python = ">=3.11"
+dependencies = ["numpy>=2,<3", "torch>=2.6,<3"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "ruff>=0.9,<1"]
+report = ["matplotlib>=3.9,<4", "psutil>=6,<8"]
+
+[tool.setuptools.packages.find]
+include = ["transformer*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
