@@ -15,6 +15,7 @@ import json
 import math
 import re
 import statistics
+import struct
 import subprocess
 import sys
 from collections import Counter
@@ -82,6 +83,50 @@ LEDGER_KEYS = (
     "blocks",
     "environment",
 )
+SOURCE_FILES = {
+    *(
+        f"transformer/{name}.py"
+        for name in (
+            "spec",
+            "reference",
+            "precision",
+            "precision_audit",
+            "validate",
+            "gpu_precision",
+            "gpu_run",
+            "gpu_inputs",
+            "gpu_contract",
+            "gpu_metal",
+            "gpu_policy",
+            "gpu_optimize",
+            "gpu_qkv_optimize",
+        )
+    ),
+    "native/metal/kernels.metal",
+    "native/metal/optimized.metal",
+    "native/metal/qkv.metal",
+    "native/metal/backend.mm",
+    "native/metal/Makefile",
+    "native/metal/build/libtransformer_metal.dylib",
+    "scripts/check_metal_qkv_optimization.py",
+    "scripts/check_metal_norm_qkv.py",
+    "scripts/profile_gpu.py",
+    "experiments/PROTOCOL-gpu-v3-qkv.md",
+    "experiments/gpu-v3-qkv/candidates.json",
+    "experiments/gpu-v2/policies/selected.json",
+}
+PINS = {
+    "PYTORCH_ENABLE_MPS_FALLBACK": "0",
+    "PYTORCH_MPS_FAST_MATH": "0",
+    "PYTORCH_MPS_PREFER_METAL": "0",
+    "MLX_ENABLE_TF32": "0",
+    "MLX_DISABLE_COMPILE": "0",
+    "MLX_SDPA_VJP_FALLBACK": "0",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+}
 
 
 def sha(value):
@@ -154,16 +199,21 @@ def paired_summary(pair, mode, order_offset=0):
     return summary
 
 
-def comparison(check):
+def comparison(check, *, shape=None, tolerance=None):
     require(
         check.get("passed") is True and check.get("failed_coordinates") == 0,
         "Failed or incomplete numerical comparison",
     )
     require(
         check.get("actual_shape") == check.get("expected_shape")
-        and isinstance(check.get("actual_shape"), list),
+        and isinstance(check.get("actual_shape"), list)
+        and all(type(n) is int and n > 0 for n in check["actual_shape"]),
         "Comparison shape mismatch",
     )
+    if shape is not None:
+        require(check["actual_shape"] == list(shape), "Wrong declared numerical shape")
+    if tolerance is not None:
+        require(check.get("tolerance") == tolerance, "Changed numerical tolerance assignment")
     count = math.prod(check["actual_shape"])
     require(check.get("coordinate_count") == count and count > 0, "Wrong comparison size")
     require(check.get("failure_examples") == [], "Retained numerical failures")
@@ -187,6 +237,55 @@ def checks(values, names=None):
         comparison(value)
 
 
+def specified_checks(values, specification):
+    """Match every named equation to its prespecified shape and tolerance."""
+    checks(values, [name for name, _, _ in specification])
+    for value, (_, shape, tolerance) in zip(values, specification, strict=True):
+        comparison(value, shape=shape, tolerance=tolerance)
+
+
+def parameter_sizes(width):
+    require(width in WIDTHS, "Unsupported model width")
+    return dict(
+        zip(
+            PARAMETERS,
+            (
+                128 * width,
+                32 * width,
+                width,
+                width,
+                3 * width * width,
+                3 * width,
+                width * width,
+                width,
+                width,
+                width,
+                2 * width * width,
+                2 * width,
+                2 * width * width,
+                width,
+                width,
+                width,
+                128 * width,
+                128,
+            ),
+            strict=True,
+        )
+    )
+
+
+def array_identity(value, shape, dtype="float32"):
+    require(
+        isinstance(value, dict)
+        and set(value) == {"dtype", "shape", "bytes", "sha256"}
+        and value.get("shape") == list(shape)
+        and value.get("dtype") == dtype
+        and value.get("bytes") == 4 * math.prod(shape)
+        and sha(value.get("sha256")),
+        "Wrong array dtype, shape, byte count, or hash",
+    )
+
+
 def controls(value, names=None):
     require(
         isinstance(value, dict) and value and all(v is True for v in value.values()),
@@ -196,15 +295,23 @@ def controls(value, names=None):
         require(set(value) == set(names), "Missing behavioral control")
 
 
-def full_model(value):
+def full_model(value, width):
     require(value.get("passed") is True, "Full-model qualification failed")
-    names = [
-        f"B{b}/{n}"
-        for b in (1, 16)
-        for n in ("logits", "loss", *(f"gradient/{p}" for p in PARAMETERS))
+    sizes = parameter_sizes(width)
+    specification = []
+    for batch in (1, 16):
+        specification += [
+            (f"B{batch}/logits", [batch, 32, 128], "forward"),
+            (f"B{batch}/loss", [], "forward"),
+        ]
+        specification += [
+            (f"B{batch}/gradient/{name}", [size], "gradient") for name, size in sizes.items()
+        ]
+    specification += [
+        (f"fixed_gradient_adam/{name}", [sum(sizes.values())], "optimizer")
+        for name in ("m", "v", "parameters")
     ]
-    names += [f"fixed_gradient_adam/{n}" for n in ("m", "v", "parameters")]
-    checks(value.get("checks"), names)
+    specified_checks(value.get("checks"), specification)
     expected = [
         f"B{b}/{n}"
         for b in (1, 16)
@@ -261,6 +368,51 @@ def stress_names(width, complete):
     return names
 
 
+def norm_shapes(rows, width):
+    return {
+        "norm": {"output": [rows, width], "norm": [rows, width], "inv": [rows]},
+        "linear": {
+            "output": [rows, 3 * width],
+            "dx": [rows, width],
+            "dweight": [3 * width, width],
+            "dbias": [3 * width],
+        },
+        "backward": {
+            "output": [rows, width],
+            "norm": [rows, width],
+            "inv": [rows],
+            "dx": [rows, width],
+            "dgamma": [width],
+            "dbeta": [width],
+        },
+    }
+
+
+def norm_specification(name, rows, width):
+    return [
+        (name + "/" + suffix, shape, tolerance)
+        for suffix, shape, tolerance in (
+            ("joint/normalized_fp64", [rows, width], "forward"),
+            ("joint/inverse_std_fp64", [rows], "math"),
+            ("joint/ln_fp64", [rows, width], "forward"),
+            ("joint/qkv_fp64", [rows, 3 * width], "forward"),
+            ("joint/dx_fp64", [rows, width], "gradient"),
+            ("joint/dgamma_fp64", [width], "gradient"),
+            ("joint/dbeta_fp64", [width], "gradient"),
+            ("joint/dweight_fp64", [3 * width, width], "gradient"),
+            ("joint/dbias_fp64", [3 * width], "gradient"),
+            ("joint/dln_fp64", [rows, width], "gradient"),
+            ("linear_same_operands/output_fp64", [rows, 3 * width], "forward"),
+            ("linear_same_operands/dln_fp64", [rows, width], "gradient"),
+            ("linear_same_operands/dweight_fp64", [3 * width, width], "gradient"),
+            ("linear_same_operands/dbias_fp64", [3 * width], "gradient"),
+            ("norm_same_incoming/dx_fp64", [rows, width], "gradient"),
+            ("norm_same_incoming/dgamma_fp64", [width], "gradient"),
+            ("norm_same_incoming/dbeta_fp64", [width], "gradient"),
+        )
+    ]
+
+
 def stress(value, width, complete):
     require(
         [v.get("name") for v in value] == stress_names(width, complete),
@@ -268,8 +420,22 @@ def stress(value, width, complete):
     )
     for index, case in enumerate(value):
         require(case.get("passed") is True, "Stress case failed")
-        checks(case.get("checks"))
+        name = case["name"]
         if index < 22:
+            rows = (
+                int(name.removeprefix("random_rows"))
+                if name.startswith("random_rows")
+                else 32
+                if name == "qkv_common_bias"
+                else 3
+            )
+            require(
+                case.get("rows") == rows
+                and case.get("width") == width
+                and case.get("epsilon") == 1e-5,
+                "Changed normalization shape/epsilon",
+            )
+            specified_checks(case.get("checks"), norm_specification(name, rows, width))
             require(
                 all(
                     case.get(k) is True
@@ -284,10 +450,69 @@ def stress(value, width, complete):
                 "Normalization/QKV control failed",
             )
             require(case.get("failed_checks") == [], "Failed normalization/QKV checks")
-            controls(case.get("repeat_checks"))
+            shapes = norm_shapes(rows, width)
+            controls(
+                case.get("repeat_checks"),
+                [f"{stage}/{key}" for stage, outputs in shapes.items() for key in outputs],
+            )
+            identities = case.get("output_identity", {})
+            require(set(identities) == set(shapes), "Missing normalization output stage")
+            for stage, outputs in shapes.items():
+                require(set(identities[stage]) == set(outputs), "Missing normalization output")
+                for key, shape in outputs.items():
+                    array_identity(identities[stage][key], shape)
+            operands = {
+                "x": [rows, width],
+                "gamma": [width],
+                "beta": [width],
+                "weight": [3 * width, width],
+                "bias": [3 * width],
+                "dqkv": [rows, 3 * width],
+            }
+            require(set(case.get("fixture", {})) == set(operands), "Missing normalization operands")
+            for key, shape in operands.items():
+                array_identity(case["fixture"][key], shape)
         elif index < 45:
-            controls(case.get("controls"))
+            tokens = int(name.split("_t")[1]) if name.startswith(("random_t", "prefix_t")) else 32
+            specified_checks(
+                case.get("checks"),
+                [
+                    (name + "/" + key, shape, tolerance)
+                    for key, shape, tolerance in (
+                        ("output", [tokens, width], "forward"),
+                        ("probabilities", [4, tokens, tokens], "math"),
+                        ("dqkv", [tokens, 3 * width], "gradient"),
+                        ("same_stored_probability_gradient", [tokens, 3 * width], "gradient"),
+                        ("mass", [4, tokens], "math"),
+                    )
+                ],
+            )
+            expected_controls = ["exact_repeat", "guards", "mask_exact_zero"]
+            if tokens > 1:
+                expected_controls += [
+                    "causal_future_intervention",
+                    "prefix_gradient_exact",
+                    "future_gradient_exact_zero",
+                ]
+            controls(case.get("controls"), expected_controls)
         else:
+            if index < 51:
+                rows, n, k = (int(v) for v in name.split("_")[1:])
+                specification = [
+                    ("output", [rows, n], "forward"),
+                    ("dx", [rows, k], "gradient"),
+                    ("dweight", [n, k], "gradient"),
+                    ("dbias", [n], "gradient"),
+                ]
+            else:
+                specification = [
+                    ("token", [128 * width], "gradient"),
+                    ("position", [32 * width], "gradient"),
+                ]
+            specified_checks(
+                case.get("checks"),
+                [(name + "/" + key, shape, tolerance) for key, shape, tolerance in specification],
+            )
             require(
                 case.get("exact_repeat") is True and case.get("guards") is True,
                 "Dense/embedding behavioral failure",
@@ -306,31 +531,74 @@ def direct_qkv(value, width):
     )
     cases = value.get("cases", [])
     require([v.get("name") for v in cases] == DIRECT_NAMES, "Incomplete direct QKV cases")
+    specifications = []
+    for index, name in enumerate(DIRECT_NAMES):
+        rows = DIRECT_ROWS[index] if index < len(DIRECT_ROWS) else 3
+        specifications.append(
+            {
+                "name": name,
+                "width": width,
+                "rows": rows,
+                "kind": "random" if index < len(DIRECT_ROWS) else name,
+                "x_shape": [rows, width],
+                "weight_shape": [3 * width, width],
+                "bias_shape": [3 * width],
+                "dy_shape": [rows, 3 * width],
+            }
+        )
+    require(value.get("inventory") == specifications, "Incomplete direct QKV inventory")
     require(
-        [v.get("name") for v in value.get("inventory", [])] == DIRECT_NAMES,
-        "Incomplete direct QKV inventory",
+        value.get("scope") == "development_only_no_admission_operands_or_formal_measurement",
+        "Wrong direct QKV stream scope",
     )
-    for case in cases:
+    for case, spec in zip(cases, specifications, strict=True):
+        rows = spec["rows"]
         require(
-            case.get("passed") is True and case.get("width") == width,
+            case.get("passed") is True
+            and all(case.get(k) == spec[k] for k in ("width", "rows", "kind")),
             "Direct QKV qualification failed",
         )
-        controls(case.get("controls"))
-        expected = [
-            f"{case['name']}/{label}/{name}/fp64"
-            for name in ("output", "dx", "dweight", "dbias")
-            for label in ("reference", "candidate")
+        outputs = {
+            "output": [rows, 3 * width],
+            "dx": [rows, width],
+            "dweight": [3 * width, width],
+            "dbias": [3 * width],
+        }
+        expected_controls = [
+            "oracle_keys",
+            "oracle_crosscheck",
+            "reference_input_immutability",
+            "candidate_input_immutability",
+            "reference_keys",
+            "candidate_keys",
+            "reference_repeat_exact",
+            "candidate_repeat_exact",
+            "reference_guards",
+            "candidate_guards",
         ]
-        checks(case.get("checks"), expected)
+        expected_controls += [
+            f"{label}/{name}/dtype" for name in outputs for label in ("reference", "candidate")
+        ]
+        expected_controls += [f"{name}/reference_exact" for name in outputs]
+        controls(case.get("controls"), expected_controls)
+        specified_checks(
+            case.get("checks"),
+            [
+                (
+                    f"{case['name']}/{label}/{name}/fp64",
+                    shape,
+                    "forward" if name == "output" else "gradient",
+                )
+                for name, shape in outputs.items()
+                for label in ("reference", "candidate")
+            ],
+        )
         require(
             set(case.get("operands", {})) == {"x", "weight", "bias", "dy"},
             "Missing direct QKV operands",
         )
-        for operand in case["operands"].values():
-            require(
-                sha(operand.get("sha256")) and operand.get("dtype") == "float32",
-                "Missing direct QKV operand identity",
-            )
+        for name, operand in case["operands"].items():
+            array_identity(operand, spec[name + "_shape"])
         output = case.get("output_identities", {})
         require(
             set(output) == {"reference", "candidate"}
@@ -338,8 +606,25 @@ def direct_qkv(value, width):
             and output["reference"] == output["candidate"],
             "QKV reference bytes changed",
         )
+        for label in ("reference", "candidate"):
+            for name, shape in outputs.items():
+                array_identity(output[label][name], shape)
         oracle = case.get("oracle_crosschecks", [])
-        require(len(oracle) == 12, "Missing independent FP64 crosschecks")
+        coordinates = {
+            "output": [(0, 0), (rows // 2, 3 * width // 2), (rows - 1, 3 * width - 1)],
+            "dx": [(0, 0), (rows // 2, width // 2), (rows - 1, width - 1)],
+            "dweight": [(0, 0), (3 * width // 2, width // 2), (3 * width - 1, width - 1)],
+            "dbias": [(0,), (3 * width // 2,), (3 * width - 1,)],
+        }
+        expected = [
+            (name, list(coordinate))
+            for name, positions in coordinates.items()
+            for coordinate in sorted(set(positions))
+        ]
+        require(
+            [(c.get("name"), c.get("coordinate")) for c in oracle] == expected,
+            "Missing, duplicated, or substituted independent FP64 crosschecks",
+        )
         for check in oracle:
             expected_limit = 1e-10 + 1e-10 * abs(check["expected"])
             same_number(check.get("allowed"), expected_limit, "Changed oracle tolerance")
@@ -355,7 +640,7 @@ def qualification(value, width, complete):
     require(value.get("passed") is True, "Unqualified candidate")
     standard = value.get("qualification", {})
     require(standard.get("passed") is True, "Missing standard qualification")
-    full_model(standard.get("full_model", {}))
+    full_model(standard.get("full_model", {}), width)
     stress(standard.get("stress", []), width, complete)
     direct_qkv(value.get("direct_qkv", {}), width)
 
@@ -368,7 +653,7 @@ def byte_equivalence(value):
     )
 
 
-def capability(cap, policy, source):
+def capability(cap, policy, source, width):
     require(
         cap.get("kernel_policy") == bundle(policy)
         and cap.get("kernel_policy_sha256") == identity(bundle(policy)),
@@ -386,12 +671,17 @@ def capability(cap, policy, source):
         and cap.get("storage_dtype") == "float32",
         "Changed backend or stored precision",
     )
+    require(
+        cap.get("width") == width
+        and cap.get("parameter_count") == sum(parameter_sizes(width).values()),
+        "Wrong backend model width or parameter count",
+    )
 
 
-def fresh_pair(value, before, after, source):
+def fresh_pair(value, before, after, source, width):
     summary = old.validate_fresh_pair(value)
     for label, policy in (("reference", before), ("candidate", after)):
-        capability(value.get("capabilities", {}).get(label, {}), policy, source)
+        capability(value.get("capabilities", {}).get(label, {}), policy, source, width)
     return summary
 
 
@@ -424,6 +714,22 @@ def conditions(value):
         )
 
 
+def verify_source_file(repository, relative, expected, revision):
+    path = old.safe_file(repository, relative)
+    require(old.digest(path) == expected, f"Stale source or binary: {relative}")
+    if not relative.endswith(".dylib"):
+        data = subprocess.run(
+            ["git", "show", f"{revision}:{relative}"],
+            cwd=repository,
+            capture_output=True,
+            check=False,
+        )
+        require(
+            data.returncode == 0 and hashlib.sha256(data.stdout).hexdigest() == expected,
+            f"Source was not frozen in the declared commit: {relative}",
+        )
+
+
 def verify_sources(value, repository):
     source = value.get("source_sha256")
     hash_map(source, "Missing source hashes")
@@ -431,32 +737,37 @@ def verify_sources(value, repository):
     require(set(value["input_sha256"]) == {"initial.f32", "train.i32"}, "Wrong data scope")
     revision = value.get("source_revision", "")
     require(re.fullmatch(r"[0-9a-f]{40}", revision) is not None, "Missing committed revision")
-    required = {
-        "native/metal/qkv.metal",
-        "native/metal/backend.mm",
-        "transformer/gpu_policy.py",
-        "transformer/gpu_qkv_optimize.py",
-        "scripts/check_metal_qkv_optimization.py",
-        "native/metal/build/libtransformer_metal.dylib",
-    }
-    require(required <= source.keys(), "Incomplete QKV source binding")
+    require(set(source) == SOURCE_FILES, "Incomplete QKV source binding")
     for relative, expected in source.items():
-        path = old.safe_file(repository, relative)
-        require(old.digest(path) == expected, f"Stale source or binary: {relative}")
-        if not relative.endswith(".dylib"):
-            data = subprocess.run(
-                ["git", "show", f"{revision}:{relative}"],
-                cwd=repository,
-                capture_output=True,
-                check=False,
-            )
-            require(
-                data.returncode == 0 and hashlib.sha256(data.stdout).hexdigest() == expected,
-                f"Source was not frozen in the declared commit: {relative}",
-            )
+        verify_source_file(repository, relative, expected, revision)
+    width = value["width"]
+    folder = f"results/inputs-v6/width-{width}/seed-42"
+    manifest = json.loads(old.safe_file(repository, folder + "/manifest.json").read_text())
+    require(
+        manifest.get("schema") == 2
+        and manifest["config"]["width"] == width
+        and manifest["config"]["seed"] == 42
+        and manifest["config"]["train_sequences"] == 2048,
+        "Wrong original training fixture",
+    )
+    sizes = {"initial.f32": sum(parameter_sizes(width).values()) * 4, "train.i32": 2048 * 33 * 4}
+    for name, expected in value["input_sha256"].items():
+        path = old.safe_file(repository, folder + "/" + name)
+        require(
+            path.stat().st_size == sizes[name]
+            and expected == manifest["sha256"][name] == old.digest(path),
+            "Substituted original training fixture bytes",
+        )
+    require(
+        all(value.get("environment", {}).get(k) == v for k, v in PINS.items())
+        and value["environment"].get("ARM64_TRANSFORMER_WIDTH") == str(width),
+        "Changed numerical environment pins",
+    )
 
 
-def preflight(root, relative, candidates, source, receipts):
+def preflight(root, relative, candidates, source, receipts, base_policy, width):
+    from transformer.gpu_optimize import pipeline_resource_checks
+
     value = receipts.read(root, relative, "search")
     require(
         value.get("source_sha256") == source
@@ -470,7 +781,7 @@ def preflight(root, relative, candidates, source, receipts):
         [r.get("id") for r in records] == [c["id"] for c in candidates],
         "Incomplete preflight inventory",
     )
-    for record in records:
+    for record, candidate in zip(records, candidates, strict=True):
         entry_relative = str(Path(str(relative) + ".entries") / record["evidence"])
         entry = receipts.read(root, entry_relative, "search")
         require(
@@ -485,6 +796,47 @@ def preflight(root, relative, candidates, source, receipts):
             identity(validate(entry["policy"])) == record["policy_sha256"],
             "Preflight policy hash mismatch",
         )
+        policy = apply_candidate(base_policy, candidate)
+        require(entry["policy"] == policy, "Wrong isolated/composed preflight policy")
+        status = entry["status"]
+        require(
+            status
+            in {
+                "supported",
+                "resource_rejected_unranked",
+                "compile_rejected_unranked",
+                "cleanup_rejected_unranked",
+            },
+            "Unknown preflight outcome",
+        )
+        if status in {"supported", "resource_rejected_unranked"}:
+            cap = entry.get("capabilities", {})
+            capability(cap, policy, source, width)
+            computed = pipeline_resource_checks(policy, cap)
+            require(
+                entry.get("resources") == computed
+                and computed["passed"] is (status == "supported"),
+                "Preflight resources disagree with actual capabilities",
+            )
+            require(
+                not entry.get("cleanup_errors") and "error" not in entry,
+                "Supported/resource-only candidate contains execution failure",
+            )
+        elif status == "compile_rejected_unranked":
+            require(
+                isinstance(entry.get("error"), str) and entry["error"],
+                "Compile rejection lost failure evidence",
+            )
+        else:
+            require(
+                isinstance(entry.get("cleanup_errors"), list)
+                and entry["cleanup_errors"]
+                and all(
+                    isinstance(e.get("stage"), str) and e.get("error")
+                    for e in entry["cleanup_errors"]
+                ),
+                "Cleanup rejection lost failure evidence",
+            )
     return {r["id"]: r["status"] == "supported" for r in records}
 
 
@@ -501,7 +853,7 @@ def select_group(group, mode, family, current, root, receipts, source, supported
         [r.get("id") for r in rows] == [c["id"] for c in candidates],
         "Missing, duplicated, or reordered candidate outcomes",
     )
-    measured, outcomes = [], Counter()
+    measured, outcomes, candidate_results = [], Counter(), []
     for index, (row, candidate) in enumerate(zip(rows, candidates, strict=True)):
         require(all(row.get(k) == v for k, v in candidate.items()), "Changed candidate identity")
         policy = apply_candidate(current, candidate)
@@ -520,6 +872,14 @@ def select_group(group, mode, family, current, root, receipts, source, supported
         )
         status = row.get("status")
         outcomes[status] += 1
+        candidate_summary = {
+            "id": row["id"],
+            "schedule": row["value"],
+            "status": status,
+            "candidate_over_current_incumbent_latency": None,
+            "latency_reduction_fraction": None,
+        }
+        candidate_results.append(candidate_summary)
         if not supported[row["id"]] or not composed[row["id"]]:
             require(
                 status == "compile_or_resource_rejected_unranked" and "paired_timing" not in row,
@@ -534,8 +894,15 @@ def select_group(group, mode, family, current, root, receipts, source, supported
             require(status == "qualified_measured", "Incomplete candidate outcome")
             qualification(row["qualification"], group["width"], False)
             conditions(row)
-            fresh_pair(row.get("fresh_pair", {}), current, policy, source)
+            fresh_pair(row.get("fresh_pair", {}), current, policy, source, group["width"])
             summary = paired_summary(row.get("paired_timing", {}), mode, index % 2)
+            candidate_summary.update(
+                candidate_over_current_incumbent_latency=summary[
+                    "candidate_over_reference_latency"
+                ],
+                latency_reduction_fraction=summary["latency_reduction_fraction"],
+                paired_block_ratios=summary["paired_ratios"],
+            )
             measured.append((summary["candidate_over_reference_latency"], row["id"], policy))
     eligible = [item for item in measured if item[0] <= 0.97]
     winner = min(eligible, key=lambda x: (x[0], x[1])) if eligible else None
@@ -550,6 +917,10 @@ def select_group(group, mode, family, current, root, receipts, source, supported
         "chosen_id": expected_id,
         "outcomes": dict(outcomes),
         "eligible_candidates": len(eligible),
+        "candidates": candidate_results,
+        "comparison": (
+            "candidate versus current family incumbent; not final original-incumbent pair"
+        ),
     }
 
 
@@ -635,6 +1006,8 @@ def read_search(root, width, receipts, repository=ROOT):
             active,
             result["source_sha256"],
             receipts,
+            original[mode],
+            width,
         )
         current = original[mode]
         for family in order:
@@ -647,6 +1020,8 @@ def read_search(root, width, receipts, repository=ROOT):
                 [c for c in inventory() if c["family"] == family],
                 result["source_sha256"],
                 receipts,
+                current,
+                width,
             )
             current, summary = select_group(
                 {**groups[index], "width": width},
@@ -662,9 +1037,9 @@ def read_search(root, width, receipts, repository=ROOT):
             summaries.append(summary)
         require(current == selected[mode], "Final policy differs from selected policy chain")
     require(len(groups) == len(expected_group_order), "Unexpected candidate family")
-    full_model(result.get("selected_bundle_full_model", {}))
+    full_model(result.get("selected_bundle_full_model", {}), width)
     memory = fresh_pair(
-        result.get("final_pair_memory", {}), original, selected, result["source_sha256"]
+        result.get("final_pair_memory", {}), original, selected, result["source_sha256"], width
     )
     timing = {m: paired_summary(result["selected_vs_incumbent"][m], m) for m in MODES}
     return {
@@ -733,7 +1108,7 @@ def retained_arrays(root, relative, expected, receipts):
     receipts.sources[f"repeatability/{Path(relative).as_posix()}"] = before
 
 
-def repeat_worker(worker, search, root, relative, receipts):
+def repeat_worker(worker, search, root, relative, receipts, repository=ROOT):
     width = search["width"]
     expected_names = [
         f"{stage}/b{batch}-t{length}"
@@ -776,8 +1151,12 @@ def repeat_worker(worker, search, root, relative, receipts):
         "native/metal/optimized.metal",
         "transformer/gpu_metal.py",
         "transformer/gpu_policy.py",
+        "transformer/gpu_repeatability.py",
+        "scripts/check_gpu_repeatability.py",
+        "transformer/reference.py",
+        "transformer/spec.py",
     }
-    require(required <= hashes.keys(), "Worker omits QKV source identity")
+    require(required == hashes.keys(), "Worker omits QKV source identity")
     require(
         all(
             search["source_sha256"][k] == v
@@ -786,8 +1165,16 @@ def repeat_worker(worker, search, root, relative, receipts):
         ),
         "Worker and timing source identities differ",
     )
+    for name, digest in hashes.items():
+        verify_source_file(repository, name, digest, search["source_revision"])
+    require(
+        worker.get("runtime_identity_sha256") == search["runtime_identity"]["inventory_sha256"]
+        and worker.get("python") == search["runtime_identity"]["python_version"]
+        and worker.get("environment") == PINS,
+        "Repeatability runtime/environment changed",
+    )
     cap = worker.get("capabilities", {})
-    capability(cap, search["selected_policy"], search["source_sha256"])
+    capability(cap, search["selected_policy"], search["source_sha256"], width)
     for key in (
         "binary_sha256",
         "shader_sha256",
@@ -823,6 +1210,36 @@ def repeat_worker(worker, search, root, relative, receipts):
             if name.startswith("full_model/")
             else {"parameters", "m", "v", "step", "logits", "losses"}
         )
+        batch, length = (
+            int(v) for v in re.fullmatch(r"(?:full_model|training)/b(\d+)-t(\d+)", name).groups()
+        )
+        count = sum(parameter_sizes(width).values())
+        shapes = {
+            "logits": ("<f4", [batch, length, 128]),
+            "loss": ("<f4", []),
+            "gradient": ("<f4", [count]),
+            "parameters": ("<f4", [count]),
+            "m": ("<f4", [count]),
+            "v": ("<f4", [count]),
+            "step": ("<i8", []),
+            "losses": ("<f4", [6]),
+        }
+        tokens = [
+            [(65, 65, 65, 65, 65, 66, 67, 68)[(b * length + t) % 8] for t in range(length)]
+            for b in range(batch)
+        ]
+        targets = [row[1:] + row[:1] for row in tokens]
+        fixture = {
+            key: {
+                "dtype": "<i4",
+                "shape": [batch, length],
+                "sha256": hashlib.sha256(
+                    struct.pack("<" + "i" * (batch * length), *(v for row in values for v in row))
+                ).hexdigest(),
+            }
+            for key, values in (("tokens", tokens), ("targets", targets))
+        }
+        require(case.get("fixture") == fixture, "Changed repeatability token/target fixture")
         first = {}
         for execution in executions:
             require(
@@ -836,6 +1253,10 @@ def repeat_worker(worker, search, root, relative, receipts):
             )
             actual = {k: v["actual"] for k, v in exact.items()}
             require(all(sha(v["sha256"]) for v in actual.values()), "Invalid repeat fingerprint")
+            require(
+                all((v["dtype"], v["shape"]) == shapes[k] for k, v in actual.items()),
+                "Wrong repeatability array dtype/shape",
+            )
             first = first or actual
             require(actual == first, "Execution differs from first repeat despite pass flag")
             repeat_accuracy(execution.get("accuracy", {}), name)
@@ -844,7 +1265,7 @@ def repeat_worker(worker, search, root, relative, receipts):
     return fingerprints
 
 
-def repeatability(root, searches, receipts):
+def repeatability(root, searches, receipts, repository=ROOT):
     summary = receipts.read(root, "summary.json", "repeatability")
     require(
         summary.get("scope") == "development_only"
@@ -857,6 +1278,12 @@ def repeatability(root, searches, receipts):
     require(
         all(summary.get(k) is True for k in ("complete", "exact_passed", "accuracy_passed")),
         "Repeatability summary failed",
+    )
+    require(
+        searches
+        and summary.get("runtime_identity_sha256")
+        == searches[0]["runtime_identity"]["inventory_sha256"],
+        "Repeatability launcher runtime identity mismatch",
     )
     workers = summary.get("workers", [])
     require(len(workers) == 12, "Expected twelve fresh workers")
@@ -877,7 +1304,9 @@ def repeatability(root, searches, receipts):
                 "Worker failed",
             )
             worker = receipts.read(root, launch["result"], "repeatability")
-            values.append(repeat_worker(worker, search, root, launch["result"], receipts))
+            values.append(
+                repeat_worker(worker, search, root, launch["result"], receipts, repository)
+            )
         require(values[0] == values[1], "Fresh-process training/gradient bytes differ")
         cross = receipts.read(root, f"metal-w{width}-cross-process.json", "repeatability")
         require(
@@ -912,11 +1341,18 @@ def repeatability(root, searches, receipts):
 
 
 def assemble(searches_root, repeatability_root=None, repository=ROOT):
+    from transformer.gpu_optimize import runtime_identity
+
     receipts = old.Receipts()
     searches = [read_search(searches_root, w, receipts, repository) for w in WIDTHS]
     for key in ("source_revision", "source_sha256", "runtime_identity"):
         require(all(s[key] == searches[0][key] for s in searches), "Cross-width identity mismatch")
-    repeats = repeatability(repeatability_root, searches, receipts) if repeatability_root else None
+    require(runtime_identity() == searches[0]["runtime_identity"], "Installed runtime changed")
+    repeats = (
+        repeatability(repeatability_root, searches, receipts, repository)
+        if repeatability_root
+        else None
+    )
     feasibility = receipts.read(
         repository, "experiments/gpu-v3-qkv/baseline-feasibility.json", "source"
     )
@@ -1071,13 +1507,116 @@ def render_figures(result, output):
     )
     fig.savefig(output / "qkv-stage-costs.png")
     plt.close(fig)
+    render_candidate_grid(result, output)
+
+
+def render_candidate_grid(result, output):
+    import numpy as np
+    from matplotlib import pyplot as plt
+    from matplotlib.colors import TwoSlopeNorm
+
+    panels = (("training", "forward"), ("training", "dx"), ("inference", "forward"))
+    groups = {
+        (row["width"], group["mode"], group["family"]): group
+        for row in result["widths"]
+        for group in row["selection"]
+    }
+    data = []
+    for mode, family in panels:
+        data.append(
+            [
+                [
+                    100 * c["latency_reduction_fraction"]
+                    if c["latency_reduction_fraction"] is not None
+                    else float("nan")
+                    for c in groups[(width, mode, family)]["candidates"]
+                ]
+                for width in WIDTHS
+            ]
+        )
+    finite = [v for matrix in data for row in matrix for v in row if math.isfinite(v)]
+    low, high = min([-3.0, *finite]), max([3.0, *finite])
+    norm = TwoSlopeNorm(vmin=low, vcenter=0, vmax=high)
+    cmap = plt.get_cmap("RdBu").copy()
+    cmap.set_bad("#D1D5DB")
+    fig, axes = plt.subplots(1, 3, figsize=(16, 6))
+    fig.subplots_adjust(left=0.045, right=0.89, bottom=0.26, top=0.80, wspace=0.18)
+    tiles = [(m, n, k) for m, n, k in itertools.product((16, 32), (32, 64), (16, 32))]
+    for ax, (mode, family), matrix in zip(axes, panels, data, strict=True):
+        grid = ax.imshow(np.asarray(matrix), cmap=cmap, norm=norm, aspect="auto")
+        ax.set_xticks(range(8), [f"{m}/{n}/{k}" for m, n, k in tiles], rotation=50, ha="right")
+        ax.set_yticks(range(6), [str(w) for w in WIDTHS])
+        ax.set_xlabel("Tile M/N/K", labelpad=7)
+        ax.set_title(("Training" if mode == "training" else "Inference") + " · QKV " + family)
+        for row, width in enumerate(WIDTHS):
+            group = groups[(width, mode, family)]
+            for column, value in enumerate(matrix[row]):
+                candidate = group["candidates"][column]
+                selected = candidate["id"] == group["chosen_id"]
+                text = (
+                    "R" if not math.isfinite(value) else f"{value:+.1f}" + ("*" if selected else "")
+                )
+                brightness = norm(value) if math.isfinite(value) else 0.5
+                color = "white" if brightness < 0.17 or brightness > 0.83 else "#111827"
+                ax.text(
+                    column,
+                    row,
+                    text,
+                    ha="center",
+                    va="center",
+                    fontsize=8,
+                    color=color,
+                    fontweight="bold" if selected else "normal",
+                )
+        ax.tick_params(axis="both", labelsize=9)
+    axes[0].set_ylabel("Model width")
+    cax = fig.add_axes([0.91, 0.29, 0.016, 0.46])
+    bar = fig.colorbar(grid, cax=cax)
+    bar.set_label("Complete-operation latency reduction (%)", fontsize=10)
+    fig.suptitle("Every frozen QKV schedule: complete-operation performance", fontsize=15)
+    fig.text(
+        0.5,
+        0.885,
+        "Selection threshold: ≥3% median reduction; * selected policy. "
+        "R = correctness/resource rejection, unranked.",
+        ha="center",
+        fontsize=11,
+    )
+    fig.text(
+        0.5,
+        0.035,
+        "Each candidate is paired with the current family incumbent, using five "
+        "blocks of 20 observations.\nThese selection ratios are distinct from the final direct "
+        "comparison against the original v2 incumbent; they are never multiplied.",
+        ha="center",
+        fontsize=10,
+        color="#4B5563",
+    )
+    fig.savefig(output / "qkv-candidate-grid.png")
+    plt.close(fig)
 
 
 def write_report(result, output):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
-    timing, profile = [], []
+    timing, profile, candidates = [], [], []
     for row in result["widths"]:
+        for group in row["selection"]:
+            for candidate in group["candidates"]:
+                candidates.append(
+                    {
+                        "width": row["width"],
+                        "mode": group["mode"],
+                        "family": group["family"],
+                        "candidate": candidate["id"],
+                        "status": candidate["status"],
+                        "chosen": candidate["id"] == group["chosen_id"],
+                        "candidate_over_current_incumbent_latency": candidate[
+                            "candidate_over_current_incumbent_latency"
+                        ],
+                        "latency_reduction_fraction": candidate["latency_reduction_fraction"],
+                    }
+                )
         for mode in MODES:
             summary = row["timing"][mode]
             timing.append(
@@ -1105,6 +1644,7 @@ def write_report(result, output):
                     )
     write_csv(output / "timing.csv", timing)
     write_csv(output / "stage-profiles.csv", profile)
+    write_csv(output / "candidate-search.csv", candidates)
     render_figures(result, output)
     lines = [
         "# Precision-protected QKV development results",
@@ -1143,6 +1683,15 @@ def write_report(result, output):
         "of an unchanged policy can differ; a retained label means no candidate met the selection "
         "rule. All p50/p95 values and training throughput are in [timing.csv](timing.csv). "
         "No widths are pooled into a headline ratio.",
+        "",
+        "![All frozen candidate schedules](qkv-candidate-grid.png)",
+        "",
+        "The candidate grid makes retained policies visible as bounded negative findings: "
+        "a faster-looking microkernel or a sub-3% complete-operation improvement cannot replace "
+        "the incumbent. Every declared schedule and rejected outcome remains in "
+        "[candidate-search.csv](candidate-search.csv). Each candidate comparison uses the current "
+        "family incumbent; it is separate from the final direct "
+        "original-incumbent comparison above.",
         "",
         "![Intrusive QKV stage profiles](qkv-stage-costs.png)",
         "",

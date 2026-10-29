@@ -1,0 +1,398 @@
+{
+  "scope": "qkv_training_partition_development_only",
+  "search_sha256": {
+    "1024": "a34c621ab7e6e82b59f3579b8936ac1cfc66ff70e8439ff4a21f66037ab4e301",
+    "128": "5b5d74bbf5ce5db859010a8b342f538c84db0165f539617fd8f290f882eacff7",
+    "256": "fccb83037bd12c1d1bdcca56f61b2f8dec1a3da3b2f51a40dbb0862cc04d1509",
+    "32": "d538f464b54102fca0cc5457dd7859b284d17528ab99fc0460c3ed12d6e0e6b4",
+    "512": "1ef94a27add2a0b23c417ea841a3cf99941c6f9241d640eef5543d13b9fc470b",
+    "64": "5959f337afda9d2f15d0faf074d7a232c33734835942c933839d4eab9bfbb029"
+  },
+  "source_revision": "aac359fb54b19334a532ca3f0a1bd084545836fe",
+  "widths": {
+    "1024": {
+      "inference": {
+        "attention": null,
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": null
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 4
+        },
+        "qkv": {
+          "dx": null,
+          "forward": null
+        },
+        "schema": 3
+      },
+      "training": {
+        "attention": null,
+        "dense": {
+          "dw": {
+            "k": 16,
+            "m": 32,
+            "n": 32,
+            "sg": 4
+          },
+          "dx": {
+            "k": 16,
+            "m": 32,
+            "n": 32,
+            "sg": 4
+          },
+          "forward": {
+            "k": 16,
+            "m": 32,
+            "n": 32,
+            "sg": 4
+          }
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": true,
+          "epilogue": true
+        },
+        "norm": {
+          "sg": 4,
+          "vec": 1
+        },
+        "qkv": {
+          "dx": null,
+          "forward": null
+        },
+        "schema": 3
+      }
+    },
+    "128": {
+      "inference": {
+        "attention": {
+          "backward": "saved",
+          "rows": 2,
+          "sg": 2,
+          "stage": "register"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": null
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 4
+        },
+        "qkv": {
+          "dx": null,
+          "forward": null
+        },
+        "schema": 3
+      },
+      "training": {
+        "attention": {
+          "backward": "saved",
+          "rows": 1,
+          "sg": 2,
+          "stage": "register"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": {
+            "k": 32,
+            "m": 16,
+            "n": 32,
+            "sg": 4
+          }
+        },
+        "embedding": {
+          "block": 64
+        },
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 1,
+          "vec": 4
+        },
+        "qkv": {
+          "dx": null,
+          "forward": null
+        },
+        "schema": 3
+      }
+    },
+    "256": {
+      "inference": {
+        "attention": {
+          "backward": "saved",
+          "rows": 2,
+          "sg": 2,
+          "stage": "register"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": null
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 1
+        },
+        "qkv": {
+          "dx": null,
+          "forward": null
+        },
+        "schema": 3
+      },
+      "training": {
+        "attention": {
+          "backward": "saved",
+          "rows": 2,
+          "sg": 1,
+          "stage": "register"
+        },
+        "dense": {
+          "dw": {
+            "k": 32,
+            "m": 16,
+            "n": 32,
+            "sg": 4
+          },
+          "dx": {
+            "k": 32,
+            "m": 16,
+            "n": 32,
+            "sg": 4
+          },
+          "forward": {
+            "k": 16,
+            "m": 16,
+            "n": 32,
+            "sg": 4
+          }
+        },
+        "embedding": {
+          "block": 64
+        },
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 1
+        },
+        "qkv": {
+          "dx": null,
+          "forward": null
+        },
+        "schema": 3
+      }
+    },
+    "32": {
+      "inference": {
+        "attention": {
+          "backward": "saved",
+          "rows": 1,
+          "sg": 1,
+          "stage": "threadgroup"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": {
+            "k": 16,
+            "m": 16,
+            "n": 64,
+            "sg": 4
+          }
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 1,
+          "vec": 4
+        },
+        "qkv": {
+          "dx": null,
+          "forward": null
+        },
+        "schema": 3
+      },
+      "training": {
+        "attention": {
+          "backward": "saved",
+          "rows": 2,
+          "sg": 1,
+          "stage": "register"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": null
+        },
+        "embedding": {
+          "block": 64
+        },
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 1
+        },
+        "qkv": {
+          "dx": null,
+          "forward": null
+        },
+        "schema": 3
+      }
+    },
+    "512": {
+      "inference": {
+        "attention": {
+          "backward": "saved",
+          "rows": 2,
+          "sg": 2,
+          "stage": "threadgroup"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": null
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 4
+        },
+        "qkv": {
+          "dx": null,
+          "forward": null
+        },
+        "schema": 3
+      },
+      "training": {
+        "attention": null,
+        "dense": {
+          "dw": {
+            "k": 16,
+            "m": 32,
+            "n": 32,
+            "sg": 4
+          },
+          "dx": {
+            "k": 16,
+            "m": 32,
+            "n": 32,
+            "sg": 4
+          },
+          "forward": {
+            "k": 16,
+            "m": 32,
+            "n": 32,
+            "sg": 4
+          }
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": true,
+          "epilogue": true
+        },
+        "norm": {
+          "sg": 4,
+          "vec": 4
+        },
+        "qkv": {
+          "dx": null,
+          "forward": null
+        },
+        "schema": 3
+      }
+    },
+    "64": {
+      "inference": {
+        "attention": {
+          "backward": "saved",
+          "rows": 1,
+          "sg": 2,
+          "stage": "register"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": null
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 1
+        },
+        "qkv": {
+          "dx": null,
+          "forward": null
+        },
+        "schema": 3
+      },
+      "training": {
+        "attention": {
+          "backward": "saved",
+          "rows": 2,
+          "sg": 1,
+          "stage": "register"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": null
+        },
+        "embedding": {
+          "block": 128
+        },
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 1
+        },
+        "qkv": {
+          "dx": null,
+          "forward": null
+        },
+        "schema": 3
+      }
+    }
+  }
+}
