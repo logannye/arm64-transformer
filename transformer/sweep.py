@@ -19,12 +19,19 @@ from transformer.backend import (
     WIDE_VALIDATION_CONTRACT,
     read_backend,
     validate_backend_preflights,
+    validate_precision_preflight,
     validate_regression_preflights,
     validate_runtime_backend,
+    validation_contract,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
-PROTOCOL_WIDTHS = {"v3": (32, 64, 128, 256), "v4": (32, 64, 128, 256), "v5": (512, 1024)}
+PROTOCOL_WIDTHS = {
+    "v3": (32, 64, 128, 256),
+    "v4": (32, 64, 128, 256),
+    "v5": (512, 1024),
+    "v6": (32, 64, 128, 256, 512, 1024),
+}
 REGRESSION_WIDTHS = (32, 64, 128, 256, 512, 1024)
 PAUSE_SECONDS = 15
 CHILD_TIMEOUT = 1800
@@ -270,7 +277,7 @@ def measured_child(cmd, env, *, timeout=CHILD_TIMEOUT):
 
 def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
     widths = protocol_widths(protocol)
-    regression_widths = REGRESSION_WIDTHS if protocol == "v5" else widths
+    regression_widths = REGRESSION_WIDTHS if protocol in ("v5", "v6") else widths
     inputs, output, preflight_directory = (
         Path(value).resolve() for value in (inputs, output, preflight_directory)
     )
@@ -291,8 +298,15 @@ def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
         "preflights": {},
         "backend_preflights": {},
     }
-    if protocol == "v5":
+    if protocol in ("v5", "v6"):
         manifest["validation_contract"] = WIDE_VALIDATION_CONTRACT
+    if protocol == "v6":
+        manifest["precision_contract"] = "v6-fp64-centered-attention-v1"
+        manifest["postrun_numerical_contract"] = manifest["precision_contract"]
+        manifest["validation_contract"] = "v6-width-specific-v1"
+        manifest["validation_contracts"] = {
+            str(width): validation_contract(width) for width in widths
+        }
     width_manifests = {}
 
     def persist():
@@ -352,18 +366,22 @@ def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
             if width in widths:
                 manifest["preflights"][str(width)] = preflight
             authenticated.update(validate_preflight(preflight, inspection))
-            if protocol in ("v4", "v5"):
+            if protocol == "v6":
+                validate_precision_preflight(preflight, width)
+            if protocol in ("v4", "v5", "v6"):
                 modes = ("neon", "sme") if preflight["backend"]["sme_supported"] else ("neon",)
                 supplements = {}
                 for mode in modes:
                     mode_path = preflight_directory / f"width-{width}-{mode}.json"
                     supplements[mode] = json.loads(mode_path.read_text())
                     authenticated.update(validate_preflight(supplements[mode], inspection))
+                    if protocol == "v6":
+                        validate_precision_preflight(supplements[mode], width)
                     authenticated[str(mode_path)] = digest(mode_path)
                 validate_backend_preflights(preflight, supplements)
                 if width in widths:
                     manifest["backend_preflights"][str(width)] = supplements
-                if protocol == "v5":
+                if protocol in ("v5", "v6"):
                     manifest.setdefault("regression_preflights", {})[str(width)] = {
                         "auto": preflight,
                         **supplements,
@@ -373,7 +391,7 @@ def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
         inspections = {width: entry["result"] for width, entry in manifest["inspections"].items()}
         measured_inspections = {str(width): inspections[str(width)] for width in widths}
         validate_shared_data(measured_inspections)
-        if protocol == "v5":
+        if protocol in ("v5", "v6"):
             manifest["regression_widths"] = list(REGRESSION_WIDTHS)
             manifest["regression_gate_counts"] = validate_regression_preflights(
                 manifest["regression_preflights"], REGRESSION_WIDTHS, tracked
@@ -424,9 +442,15 @@ def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
                 "order": [list(row[1:]) for row in manifest["order"] if row[0] == width],
                 "runs": [],
             }
-            if protocol == "v5":
+            if protocol in ("v5", "v6"):
                 width_manifests[width]["validation_contract"] = WIDE_VALIDATION_CONTRACT
-            if protocol in ("v4", "v5"):
+            if protocol == "v6":
+                width_manifests[width]["validation_contract"] = validation_contract(width)
+                width_manifests[width]["precision_contract"] = manifest["precision_contract"]
+                width_manifests[width]["postrun_numerical_contract"] = manifest[
+                    "precision_contract"
+                ]
+            if protocol in ("v4", "v5", "v6"):
                 width_manifests[width]["backend_preflights"] = manifest["backend_preflights"][
                     str(width)
                 ]
@@ -476,7 +500,7 @@ def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
                 flush=True,
             )
             child_env = child_environment(width)
-            if protocol in ("v4", "v5"):
+            if protocol in ("v4", "v5", "v6"):
                 child_env["ARM64_TRANSFORMER_BACKEND"] = "auto"
                 entry["backend_environment"] = "auto"
             entry.update(measured_child(cmd, child_env))
@@ -508,7 +532,7 @@ def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
             performance = struct.unpack("<8d", raw_performance)
             if not all(math.isfinite(value) for value in performance) or performance[0] <= 0:
                 raise ValueError("Child performance file contains invalid measurements")
-            if protocol in ("v4", "v5") and implementation == "arm64":
+            if protocol in ("v4", "v5", "v6") and implementation == "arm64":
                 backend_path = child / "backend.u64"
                 entry["backend"] = read_backend(backend_path, policy="auto")
                 validate_runtime_backend(

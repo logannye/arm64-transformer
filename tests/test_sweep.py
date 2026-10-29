@@ -8,7 +8,7 @@ from collections import Counter
 from pathlib import Path
 
 import pytest
-from contract_fixtures import attach_contract
+from contract_fixtures import attach_contract, attach_precision
 
 from transformer import spec, sweep
 
@@ -259,6 +259,7 @@ def test_coordinator_retains_report_compatible_manifests_for_all_48_children(tmp
         ("v3", (32, 64, 128, 256), 48),
         ("v4", (32, 64, 128, 256), 48),
         ("v5", (512, 1024), 24),
+        ("v6", (32, 64, 128, 256, 512, 1024), 72),
     ],
 )
 def test_protocol_widths_are_independent_of_supported_model_widths(protocol, widths, total):
@@ -277,7 +278,8 @@ def test_protocol_widths_are_independent_of_supported_model_widths(protocol, wid
         sweep.protocol_widths("v99")
 
 
-def test_v5_coordinator_authenticates_six_widths_but_launches_only_24_fits(tmp_path, monkeypatch):
+@pytest.mark.parametrize("protocol", ("v5", "v6"))
+def test_coordinator_authenticates_six_widths_before_declared_fits(tmp_path, monkeypatch, protocol):
     """Mock children, not admission semantics; no native execution or real timers."""
     from transformer.backend import FIELDS
 
@@ -290,10 +292,10 @@ def test_v5_coordinator_authenticates_six_widths_but_launches_only_24_fits(tmp_p
     gates = tmp_path / "preflight"
     gates.mkdir()
 
-    def backend(policy=0, measured=False):
+    def backend(policy=0, measured=False, width=512):
         values = [1, 0, policy, int(policy != 1), 1, 64, 0, 0, 0, 0]
         if measured:
-            values[6:8] = [94040, 81920]
+            values[6 if width >= 64 else 8 : 8 if width >= 64 else 10] = [94040, 81920]
         return dict(zip(FIELDS, values, strict=True))
 
     for width in sweep.REGRESSION_WIDTHS:
@@ -313,6 +315,8 @@ def test_v5_coordinator_authenticates_six_widths_but_launches_only_24_fits(tmp_p
                 "backend": backend(policy),
             }
             attach_contract(value, width)
+            if protocol == "v6":
+                attach_precision(value, width)
             suffix = "" if mode == "auto" else "-" + mode
             (gates / f"width-{width}{suffix}.json").write_text(json.dumps(value))
 
@@ -371,20 +375,26 @@ def test_v5_coordinator_authenticates_six_widths_but_launches_only_24_fits(tmp_p
         (destination / "performance.f64").write_bytes(struct.pack("<8d", 1, 1, 1, 1, 1, 1, 1024, 2))
         if "transformer.python_train" not in cmd:
             (destination / "backend.u64").write_bytes(
-                struct.pack("<10Q", *backend(measured=True).values())
+                struct.pack("<10Q", *backend(measured=True, width=width).values())
             )
         return record | {"stdout": "completed"}
 
     monkeypatch.setattr(sweep, "measured_child", child)
     output = tmp_path / "results"
-    manifest = sweep.run_sweep(tmp_path / "inputs", output, gates, protocol="v5")
+    manifest = sweep.run_sweep(tmp_path / "inputs", output, gates, protocol=protocol)
     assert manifest["status"] == "completed"
-    assert inspections == [(width, width >= 512) for width in sweep.REGRESSION_WIDTHS]
-    assert len(fits) == 24 and set(fits) == {512, 1024}
-    assert set(manifest["models"]) == set(manifest["fixtures"]) == {"512", "1024"}
-    assert manifest["regression_gate_counts"] == {"auto": 1018, "forced": 2036, "all": 3054}
-    assert pauses == [15] * 23
-    assert not (output / "width-32").exists()
+    widths = sweep.protocol_widths(protocol)
+    assert inspections == [(width, width in widths) for width in sweep.REGRESSION_WIDTHS]
+    assert len(fits) == 12 * len(widths) and set(fits) == set(widths)
+    assert set(manifest["models"]) == set(manifest["fixtures"]) == {str(width) for width in widths}
+    expected = 1018 if protocol == "v5" else 2132
+    assert manifest["regression_gate_counts"] == {
+        "auto": expected,
+        "forced": 2 * expected,
+        "all": 3 * expected,
+    }
+    assert pauses == [15] * (len(fits) - 1)
+    assert (output / "width-32").exists() is (protocol == "v6")
     assert all(
         entry["backend_valid"] for entry in manifest["runs"] if entry["implementation"] == "arm64"
     )

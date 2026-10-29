@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "validation_contract": "v5-common-state-replay-v1",
+  "legacy_diagnostic_count": 73,
+  "legacy_failed_checks": [],
+  "legacy_contract_passed": true,
+  "precision": {
+    "contract": "v6-fp64-centered-attention-v1",
+    "fixture_stream": "admission",
+    "fixture_seed": 20261102,
+    "case_count": 23,
+    "oracle_tolerances": {
+      "atol": 1e-10,
+      "rtol": 1e-10
+    },
+    "diagnostic_count": 138,
+    "failed_diagnostics": [
+      "v6/precision/offset_64_gap_0/native_vs_torch32/output",
+      "v6/precision/offset_64_gap_0/native_vs_torch32/probabilities",
+      "v6/precision/offset_64_gap_0/torch32_vs_fp64/output",
+      "v6/precision/offset_64_gap_0/torch32_vs_fp64/probabilities",
+      "v6/precision/offset_64_gap_0.125/native_vs_torch32/probabilities",
+      "v6/precision/offset_64_gap_0.125/torch32_vs_fp64/probabilities",
+      "v6/precision/offset_64_gap_0.75/native_vs_torch32/probabilities",
+      "v6/precision/offset_64_gap_0.75/torch32_vs_fp64/probabilities",
+      "v6/precision/offset_512_gap_0/native_vs_torch32/output",
+      "v6/precision/offset_512_gap_0/native_vs_torch32/probabilities",
+      "v6/precision/offset_512_gap_0/torch32_vs_fp64/output",
+      "v6/precision/offset_512_gap_0/torch32_vs_fp64/probabilities",
+      "v6/precision/offset_512_gap_0.125/native_vs_torch32/output",
+      "v6/precision/offset_512_gap_0.125/native_vs_torch32/probabilities",
+      "v6/precision/offset_512_gap_0.125/torch32_vs_fp64/output",
+      "v6/precision/offset_512_gap_0.125/torch32_vs_fp64/probabilities",
+      "v6/precision/offset_512_gap_0.75/native_vs_torch32/probabilities",
+      "v6/precision/offset_512_gap_0.75/torch32_vs_fp64/probabilities",
+      "v6/precision/offset_4096_gap_0/native_vs_torch32/output",
+      "v6/precision/offset_4096_gap_0/native_vs_torch32/probabilities",
+      "v6/precision/offset_4096_gap_0/native_vs_torch32/dqkv",
+      "v6/precision/offset_4096_gap_0/torch32_vs_fp64/output",
+      "v6/precision/offset_4096_gap_0/torch32_vs_fp64/probabilities",
+      "v6/precision/offset_4096_gap_0/torch32_vs_fp64/dqkv",
+      "v6/precision/offset_4096_gap_0.125/native_vs_torch32/output",
+      "v6/precision/offset_4096_gap_0.125/native_vs_torch32/probabilities",
+      "v6/precision/offset_4096_gap_0.125/native_vs_torch32/dqkv",
+      "v6/precision/offset_4096_gap_0.125/torch32_vs_fp64/output",
+      "v6/precision/offset_4096_gap_0.125/torch32_vs_fp64/probabilities",
+      "v6/precision/offset_4096_gap_0.125/torch32_vs_fp64/dqkv",
+      "v6/precision/offset_4096_gap_0.75/native_vs_torch32/output",
+      "v6/precision/offset_4096_gap_0.75/native_vs_torch32/probabilities",
+      "v6/precision/offset_4096_gap_0.75/native_vs_torch32/dqkv",
+      "v6/precision/offset_4096_gap_0.75/torch32_vs_fp64/output",
+      "v6/precision/offset_4096_gap_0.75/torch32_vs_fp64/probabilities",
+      "v6/precision/offset_4096_gap_0.75/torch32_vs_fp64/dqkv",
+      "v6/precision/prefix_t2/native_vs_torch32/output",
+      "v6/precision/prefix_t2/native_vs_torch32/probabilities",
+      "v6/precision/prefix_t2/torch32_vs_fp64/output",
+      "v6/precision/prefix_t2/torch32_vs_fp64/probabilities",
+      "v6/precision/prefix_t3/native_vs_torch32/output",
+      "v6/precision/prefix_t3/native_vs_torch32/probabilities",
+      "v6/precision/prefix_t3/torch32_vs_fp64/output",
+      "v6/precision/prefix_t3/torch32_vs_fp64/probabilities",
+      "v6/precision/prefix_t5/native_vs_torch32/output",
+      "v6/precision/prefix_t5/native_vs_torch32/probabilities",
+      "v6/precision/prefix_t5/torch32_vs_fp64/output",
+      "v6/precision/prefix_t5/torch32_vs_fp64/probabilities",
+      "v6/precision/prefix_t31/native_vs_torch32/output",
+      "v6/precision/prefix_t31/native_vs_torch32/probabilities",
+      "v6/precision/prefix_t31/torch32_vs_fp64/output",
+      "v6/precision/prefix_t31/torch32_vs_fp64/probabilities",
+      "v6/precision/negative_offset/native_vs_torch32/output",
+      "v6/precision/negative_offset/native_vs_torch32/probabilities",
+      "v6/precision/negative_offset/native_vs_torch32/dqkv",
+      "v6/precision/negative_offset/torch32_vs_fp64/output",
+      "v6/precision/negative_offset/torch32_vs_fp64/probabilities",
+      "v6/precision/negative_offset/torch32_vs_fp64/dqkv",
+      "v6/precision/cancellation_16/native_vs_torch32/probabilities",
+      "v6/precision/cancellation_16/torch32_vs_fp64/probabilities",
+      "v6/precision/cancellation_64/native_vs_torch32/probabilities",
+      "v6/precision/cancellation_64/torch32_vs_fp64/probabilities",
+      "v6/precision/cancellation_256/native_vs_torch32/probabilities",
+      "v6/precision/cancellation_256/native_vs_torch32/dqkv",
+      "v6/precision/cancellation_256/torch32_vs_fp64/probabilities",
+      "v6/precision/cancellation_256/torch32_vs_fp64/dqkv"
+    ],
+    "omitted_full_record_counts": {
+      "diagnostics": 138
+    }
+  },
+  "model_width": 512,
+  "parameter_count": 2251392,
+  "model_identity": {
+    "width": 512,
+    "parameter_count": 2251392,
+    "verified": true
+  },
+  "backend": {
+    "version": 1,
+    "init_status": 0,
+    "requested_policy": 2,
+    "selected_kind": 1,
+    "sme_supported": 1,
+    "streaming_vector_bytes": 64,
+    "sme_forward_calls": 72,
+    "sme_backward_calls": 79,
+    "neon_forward_calls": 36,
+    "neon_backward_calls": 54
+  },
+  "backend_environment": "sme",
+  "library_path": "native/build/width-512/libtransformer.dylib",
+  "executable_path": "native/build/width-512/transformer-arm64",
+  "passed": true,
+  "check_count": 1980,
+  "failed_checks": [],
+  "tolerances": {
+    "forward": {
+      "atol": 2e-05,
+      "rtol": 0.0002
+    },
+    "gradient": {
+      "atol": 3e-05,
+      "rtol": 0.003
+    },
+    "optimizer": {
+      "atol": 3e-06,
+      "rtol": 0.0003
+    },
+    "math": {
+      "atol": 2e-07,
+      "rtol": 2e-06
+    },
+    "trajectory": {
+      "atol": 0.0002,
+      "rtol": 0.002
+    },
+    "finite_difference": {
+      "atol": 2e-05,
+      "rtol": 0.005
+    }
+  },
+  "library_sha256": "db1e5c6510861bf238962a19cfe47a1ded0a15da3997147723e23cd3f9d7bdd9",
+  "executable_sha256": "fcd73bad51648eb1d16fce222ec3ebc48406d872727be20d56c4442c61ed5987",
+  "runtime_included": true,
+  "source_sha256": {
+    "native/kernels.S": "5120dc3b4553a40f1e35cd09206bee61df94018cef3bac4731443e1adefcd654",
+    "native/linear.S": "bff254cd0dc65321e8c76a2a5ec4d3c54b4a10746e44cc30e2dcee9b544290bd",
+    "native/linear_sme.S": "c597991598707fd81f20c9bdbb50b9d3079b49fcc0ccb731d01096593df76e6c",
+    "native/backend.S": "314fbcc72ced7dd907461d37d3b92a01dd9592668687d21ccacad70a75cc8616",
+    "native/attention.S": "454dc3366f4ee6408e3199fda7797923f2202b65210de7f137541d832001bd26",
+    "native/softmax.S": "4f61cf45328aac18c0abd779c9738a86f0048ca00850b054bb3bf3ef3bfa4161",
+    "native/normalization.S": "c5001fd8bdca68375f72599df39d3b99aaf856cc94f37a2ef07a27738b1e72ec",
+    "native/model.S": "bba4485a53f75e88749953dae1c5aa7da033c978ce4ccf281e7d9e97bc27de90",
+    "native/runtime.S": "80952e3cca2ad4e0680b0689aa6981f45fbe553072074f3eddf201a68154c19a",
+    "native/Makefile": "90ac1a0c088d60ee59dd94bfd9950eedd9f2094e32016bc806b996d5b6304ff2",
+    "transformer/spec.py": "b36d58ee1494399175016a59c0becc9d37597d05241969791fb7ca2234e2f1e3",
+    "transformer/reference.py": "54a20341c9e96196961fd6770ebeda8052b9378f20f9f4934e2781e78d11b19f",
+    "transformer/prepare.py": "a6d18bd2195140711e6db23a11878e69211fa0a36c45fb6e74c72a0d8cdb5dbe",
+    "transformer/python_train.py": "7452ffcb13328bcf51cb3ccdfc0884449dffce3284fe034ae4eaa5a0985b2d32",
+    "transformer/validate.py": "b9e796c4763bd0d66b30ea78007331aa3901324c7ee7aa8e4fe399170c49ac57",
+    "transformer/backend.py": "681b47d24cd9e3e79989a8519f0e2b240099259854f4cee0c17fb6bcb0b53b31",
+    "transformer/audit.py": "b8f9f758363fbfd1634480fc38767431ff4b2e1bb36c8b61b030013fcd5256ec",
+    "transformer/runtime_replay.py": "b92206a2cdaf9f36210ca79a3a2de067a984beaabbfe6d4b2ec07dad597429c1",
+    "transformer/precision.py": "e049d9be8f4e10db462f394d59fdeef6654743bfd9af74512d063d6d753c6502",
+    "transformer/precision_audit.py": "fffaa767b52967133c65c832fa8cab212dabfb3684429e6a0a466df01f8721a1"
+  },
+  "generated_layout_path": "native/build/width-512/layout.inc",
+  "generated_layout_sha256": "9f2270d788a932f03a7fd1e909388b4d1feaab0e185846f8fe3f1637a1db1d0f",
+  "environment": {
+    "platform": "macOS-26.2-arm64-arm-64bit",
+    "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+    "torch": "2.14.1",
+    "numpy": "2.5.2"
+  },
+  "error": null,
+  "omitted_full_record_counts": {
+    "legacy_diagnostics": 73,
+    "checks": 1980
+  },
+  "publication": {
+    "artifact_type": "compact_report_view",
+    "complete_check_records_present": false,
+    "scope": "Compact publication view only; complete check records are omitted here and retained unchanged in the linked release archive. Counts, failures, qualification flags and metrics are copied from the full report. This projection performs no model execution.",
+    "full_source": {
+      "archive_path": "report/width-512/preflight-sme.json",
+      "sha256": "6599f9759e87b6ba235cd570dac140c7b60d5133bab1f6ab5ae1d6de84c2bc33",
+      "release_url": "https://github.com/logannye/arm64-transformer/releases/tag/transformer-attention-precision-v6"
+    }
+  }
+}

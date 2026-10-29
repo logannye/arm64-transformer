@@ -383,3 +383,81 @@ def validate_validation_contract(gate, width):
     elif diagnostics:
         raise ValueError("Strict historical widths cannot demote trajectory checks")
     return len(diagnostics), len(failed)
+
+
+def validate_precision_preflight(gate, width):
+    """Reject missing, altered or partially reported prospective v6 precision gates."""
+    from transformer.precision import (
+        ORACLE_TOLERANCES,
+        PRECISION_CONTRACT,
+        PRECISION_SEEDS,
+        expected_precision_check_names,
+        expected_precision_diagnostic_names,
+        precision_case_specs,
+    )
+
+    precision = gate.get("precision", {})
+    expected_metadata = {
+        "contract": PRECISION_CONTRACT,
+        "fixture_stream": "admission",
+        "fixture_seed": PRECISION_SEEDS["admission"],
+        "case_count": len(precision_case_specs(width)),
+        "oracle_tolerances": ORACLE_TOLERANCES,
+    }
+    if any(precision.get(key) != value for key, value in expected_metadata.items()):
+        raise ValueError("Missing or altered v6 precision metadata")
+    required_tolerances = {
+        "forward": {"atol": 2e-5, "rtol": 2e-4},
+        "gradient": {"atol": 3e-5, "rtol": 3e-3},
+        "math": {"atol": 2e-7, "rtol": 2e-6},
+    }
+    if any(
+        gate.get("tolerances", {}).get(key) != value for key, value in required_tolerances.items()
+    ):
+        raise ValueError("Altered v6 precision tolerances")
+    selected = [
+        record
+        for record in gate.get("checks", [])
+        if record.get("name", "").startswith("v6/precision/")
+    ]
+    if [record["name"] for record in selected] != expected_precision_check_names(width):
+        raise ValueError("Missing, reordered or duplicate v6 precision checks")
+    tolerance_by_suffix = {
+        "output_fp64": "forward",
+        "probabilities_fp64": "math",
+        "dqkv_fp64": "gradient",
+        "dqkv_same_probabilities_fp64": "gradient",
+        "probability_mass": "math",
+        "prefix_dqkv_fp64": "gradient",
+    }
+    for record in selected:
+        expected = tolerance_by_suffix.get(record["name"].rsplit("/", 1)[-1])
+        if record.get("passed") is not True or record.get("tolerance") != expected:
+            raise ValueError("Failed or altered v6 precision check")
+    for name in ("audit/precision_checks_complete", "audit/precision_diagnostics_complete"):
+        records = [record for record in gate.get("checks", []) if record.get("name") == name]
+        if len(records) != 1 or records[0].get("passed") is not True:
+            raise ValueError("Missing v6 precision completeness check")
+    diagnostics = precision.get("diagnostics", [])
+    if [record.get("name") for record in diagnostics] != expected_precision_diagnostic_names(width):
+        raise ValueError("Incomplete v6 precision diagnostics")
+    for record in diagnostics:
+        suffix = record["name"].rsplit("/", 1)[-1]
+        expected = {"output": "forward", "probabilities": "math", "dqkv": "gradient"}[suffix]
+        if (
+            type(record.get("passed")) is not bool
+            or record.get("admission_role") != "diagnostic"
+            or record.get("tolerance") != expected
+        ):
+            raise ValueError("Altered v6 precision diagnostic semantics")
+    failed = [record["name"] for record in diagnostics if not record["passed"]]
+    if (
+        precision.get("diagnostic_count") != len(diagnostics)
+        or precision.get("failed_diagnostics") != failed
+    ):
+        raise ValueError("Inconsistent v6 precision diagnostic counts")
+    return {
+        "checks": len(selected),
+        "diagnostics": len(diagnostics),
+        "failed_diagnostics": len(failed),
+    }

@@ -1,14 +1,18 @@
-# Reproduce the wider transformer study
+# Reproduce the attention-precision study
 
-V5 times widths 512 and 1024. It requires current correctness gates at all six
-supported widths before launching its 24 matched fits. V3 and v4 retain their
-original four-width protocols and published evidence.
+V6 measures all six widths with the same dataset and training budget in **72
+matched fits**. Wide native attention uses selective FP64 accumulation in forward
+and backward while model and optimizer state remain stored in FP32. The
+[protocol](../experiments/PROTOCOL-v6.md) fixes tests, thresholds, execution, and
+reporting before measurement.
 
-The published v5 candidate passed synthetic admission but failed the later
-trained-checkpoint audit. Reproducing that candidate should retain the failures;
-a nonzero report exit is an experimental result. The [outcome report](../experiments/width-sweep-v5-outcome/README.md)
-separates descriptive measurements from numerical acceptance. Its reporting and
-archive tools were added after measurement and never change failed flags.
+The post-run report separates evidence integrity, each engine's accuracy against
+independent FP64 equations, and mutual FP32 compatibility. It continues through
+all widths when numerical requirements fail and reports `baseline_precision_limit`
+or `native_precision_limit` explicitly. A zero report-process exit means complete
+intact evidence, **not necessarily numerical qualification**: inspect the named
+flags and status. Original v5 failures remain available through the
+[historical reproduction guide](REPRODUCE-v5.md).
 
 Use an Apple silicon Mac with Xcode Command Line Tools that can assemble SME.
 The measured machine is an M4 Max. Runtime feature checks select SME only when
@@ -22,7 +26,7 @@ recorded versions are in `requirements-benchmark.txt`.
 ```sh
 git clone https://github.com/logannye/arm64-transformer.git
 cd arm64-transformer
-git checkout c12874c2fe6af3fd1612046950aa56d756f4d0a0
+git checkout 2c5191047068c16b12e3312652b118d48a5f3744
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install --only-binary=:all: -r requirements-benchmark.txt
@@ -46,27 +50,27 @@ for width in 32 64 128 256 512 1024; do
   export ARM64_TRANSFORMER_WIDTH=$width
   export ARM64_TRANSFORMER_BACKEND=auto
   python -m pytest -q
-  python -m transformer.validate --output results/preflight-v5/width-$width.json \
-    --runtime --work-dir results/smoke-v5/width-$width
+  python -m transformer.validate --output results/preflight-v6/width-$width.json \
+    --runtime --work-dir results/smoke-v6/width-$width
   ARM64_TRANSFORMER_BACKEND=neon python -m transformer.validate \
-    --output results/preflight-v5/width-$width-neon.json \
-    --runtime --work-dir results/smoke-v5/width-$width-neon
-  supported=$(python -c "import json; print(json.load(open('results/preflight-v5/width-$width.json'))['backend']['sme_supported'])")
+    --output results/preflight-v6/width-$width-neon.json \
+    --runtime --work-dir results/smoke-v6/width-$width-neon
+  supported=$(python -c "import json; print(json.load(open('results/preflight-v6/width-$width.json'))['backend']['sme_supported'])")
   if [ "$supported" = 1 ]; then
     ARM64_TRANSFORMER_BACKEND=sme python -m transformer.validate \
-      --output results/preflight-v5/width-$width-sme.json \
-      --runtime --work-dir results/smoke-v5/width-$width-sme
+      --output results/preflight-v6/width-$width-sme.json \
+      --runtime --work-dir results/smoke-v6/width-$width-sme
   fi
 done
-for width in 512 1024; do
+for width in 32 64 128 256 512 1024; do
   ARM64_TRANSFORMER_WIDTH=$width python -m transformer.prepare \
-    --source data/tinyshakespeare.txt --output results/inputs-v5/width-$width
+    --source data/tinyshakespeare.txt --output results/inputs-v6/width-$width
 done
 unset ARM64_TRANSFORMER_WIDTH
-python -m transformer.sweep --protocol v5 --inputs results/inputs-v5 \
-  --preflight-dir results/preflight-v5 --output results/width-sweep-v5
-python -m transformer.sweep_report --inputs results/inputs-v5 \
-  --results results/width-sweep-v5 --output results/report-v5
+python -m transformer.sweep --protocol v6 --inputs results/inputs-v6 \
+  --preflight-dir results/preflight-v6 --output results/width-sweep-v6
+python -m transformer.sweep_report --inputs results/inputs-v6 \
+  --results results/width-sweep-v6 --output results/report-v6
 ```
 
 The measured source must be committed and clean. Use AC power and do not run
@@ -75,10 +79,10 @@ coordinator authenticates the source, all six admitted binaries/layouts/gates,
 and measured fixtures around each child. It uses one compute thread, records
 conditions, pauses 15 seconds between fits, and preserves failed campaigns.
 
-The [v5 protocol](../experiments/PROTOCOL-v5.md) distinguishes strict comparisons
+The [v6 protocol](../experiments/PROTOCOL-v6.md) distinguishes strict comparisons
 at common model/optimizer states from diagnostics of independently evolving
 training trajectories. The original failed wide-model trajectory checks remain
-in the numerical investigation; their tolerances were not raised. A passing v5
+in the numerical investigation; their tolerances were not raised. A passing v6
 gate must identify its validation contract and retain those diagnostic outcomes.
 The [native contract](../native/ABI.md) and [kernel notes](../native/kernel_notes.md)
 describe the numerical interfaces and hardware paths.
@@ -90,12 +94,14 @@ Archive packaging verifies source, inputs, binaries, raw runs and report identit
 and rehashes the streamed payload. Release checksums authenticate the downloadable
 bytes separately from the numerical correctness checks.
 
-The original successful-study reporter stops at the first failed width. To retain
-both widths' failures, the published outcome also ran the unchanged per-width
-reporter separately at width 1024. The publication revision's
-`scripts/report_failed_sweep.py` then authenticated all saved evidence and computed
-descriptive statistics without new model execution. Its separate
-`scripts/package_failed_sweep.py` archives that failed outcome and explicitly sets
-`numerical_validation_passed` to false. The successful-study packager still rejects
-failed audits. The release includes the exact post-study tools and measured source
-separately, plus instructions for reconstructing the archive if delivered in parts.
+
+Package the complete saved evidence, including failed numerical comparisons:
+
+```sh
+python scripts/package_sweep_evidence.py --help
+```
+
+The packager supports v6 numerical-limit outcomes only when evidence-integrity
+checks pass and all qualification flags agree with the complete comparison
+records. It preserves exact measured source, gates, binaries, inputs, checkpoints,
+moments, predictions, reports, and checksums. It does not rerun models.

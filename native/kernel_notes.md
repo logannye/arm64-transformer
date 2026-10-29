@@ -129,12 +129,25 @@ and [LLVM's SME ABI documentation](https://www.llvm.org/docs/AArch64SME.html).
   dot-product accumulators, and unroll the feature loops. Backward caches one
   row of attention derivatives in a 32-float stack buffer instead of recomputing
   those dot products. Heads of 128 or 256 elements use register blocks: forward
-  retains 64 query channels across causal keys, combines block dot totals before
-  scaling and softmax, and accumulates values in 64-channel blocks. Backward
-  computes dA/dV in 64-channel blocks, then reuses the 32-float row cache for
-  dScore after its softmax contraction. It retains 32 Q/dQ channels together
-  while accumulating dK/dQ. These larger-head paths use 128-byte forward and
-  256-byte backward frames; the paths for widths 32 through 256 are unchanged.
+  retains 32 query channels converted to FP64 across causal keys, accumulates
+  four FP64 dot-product chains, and adds each block's result to a private
+  32-double score row. Scale, maximum selection and subtraction remain FP64.
+  Only the centered scores are converted to FP32 before the existing vector
+  exponential, probability normalization and 64-channel value accumulation.
+  Conversion after centering avoids discarding the small differences between
+  large, nearly tied scores. Q/K conversion uses ordinary NEON FP64 instructions,
+  requiring no optional SME FP64 capability. This trades additional conversion
+  and FP64 arithmetic for score accuracy; elapsed cost must be measured.
+  Backward computes FP64 dA dot products alongside unchanged FP32 dV updates
+  in 64-channel blocks. It reuses a 32-double row for FP64 dScore after the FP64
+  softmax contraction, retaining the supplied probabilities exactly. Blocks of
+  16 converted Q channels and 16 FP64 dQ accumulators keep the complete causal
+  dQ sum in registers until its final float32 store. Each dK contribution is
+  added in FP64 before rounding to its existing float32 destination. This
+  addresses cancellation in gradients when keys share a large component without
+  renormalizing probabilities, clipping gradients or changing the model.
+  These larger-head paths use 400-byte forward and 384-byte backward frames;
+  the paths for widths 32 through 256 are unchanged.
   Other shapes use the original generic implementation.
 - `softmax.S` evaluates four exponentials at a time, using pairs of float64 lanes
   for range reduction and a degree-nine polynomial, then rounding to float32.
@@ -196,6 +209,12 @@ range depends on tensor size.
 - Attention stores Q, K, and V consecutively in each token row. Each query attends
   only to keys through its own position. Masked probabilities are explicitly zero.
   Scores use `1/sqrt(head_width)`, max-subtracted softmax, and fixed-order reductions.
+  The optimized 128/256-channel heads keep scores in FP64 through centering;
+  stored tensors, probabilities and value mixing remain FP32. The corresponding
+  backward keeps dA, its softmax contraction, dScore and dQ sums in FP64 before
+  rounding output gradients to their float32 destinations.
+  The implementation therefore uses mixed accumulation precision, while preserving
+  the model's real-valued equations and float32 parameter/activation interfaces.
   Backward overwrites all Q/K/V gradients, computes the softmax row contraction,
   and accumulates Q/K/V contributions. The specialized path caches one row;
   the generic path recomputes it. No quadratic backward tensor is allocated.

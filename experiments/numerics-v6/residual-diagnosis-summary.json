@@ -1,0 +1,1946 @@
+{
+  "scope": "Exposed post-hoc diagnosis of every unique native width-1024 FP64 logit failure in the frozen v6 campaign. No training, timing, tuning, production changes, or changed acceptance criteria.",
+  "formal_status_unchanged": "native_precision_limit",
+  "acceptance_limit": "abs(actual-reference) <= 2e-5 + 2e-4*abs(reference); probability primitives use the original math limit",
+  "measured_revision": "2c5191047068c16b12e3312652b118d48a5f3744",
+  "libraries": {
+    "current": {
+      "library_path": "native/build/width-1024/libtransformer.dylib",
+      "library_sha256": "99149b68688e4bfa58e3d862ccc96117da95cf73b2e9f7a0824948a38085cbea"
+    },
+    "old": {
+      "library_path": "work/v6/baseline-native-v5/build/width-1024/libtransformer.dylib",
+      "library_sha256": "232812807252df51d2f07c5639bfbc733892220350dc4860fb9b362696069e5b"
+    }
+  },
+  "aggregate": {
+    "unique_sequences": 8,
+    "formal_sequence_checks_including_repeats": 16,
+    "unique_failed_logit_coordinates": 9,
+    "formal_failed_logit_coordinates_including_repeats": 18,
+    "old_library_failed_logit_coordinates_at_same_weights": 9,
+    "old_library_failed_sequences_at_same_weights": 6,
+    "native_norm1_prefix_failure_cases": 6,
+    "native_qkv_prefix_failure_cases": 1,
+    "borderline_cumulative_cases": 1,
+    "old_attention_same_qkv_failed_coordinates": 16,
+    "current_attention_same_qkv_failed_coordinates": 0,
+    "current_attention_same_qkv_max_absolute_error": 1.3644499183840253e-06,
+    "current_probability_same_qkv_max_absolute_error": 1.0013162710098555e-07,
+    "relu_mask_changes": 0,
+    "independent_fp64_oracle_max_absolute_difference": 1.3677947663381929e-13,
+    "selected_case_token_positions": 256,
+    "selected_case_argmax_changes": 0,
+    "selected_case_max_probability_difference": 9.28451039752809e-06,
+    "selected_case_max_absolute_sequence_mean_nll_delta": 7.616009161104387e-07,
+    "all_ideal_qkv_rounded_once_suffixes_pass": true,
+    "all_native_x_fp64_norm1_rounded_once_suffixes_pass": true,
+    "all_ideal_norm1_rounded_once_suffixes_pass": true
+  },
+  "full_report_prediction_effect_deduplicated_by_checkpoint_and_split": {
+    "native_vs_fp64": {
+      "distinct_checkpoint_split_records": 12,
+      "token_positions": 98304,
+      "argmax_changes": 0,
+      "maximum_probability_absolute_difference": 1.0569661261838892e-05,
+      "maximum_absolute_split_mean_nll_delta": 2.0612473505821072e-08,
+      "maximum_target_log_probability_absolute_difference": 4.043875923898099e-05
+    },
+    "python_vs_fp64": {
+      "distinct_checkpoint_split_records": 12,
+      "token_positions": 98304,
+      "argmax_changes": 1,
+      "maximum_probability_absolute_difference": 4.547895637985189e-05,
+      "maximum_absolute_split_mean_nll_delta": 9.143646373388492e-08,
+      "maximum_target_log_probability_absolute_difference": 0.0002556201376759937
+    },
+    "native_vs_python": {
+      "distinct_checkpoint_split_records": 12,
+      "token_positions": 98304,
+      "argmax_changes": 1,
+      "maximum_probability_absolute_difference": 3.7841014542100426e-05,
+      "maximum_absolute_split_mean_nll_delta": 9.5163168012391e-08,
+      "maximum_target_log_probability_absolute_difference": 0.00023024608697719273
+    }
+  },
+  "cases": [
+    {
+      "name": "seed-42-arm64-test-244",
+      "checkpoint_origin": "arm64",
+      "checkpoint_sha256": "92f0b15992fa5ab9b73da6d7f9d51118762256030e0875fb3108f19103e37f3b",
+      "input_sha256": "4d30b9c8a4b588782c94be98b5dfcabfacd387efc14ada479452f088179acfd4",
+      "equivalent_repeated_checks": [
+        "seed-42-repeat-1-arm64/v6/test/sequence_244/native_fp64",
+        "seed-42-repeat-2-arm64/v6/test/sequence_244/native_fp64"
+      ],
+      "diagnostic_inference": "native_qkv_prefix_suffices_for_a_logit_failure_with_an_fp64_suffix",
+      "current_full_logits_fp64": {
+        "passed": false,
+        "failed_coordinates": 1,
+        "max_absolute_error": 3.7145124388751616e-05,
+        "rmse": 1.8791448692745886e-06,
+        "max_tolerance_ratio": 1.0031953802100966
+      },
+      "old_full_logits_fp64": {
+        "passed": true,
+        "failed_coordinates": 0,
+        "max_absolute_error": 2.7101741744098296e-05,
+        "rmse": 1.5093222257652711e-06,
+        "max_tolerance_ratio": 0.731949147047675
+      },
+      "current_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.279503333457171e-07,
+          "rmse": 8.957169592717872e-08,
+          "max_tolerance_ratio": 0.0014988352507750832
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 8.830576305740578e-06,
+          "rmse": 7.678980632006181e-07,
+          "max_tolerance_ratio": 0.038703812281990504
+        },
+        "attention_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 1.3644499183840253e-06,
+          "rmse": 4.568065011896998e-08,
+          "max_tolerance_ratio": 0.0031867444611687985
+        },
+        "probabilities_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.922317835085124e-08,
+          "rmse": 2.492208484278472e-09,
+          "max_tolerance_ratio": 0.03985669084000615
+        }
+      },
+      "old_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.279503333457171e-07,
+          "rmse": 8.957169592717872e-08,
+          "max_tolerance_ratio": 0.0014988352507750832
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 8.830576305740578e-06,
+          "rmse": 7.678980632006181e-07,
+          "max_tolerance_ratio": 0.038703812281990504
+        },
+        "attention_same_qkv": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.9464984108672496e-05,
+          "rmse": 1.851316106718356e-06,
+          "max_tolerance_ratio": 1.6697003854464971
+        },
+        "probabilities_same_qkv": {
+          "passed": false,
+          "failed_coordinates": 4,
+          "max_absolute_error": 4.557022117060439e-06,
+          "rmse": 1.3580259331921892e-07,
+          "max_tolerance_ratio": 11.052708068920248
+        }
+      },
+      "fp64_suffixes_after_native_stage": {
+        "x": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 4.5467503823060085e-07,
+          "rmse": 2.2420604558517996e-08,
+          "max_tolerance_ratio": 0.012279616917581615
+        },
+        "n1": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 3.251470320170258e-05,
+          "rmse": 1.505776766619007e-06,
+          "max_tolerance_ratio": 0.8781394753042774
+        },
+        "qkv": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.718815147832344e-05,
+          "rmse": 1.7202207936011825e-06,
+          "max_tolerance_ratio": 1.004357432516897
+        },
+        "attention": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.717961652439927e-05,
+          "rmse": 1.7187994721464594e-06,
+          "max_tolerance_ratio": 1.00412692510878
+        },
+        "projected": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.7178944337357134e-05,
+          "rmse": 1.7200212875943803e-06,
+          "max_tolerance_ratio": 1.0041087710455914
+        },
+        "r1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.7185643978060456e-05,
+          "rmse": 1.7201075018345092e-06,
+          "max_tolerance_ratio": 1.0042897113093066
+        },
+        "n2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.723213821472948e-05,
+          "rmse": 1.7213090706948004e-06,
+          "max_tolerance_ratio": 1.0055454024450963
+        },
+        "ff1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.723396853230754e-05,
+          "rmse": 1.721671456338178e-06,
+          "max_tolerance_ratio": 1.005594834669886
+        },
+        "relu": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.723396853230754e-05,
+          "rmse": 1.721671456338178e-06,
+          "max_tolerance_ratio": 1.005594834669886
+        },
+        "ff2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.716722592460309e-05,
+          "rmse": 1.7218022592217056e-06,
+          "max_tolerance_ratio": 1.0037922865073994
+        },
+        "r2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.715962394856831e-05,
+          "rmse": 1.7217291202872991e-06,
+          "max_tolerance_ratio": 1.0035869764602787
+        },
+        "n3": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.719610182160993e-05,
+          "rmse": 1.7506836536216177e-06,
+          "max_tolerance_ratio": 1.0045721510778747
+        }
+      },
+      "storage_substitutions": {
+        "native_x_then_fp64_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.312981295248822e-07,
+          "rmse": 3.573946859760254e-08,
+          "max_tolerance_ratio": 0.019750503388213388
+        },
+        "ideal_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 5.047641229438682e-07,
+          "rmse": 2.3051143465380533e-08,
+          "max_tolerance_ratio": 0.0105838787928036
+        },
+        "native_norm1_then_fp64_qkv_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 3.1829378736622504e-05,
+          "rmse": 1.474677603118726e-06,
+          "max_tolerance_ratio": 0.859630603719465
+        }
+      },
+      "ideal_qkv_rounded_once_to_fp32_suffix": {
+        "passed": true,
+        "failed_coordinates": 0,
+        "max_absolute_error": 3.8741438723732813e-07,
+        "rmse": 1.907940537065527e-08,
+        "max_tolerance_ratio": 0.008720372427082521
+      },
+      "relu_mask_changes": 0,
+      "critical_attention_row": {
+        "head": 2,
+        "query": 28,
+        "largest_probability_change_due_to_qkv": 1.5008436263619362e-05,
+        "keys": [
+          {
+            "key": 28,
+            "full_fp64_score": 531.9854563640133,
+            "fp64_score_from_native_qkv": 531.9854562907444,
+            "full_fp64_probability": 0.5925297602432245,
+            "fp64_probability_from_native_qkv": 0.5925147518180831,
+            "native_probability": 0.5925147533416748
+          },
+          {
+            "key": 6,
+            "full_fp64_score": 531.6110216855931,
+            "fp64_score_from_native_qkv": 531.6110837746326,
+            "full_fp64_probability": 0.40746963786009627,
+            "fp64_probability_from_native_qkv": 0.4074846462963599,
+            "native_probability": 0.40748462080955505
+          }
+        ]
+      },
+      "prediction_effect": {
+        "token_positions": 32,
+        "argmax_changes": 0,
+        "maximum_probability_absolute_difference": 4.044373220102315e-06,
+        "probability_rmse": 9.090311429745547e-08,
+        "nll_delta": 1.3150338595835365e-07,
+        "maximum_target_log_probability_absolute_difference": 6.942909849705359e-06
+      }
+    },
+    {
+      "name": "seed-42-python-test-6",
+      "checkpoint_origin": "python",
+      "checkpoint_sha256": "c11108df2fadaaf3407776b25fd259b1b571c8835bfe852799baffaa04010381",
+      "input_sha256": "4d30b9c8a4b588782c94be98b5dfcabfacd387efc14ada479452f088179acfd4",
+      "equivalent_repeated_checks": [
+        "seed-42-repeat-1-python/v6/test/sequence_6/native_fp64",
+        "seed-42-repeat-2-python/v6/test/sequence_6/native_fp64"
+      ],
+      "diagnostic_inference": "borderline_cumulative_rounding_no_single_early_stage_explains_failure",
+      "current_full_logits_fp64": {
+        "passed": false,
+        "failed_coordinates": 1,
+        "max_absolute_error": 2.378597544230171e-05,
+        "rmse": 1.3435209141294834e-06,
+        "max_tolerance_ratio": 1.003646016871708
+      },
+      "old_full_logits_fp64": {
+        "passed": false,
+        "failed_coordinates": 1,
+        "max_absolute_error": 2.4471428857218702e-05,
+        "rmse": 1.3820723352763189e-06,
+        "max_tolerance_ratio": 1.0325686310105031
+      },
+      "current_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 9.732891683711387e-07,
+          "rmse": 8.782708065336053e-08,
+          "max_tolerance_ratio": 0.0016508898369633216
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 4.643219286393219e-06,
+          "rmse": 5.161887258704096e-07,
+          "max_tolerance_ratio": 0.047508578826417895
+        },
+        "attention_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 1.0142883333230657e-06,
+          "rmse": 4.511625257840917e-08,
+          "max_tolerance_ratio": 0.0026134169973033626
+        },
+        "probabilities_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.200746821034443e-08,
+          "rmse": 2.8923093070886526e-09,
+          "max_tolerance_ratio": 0.033048268104145524
+        }
+      },
+      "old_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 9.732891683711387e-07,
+          "rmse": 8.782708065336053e-08,
+          "max_tolerance_ratio": 0.0016508898369633216
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 4.643219286393219e-06,
+          "rmse": 5.161887258704096e-07,
+          "max_tolerance_ratio": 0.047508578826417895
+        },
+        "attention_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 9.080309588682667e-06,
+          "rmse": 2.5658556973131175e-07,
+          "max_tolerance_ratio": 0.1589209107474009
+        },
+        "probabilities_same_qkv": {
+          "passed": false,
+          "failed_coordinates": 2,
+          "max_absolute_error": 1.259432769296076e-06,
+          "rmse": 3.470115030162237e-08,
+          "max_tolerance_ratio": 2.9931152143783155
+        }
+      },
+      "fp64_suffixes_after_native_stage": {
+        "x": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 1.4842250065094653e-07,
+          "rmse": 1.0017508207348412e-08,
+          "max_tolerance_ratio": 0.0062626673416781315
+        },
+        "n1": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 1.8714823179079992e-05,
+          "rmse": 9.245032533717197e-07,
+          "max_tolerance_ratio": 0.7896694329692102
+        },
+        "qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.36450738223537e-05,
+          "rmse": 1.1656642269808546e-06,
+          "max_tolerance_ratio": 0.9977006920741346
+        },
+        "attention": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.3630941794364896e-05,
+          "rmse": 1.1640372457789956e-06,
+          "max_tolerance_ratio": 0.9971043930644223
+        },
+        "projected": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 2.3705626260334123e-05,
+          "rmse": 1.1670411063892515e-06,
+          "max_tolerance_ratio": 1.00025569400535
+        },
+        "r1": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.369876612735855e-05,
+          "rmse": 1.1674504583469768e-06,
+          "max_tolerance_ratio": 0.9999662316222391
+        },
+        "n2": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.3634208190008443e-05,
+          "rmse": 1.148013234515404e-06,
+          "max_tolerance_ratio": 0.9972422181868406
+        },
+        "ff1": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.3652864356633885e-05,
+          "rmse": 1.1468130860769038e-06,
+          "max_tolerance_ratio": 0.998029412614462
+        },
+        "relu": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.3652864356633885e-05,
+          "rmse": 1.1468130860769038e-06,
+          "max_tolerance_ratio": 0.998029412614462
+        },
+        "ff2": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.356985333974021e-05,
+          "rmse": 1.147901715216485e-06,
+          "max_tolerance_ratio": 0.9945267739833954
+        },
+        "r2": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.3546313440911404e-05,
+          "rmse": 1.1477965696218488e-06,
+          "max_tolerance_ratio": 0.9935335111359497
+        },
+        "n3": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.355234523663402e-05,
+          "rmse": 1.1922188532950577e-06,
+          "max_tolerance_ratio": 0.9937880219406998
+        }
+      },
+      "storage_substitutions": {
+        "native_x_then_fp64_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 6.898469333549428e-07,
+          "rmse": 3.5594946132098366e-08,
+          "max_tolerance_ratio": 0.029107998055086397
+        },
+        "ideal_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 8.630494184348747e-07,
+          "rmse": 4.480731661621992e-08,
+          "max_tolerance_ratio": 0.03641625348839536
+        },
+        "native_norm1_then_fp64_qkv_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 1.8582855442664248e-05,
+          "rmse": 9.181693247268964e-07,
+          "max_tolerance_ratio": 0.7841010721790244
+        }
+      },
+      "ideal_qkv_rounded_once_to_fp32_suffix": {
+        "passed": true,
+        "failed_coordinates": 0,
+        "max_absolute_error": 1.023865706155369e-06,
+        "rmse": 5.0756116313584884e-08,
+        "max_tolerance_ratio": 0.04320187499928473
+      },
+      "relu_mask_changes": 0,
+      "critical_attention_row": {
+        "head": 0,
+        "query": 28,
+        "largest_probability_change_due_to_qkv": 8.260485936606443e-06,
+        "keys": [
+          {
+            "key": 23,
+            "full_fp64_score": 246.98986845108288,
+            "fp64_score_from_native_qkv": 246.9898911318519,
+            "full_fp64_probability": 0.6688549068799184,
+            "fp64_probability_from_native_qkv": 0.6688631673658549,
+            "native_probability": 0.6688631176948547
+          },
+          {
+            "key": 26,
+            "full_fp64_score": 246.28685792220023,
+            "fp64_score_from_native_qkv": 246.28684330732705,
+            "full_fp64_probability": 0.3311450931200816,
+            "fp64_probability_from_native_qkv": 0.331136832634145,
+            "native_probability": 0.3311368227005005
+          }
+        ]
+      },
+      "prediction_effect": {
+        "token_positions": 32,
+        "argmax_changes": 0,
+        "maximum_probability_absolute_difference": 2.3594547454985904e-06,
+        "probability_rmse": 5.737701459395672e-08,
+        "nll_delta": 4.4904554075131387e-07,
+        "maximum_target_log_probability_absolute_difference": 1.8438734124437417e-05
+      }
+    },
+    {
+      "name": "seed-43-arm64-validation-67",
+      "checkpoint_origin": "arm64",
+      "checkpoint_sha256": "90574b6eee6b3519928a24c5eff593d6efbecbba6c2bfe832526593ff21ccca8",
+      "input_sha256": "1d27ba2135d12364653dda36d17a8f72ed56387562a8b2cf9a4ac455c586cd6d",
+      "equivalent_repeated_checks": [
+        "seed-43-repeat-1-arm64/v6/validation/sequence_67/native_fp64",
+        "seed-43-repeat-2-arm64/v6/validation/sequence_67/native_fp64"
+      ],
+      "diagnostic_inference": "native_norm1_prefix_suffices_for_a_logit_failure_with_an_fp64_suffix",
+      "current_full_logits_fp64": {
+        "passed": false,
+        "failed_coordinates": 2,
+        "max_absolute_error": 5.991410935624053e-05,
+        "rmse": 3.7619398567565322e-06,
+        "max_tolerance_ratio": 2.174092380340538
+      },
+      "old_full_logits_fp64": {
+        "passed": false,
+        "failed_coordinates": 2,
+        "max_absolute_error": 4.394006455643584e-05,
+        "rmse": 2.7667264381208785e-06,
+        "max_tolerance_ratio": 1.59529543761658
+      },
+      "current_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.414931708638051e-07,
+          "rmse": 8.973256723458078e-08,
+          "max_tolerance_ratio": 0.0015544768936459335
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.863128800522645e-06,
+          "rmse": 7.22414103346324e-07,
+          "max_tolerance_ratio": 0.05143945490054535
+        },
+        "attention_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 6.280140265602085e-07,
+          "rmse": 3.850152504508959e-08,
+          "max_tolerance_ratio": 0.0032978694270194356
+        },
+        "probabilities_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.979109994948885e-08,
+          "rmse": 2.948145934205911e-09,
+          "max_tolerance_ratio": 0.036278329172903266
+        }
+      },
+      "old_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.414931708638051e-07,
+          "rmse": 8.973256723458078e-08,
+          "max_tolerance_ratio": 0.0015544768936459335
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.863128800522645e-06,
+          "rmse": 7.22414103346324e-07,
+          "max_tolerance_ratio": 0.05143945490054535
+        },
+        "attention_same_qkv": {
+          "passed": false,
+          "failed_coordinates": 3,
+          "max_absolute_error": 4.8497041128303664e-05,
+          "rmse": 1.8815445156756772e-06,
+          "max_tolerance_ratio": 1.8565231520022318
+        },
+        "probabilities_same_qkv": {
+          "passed": false,
+          "failed_coordinates": 6,
+          "max_absolute_error": 5.341040921313933e-06,
+          "rmse": 1.6350515942057155e-07,
+          "max_tolerance_ratio": 6.852177245874679
+        }
+      },
+      "fp64_suffixes_after_native_stage": {
+        "x": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.0365628272678293e-06,
+          "rmse": 1.2292349998305713e-07,
+          "max_tolerance_ratio": 0.07396413846581983
+        },
+        "n1": {
+          "passed": false,
+          "failed_coordinates": 2,
+          "max_absolute_error": 6.190858297783208e-05,
+          "rmse": 3.7654254577949954e-06,
+          "max_tolerance_ratio": 2.2512209176402487
+        },
+        "qkv": {
+          "passed": false,
+          "failed_coordinates": 2,
+          "max_absolute_error": 5.9826756156677874e-05,
+          "rmse": 3.6234994247117907e-06,
+          "max_tolerance_ratio": 2.1716559697645184
+        },
+        "attention": {
+          "passed": false,
+          "failed_coordinates": 2,
+          "max_absolute_error": 5.985636426730778e-05,
+          "rmse": 3.625625912474136e-06,
+          "max_tolerance_ratio": 2.1733308676698013
+        },
+        "projected": {
+          "passed": false,
+          "failed_coordinates": 2,
+          "max_absolute_error": 5.986468995144989e-05,
+          "rmse": 3.6210693607147164e-06,
+          "max_tolerance_ratio": 2.1756783473299444
+        },
+        "r1": {
+          "passed": false,
+          "failed_coordinates": 2,
+          "max_absolute_error": 5.985157680310493e-05,
+          "rmse": 3.621095438288043e-06,
+          "max_tolerance_ratio": 2.175279562396404
+        },
+        "n2": {
+          "passed": false,
+          "failed_coordinates": 2,
+          "max_absolute_error": 5.983706201373451e-05,
+          "rmse": 3.6236525739152364e-06,
+          "max_tolerance_ratio": 2.174370414612799
+        },
+        "ff1": {
+          "passed": false,
+          "failed_coordinates": 2,
+          "max_absolute_error": 5.983836639922302e-05,
+          "rmse": 3.6244429338601753e-06,
+          "max_tolerance_ratio": 2.174219430960847
+        },
+        "relu": {
+          "passed": false,
+          "failed_coordinates": 2,
+          "max_absolute_error": 5.983836639922302e-05,
+          "rmse": 3.6244429338601753e-06,
+          "max_tolerance_ratio": 2.174219430960847
+        },
+        "ff2": {
+          "passed": false,
+          "failed_coordinates": 2,
+          "max_absolute_error": 5.985908570371734e-05,
+          "rmse": 3.628223066506703e-06,
+          "max_tolerance_ratio": 2.1755383002104822
+        },
+        "r2": {
+          "passed": false,
+          "failed_coordinates": 2,
+          "max_absolute_error": 5.983384391683444e-05,
+          "rmse": 3.6300712340285702e-06,
+          "max_tolerance_ratio": 2.176184938474833
+        },
+        "n3": {
+          "passed": false,
+          "failed_coordinates": 2,
+          "max_absolute_error": 5.9922847791993306e-05,
+          "rmse": 3.6931292022763836e-06,
+          "max_tolerance_ratio": 2.17775555083115
+        }
+      },
+      "storage_substitutions": {
+        "native_x_then_fp64_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 1.8746807273206656e-06,
+          "rmse": 1.1679159549936735e-07,
+          "max_tolerance_ratio": 0.06859715521560357
+        },
+        "ideal_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 5.060703180959081e-07,
+          "rmse": 2.4290716510381745e-08,
+          "max_tolerance_ratio": 0.0028727534237143974
+        },
+        "native_norm1_then_fp64_qkv_rounded_once": {
+          "passed": false,
+          "failed_coordinates": 2,
+          "max_absolute_error": 6.141861887520861e-05,
+          "rmse": 3.735555642673227e-06,
+          "max_tolerance_ratio": 2.234070975987867
+        }
+      },
+      "ideal_qkv_rounded_once_to_fp32_suffix": {
+        "passed": true,
+        "failed_coordinates": 0,
+        "max_absolute_error": 4.365272234130302e-06,
+        "rmse": 2.6231146962474673e-07,
+        "max_tolerance_ratio": 0.15860701497843563
+      },
+      "relu_mask_changes": 0,
+      "critical_attention_row": {
+        "head": 0,
+        "query": 11,
+        "largest_probability_change_due_to_qkv": 1.9862668219461366e-05,
+        "keys": [
+          {
+            "key": 11,
+            "full_fp64_score": 503.0259882921987,
+            "fp64_score_from_native_qkv": 503.0259516104727,
+            "full_fp64_probability": 0.5768768568323763,
+            "fp64_probability_from_native_qkv": 0.5768569941641569,
+            "native_probability": 0.5768569707870483
+          },
+          {
+            "key": 7,
+            "full_fp64_score": 502.71602272344813,
+            "fp64_score_from_native_qkv": 502.716067415593,
+            "full_fp64_probability": 0.4231231431676237,
+            "fp64_probability_from_native_qkv": 0.4231430058358432,
+            "native_probability": 0.4231429994106293
+          }
+        ]
+      },
+      "prediction_effect": {
+        "token_positions": 32,
+        "argmax_changes": 0,
+        "maximum_probability_absolute_difference": 1.3168854540168695e-06,
+        "probability_rmse": 3.2316215960498757e-08,
+        "nll_delta": 5.520080614829226e-08,
+        "maximum_target_log_probability_absolute_difference": 2.7497347039329156e-06
+      }
+    },
+    {
+      "name": "seed-43-arm64-validation-150",
+      "checkpoint_origin": "arm64",
+      "checkpoint_sha256": "90574b6eee6b3519928a24c5eff593d6efbecbba6c2bfe832526593ff21ccca8",
+      "input_sha256": "1d27ba2135d12364653dda36d17a8f72ed56387562a8b2cf9a4ac455c586cd6d",
+      "equivalent_repeated_checks": [
+        "seed-43-repeat-1-arm64/v6/validation/sequence_150/native_fp64",
+        "seed-43-repeat-2-arm64/v6/validation/sequence_150/native_fp64"
+      ],
+      "diagnostic_inference": "native_norm1_prefix_suffices_for_a_logit_failure_with_an_fp64_suffix",
+      "current_full_logits_fp64": {
+        "passed": false,
+        "failed_coordinates": 1,
+        "max_absolute_error": 0.00010541136277364416,
+        "rmse": 5.069674098108913e-06,
+        "max_tolerance_ratio": 1.0874441149328038
+      },
+      "old_full_logits_fp64": {
+        "passed": true,
+        "failed_coordinates": 0,
+        "max_absolute_error": 8.061583054708166e-05,
+        "rmse": 3.956775059271011e-06,
+        "max_tolerance_ratio": 0.8433815018103844
+      },
+      "current_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 9.535710887575988e-07,
+          "rmse": 7.899289199684323e-08,
+          "max_tolerance_ratio": 0.0013317151823995382
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 9.026390827671094e-06,
+          "rmse": 7.316043940095514e-07,
+          "max_tolerance_ratio": 0.04816040347494476
+        },
+        "attention_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 6.737834592485115e-07,
+          "rmse": 2.6533795302587468e-08,
+          "max_tolerance_ratio": 0.0019619035586361465
+        },
+        "probabilities_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 5.421534998717448e-08,
+          "rmse": 1.83828035353772e-09,
+          "max_tolerance_ratio": 0.02464334502997361
+        }
+      },
+      "old_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 9.535710887575988e-07,
+          "rmse": 7.899289199684323e-08,
+          "max_tolerance_ratio": 0.0013317151823995382
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 9.026390827671094e-06,
+          "rmse": 7.316043940095514e-07,
+          "max_tolerance_ratio": 0.04816040347494476
+        },
+        "attention_same_qkv": {
+          "passed": false,
+          "failed_coordinates": 3,
+          "max_absolute_error": 5.8513049047803634e-05,
+          "rmse": 1.7340896200922795e-06,
+          "max_tolerance_ratio": 1.145199766029877
+        },
+        "probabilities_same_qkv": {
+          "passed": false,
+          "failed_coordinates": 5,
+          "max_absolute_error": 5.310768290578416e-06,
+          "rmse": 1.2894519240144235e-07,
+          "max_tolerance_ratio": 4.798280545292458
+        }
+      },
+      "fp64_suffixes_after_native_stage": {
+        "x": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 9.099093585263063e-07,
+          "rmse": 4.6632551188218097e-08,
+          "max_tolerance_ratio": 0.009257186978856932
+        },
+        "n1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 0.00013942383453713347,
+          "rmse": 6.571830478212344e-06,
+          "max_tolerance_ratio": 1.431655557712046
+        },
+        "qkv": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 0.00010582661691582729,
+          "rmse": 4.986461288087716e-06,
+          "max_tolerance_ratio": 1.085272173268837
+        },
+        "attention": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 0.00010584295059512527,
+          "rmse": 4.985984917491476e-06,
+          "max_tolerance_ratio": 1.0850492906053997
+        },
+        "projected": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 0.00010579103554242408,
+          "rmse": 4.98509004778047e-06,
+          "max_tolerance_ratio": 1.0836460863056998
+        },
+        "r1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 0.00010578654412718436,
+          "rmse": 4.985731646093047e-06,
+          "max_tolerance_ratio": 1.0834335905344539
+        },
+        "n2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 0.0001058794793706852,
+          "rmse": 5.002116811301828e-06,
+          "max_tolerance_ratio": 1.0862482898163448
+        },
+        "ff1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 0.0001058811449663466,
+          "rmse": 5.006341147814889e-06,
+          "max_tolerance_ratio": 1.086131309103008
+        },
+        "relu": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 0.0001058811449663466,
+          "rmse": 5.006341147814889e-06,
+          "max_tolerance_ratio": 1.086131309103008
+        },
+        "ff2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 0.00010585987228051152,
+          "rmse": 5.008817544103892e-06,
+          "max_tolerance_ratio": 1.085073411235379
+        },
+        "r2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 0.00010584597087870407,
+          "rmse": 5.009262642141803e-06,
+          "max_tolerance_ratio": 1.0856514662578916
+        },
+        "n3": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 0.00010582120984370391,
+          "rmse": 5.0240640638803845e-06,
+          "max_tolerance_ratio": 1.084286394367337
+        }
+      },
+      "storage_substitutions": {
+        "native_x_then_fp64_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 1.4797693541623858e-06,
+          "rmse": 7.149143704315511e-08,
+          "max_tolerance_ratio": 0.01542777874070289
+        },
+        "ideal_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.985717541648114e-06,
+          "rmse": 1.4109558400103487e-07,
+          "max_tolerance_ratio": 0.030667317304424308
+        },
+        "native_norm1_then_fp64_qkv_rounded_once": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 0.0001390329356718567,
+          "rmse": 6.553550234627773e-06,
+          "max_tolerance_ratio": 1.427855498300587
+        }
+      },
+      "ideal_qkv_rounded_once_to_fp32_suffix": {
+        "passed": true,
+        "failed_coordinates": 0,
+        "max_absolute_error": 5.53789771018387e-06,
+        "rmse": 2.615118052192218e-07,
+        "max_tolerance_ratio": 0.05676282203877115
+      },
+      "relu_mask_changes": 0,
+      "critical_attention_row": {
+        "head": 0,
+        "query": 19,
+        "largest_probability_change_due_to_qkv": 2.3614819119499586e-05,
+        "keys": [
+          {
+            "key": 18,
+            "full_fp64_score": 909.4073632859939,
+            "fp64_score_from_native_qkv": 909.4073125135577,
+            "full_fp64_probability": 0.54662034458008,
+            "fp64_probability_from_native_qkv": 0.5465967297609605,
+            "native_probability": 0.5465967059135437
+          },
+          {
+            "key": 7,
+            "full_fp64_score": 909.2203386588735,
+            "fp64_score_from_native_qkv": 909.2203831737052,
+            "full_fp64_probability": 0.4533796554199201,
+            "fp64_probability_from_native_qkv": 0.4534032702390395,
+            "native_probability": 0.4534032642841339
+          }
+        ]
+      },
+      "prediction_effect": {
+        "token_positions": 32,
+        "argmax_changes": 0,
+        "maximum_probability_absolute_difference": 9.28451039752809e-06,
+        "probability_rmse": 1.9374216160685346e-07,
+        "nll_delta": 3.1951383627770724e-07,
+        "maximum_target_log_probability_absolute_difference": 1.691215869747964e-05
+      }
+    },
+    {
+      "name": "seed-44-arm64-test-9",
+      "checkpoint_origin": "arm64",
+      "checkpoint_sha256": "a011915c0ca4454194de51d20c6d323f3832640c27722d7a129d616ba2980000",
+      "input_sha256": "4d30b9c8a4b588782c94be98b5dfcabfacd387efc14ada479452f088179acfd4",
+      "equivalent_repeated_checks": [
+        "seed-44-repeat-1-arm64/v6/test/sequence_9/native_fp64",
+        "seed-44-repeat-2-arm64/v6/test/sequence_9/native_fp64"
+      ],
+      "diagnostic_inference": "native_norm1_prefix_suffices_for_a_logit_failure_with_an_fp64_suffix",
+      "current_full_logits_fp64": {
+        "passed": false,
+        "failed_coordinates": 1,
+        "max_absolute_error": 3.712666965327571e-05,
+        "rmse": 2.7750167643828144e-06,
+        "max_tolerance_ratio": 1.2327257402734457
+      },
+      "old_full_logits_fp64": {
+        "passed": false,
+        "failed_coordinates": 1,
+        "max_absolute_error": 3.3747912526749246e-05,
+        "rmse": 2.3844306067690596e-06,
+        "max_tolerance_ratio": 1.041923552168153
+      },
+      "current_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 9.219175551855585e-07,
+          "rmse": 9.08048351888305e-08,
+          "max_tolerance_ratio": 0.001662173602565608
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.484854684491893e-06,
+          "rmse": 5.94995738487451e-07,
+          "max_tolerance_ratio": 0.05260618716708356
+        },
+        "attention_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 9.368667956977106e-07,
+          "rmse": 5.0867158361340396e-08,
+          "max_tolerance_ratio": 0.0015203279414207247
+        },
+        "probabilities_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 8.243569105115256e-08,
+          "rmse": 2.9301323007122645e-09,
+          "max_tolerance_ratio": 0.037470779589305385
+        }
+      },
+      "old_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 9.219175551855585e-07,
+          "rmse": 9.08048351888305e-08,
+          "max_tolerance_ratio": 0.001662173602565608
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.484854684491893e-06,
+          "rmse": 5.94995738487451e-07,
+          "max_tolerance_ratio": 0.05260618716708356
+        },
+        "attention_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.2057860469271162e-05,
+          "rmse": 9.253130692778995e-07,
+          "max_tolerance_ratio": 0.44845089554300094
+        },
+        "probabilities_same_qkv": {
+          "passed": false,
+          "failed_coordinates": 8,
+          "max_absolute_error": 6.101239233169409e-06,
+          "rmse": 1.6424328102852342e-07,
+          "max_tolerance_ratio": 5.809537083319631
+        }
+      },
+      "fp64_suffixes_after_native_stage": {
+        "x": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 5.585804725427579e-07,
+          "rmse": 3.6494234173683276e-08,
+          "max_tolerance_ratio": 0.01650246928674078
+        },
+        "n1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.088904237775637e-05,
+          "rmse": 2.533323080947587e-06,
+          "max_tolerance_ratio": 1.2186620251477647
+        },
+        "qkv": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.1926983943341156e-05,
+          "rmse": 2.6087672306854206e-06,
+          "max_tolerance_ratio": 1.2496820991269408
+        },
+        "attention": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.185872259476753e-05,
+          "rmse": 2.604024103637859e-06,
+          "max_tolerance_ratio": 1.2474970285984694
+        },
+        "projected": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.194448746375201e-05,
+          "rmse": 2.613608352841256e-06,
+          "max_tolerance_ratio": 1.2492227330138579
+        },
+        "r1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.194565442183773e-05,
+          "rmse": 2.613931100824329e-06,
+          "max_tolerance_ratio": 1.2492843373591647
+        },
+        "n2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.1972929727407404e-05,
+          "rmse": 2.616032038682024e-06,
+          "max_tolerance_ratio": 1.2522232651372156
+        },
+        "ff1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.1924405882909355e-05,
+          "rmse": 2.6106571603329245e-06,
+          "max_tolerance_ratio": 1.2505217336894883
+        },
+        "relu": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.1924405882909355e-05,
+          "rmse": 2.6106571603329245e-06,
+          "max_tolerance_ratio": 1.2505217336894883
+        },
+        "ff2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.1840073123466937e-05,
+          "rmse": 2.603818965237091e-06,
+          "max_tolerance_ratio": 1.2511005772918575
+        },
+        "r2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.187592651305749e-05,
+          "rmse": 2.604722049746983e-06,
+          "max_tolerance_ratio": 1.2507677701401625
+        },
+        "n3": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.9275952788742075e-05,
+          "rmse": 2.6953343942060974e-06,
+          "max_tolerance_ratio": 1.2498000198649504
+        }
+      },
+      "storage_substitutions": {
+        "native_x_then_fp64_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 4.98450344110779e-07,
+          "rmse": 3.3486076631810065e-08,
+          "max_tolerance_ratio": 0.014666959829937291
+        },
+        "ideal_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 1.4820159170980673e-06,
+          "rmse": 7.294633205868657e-08,
+          "max_tolerance_ratio": 0.014127753477979663
+        },
+        "native_norm1_then_fp64_qkv_rounded_once": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.087740817837471e-05,
+          "rmse": 2.5287354467846084e-06,
+          "max_tolerance_ratio": 1.2163538778538174
+        }
+      },
+      "ideal_qkv_rounded_once_to_fp32_suffix": {
+        "passed": true,
+        "failed_coordinates": 0,
+        "max_absolute_error": 4.861056721594537e-07,
+        "rmse": 3.598861893207853e-08,
+        "max_tolerance_ratio": 0.009334210086674557
+      },
+      "relu_mask_changes": 0,
+      "critical_attention_row": {
+        "head": 2,
+        "query": 30,
+        "largest_probability_change_due_to_qkv": 1.0553119891842933e-05,
+        "keys": [
+          {
+            "key": 19,
+            "full_fp64_score": 291.04939538148255,
+            "fp64_score_from_native_qkv": 291.0493730460016,
+            "full_fp64_probability": 0.7774064131517318,
+            "fp64_probability_from_native_qkv": 0.7774169662716236,
+            "native_probability": 0.7774169445037842
+          },
+          {
+            "key": 30,
+            "full_fp64_score": 289.79877974090175,
+            "fp64_score_from_native_qkv": 289.79869641979946,
+            "full_fp64_probability": 0.2225935866412573,
+            "fp64_probability_from_native_qkv": 0.22258303352136727,
+            "native_probability": 0.22258302569389343
+          }
+        ]
+      },
+      "prediction_effect": {
+        "token_positions": 32,
+        "argmax_changes": 0,
+        "maximum_probability_absolute_difference": 6.919417255280003e-07,
+        "probability_rmse": 2.7760517473988872e-08,
+        "nll_delta": 1.445962816148949e-07,
+        "maximum_target_log_probability_absolute_difference": 5.4412796366420935e-06
+      }
+    },
+    {
+      "name": "seed-44-arm64-validation-136",
+      "checkpoint_origin": "arm64",
+      "checkpoint_sha256": "a011915c0ca4454194de51d20c6d323f3832640c27722d7a129d616ba2980000",
+      "input_sha256": "1d27ba2135d12364653dda36d17a8f72ed56387562a8b2cf9a4ac455c586cd6d",
+      "equivalent_repeated_checks": [
+        "seed-44-repeat-1-arm64/v6/validation/sequence_136/native_fp64",
+        "seed-44-repeat-2-arm64/v6/validation/sequence_136/native_fp64"
+      ],
+      "diagnostic_inference": "native_norm1_prefix_suffices_for_a_logit_failure_with_an_fp64_suffix",
+      "current_full_logits_fp64": {
+        "passed": false,
+        "failed_coordinates": 1,
+        "max_absolute_error": 4.185529626532514e-05,
+        "rmse": 2.9991380269570607e-06,
+        "max_tolerance_ratio": 1.0495666494127445
+      },
+      "old_full_logits_fp64": {
+        "passed": false,
+        "failed_coordinates": 2,
+        "max_absolute_error": 6.36705962531181e-05,
+        "rmse": 4.464709605282928e-06,
+        "max_tolerance_ratio": 1.6225977828628526
+      },
+      "current_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 6.471753923875667e-07,
+          "rmse": 8.87779245817627e-08,
+          "max_tolerance_ratio": 0.0014560720114274012
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.677065028133256e-06,
+          "rmse": 5.915519421862397e-07,
+          "max_tolerance_ratio": 0.05327530295539504
+        },
+        "attention_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 8.781068689955873e-07,
+          "rmse": 4.359531485143419e-08,
+          "max_tolerance_ratio": 0.004716546695165953
+        },
+        "probabilities_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 6.189753642971141e-08,
+          "rmse": 2.5844937929509716e-09,
+          "max_tolerance_ratio": 0.03692818711188445
+        }
+      },
+      "old_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 6.471753923875667e-07,
+          "rmse": 8.87779245817627e-08,
+          "max_tolerance_ratio": 0.0014560720114274012
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.677065028133256e-06,
+          "rmse": 5.915519421862397e-07,
+          "max_tolerance_ratio": 0.05327530295539504
+        },
+        "attention_same_qkv": {
+          "passed": false,
+          "failed_coordinates": 2,
+          "max_absolute_error": 5.902835496218728e-05,
+          "rmse": 1.7966505439775651e-06,
+          "max_tolerance_ratio": 1.3190268544540262
+        },
+        "probabilities_same_qkv": {
+          "passed": false,
+          "failed_coordinates": 9,
+          "max_absolute_error": 6.110459229768939e-06,
+          "rmse": 1.479648960961103e-07,
+          "max_tolerance_ratio": 7.520065817126652
+        }
+      },
+      "fp64_suffixes_after_native_stage": {
+        "x": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 4.570747997867386e-07,
+          "rmse": 2.783137419654757e-08,
+          "max_tolerance_ratio": 0.004352563020349571
+        },
+        "n1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.652471839139416e-05,
+          "rmse": 3.206312412256321e-06,
+          "max_tolerance_ratio": 1.1783719031173252
+        },
+        "qkv": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.1615494812852205e-05,
+          "rmse": 2.874192128652495e-06,
+          "max_tolerance_ratio": 1.053961309789057
+        },
+        "attention": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.1510425818236385e-05,
+          "rmse": 2.8664111766824215e-06,
+          "max_tolerance_ratio": 1.051411925523763
+        },
+        "projected": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.1474800826613034e-05,
+          "rmse": 2.8649812922752997e-06,
+          "max_tolerance_ratio": 1.0513354398545074
+        },
+        "r1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.147699988332754e-05,
+          "rmse": 2.8650149033381466e-06,
+          "max_tolerance_ratio": 1.0511785282552588
+        },
+        "n2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.1472545126319815e-05,
+          "rmse": 2.8661121044608556e-06,
+          "max_tolerance_ratio": 1.0516443509148998
+        },
+        "ff1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.148510933132954e-05,
+          "rmse": 2.867982018111519e-06,
+          "max_tolerance_ratio": 1.052023241687425
+        },
+        "relu": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.148510933132954e-05,
+          "rmse": 2.867982018111519e-06,
+          "max_tolerance_ratio": 1.052023241687425
+        },
+        "ff2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.148556365701772e-05,
+          "rmse": 2.8694511844331957e-06,
+          "max_tolerance_ratio": 1.0522488730545188
+        },
+        "r2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.1464062520812917e-05,
+          "rmse": 2.8698056456491246e-06,
+          "max_tolerance_ratio": 1.0513135649329417
+        },
+        "n3": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.1351076236928463e-05,
+          "rmse": 2.913138881795393e-06,
+          "max_tolerance_ratio": 1.051809790762304
+        }
+      },
+      "storage_substitutions": {
+        "native_x_then_fp64_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 6.990466974166054e-07,
+          "rmse": 3.859296161970009e-08,
+          "max_tolerance_ratio": 0.0034683752811865334
+        },
+        "ideal_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.620769730121708e-07,
+          "rmse": 2.170381477353482e-08,
+          "max_tolerance_ratio": 0.005399760202321791
+        },
+        "native_norm1_then_fp64_qkv_rounded_once": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.780549082550323e-05,
+          "rmse": 3.294543831504746e-06,
+          "max_tolerance_ratio": 1.210891018710599
+        }
+      },
+      "ideal_qkv_rounded_once_to_fp32_suffix": {
+        "passed": true,
+        "failed_coordinates": 0,
+        "max_absolute_error": 3.486347301961956e-07,
+        "rmse": 3.2063610601057474e-08,
+        "max_tolerance_ratio": 0.00707790728825
+      },
+      "relu_mask_changes": 0,
+      "critical_attention_row": {
+        "head": 1,
+        "query": 15,
+        "largest_probability_change_due_to_qkv": 1.1332414132092516e-05,
+        "keys": [
+          {
+            "key": 14,
+            "full_fp64_score": 229.89385992825675,
+            "fp64_score_from_native_qkv": 229.89383783965735,
+            "full_fp64_probability": 0.6937116895405023,
+            "fp64_probability_from_native_qkv": 0.6937230219546344,
+            "native_probability": 0.6937229633331299
+          },
+          {
+            "key": 15,
+            "full_fp64_score": 229.07633033641798,
+            "fp64_score_from_native_qkv": 229.07625491218124,
+            "full_fp64_probability": 0.30628831045949767,
+            "fp64_probability_from_native_qkv": 0.30627697804536563,
+            "native_probability": 0.30627697706222534
+          }
+        ]
+      },
+      "prediction_effect": {
+        "token_positions": 32,
+        "argmax_changes": 0,
+        "maximum_probability_absolute_difference": 1.2214224660023199e-06,
+        "probability_rmse": 3.758594933549984e-08,
+        "nll_delta": -3.005628457231069e-07,
+        "maximum_target_log_probability_absolute_difference": 2.4869198504973156e-06
+      }
+    },
+    {
+      "name": "seed-44-python-test-219",
+      "checkpoint_origin": "python",
+      "checkpoint_sha256": "2175595c9e7119d74aa88024464bb281b5ae242ced86db1990f31c9c584921d1",
+      "input_sha256": "4d30b9c8a4b588782c94be98b5dfcabfacd387efc14ada479452f088179acfd4",
+      "equivalent_repeated_checks": [
+        "seed-44-repeat-1-python/v6/test/sequence_219/native_fp64",
+        "seed-44-repeat-2-python/v6/test/sequence_219/native_fp64"
+      ],
+      "diagnostic_inference": "native_norm1_prefix_suffices_for_a_logit_failure_with_an_fp64_suffix",
+      "current_full_logits_fp64": {
+        "passed": false,
+        "failed_coordinates": 1,
+        "max_absolute_error": 6.677616650030416e-05,
+        "rmse": 4.126671575580149e-06,
+        "max_tolerance_ratio": 1.1152629507147327
+      },
+      "old_full_logits_fp64": {
+        "passed": false,
+        "failed_coordinates": 1,
+        "max_absolute_error": 7.869709545538228e-05,
+        "rmse": 4.956495959718842e-06,
+        "max_tolerance_ratio": 1.3400052876304573
+      },
+      "current_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.046799446186469e-07,
+          "rmse": 8.815935847063192e-08,
+          "max_tolerance_ratio": 0.0013281722596551293
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 5.719320238739556e-06,
+          "rmse": 5.128585778516433e-07,
+          "max_tolerance_ratio": 0.03889744070106057
+        },
+        "attention_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 1.2225569072654707e-06,
+          "rmse": 5.113446109256018e-08,
+          "max_tolerance_ratio": 0.00565029335610295
+        },
+        "probabilities_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.886918451660563e-08,
+          "rmse": 3.0552657768121987e-09,
+          "max_tolerance_ratio": 0.044045427056374944
+        }
+      },
+      "old_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.046799446186469e-07,
+          "rmse": 8.815935847063192e-08,
+          "max_tolerance_ratio": 0.0013281722596551293
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 5.719320238739556e-06,
+          "rmse": 5.128585778516433e-07,
+          "max_tolerance_ratio": 0.03889744070106057
+        },
+        "attention_same_qkv": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.0395600931584776e-05,
+          "rmse": 8.034751955489736e-07,
+          "max_tolerance_ratio": 1.1977375428646098
+        },
+        "probabilities_same_qkv": {
+          "passed": false,
+          "failed_coordinates": 5,
+          "max_absolute_error": 3.5888230537628463e-06,
+          "rmse": 8.867889832596586e-08,
+          "max_tolerance_ratio": 6.2335464451942295
+        }
+      },
+      "fp64_suffixes_after_native_stage": {
+        "x": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 1.7630830075887616e-06,
+          "rmse": 1.100385795074701e-07,
+          "max_tolerance_ratio": 0.030507026203063923
+        },
+        "n1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 6.889173315816066e-05,
+          "rmse": 4.287316165629969e-06,
+          "max_tolerance_ratio": 1.1693365944199263
+        },
+        "qkv": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 6.533427102173306e-05,
+          "rmse": 4.069387248030409e-06,
+          "max_tolerance_ratio": 1.108742851369248
+        },
+        "attention": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 6.532778333134814e-05,
+          "rmse": 4.068500252697434e-06,
+          "max_tolerance_ratio": 1.1071850753426968
+        },
+        "projected": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 6.544217953052822e-05,
+          "rmse": 4.070663384221976e-06,
+          "max_tolerance_ratio": 1.1074432690829665
+        },
+        "r1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 6.543600473118971e-05,
+          "rmse": 4.0701864142507765e-06,
+          "max_tolerance_ratio": 1.1077775492449495
+        },
+        "n2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 6.54198063152478e-05,
+          "rmse": 4.070152123199631e-06,
+          "max_tolerance_ratio": 1.1076177989489686
+        },
+        "ff1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 6.544956107301658e-05,
+          "rmse": 4.071801992654935e-06,
+          "max_tolerance_ratio": 1.10886193127482
+        },
+        "relu": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 6.544956107301658e-05,
+          "rmse": 4.071801992654935e-06,
+          "max_tolerance_ratio": 1.10886193127482
+        },
+        "ff2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 6.548944876794138e-05,
+          "rmse": 4.073319791298079e-06,
+          "max_tolerance_ratio": 1.107770753093153
+        },
+        "r2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 6.546252788997009e-05,
+          "rmse": 4.071138609238694e-06,
+          "max_tolerance_ratio": 1.1076246836974266
+        },
+        "n3": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 6.563003004167456e-05,
+          "rmse": 4.075943263164711e-06,
+          "max_tolerance_ratio": 1.1059444307232182
+        }
+      },
+      "storage_substitutions": {
+        "native_x_then_fp64_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.0868491992231952e-06,
+          "rmse": 1.3041828922696741e-07,
+          "max_tolerance_ratio": 0.035951130576563156
+        },
+        "ideal_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 2.0981606006775788e-07,
+          "rmse": 1.3402682922103749e-08,
+          "max_tolerance_ratio": 0.006528908875977895
+        },
+        "native_norm1_then_fp64_qkv_rounded_once": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 6.72212946266626e-05,
+          "rmse": 4.183167074958018e-06,
+          "max_tolerance_ratio": 1.1413689636787379
+        }
+      },
+      "ideal_qkv_rounded_once_to_fp32_suffix": {
+        "passed": true,
+        "failed_coordinates": 0,
+        "max_absolute_error": 1.9349926161371656e-07,
+        "rmse": 1.5576571299994506e-08,
+        "max_tolerance_ratio": 0.0023370869330921165
+      },
+      "relu_mask_changes": 0,
+      "critical_attention_row": {
+        "head": 0,
+        "query": 29,
+        "largest_probability_change_due_to_qkv": 1.733375332413356e-05,
+        "keys": [
+          {
+            "key": 25,
+            "full_fp64_score": 574.3681872248524,
+            "fp64_score_from_native_qkv": 574.3681047705361,
+            "full_fp64_probability": 0.8121536685575943,
+            "fp64_probability_from_native_qkv": 0.8121363348042702,
+            "native_probability": 0.8121362924575806
+          },
+          {
+            "key": 13,
+            "full_fp64_score": 572.9041218982468,
+            "fp64_score_from_native_qkv": 572.9041530590897,
+            "full_fp64_probability": 0.18784633144240567,
+            "fp64_probability_from_native_qkv": 0.1878636651957298,
+            "native_probability": 0.18786366283893585
+          }
+        ]
+      },
+      "prediction_effect": {
+        "token_positions": 32,
+        "argmax_changes": 0,
+        "maximum_probability_absolute_difference": 1.9034495990499778e-06,
+        "probability_rmse": 4.584678141839422e-08,
+        "nll_delta": 3.767793232967165e-08,
+        "maximum_target_log_probability_absolute_difference": 2.3460660405483225e-06
+      }
+    },
+    {
+      "name": "seed-44-python-validation-142",
+      "checkpoint_origin": "python",
+      "checkpoint_sha256": "2175595c9e7119d74aa88024464bb281b5ae242ced86db1990f31c9c584921d1",
+      "input_sha256": "1d27ba2135d12364653dda36d17a8f72ed56387562a8b2cf9a4ac455c586cd6d",
+      "equivalent_repeated_checks": [
+        "seed-44-repeat-1-python/v6/validation/sequence_142/native_fp64",
+        "seed-44-repeat-2-python/v6/validation/sequence_142/native_fp64"
+      ],
+      "diagnostic_inference": "native_norm1_prefix_suffices_for_a_logit_failure_with_an_fp64_suffix",
+      "current_full_logits_fp64": {
+        "passed": false,
+        "failed_coordinates": 1,
+        "max_absolute_error": 4.297738430358855e-05,
+        "rmse": 3.3767598387775273e-06,
+        "max_tolerance_ratio": 1.3049353127708851
+      },
+      "old_full_logits_fp64": {
+        "passed": false,
+        "failed_coordinates": 2,
+        "max_absolute_error": 7.742886898376433e-05,
+        "rmse": 4.760248134122211e-06,
+        "max_tolerance_ratio": 2.2854339032693556
+      },
+      "current_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.641946897507523e-07,
+          "rmse": 9.247490029021466e-08,
+          "max_tolerance_ratio": 0.0013755571849590495
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 6.372172663304809e-06,
+          "rmse": 5.161088876819656e-07,
+          "max_tolerance_ratio": 0.04569823193489738
+        },
+        "attention_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 1.1461119466815717e-06,
+          "rmse": 5.286234551470992e-08,
+          "max_tolerance_ratio": 0.0020473314070670523
+        },
+        "probabilities_same_qkv": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 1.0013162710098555e-07,
+          "rmse": 2.980446631454086e-09,
+          "max_tolerance_ratio": 0.05336723182677865
+        }
+      },
+      "old_identical_input_primitives": {
+        "norm1_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.641946897507523e-07,
+          "rmse": 9.247490029021466e-08,
+          "max_tolerance_ratio": 0.0013755571849590495
+        },
+        "qkv_dense_same_input": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 6.372172663304809e-06,
+          "rmse": 5.161088876819656e-07,
+          "max_tolerance_ratio": 0.04569823193489738
+        },
+        "attention_same_qkv": {
+          "passed": false,
+          "failed_coordinates": 6,
+          "max_absolute_error": 0.00011084785845483225,
+          "rmse": 4.054907118234216e-06,
+          "max_tolerance_ratio": 1.279394776879881
+        },
+        "probabilities_same_qkv": {
+          "passed": false,
+          "failed_coordinates": 12,
+          "max_absolute_error": 1.2463589777300665e-05,
+          "rmse": 3.9160756899376787e-07,
+          "max_tolerance_ratio": 23.14875722766989
+        }
+      },
+      "fp64_suffixes_after_native_stage": {
+        "x": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.698944898271165e-07,
+          "rmse": 3.519656468322557e-08,
+          "max_tolerance_ratio": 0.0036419918091492596
+        },
+        "n1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.615210070684327e-05,
+          "rmse": 2.674114286546616e-06,
+          "max_tolerance_ratio": 1.0650164086538458
+        },
+        "qkv": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.3806535059642826e-05,
+          "rmse": 3.238417553329897e-06,
+          "max_tolerance_ratio": 1.2918530742870251
+        },
+        "attention": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.37076162180805e-05,
+          "rmse": 3.2344924021061517e-06,
+          "max_tolerance_ratio": 1.2916684010125574
+        },
+        "projected": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.373258218270948e-05,
+          "rmse": 3.235140131233564e-06,
+          "max_tolerance_ratio": 1.2946858274335267
+        },
+        "r1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.374731900669282e-05,
+          "rmse": 3.2363295660665854e-06,
+          "max_tolerance_ratio": 1.2947727228506078
+        },
+        "n2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.382942223246644e-05,
+          "rmse": 3.244289511407469e-06,
+          "max_tolerance_ratio": 1.2938738966131342
+        },
+        "ff1": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.381573611311751e-05,
+          "rmse": 3.2444613389701413e-06,
+          "max_tolerance_ratio": 1.2946570342253088
+        },
+        "relu": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.381573611311751e-05,
+          "rmse": 3.2444613389701413e-06,
+          "max_tolerance_ratio": 1.2946570342253088
+        },
+        "ff2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.384170216975569e-05,
+          "rmse": 3.2482667639893287e-06,
+          "max_tolerance_ratio": 1.2958482318490079
+        },
+        "r2": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.384380257649312e-05,
+          "rmse": 3.2481334633434153e-06,
+          "max_tolerance_ratio": 1.2961430428127019
+        },
+        "n3": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 4.354352190305555e-05,
+          "rmse": 3.3174167659150335e-06,
+          "max_tolerance_ratio": 1.2974079214552088
+        }
+      },
+      "storage_substitutions": {
+        "native_x_then_fp64_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 1.1086980021834947e-06,
+          "rmse": 9.418178779028207e-08,
+          "max_tolerance_ratio": 0.03207376244873897
+        },
+        "ideal_norm1_rounded_once": {
+          "passed": true,
+          "failed_coordinates": 0,
+          "max_absolute_error": 7.106323751671084e-07,
+          "rmse": 4.414705981196695e-08,
+          "max_tolerance_ratio": 0.007333394141630238
+        },
+        "native_norm1_then_fp64_qkv_rounded_once": {
+          "passed": false,
+          "failed_coordinates": 1,
+          "max_absolute_error": 3.6568150812765765e-05,
+          "rmse": 2.683313570227014e-06,
+          "max_tolerance_ratio": 1.0771961759464777
+        }
+      },
+      "ideal_qkv_rounded_once_to_fp32_suffix": {
+        "passed": true,
+        "failed_coordinates": 0,
+        "max_absolute_error": 6.986192797597823e-07,
+        "rmse": 5.548367067614944e-08,
+        "max_tolerance_ratio": 0.013373504634210526
+      },
+      "relu_mask_changes": 0,
+      "critical_attention_row": {
+        "head": 0,
+        "query": 29,
+        "largest_probability_change_due_to_qkv": 1.6267737507902336e-05,
+        "keys": [
+          {
+            "key": 9,
+            "full_fp64_score": 573.7038376659681,
+            "fp64_score_from_native_qkv": 573.7038894209862,
+            "full_fp64_probability": 0.723435910444488,
+            "fp64_probability_from_native_qkv": 0.7234196427069801,
+            "native_probability": 0.7234196662902832
+          },
+          {
+            "key": 19,
+            "full_fp64_score": 572.7422682892127,
+            "fp64_score_from_native_qkv": 572.7424013503843,
+            "full_fp64_probability": 0.27656408955551204,
+            "fp64_probability_from_native_qkv": 0.27658035729301994,
+            "native_probability": 0.2765803635120392
+          }
+        ]
+      },
+      "prediction_effect": {
+        "token_positions": 32,
+        "argmax_changes": 0,
+        "maximum_probability_absolute_difference": 2.374450791223226e-06,
+        "probability_rmse": 8.744966756346507e-08,
+        "nll_delta": -7.616009161104387e-07,
+        "maximum_target_log_probability_absolute_difference": 1.3325926216278816e-05
+      }
+    }
+  ],
+  "interpretation_limits": [
+    "Hybrid suffixes replace multiple downstream operations with FP64, so these results do not prove that changing LayerNorm alone would repair the full native model.",
+    "All current identical-input attention checks pass; upstream arithmetic perturbations are sufficient to cause most remaining full-model failures in these selected cases.",
+    "Passing rounded ideal-state probes argues against unavoidable FP32 storage alone as the explanation for these cases; it is not a guarantee for other inputs.",
+    "The old library also has nine failed full-logit coordinates on these v6 weights, distributed across six cases. Improved local attention does not imply monotonic whole-model error.",
+    "The formal width-1024 status remains native_precision_limit; this analysis does not qualify its timings or turn exposed cases into fresh assessment evidence."
+  ],
+  "input_sha256": {
+    "current.json": "4f618da9503ec01bb9377e1f9a6e431a6517af44f591e2ea96f4f51b6ba3e8f5",
+    "old.json": "6422cfaba09888c93c63dd737553dcb8198c0dbb59dfd73a1ed53553d982267f",
+    "storage-probe.json": "53218984f5449f181f63ce212ea8e26fc3a8122ac68396d3a2aaced940a6d9d2"
+  },
+  "formal_summary_sha256": "365b98d330ececb9cd06f8ec895eb4d310b43df04020c14a47452d451613d9f1",
+  "script_sha256": "134d93d504d70f471e29cee273fe0197cb791c48a0097ac99f431430d7919e02"
+}

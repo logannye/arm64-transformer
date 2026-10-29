@@ -17,6 +17,12 @@ from transformer.backend import (
     validate_backend_preflights,
     validate_runtime_backend,
     validate_validation_contract,
+    validation_contract,
+)
+from transformer.precision_audit import (
+    POSTRUN_CONTRACT,
+    numerical_status,
+    summarize_numerical_runs,
 )
 from transformer.validate import ROOT, SOURCE_FILES, Checks, sha256
 
@@ -263,6 +269,8 @@ def charts(summary, output):
 
 def report_markdown(summary):
     version = summary.get("protocol_version", "v1")
+    if version == "v6":
+        return precision_report_markdown(summary)
     model = summary.get("model", {"width": 32, "parameters": 17952})
     reuse_note = (
         "This optimization study reuses v1's fixed train/validation/test fixtures. "
@@ -447,14 +455,153 @@ snapshot and executable belong to the accompanying raw evidence bundle.
 """
 
 
+def precision_report_markdown(summary):
+    """V6 always explains qualification separately from retained measurements."""
+    model = summary["model"]
+    aggregate = summary["aggregate"]["by_implementation"]
+    ratio = summary["aggregate"]["geometric_mean_training_ratio_python_over_arm64"]
+    categories = summary["numerical_categories"]
+    labels = {
+        "native_fp64": "Native versus independent FP64",
+        "python_fp64": "Production PyTorch versus independent FP64",
+        "fp32_compatibility": "Native versus production/functional PyTorch FP32",
+    }
+    numeric_rows = [
+        "| Numerical comparison | Checks | Failed checks | Failed coordinates |",
+        "|---|---:|---:|---:|",
+    ]
+    for category, label in labels.items():
+        values = categories[category]
+        numeric_rows.append(
+            f"| {label} | {values['check_count']:,} | {len(values['failed_checks']):,} | "
+            f"{values['failed_coordinates']:,} |"
+        )
+    metrics = [
+        ("Training + validation (s)", "training_seconds", 3),
+        ("Full-context forward p50 (ms)", "forward_p50_ms", 4),
+        ("Peak RSS through training (MiB)", "peak_rss_training_mib", 2),
+        ("Test NLL", "test_nll", 5),
+        ("Test accuracy (%)", "test_accuracy_percent", 3),
+    ]
+    metric_rows = ["| Measurement | PyTorch | ARM64 assembly |", "|---|---:|---:|"]
+    for label, field, digits in metrics:
+        cells = [
+            f"{aggregate[impl][field]['mean']:.{digits}f} ± "
+            f"{aggregate[impl][field]['sample_sd']:.{digits}f}"
+            for impl in IMPLEMENTATIONS
+        ]
+        metric_rows.append(f"| {label} | {' | '.join(cells)} |")
+    run_rows = [
+        "| Seed | Repeat | Implementation | Train (s) | Test NLL | Best epoch |",
+        "|---:|---:|---|---:|---:|---:|",
+    ]
+    for run in summary["runs"]:
+        run_rows.append(
+            f"| {run['seed']} | {run['repeat']} | {LABELS[run['implementation']]} | "
+            f"{run['training_seconds']:.4f} | {run['quality']['nll']:.6f} | {run['best_epoch']} |"
+        )
+    qualification = (
+        "Both implementations passed the prespecified FP64 accuracy requirement "
+        "at all selected checkpoints."
+        if summary["numerically_qualified"]
+        else "The evidence is intact, but this width did not meet the full matched FP64 "
+        "accuracy requirement. Timings and quality are retained descriptively; "
+        "no numerically qualified speedup is claimed."
+    )
+    return f"""# Higher-precision attention study, v6, width {model["width"]}
+
+The implementation preserves the transformer and training budget while making
+attention score precision an explicit hardware-design choice. Both engines are
+replayed at every selected checkpoint, regardless of which engine trained it.
+Independent NumPy FP64 equations evaluate the exact saved FP32 weights.
+
+## Numerical result
+
+Status: **`{summary["status"]}`**. {qualification}
+
+The post-run contract is `{POSTRUN_CONTRACT}`. Each native and production
+PyTorch prediction is compared with FP64 using the unchanged forward limit
+`abs(error) <= 2e-5 + 2e-4*abs(FP64)`. PyTorch FP32 compatibility is separately
+reported, with its actual passing or failing records preserved.
+
+{chr(10).join(numeric_rows)}
+
+Counts cover every test and validation sequence at all 12 selected checkpoints,
+including repeated fits, plus per-engine validation-NLL comparisons. Coordinates
+are individual logits or NLL scalars. They are not independent statistical samples.
+The first and last sequence of each split also cross-check NumPy FP64 against
+independent functional PyTorch FP64 at fixed absolute/relative limits of `1e-10`.
+
+The originating engine reproduced saved test logits bit-exact, using its original
+evaluation grouping (batch {spec.BATCH} for PyTorch; individual sequences for native).
+Its validation loss reproduced the selected history entry exactly. Within-engine
+repeat weights, moments, saved logits and non-timing histories also matched exactly.
+Evidence-integrity checks passed: **{summary["audit_check_count"]:,}**.
+
+## Matched measurements
+
+{chr(10).join(metric_rows)}
+
+Entries are mean ± sample SD across three seed means, after averaging two repeats
+within each seed. The geometric mean of six paired PyTorch/native training-time
+ratios is **{ratio:.6f}**; values above one favor native. This descriptive statistic
+does not override the qualification status above.
+
+![Training and process time](training.png)
+![Forward latency](latency.png)
+![Process memory](memory.png)
+![Training and validation histories](learning.png)
+
+## Fixed workload and scope
+
+One causal decoder block, width {model["width"]}, {model["parameters"]:,} parameters,
+four heads, context 32, feed-forward width twice the model width, ASCII-128 output,
+FP32 parameters and optimizer state. The pinned Tiny Shakespeare benchmark uses
+65,536 training and 8,192 validation/test targets. Seeds 42/43/44, eight epochs,
+batch 16 and 1,024 Adam updates are unchanged. Minimum epoch validation NLL selects
+the checkpoint; test predictions are evaluated afterward.
+
+This is a reused engineering benchmark. Exposed v5 failures inform development
+and remain failed in their original reports. V6 admission adds prospectively
+declared synthetic stress tests and independent FP64 checks. It does not claim a
+fresh untouched corpus assessment or equivalence of independent training paths.
+
+Training timing includes forward/backward, Adam, finite checks, validation and
+checkpoint/history work. Setup, final test and inference samples are excluded.
+Forward timing is batch one over a full 32-character context, including attention
+softmax, with 20 warmups and 100 samples per fit; it excludes output probability
+softmax, sampling and I/O. RSS includes the framework/runtime and loaded data.
+One compute thread, serial children, alternating/reversed order and 15-second
+pauses remain fixed. Operating-system clocks and scheduling are not controlled.
+
+## Every measured fit
+
+{chr(10).join(run_rows)}
+
+Measured revision: `{summary["revision"]}`. Hardware: {summary["hardware"]}.
+Platform: `{summary["platform"]}`. PyTorch: `{summary["torch"]}`.
+Preflight contract: `{summary["validation_contract"]}`. Auto/forced backend gates
+contain {summary["all_backend_preflight_check_count"]:,} blocking checks.
+All {summary["retained_test_prediction_rows"]:,} saved test prediction rows and
+their full numerical evidence are retained in [summary.json](summary.json) and
+[audit.json](audit.json). Raw checkpoints, fixtures, source, binaries and timings
+are authenticated in the accompanying evidence bundle.
+"""
+
+
 def create_report(results, inputs, output):
     results, inputs, output = Path(results), Path(inputs), Path(output)
     output.mkdir(parents=True, exist_ok=False)
     checks = Checks()
     summary = {"schema_version": 1, "status": "audit_failed", "runs": []}
     error = None
+    version = None
+    numerical_categories = None
     try:
         manifest = json.loads((results / "manifest.json").read_text())
+        version = manifest.get("protocol_version", "v1")
+        if version == "v6" and manifest.get("postrun_numerical_contract") != POSTRUN_CONTRACT:
+            raise ValueError("Missing prospective v6 checkpoint numerical contract")
         if manifest.get("model", {"width": 32})["width"] != spec.WIDTH:
             raise ValueError("Report process width does not match the measured model")
         hardware = manifest["hardware"]["stdout"].strip()
@@ -492,8 +639,11 @@ def create_report(results, inputs, output):
             and manifest["preflight"].get("runtime_included") is True,
         )
         diagnostic_counts = {}
-        if manifest.get("protocol_version") == "v5":
-            if manifest.get("validation_contract") != WIDE_VALIDATION_CONTRACT:
+        if version in ("v5", "v6"):
+            expected_contract = (
+                validation_contract(spec.WIDTH) if version == "v6" else WIDE_VALIDATION_CONTRACT
+            )
+            if manifest.get("validation_contract") != expected_contract:
                 raise ValueError("Missing prospective wide-model validation contract")
             for mode, gate in {
                 "auto": manifest["preflight"],
@@ -506,7 +656,7 @@ def create_report(results, inputs, output):
                     "failed_checks": gate["legacy_failed_checks"],
                 }
         forced_count = 0
-        if manifest.get("protocol_version") in ("v4", "v5"):
+        if version in ("v4", "v5", "v6"):
             forced_count = validate_backend_preflights(
                 manifest["preflight"], manifest["backend_preflights"]
             )
@@ -525,15 +675,17 @@ def create_report(results, inputs, output):
                 checks.require(entry["name"] + "/" + condition, entry.get(condition) is True)
             fixture = inputs / f"seed-{entry['seed']}"
             print(json.dumps({"auditing": entry["name"]}), flush=True)
-            run = audit_run(fixture, results / entry["name"], checks, recompute=True)
+            options = (
+                {"numerical_contract": POSTRUN_CONTRACT, "implementation": entry["implementation"]}
+                if version == "v6"
+                else {}
+            )
+            run = audit_run(fixture, results / entry["name"], checks, recompute=True, **options)
             checks.require(
                 entry["name"] + "/runner_fixture_identity",
                 run["fixture_sha256"] == manifest["fixtures"][str(entry["seed"])]["sha256"],
             )
-            if (
-                manifest.get("protocol_version") in ("v4", "v5")
-                and entry["implementation"] == "arm64"
-            ):
+            if version in ("v4", "v5", "v6") and entry["implementation"] == "arm64":
                 backend_path = results / entry["name"] / "backend.u64"
                 backend = read_backend(backend_path, policy="auto")
                 validate_runtime_backend(
@@ -615,6 +767,19 @@ def create_report(results, inputs, output):
                 ),
                 raw_manifest_sha256=sha256(results / "manifest.json"),
             )
+            if version == "v6":
+                numerical_categories = summarize_numerical_runs(summary["runs"])
+                summary.update(numerical_status(True, numerical_categories))
+                summary.update(
+                    postrun_numerical_contract=POSTRUN_CONTRACT,
+                    numerical_categories={
+                        category: {key: value for key, value in record.items() if key != "checks"}
+                        for category, record in numerical_categories.items()
+                    },
+                    numerical_check_count=sum(
+                        record["check_count"] for record in numerical_categories.values()
+                    ),
+                )
             charts(summary, output)
             (output / "README.md").write_text(report_markdown(summary))
     except Exception as exc:
@@ -628,6 +793,45 @@ def create_report(results, inputs, output):
         "error": error,
         "failed_checks": [item["name"] for item in checks.records if not item["passed"]],
     }
+    if version == "v6":
+        if numerical_categories is None and summary["runs"]:
+            numerical_categories = summarize_numerical_runs(summary["runs"])
+        if numerical_categories is None:
+            numerical_categories = {
+                category: {
+                    "passed": False,
+                    "checks": [],
+                    "check_count": 0,
+                    "failed_checks": [],
+                    "failed_coordinates": 0,
+                }
+                for category in ("native_fp64", "python_fp64", "fp32_compatibility")
+            }
+        audit.update(numerical_status(checks.passed, numerical_categories))
+        audit.update(
+            schema_version=2,
+            postrun_numerical_contract=POSTRUN_CONTRACT,
+            integrity_check_count=len(checks.records),
+            integrity_failed_checks=[
+                record["name"] for record in checks.records if not record["passed"]
+            ],
+            numerical_checks=[
+                {**record, "category": category}
+                for category, group in numerical_categories.items()
+                for record in group["checks"]
+            ],
+            numerical_categories={
+                category: {key: value for key, value in record.items() if key != "checks"}
+                for category, record in numerical_categories.items()
+            },
+        )
+        audit["numerical_check_count"] = len(audit["numerical_checks"])
+        audit["numerical_failed_checks"] = [
+            record["name"]
+            for record in audit["numerical_checks"]
+            if record["category"] != "fp32_compatibility" and not record["passed"]
+        ]
+        summary.update(numerical_status(checks.passed, numerical_categories))
     if not checks.passed:
         summary["status"] = "audit_failed"
         (output / "README.md").write_text(
@@ -655,7 +859,7 @@ def main():
             {key: result[key] for key in ("passed", "check_count", "failed_checks", "error")}
         )
     )
-    return 0 if result["passed"] else 1
+    return 0 if result.get("evidence_integrity_passed", result["passed"]) else 1
 
 
 if __name__ == "__main__":

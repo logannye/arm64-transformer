@@ -6,7 +6,7 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
-from contract_fixtures import attach_contract
+from contract_fixtures import attach_contract, attach_precision
 
 from transformer import spec, sweep_report
 from transformer.report import aggregate_runs
@@ -348,7 +348,7 @@ def v4_campaign(protocol="v4"):
             backend_preflights=copy.deepcopy(modes),
             runs=copy.deepcopy([row for row in manifest["runs"] if row["width"] == width]),
         )
-    if protocol == "v5":
+    if protocol in ("v5", "v6"):
         from transformer.backend import validate_regression_preflights
 
         regression = {}
@@ -373,6 +373,8 @@ def v4_campaign(protocol="v4"):
                     )
             for gate in (main, *modes.values()):
                 attach_contract(gate, width)
+                if protocol == "v6":
+                    attach_precision(gate, width)
             regression[str(width)] = {"auto": main, **modes}
         manifest["validation_contract"] = "v5-common-state-replay-v1"
         for width in manifest["widths"]:
@@ -386,6 +388,21 @@ def v4_campaign(protocol="v4"):
         manifest["regression_gate_counts"] = validate_regression_preflights(
             regression, REGRESSION_WIDTHS, manifest["source_sha256"]
         )
+    if protocol == "v6":
+        from transformer.backend import validation_contract
+
+        manifest["validation_contract"] = "v6-width-specific-v1"
+        manifest["validation_contracts"] = {
+            str(width): validation_contract(width) for width in manifest["widths"]
+        }
+        manifest["precision_contract"] = manifest["postrun_numerical_contract"] = (
+            "v6-fp64-centered-attention-v1"
+        )
+        for width, child in children.items():
+            child["validation_contract"] = validation_contract(width)
+            child["precision_contract"] = child["postrun_numerical_contract"] = manifest[
+                "precision_contract"
+            ]
     return manifest, children
 
 
@@ -462,3 +479,33 @@ def test_v5_summary_has_only_measured_widths_and_correct_prediction_count():
     assert set(aggregate["by_width"]) == {"512", "1024"}
     assert len(aggregate["runs"]) == 24
     assert aggregate["retained_test_prediction_rows"] == 196608
+
+
+def test_v6_requires_precision_gates_for_all_72_fits():
+    manifest, children = v4_campaign("v6")
+    checks = Checks()
+    sweep_report.validate_manifest(manifest, children, checks)
+    assert checks.passed
+    assert len(manifest["runs"]) == 72
+    manifest["regression_preflights"]["512"]["neon"]["precision"]["fixture_seed"] += 1
+    with pytest.raises(ValueError, match="precision metadata"):
+        sweep_report.validate_manifest(manifest, children, Checks())
+
+
+def test_v6_preserves_baseline_failure_without_claiming_qualification():
+    fields = dict(
+        evidence_integrity_passed=True,
+        native_fp64_accuracy_passed=True,
+        python_fp64_accuracy_passed=False,
+        cross_implementation_fp32_compatibility_passed=False,
+    )
+    result = sweep_report.v6_qualification([fields])
+    assert result["status"] == "baseline_precision_limit"
+    assert not result["numerically_qualified"]
+    fields["native_fp64_accuracy_passed"] = False
+    assert sweep_report.v6_qualification([fields])["status"] == "native_precision_limit"
+    fields["evidence_integrity_passed"] = False
+    assert sweep_report.v6_qualification([fields])["status"] == "audit_failed"
+    fields["python_fp64_accuracy_passed"] = "false"
+    with pytest.raises(ValueError, match="qualification fields"):
+        sweep_report.v6_qualification([fields])
