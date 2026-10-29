@@ -1,4 +1,4 @@
-"""Immutable, explicit Metal v2 dispatch policies; no data-dependent tuning."""
+"""Immutable Metal dispatch policies; v2 identities remain unchanged."""
 
 from __future__ import annotations
 
@@ -28,12 +28,20 @@ def identity(value):
     return hashlib.sha256(canonical(value)).hexdigest()
 
 
+def with_qkv(value):
+    """Upgrade explicitly without changing the identity of an existing v2 policy."""
+    result = validate(value)
+    if result["schema"] == 2:
+        result.update(schema=3, qkv={"forward": None, "dx": None})
+    return result
+
+
 def validate(value):
     if (
         not isinstance(value, dict)
-        or set(value) != set(reference())
+        or set(value) != (set(reference()) | ({"qkv"} if value.get("schema") == 3 else set()))
         or type(value["schema"]) is not int
-        or value["schema"] != 2
+        or value["schema"] not in (2, 3)
     ):
         raise ValueError("Invalid Metal policy schema/keys")
     if not isinstance(value["dense"], dict) or set(value["dense"]) != {"forward", "dx", "dw"}:
@@ -54,6 +62,11 @@ def validate(value):
 
     for item in value["dense"].values():
         fields(item, {"m": (16, 32), "n": (32, 64), "k": (16, 32), "sg": (2, 4)})
+    if value["schema"] == 3:
+        if not isinstance(value["qkv"], dict) or set(value["qkv"]) != {"forward", "dx"}:
+            raise ValueError("Invalid protected QKV policy")
+        for item in value["qkv"].values():
+            fields(item, {"m": (16, 32), "n": (32, 64), "k": (16, 32)})
     fields(value["norm"], {"sg": (1, 2, 4), "vec": (1, 4)})
     fields(
         value["attention"],
@@ -88,7 +101,7 @@ def bundle(value=None, width=None):
     return {name: validate(policy) for name, policy in value.items()}
 
 
-def controls(policy):
+def controls(policy, *, version=None):
     p = validate(policy)
     result = []
     for direction in ("forward", "dx", "dw"):
@@ -102,6 +115,10 @@ def controls(policy):
         else [0, 0, 0, 0]
     )
     result.extend([e["block"] if e else 0, int(f["epilogue"]), int(f["adam_finite"])])
+    if version == 3 or p["schema"] == 3:
+        for direction in ("forward", "dx"):
+            q = p.get("qkv", {}).get(direction)
+            result.extend([q[k] for k in ("m", "n", "k")] if q else [0, 0, 0])
     return result
 
 
@@ -121,6 +138,10 @@ def defines(policy):
         V2_ATT_RECOMPUTE=int(a["backward"] == "recompute"),
     )
     definitions["V2_EMBED_BLOCK"] = (p["embedding"] or {"block": 64})["block"]
+    if p["schema"] == 3:
+        for direction, prefix in (("forward", "FWD"), ("dx", "DX")):
+            q = p["qkv"][direction] or {"m": 16, "n": 32, "k": 16}
+            definitions.update({f"V3_QKV_{prefix}_{k.upper()}": v for k, v in q.items()})
     return "".join(
         f"#define {name} {value}\n" for name, value in sorted(definitions.items())
     ).encode()

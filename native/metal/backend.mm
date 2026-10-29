@@ -42,16 +42,22 @@ struct Batch {Buf tokens,targets;uint32_t b,t;bool hasTargets;};
 enum P {TOKEN,POSITION,LN1W,LN1B,QKVW,QKVB,ATTW,ATTB,LN2W,LN2B,FF1W,FF1B,FF2W,FF2B,LN3W,LN3B,HEADW,HEADB,NP};
 struct KernelPolicy {
     uint32_t dense[3][4]{}; // M,N,K,SIMD groups; zero M selects reference.
+    uint32_t qkv[2][3]{}; // Protected forward/dX: M,N,K; zero M selects reference.
     uint32_t normSG=0,normVec=0,attentionRows=0,attentionSG=0,attentionStage=0,attentionRecompute=0;
     uint32_t embeddingBlock=0,epilogue=0,adamFinite=0;
-    explicit KernelPolicy(const uint32_t* p=nullptr){if(!p)return;for(int d=0;d<3;++d)for(int j=0;j<4;++j)dense[d][j]=*p++;
+    explicit KernelPolicy(const uint32_t* p=nullptr,uint32_t stride=21){if(!p)return;
+        if(stride!=21&&stride!=27)throw std::runtime_error("Invalid policy stride");
+        for(int d=0;d<3;++d)for(int j=0;j<4;++j)dense[d][j]=*p++;
         normSG=*p++;normVec=*p++;attentionRows=*p++;attentionSG=*p++;attentionStage=*p++;attentionRecompute=*p++;
         embeddingBlock=*p++;epilogue=*p++;adamFinite=*p++;
+        if(stride==27)for(int d=0;d<2;++d)for(int j=0;j<3;++j)qkv[d][j]=*p++;
         for(auto& d:dense){if(!d[0]){if(d[1]||d[2]||d[3])throw std::runtime_error("Malformed reference tile");continue;}
             if((d[0]!=16&&d[0]!=32)||(d[1]!=32&&d[1]!=64)||(d[2]!=16&&d[2]!=32)||(d[3]!=2&&d[3]!=4))throw std::runtime_error("Invalid dense policy");}
         if((normSG!=0&&normSG!=1&&normSG!=2&&normSG!=4)||(normSG?(normVec!=1&&normVec!=4):normVec!=0))throw std::runtime_error("Invalid norm policy");
         if((attentionRows>2)||(attentionRows?(attentionSG!=1&&attentionSG!=2):(attentionSG||attentionStage||attentionRecompute))||attentionStage>1||attentionRecompute>1)throw std::runtime_error("Invalid attention policy");
-        if((embeddingBlock&&embeddingBlock!=64&&embeddingBlock!=128)||epilogue>1||adamFinite>1)throw std::runtime_error("Invalid embedding/fusion policy");}
+        if((embeddingBlock&&embeddingBlock!=64&&embeddingBlock!=128)||epilogue>1||adamFinite>1)throw std::runtime_error("Invalid embedding/fusion policy");
+        for(auto& d:qkv){if(!d[0]){if(d[1]||d[2])throw std::runtime_error("Malformed reference QKV tile");continue;}
+            if((d[0]!=16&&d[0]!=32)||(d[1]!=32&&d[1]!=64)||(d[2]!=16&&d[2]!=32))throw std::runtime_error("Invalid QKV policy");}}
 };
 
 struct Context {
@@ -60,7 +66,7 @@ struct Context {
     std::map<std::string,Buf> buffers;
     std::map<uint64_t,Input> inputs;std::map<uint64_t,Batch> batches;
     std::vector<id<MTLCommandBuffer>> pending;
-    uint32_t w,maxB,maxT,step=0,lastB=0,lastT=0,lastMode=0;
+    uint32_t w,maxB,maxT,step=0,lastB=0,lastT=0,lastMode=0,policyStride=21;
     float attentionScaleHi=0,attentionScaleLo=0;
     uint64_t nextHandle=1;size_t offsets[NP],sizes[NP],paramCount=0,dispatchCount=0,commandCount=0;
     double lastGPUTime=0;std::string receipt;
@@ -69,8 +75,8 @@ struct Context {
     KernelPolicy& policy(){return policies[inferencePolicy?1:0];}
     id<MTLComputePipelineState> pipeline(const std::string& name){return pipelines.at((inferencePolicy?"inference:":"")+name);}
     explicit Context(uint32_t width,uint32_t mb,uint32_t mt,const char* source,const float* initial,size_t count,
-                     const uint32_t* controls=nullptr,const char* inferenceSource=nullptr):w(width),maxB(mb),maxT(mt) {
-        if(controls){policies[0]=KernelPolicy(controls);policies[1]=KernelPolicy(controls+21);}
+                     const uint32_t* controls=nullptr,const char* inferenceSource=nullptr,uint32_t controlStride=21):w(width),maxB(mb),maxT(mt),policyStride(controlStride) {
+        if(controls){policies[0]=KernelPolicy(controls,controlStride);policies[1]=KernelPolicy(controls+controlStride,controlStride);}
         if(!(w==32||w==64||w==128||w==256||w==512||w==1024)||mb<1||mb>16||mt<1||mt>32)
             throw std::runtime_error("Unsupported width/batch/context limits");
         double attentionScale=1.0/std::sqrt(double(w/4));
@@ -112,6 +118,15 @@ struct Context {
             auto p=[device newComputePipelineStateWithFunction:f error:&error];if(!p)throw std::runtime_error("Inference pipeline creation failed");pipelines[std::string("inference:")+name]=p;}
         if(controls){for(auto name:optimized){id<MTLFunction> f=[inferenceLibrary newFunctionWithName:[NSString stringWithUTF8String:name]];
             auto p=[device newComputePipelineStateWithFunction:f error:&error];if(!p)throw std::runtime_error("Inference optimized pipeline creation failed");pipelines[std::string("inference:")+name]=p;}}
+        if(policyStride==27)for(int mode=0;mode<2;++mode){
+            id<MTLLibrary> lib=mode?inferenceLibrary:library;
+            for(auto name:{"v3_qkv_forward","v3_qkv_dx"}){
+                id<MTLFunction> f=[lib newFunctionWithName:[NSString stringWithUTF8String:name]];
+                auto p=[device newComputePipelineStateWithFunction:f error:&error];
+                if(!p)throw std::runtime_error(std::string("Protected QKV pipeline ")+name+": "+error.localizedDescription.UTF8String);
+                pipelines[(mode?"inference:":std::string())+name]=p;
+            }
+        }
         for(auto name:{"parameters","gradients","m","v"})allocate(name,paramCount);
         std::memcpy(buffers.at("parameters")->data(),initial,count*4);
         size_t rows=mb*mt;
@@ -150,12 +165,18 @@ struct Context {
     }
     void matrix(id<MTLComputeCommandEncoder> e,const char* name,std::initializer_list<Ref> refs,const Args& a,uint32_t rows,uint32_t cols){
         std::string selected=name;int direction=selected=="linear_forward"?0:(selected=="linear_dx"?1:(selected=="linear_dw"?2:-1));
-        const uint32_t* tile=direction>=0?policy().dense[direction]:nullptr;bool optimized=tile&&tile[0];if(optimized)selected="v2_"+selected;
-        auto pipe=pipeline(selected);if(optimized&&32*tile[3]>pipe.maxTotalThreadsPerThreadgroup)throw std::runtime_error("Dense policy exceeds pipeline threadgroup limit");
+        int protectedDirection=selected=="qkv_forward"?0:(selected=="qkv_dx"?1:-1);
+        const uint32_t* protectedTile=protectedDirection>=0?policy().qkv[protectedDirection]:nullptr;
+        bool protectedOptimized=protectedTile&&protectedTile[0];
+        const uint32_t* tile=direction>=0?policy().dense[direction]:nullptr;bool optimized=tile&&tile[0];
+        if(protectedOptimized)selected="v3_"+selected;else if(optimized)selected="v2_"+selected;
+        uint32_t threads=protectedOptimized?8*protectedTile[0]:(optimized?32*tile[3]:256);
+        auto pipe=pipeline(selected);if(threads>pipe.maxTotalThreadsPerThreadgroup)throw std::runtime_error("Matrix policy exceeds pipeline threadgroup limit");
         [e setComputePipelineState:pipe];uint32_t slot=0;
         for(auto ref:refs)[e setBuffer:ref.buffer->object offset:GUARD+ref.offset atIndex:slot++];
         [e setBytes:&a length:sizeof(a) atIndex:7];
-        if(optimized)[e dispatchThreadgroups:MTLSizeMake((cols+tile[1]-1)/tile[1],(rows+tile[0]-1)/tile[0],1) threadsPerThreadgroup:MTLSizeMake(32*tile[3],1,1)];
+        if(protectedOptimized)[e dispatchThreadgroups:MTLSizeMake((cols+protectedTile[1]-1)/protectedTile[1],(rows+protectedTile[0]-1)/protectedTile[0],1) threadsPerThreadgroup:MTLSizeMake(threads,1,1)];
+        else if(optimized)[e dispatchThreadgroups:MTLSizeMake((cols+tile[1]-1)/tile[1],(rows+tile[0]-1)/tile[0],1) threadsPerThreadgroup:MTLSizeMake(threads,1,1)];
         else [e dispatchThreadgroups:MTLSizeMake((cols+15)/16,(rows+15)/16,1) threadsPerThreadgroup:MTLSizeMake(16,16,1)];++dispatchCount;
     }
     void linear(id<MTLComputeCommandEncoder> e,const char* x,P weight,P bias,const char* y,uint32_t m,uint32_t k,uint32_t n){
@@ -292,7 +313,7 @@ struct Context {
         NSMutableDictionary* pipes=[NSMutableDictionary dictionary];
         for(auto& [name,p]:pipelines)pipes[[NSString stringWithUTF8String:name.c_str()]]=@{@"thread_execution_width":@(p.threadExecutionWidth),
             @"max_threads_per_group":@(p.maxTotalThreadsPerThreadgroup),@"static_threadgroup_memory_bytes":@(p.staticThreadgroupMemoryLength)};
-        NSDictionary* info=@{@"backend":@"handwritten-metal-v2",@"device":device.name,@"registry_id":@(device.registryID),
+        NSMutableDictionary* info=[@{@"backend":policyStride==27?@"handwritten-metal-v3":@"handwritten-metal-v2",@"device":device.name,@"registry_id":@(device.registryID),
             @"unified_memory":@(device.hasUnifiedMemory),@"families":families,@"max_buffer_length":@(device.maxBufferLength),
             @"max_threadgroup_memory_bytes":@(device.maxThreadgroupMemoryLength),@"recommended_working_set_bytes":@(device.recommendedMaxWorkingSetSize),
             @"shader_language":@"MSL 3.1",@"compiler_math_mode":@"safe",@"floating_point_functions":@"precise",
@@ -305,7 +326,13 @@ struct Context {
             @"normalization_precision":@"Two-float reductions, centered variance and backward contractions; FP32 saved norm/inverse/output",
             @"qkv_precision":@"Two-float forward and input-gradient contractions; weight gradients follow the FP32 dense policy, bias gradients follow the reference or compensated reduction policy; stored gradients are FP32",
             @"matrix_instruction_path":@"Explicit v2 policy: reference scalar FMA or FP32 SIMD-group 8x8 matrix operations; QKV forward/dX compensated",
-            @"pipelines":pipes,@"adam_scalar_bookkeeping":@"Host step and double scalar pow for bias correction; all tensor arithmetic on GPU"};
+            @"pipelines":pipes,@"adam_scalar_bookkeeping":@"Host step and double scalar pow for bias correction; all tensor arithmetic on GPU"} mutableCopy];
+        if(policyStride==27){NSMutableArray* qkvPolicies=[NSMutableArray array];
+            for(auto& mode:policies){NSMutableArray* directions=[NSMutableArray array];
+                for(auto& tile:mode.qkv)[directions addObject:@[@(tile[0]),@(tile[1]),@(tile[2])]];
+                [qkvPolicies addObject:directions];}
+            info[@"qkv_policies"]=qkvPolicies;
+            info[@"qkv_ownership"]=@"2-row by 2/4-column thread microtiles; cooperative guarded loads; reference ascending ff_product/ff_add order per output";}
         NSData* data=[NSJSONSerialization dataWithJSONObject:info options:NSJSONWritingSortedKeys error:nil];
         receipt.assign(static_cast<const char*>(data.bytes),data.length);return receipt.c_str();
     }
@@ -337,6 +364,10 @@ void* tfm_create(uint32_t w,uint32_t b,uint32_t t,const char* source,const float
 void* tfm_create_v2(uint32_t w,uint32_t b,uint32_t t,const char* source,const char* inferenceSource,const float* initial,size_t n,const uint32_t* controls){
     Context* result=nullptr;protect([&]{if(!controls||!source||!inferenceSource)throw std::runtime_error("Null v2 policy/source");
         result=new Context(w,b,t,source,initial,n,controls,inferenceSource);});return result;}
+void* tfm_create_v3(uint32_t w,uint32_t b,uint32_t t,const char* source,const char* inferenceSource,const float* initial,size_t n,const uint32_t* controls,uint32_t controlCount){
+    Context* result=nullptr;protect([&]{if(controlCount!=54)throw std::runtime_error("V3 policy requires exactly 54 controls");
+        if(!controls||!source||!inferenceSource)throw std::runtime_error("Null v3 policy/source");
+        result=new Context(w,b,t,source,initial,n,controls,inferenceSource,27);});return result;}
 int tfm_destroy(void* p){return protect([&]{
     std::unique_ptr<Context> owned(static_cast<Context*>(p));
     if(owned)owned->sync();

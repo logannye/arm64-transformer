@@ -1,0 +1,146 @@
+[
+  {
+    "id": "qkv-forward-16-32-16",
+    "family": "forward",
+    "value": {
+      "m": 16,
+      "n": 32,
+      "k": 16
+    }
+  },
+  {
+    "id": "qkv-forward-16-32-32",
+    "family": "forward",
+    "value": {
+      "m": 16,
+      "n": 32,
+      "k": 32
+    }
+  },
+  {
+    "id": "qkv-forward-16-64-16",
+    "family": "forward",
+    "value": {
+      "m": 16,
+      "n": 64,
+      "k": 16
+    }
+  },
+  {
+    "id": "qkv-forward-16-64-32",
+    "family": "forward",
+    "value": {
+      "m": 16,
+      "n": 64,
+      "k": 32
+    }
+  },
+  {
+    "id": "qkv-forward-32-32-16",
+    "family": "forward",
+    "value": {
+      "m": 32,
+      "n": 32,
+      "k": 16
+    }
+  },
+  {
+    "id": "qkv-forward-32-32-32",
+    "family": "forward",
+    "value": {
+      "m": 32,
+      "n": 32,
+      "k": 32
+    }
+  },
+  {
+    "id": "qkv-forward-32-64-16",
+    "family": "forward",
+    "value": {
+      "m": 32,
+      "n": 64,
+      "k": 16
+    }
+  },
+  {
+    "id": "qkv-forward-32-64-32",
+    "family": "forward",
+    "value": {
+      "m": 32,
+      "n": 64,
+      "k": 32
+    }
+  },
+  {
+    "id": "qkv-dx-16-32-16",
+    "family": "dx",
+    "value": {
+      "m": 16,
+      "n": 32,
+      "k": 16
+    }
+  },
+  {
+    "id": "qkv-dx-16-32-32",
+    "family": "dx",
+    "value": {
+      "m": 16,
+      "n": 32,
+      "k": 32
+    }
+  },
+  {
+    "id": "qkv-dx-16-64-16",
+    "family": "dx",
+    "value": {
+      "m": 16,
+      "n": 64,
+      "k": 16
+    }
+  },
+  {
+    "id": "qkv-dx-16-64-32",
+    "family": "dx",
+    "value": {
+      "m": 16,
+      "n": 64,
+      "k": 32
+    }
+  },
+  {
+    "id": "qkv-dx-32-32-16",
+    "family": "dx",
+    "value": {
+      "m": 32,
+      "n": 32,
+      "k": 16
+    }
+  },
+  {
+    "id": "qkv-dx-32-32-32",
+    "family": "dx",
+    "value": {
+      "m": 32,
+      "n": 32,
+      "k": 32
+    }
+  },
+  {
+    "id": "qkv-dx-32-64-16",
+    "family": "dx",
+    "value": {
+      "m": 32,
+      "n": 64,
+      "k": 16
+    }
+  },
+  {
+    "id": "qkv-dx-32-64-32",
+    "family": "dx",
+    "value": {
+      "m": 32,
+      "n": 64,
+      "k": 32
+    }
+  }
+]

@@ -25,6 +25,7 @@ ROOT = Path(__file__).resolve().parents[1]
 LIBRARY = ROOT / "native/metal/build/libtransformer_metal.dylib"
 SHADERS = ROOT / "native/metal/kernels.metal"
 OPTIMIZED_SHADERS = ROOT / "native/metal/optimized.metal"
+QKV_SHADERS = ROOT / "native/metal/qkv.metal"
 FP = C.POINTER(C.c_float)
 IP = C.POINTER(C.c_int32)
 
@@ -94,6 +95,20 @@ def _library():
                 C.POINTER(C.c_uint32),
             ],
         ),
+        "tfm_create_v3": (
+            C.c_void_p,
+            [
+                C.c_uint32,
+                C.c_uint32,
+                C.c_uint32,
+                C.c_char_p,
+                C.c_char_p,
+                FP,
+                C.c_size_t,
+                C.POINTER(C.c_uint32),
+                C.c_uint32,
+            ],
+        ),
         "tfm_destroy": (C.c_int, [C.c_void_p]),
         "tfm_sync": (C.c_int, [C.c_void_p]),
         "tfm_capabilities": (C.c_char_p, [C.c_void_p]),
@@ -151,13 +166,19 @@ class Backend:
         self.max_batch, self.max_length = max_batch, max_length
         self._lib = _library()
         policies = bundle(kernel_policy, spec.WIDTH)
+        version = max(p["schema"] for p in policies.values())
         source = SHADERS.read_bytes() + b"\n" + OPTIMIZED_SHADERS.read_bytes()
+        if version == 3:
+            source += b"\n" + QKV_SHADERS.read_bytes()
         training_source = defines(policies["training"]) + source
         inference_source = defines(policies["inference"]) + source
-        policy_values = controls(policies["training"]) + controls(policies["inference"])
+        policy_values = controls(policies["training"], version=version) + controls(
+            policies["inference"], version=version
+        )
         raw_policy = (C.c_uint32 * len(policy_values))(*policy_values)
         start = time.perf_counter()
-        self._handle = self._lib.tfm_create_v2(
+        create = self._lib.tfm_create_v3 if version == 3 else self._lib.tfm_create_v2
+        self._handle = create(
             spec.WIDTH,
             max_batch,
             max_length,
@@ -166,6 +187,7 @@ class Backend:
             initial.ctypes.data_as(FP),
             initial.size,
             raw_policy,
+            *([len(policy_values)] if version == 3 else []),
         )
         if not self._handle:
             self._raise()

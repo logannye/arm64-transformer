@@ -66,6 +66,12 @@ def source_identity():
         *(ROOT / f"transformer/{name}.py" for name in modules),
         ROOT / "native/metal/kernels.metal",
         ROOT / "native/metal/optimized.metal",
+        ROOT / "native/metal/qkv.metal",
+        ROOT / "transformer/gpu_qkv_optimize.py",
+        ROOT / "scripts/check_metal_qkv_optimization.py",
+        ROOT / "experiments/PROTOCOL-gpu-v3-qkv.md",
+        ROOT / "experiments/gpu-v3-qkv/candidates.json",
+        ROOT / "experiments/gpu-v2/policies/selected.json",
         ROOT / "native/metal/backend.mm",
         ROOT / "native/metal/Makefile",
         ROOT / "native/metal/build/libtransformer_metal.dylib",
@@ -1211,6 +1217,10 @@ def pipeline_resource_checks(policy, capabilities):
 
     policy = validate(policy)
     required = {"qkv_forward": 256, "qkv_dx": 256, "attention_dqkv": None}
+    for direction, tile in policy.get("qkv", {}).items():
+        if tile:
+            required.pop("qkv_" + direction)
+            required["v3_qkv_" + direction] = 8 * tile["m"]
     for direction, name in (
         ("forward", "linear_forward"),
         ("dx", "linear_dx"),
