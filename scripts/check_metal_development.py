@@ -18,8 +18,9 @@ torch.set_num_interop_threads(1)
 torch.use_deterministic_algorithms(True)
 parser = argparse.ArgumentParser()
 parser.add_argument("--label", required=True)
+parser.add_argument("--output-root", type=Path, default=Path("work/gpu-v1/metal-development"))
 args = parser.parse_args()
-dest = Path("work/gpu-v1/metal-development") / args.label
+dest = args.output_root / args.label
 dest.mkdir(parents=True, exist_ok=True)
 out = dest / f"smoke-width-{spec.WIDTH}.json"
 if out.exists():

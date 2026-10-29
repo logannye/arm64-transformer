@@ -68,11 +68,14 @@ workspace, so no memory-capacity reduction is claimed for that candidate.
 Freeze the executable candidate definitions and legality ledger before scoring.
 Unsupported and failed candidates stay visible and are never ranked. Each
 candidate first passes its development primitive/FP64 and complete-model checks.
-Use 20 warmups and 100 observations in five blocks. Restore parameters/moments/
+Use 20 warmups and 100 observations per policy in five paired blocks, alternating
+candidate/incumbent execution order. Restore parameters/moments/
 step after warmup and before each training block. Complete train-step samples
 include finite checks and scalar loss completion. Inference is synchronized B1.
 Visit families once in descending reference cost, name order for ties. Select a
-replacement only for >=3% median complete-step improvement; select B1 separately.
+replacement only when the median ratio of paired candidate/incumbent block
+medians is <=0.97; choose the smallest ratio, with lexical candidate ID breaking
+ties. Select B1 separately. Keep all raw samples, block medians and ratios.
 No test data, admission data or unreported grid expansion enters selection.
 Revalidate the final combined policy, including reference/optimized ablations.
 

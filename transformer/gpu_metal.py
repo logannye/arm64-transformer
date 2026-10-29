@@ -24,6 +24,7 @@ from transformer.gpu_contract import GPU_CONTRACT
 ROOT = Path(__file__).resolve().parents[1]
 LIBRARY = ROOT / "native/metal/build/libtransformer_metal.dylib"
 SHADERS = ROOT / "native/metal/kernels.metal"
+OPTIMIZED_SHADERS = ROOT / "native/metal/optimized.metal"
 FP = C.POINTER(C.c_float)
 IP = C.POINTER(C.c_int32)
 
@@ -80,11 +81,27 @@ def _library():
             C.c_void_p,
             [C.c_uint32, C.c_uint32, C.c_uint32, C.c_char_p, FP, C.c_size_t],
         ),
+        "tfm_create_v2": (
+            C.c_void_p,
+            [
+                C.c_uint32,
+                C.c_uint32,
+                C.c_uint32,
+                C.c_char_p,
+                C.c_char_p,
+                FP,
+                C.c_size_t,
+                C.POINTER(C.c_uint32),
+            ],
+        ),
         "tfm_destroy": (C.c_int, [C.c_void_p]),
         "tfm_sync": (C.c_int, [C.c_void_p]),
         "tfm_capabilities": (C.c_char_p, [C.c_void_p]),
         "tfm_memory": (C.c_char_p, [C.c_void_p]),
+        "tfm_profile_enable": (C.c_int, [C.c_void_p, C.c_int]),
+        "tfm_profile_results": (C.c_char_p, [C.c_void_p]),
         "tfm_execute": (C.c_int, [C.c_void_p, C.c_uint64, C.c_uint32]),
+        "tfm_apply_gradient": (C.c_int, [C.c_void_p, FP, C.c_size_t]),
         "tfm_read": (C.c_int, [C.c_void_p, C.c_char_p, FP, C.c_size_t]),
         "tfm_write": (C.c_int, [C.c_void_p, C.c_char_p, FP, C.c_size_t]),
         "tfm_step": (C.c_int, [C.c_void_p, C.POINTER(C.c_uint32), C.c_int]),
@@ -119,7 +136,9 @@ def _library():
 class Backend:
     name = "metal"
 
-    def __init__(self, initial_flat, max_batch=16, max_length=32):
+    def __init__(self, initial_flat, max_batch=16, max_length=32, *, kernel_policy=None):
+        from transformer.gpu_policy import bundle, controls, defines, identity
+
         self._handle = None
         initial = _floats(initial_flat, (spec.PARAM_COUNT,), "initial_flat")
         if (
@@ -131,10 +150,22 @@ class Backend:
             raise ValueError("max_batch and max_length must be integers in [1,16] and [1,32]")
         self.max_batch, self.max_length = max_batch, max_length
         self._lib = _library()
-        source = SHADERS.read_bytes()
+        policies = bundle(kernel_policy, spec.WIDTH)
+        source = SHADERS.read_bytes() + b"\n" + OPTIMIZED_SHADERS.read_bytes()
+        training_source = defines(policies["training"]) + source
+        inference_source = defines(policies["inference"]) + source
+        policy_values = controls(policies["training"]) + controls(policies["inference"])
+        raw_policy = (C.c_uint32 * len(policy_values))(*policy_values)
         start = time.perf_counter()
-        self._handle = self._lib.tfm_create(
-            spec.WIDTH, max_batch, max_length, source, initial.ctypes.data_as(FP), initial.size
+        self._handle = self._lib.tfm_create_v2(
+            spec.WIDTH,
+            max_batch,
+            max_length,
+            training_source,
+            inference_source,
+            initial.ctypes.data_as(FP),
+            initial.size,
+            raw_policy,
         )
         if not self._handle:
             self._raise()
@@ -156,6 +187,10 @@ class Backend:
                 "initialization_seconds_including_shader_compilation": self.initialization_seconds,
                 "binary_sha256": hashlib.sha256(LIBRARY.read_bytes()).hexdigest(),
                 "shader_sha256": hashlib.sha256(source).hexdigest(),
+                "training_shader_sha256": hashlib.sha256(training_source).hexdigest(),
+                "inference_shader_sha256": hashlib.sha256(inference_source).hexdigest(),
+                "kernel_policy": policies,
+                "kernel_policy_sha256": identity(policies),
                 "host_source_sha256": host_source_hash,
                 "storage_dtype": "float32",
                 "input_dtype": "int32",
@@ -178,6 +213,23 @@ class Backend:
     def _raise(self):
         message = self._lib.tfm_error()
         raise RuntimeError(message.decode() if message else "Unknown Metal failure")
+
+    def enable_profiling(self, enabled=True):
+        """Development only: split stages into synchronized command buffers."""
+        self._call("tfm_profile_enable", int(enabled))
+
+    def profile_results(self):
+        self.synchronize()
+        raw = self._lib.tfm_profile_results(self._handle)
+        if not raw:
+            self._raise()
+        return json.loads(raw)
+
+    def apply_gradient(self, gradient):
+        """Audit probe using the exact production Adam kernel and state."""
+        values = _floats(gradient, (spec.PARAM_COUNT,), "gradient")
+        self._invalidate_workspace()
+        self._call("tfm_apply_gradient", values.ctypes.data_as(FP), values.size)
 
     def _call(self, name, *args):
         if not self._handle:
@@ -449,7 +501,7 @@ class Backend:
             raise RuntimeError("Warmup state restoration was not exact")
 
     def capabilities(self):
-        return dict(self._capability)
+        return json.loads(json.dumps(self._capability))
 
     def memory_stats(self):
         return json.loads(self._lib.tfm_memory(self._handle))
