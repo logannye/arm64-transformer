@@ -141,7 +141,7 @@ No thresholds or kernels were changed after formal measurement began.
 
 ## Extending the idea to the Apple GPU
 
-A development branch now implements complete handwritten **Metal** forward,
+The GPU implementation provides complete handwritten **Metal** forward,
 backward and Adam kernels, alongside standard **PyTorch MPS** and compiled
 **MLX** baselines. All three retain the same model equations and FP32 stored
 state. Metal uses batch-wide matrix tiles, deterministic embedding reductions,
@@ -151,11 +151,13 @@ without native FP64 arithmetic.
 
 The custom path passes its development stress inventory at all six widths,
 including attention, normalization and QKV gradients. Tiny training-only runs
-also pass independent FP64 checks. **Formal GPU benchmarks remain unopened:**
-the standard GPU baselines fail the declared exact-training-repeatability gate.
-There is no GPU speedup claim. The [development report](experiments/gpu-development-v1/README.md)
-explains the implementation, retained failures and next decision; the CPU results
-above remain unchanged.
+also pass independent FP64 checks. **This phase closes at the strict repeatability
+gate:** standard MPS and compiled MLX fail exact training repeats in the retained
+development runs. All **108 planned formal fits remain blocked and unrun**.
+The gate and tolerances stay unchanged; there is no GPU speedup claim. The
+[development report](experiments/gpu-development-v1/README.md) explains the completed
+implementation, retained failures and final outcome. The CPU results above remain
+unchanged.
 
 ## Reproduce and inspect
 

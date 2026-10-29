@@ -1,7 +1,10 @@
 # Preserving small differences on the GPU
 
-**Development evidence only. Formal GPU admission and the planned 108-fit
-comparison remain closed. This report makes no timing or speedup claim.**
+**Phase closed at the strict repeatability gate on 2026-10-29.** The user chose
+to retain bitwise-repeatable training as a requirement and report the limitation.
+The implementations and development validation are complete. All **108 planned
+formal fits remain blocked and unrun**; this report makes no GPU timing or
+speedup claim. The [closure record](closure.json) lists every planned cell.
 
 A hardware-aware implementation must preserve the differences the model depends
 on. Attention subtracts large scores; normalization centers nearly equal values;
@@ -101,6 +104,21 @@ hashes. Later integration receipts retain source and artifact identities.
 The repeatability failures remain explicit and the
 [formal gate stays closed](../PROTOCOL-gpu-v1.md).
 
+This is a limitation of the declared comparison: the standard baselines did not
+meet its exact-repeatability requirement. It does not establish that their
+training is unusable or numerically inaccurate in general. Passing the retained
+FP64 development checks does not waive the separate repeatability failures.
+No tolerance was loosened, standard-framework gradient was replaced, or failing
+run was excluded to obtain a performance claim. MLX's short-sequence T3 attention
+backward failure at head width 256 also remains recorded; the T32 model path
+passed its development checks.
+
+The original eight-stage plan was stopped before performance candidate search,
+formal admission, full-budget training and checkpoint auditing. This phase
+therefore establishes a working, development-validated implementation and a
+documented boundary for the comparison. A future benchmark requires a new
+declared phase; no descriptive campaign is authorized by this closure.
+
 ## Evidence and reproduction
 
 [Summary](summary.json), [numerical receipts](receipts.json),
@@ -112,9 +130,10 @@ or large model-state payload is checked into this directory. Receipts identify
 the source snapshot actually tested; subsequent wrapper/lifecycle corrections
 do not retroactively change those identities.
 
-The planned [development evidence archive](https://github.com/logannye/arm64-transformer/releases/tag/transformer-gpu-development-v1)
+The verified [development evidence archive](https://github.com/logannye/arm64-transformer/releases/tag/transformer-gpu-development-v1)
 preserves the larger source, binary and raw-result payloads. It contains
 development evidence only; it contains no formal 108-fit comparison results.
+Its source revision and payloads remain unchanged by this later closure decision.
 
 Regenerate the figure from the checked-in data without GPU execution:
 

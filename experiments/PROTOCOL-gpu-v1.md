@@ -1,6 +1,12 @@
 # Prospective GPU comparison, v1
 
-**Status: development plan; formal admission and measurement are closed.**
+**Status: development phase closed at the strict repeatability gate on
+2026-10-29; formal admission and measurement remain closed.** The user chose to
+retain bitwise-repeatable training as a requirement and report the limitation.
+All 108 planned formal fits are blocked and unrun; no descriptive campaign or
+gate waiver is authorized. The [closure record](gpu-development-v1/closure.json)
+preserves the complete planned denominator and the development evidence identity.
+
 This document fixes the scientific scope and unchanged numerical limits. It is
 not yet a complete frozen execution contract. Capability discovery, the exact
 finite candidate list, all named check counts, dependency/compiler identities,
@@ -14,10 +20,11 @@ but do not reproduce training states exactly, despite exact state restoration
 after warmup. Two-step controls localize observed gradient differences to repeated
 token embeddings; six-update runs at widths 32 and 1024 also fail exact repeats.
 Custom Metal repeats those development runs exactly. These results do not open
-admission or qualify a formal campaign. The baseline repeatability failures and
-the resulting contract decision remain open. Formal timing stays blocked until
-this behavior and every other admission requirement are resolved under the rules
-below; no stochastic waiver is implied. MLX also rejects a short-sequence T3
+admission or qualify a formal campaign. The baseline repeatability failures are
+the reported stopping outcome; the decision to retain the strict gate is final
+for this phase. Formal timing stays blocked. Any future attempt requires a new
+declared phase that resolves this behavior and every other admission requirement;
+no stochastic waiver is implied. MLX also rejects a short-sequence T3
 attention-backward development probe at head width 256; the T32 model path works.
 
 ## Question and preserved CPU evidence

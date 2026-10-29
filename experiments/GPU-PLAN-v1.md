@@ -13,6 +13,28 @@ discovery, the finite candidate grid, complete admission inventory, execution
 order, reporters, and source identities are committed. No GPU result or speedup
 is claimed by this document.
 
+## Closure on 2026-10-29
+
+The user retained the strict exact-training-repeatability gate. The full Metal,
+MPS and compiled MLX model implementations and development checks are complete.
+MPS and MLX fail the retained exact-repeat checks, so this phase ends with a
+reported limitation and **0 of 108 formal fits executed**. The
+[development report](gpu-development-v1/README.md) and
+[closure record](gpu-development-v1/closure.json) preserve the outcome.
+
+| Planned work | Status at closure |
+|---|---|
+| CPU closure and GPU capability discovery | Complete; the final formal GPU contract was not frozen |
+| Standard GPU baselines and custom full-model runtime | Implemented and checked on development fixtures; baseline limitations retained |
+| Bounded precision work | P3 and subsequent lifecycle corrections validated in development |
+| Performance profiling and candidate selection | Not performed |
+| Formal admission | Closed; reserved seed 20261104 unopened |
+| Matched training and post-run benchmark audit | Blocked; all 108 planned fits unrun |
+| Development report, visualization and evidence publication | Complete |
+
+The stages below retain the original plan. Closing the development phase does
+not assert that the blocked benchmark stages were implemented or completed.
+
 ## 1. Close CPU work and freeze the GPU experiment
 
 The CPU phase is closed. Preserve its source, protocols, reports, failures, and
