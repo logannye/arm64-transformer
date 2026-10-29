@@ -78,6 +78,30 @@ def test_trace_before_any_model_execution_is_rejected(backend):
     assert backend._lib.calls == []
 
 
+def test_profiling_toggle_passes_one_handle_and_can_disable(backend):
+    backend.enable_profiling(True)
+    backend.enable_profiling(False)
+    assert backend._lib.calls == [
+        ("tfm_profile_enable", (1, 1)),
+        ("tfm_profile_enable", (1, 0)),
+    ]
+
+
+def test_fixed_gradient_probe_invalidates_workspace_and_uses_native_adam(backend):
+    original = batch(backend)
+    view = backend.forward(original)
+    backend.apply_gradient(np.ones(8, dtype=np.float32))
+    assert backend._lib.calls[-1][0] == "tfm_apply_gradient"
+    assert backend._lib.calls[-1][1][-1] == 8
+    assert_workspace_unavailable(backend, original, view)
+
+
+def test_fixed_gradient_probe_rejects_nonfinite_before_native_dispatch(backend):
+    with pytest.raises(ValueError, match="finite"):
+        backend.apply_gradient(np.full(8, np.nan, dtype=np.float32))
+    assert backend._lib.calls == []
+
+
 @pytest.mark.parametrize("operation", ["forward", "evaluate", "loss"])
 def test_forward_workspace_has_no_gradient_trace(operation, backend):
     original_batch = batch(backend)

@@ -40,6 +40,8 @@ SOURCE_FILES = (
     "transformer/validate.py",
     "native/metal/backend.mm",
     "native/metal/kernels.metal",
+    "native/metal/optimized.metal",
+    "transformer/gpu_policy.py",
     "native/metal/Makefile",
     "native/metal/build/libtransformer_metal.dylib",
 )
@@ -79,9 +81,10 @@ def evaluate(backend, case):
     return {"norm": norm, "linear": linear, "backward": backward}
 
 
-def check_case(backend, case):
+def check_case(backend, case, *, oracle=None):
     before = {key: array_identity(case[key]) for key in FIELDS}
-    oracle = layernorm_qkv_reference(*(case[key] for key in FIELDS), epsilon=case["epsilon"])
+    if oracle is None:
+        oracle = layernorm_qkv_reference(*(case[key] for key in FIELDS), epsilon=case["epsilon"])
     actual = evaluate(backend, case)
     repeat = evaluate(backend, case)
     after = {key: array_identity(case[key]) for key in FIELDS}

@@ -14,8 +14,9 @@ from transformer.precision_audit import comparison
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--label", required=True)
+parser.add_argument("--output-root", type=Path, default=Path("work/gpu-v1/metal-development"))
 args = parser.parse_args()
-destination = Path("work/gpu-v1/metal-development") / args.label
+destination = args.output_root / args.label
 destination.mkdir(parents=True, exist_ok=True)
 out = destination / f"attention-width-{spec.WIDTH}.json"
 if out.exists():

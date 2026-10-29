@@ -1,0 +1,746 @@
+{
+  "schema": 2,
+  "scope": "prospective finite GPU v2 candidate definitions; legality freeze precedes scoring",
+  "widths": [
+    32,
+    64,
+    128,
+    256,
+    512,
+    1024
+  ],
+  "reference": "P3 scalar/compensated reference retained",
+  "candidates": [
+    {
+      "id": "dense-forward-16-32-16-2",
+      "family": "dense_forward",
+      "value": {
+        "m": 16,
+        "n": 32,
+        "k": 16,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-forward-16-32-16-4",
+      "family": "dense_forward",
+      "value": {
+        "m": 16,
+        "n": 32,
+        "k": 16,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-forward-16-32-32-2",
+      "family": "dense_forward",
+      "value": {
+        "m": 16,
+        "n": 32,
+        "k": 32,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-forward-16-32-32-4",
+      "family": "dense_forward",
+      "value": {
+        "m": 16,
+        "n": 32,
+        "k": 32,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-forward-16-64-16-2",
+      "family": "dense_forward",
+      "value": {
+        "m": 16,
+        "n": 64,
+        "k": 16,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-forward-16-64-16-4",
+      "family": "dense_forward",
+      "value": {
+        "m": 16,
+        "n": 64,
+        "k": 16,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-forward-16-64-32-2",
+      "family": "dense_forward",
+      "value": {
+        "m": 16,
+        "n": 64,
+        "k": 32,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-forward-16-64-32-4",
+      "family": "dense_forward",
+      "value": {
+        "m": 16,
+        "n": 64,
+        "k": 32,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-forward-32-32-16-2",
+      "family": "dense_forward",
+      "value": {
+        "m": 32,
+        "n": 32,
+        "k": 16,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-forward-32-32-16-4",
+      "family": "dense_forward",
+      "value": {
+        "m": 32,
+        "n": 32,
+        "k": 16,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-forward-32-32-32-2",
+      "family": "dense_forward",
+      "value": {
+        "m": 32,
+        "n": 32,
+        "k": 32,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-forward-32-32-32-4",
+      "family": "dense_forward",
+      "value": {
+        "m": 32,
+        "n": 32,
+        "k": 32,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-forward-32-64-16-2",
+      "family": "dense_forward",
+      "value": {
+        "m": 32,
+        "n": 64,
+        "k": 16,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-forward-32-64-16-4",
+      "family": "dense_forward",
+      "value": {
+        "m": 32,
+        "n": 64,
+        "k": 16,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-forward-32-64-32-2",
+      "family": "dense_forward",
+      "value": {
+        "m": 32,
+        "n": 64,
+        "k": 32,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-forward-32-64-32-4",
+      "family": "dense_forward",
+      "value": {
+        "m": 32,
+        "n": 64,
+        "k": 32,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dx-16-32-16-2",
+      "family": "dense_dx",
+      "value": {
+        "m": 16,
+        "n": 32,
+        "k": 16,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dx-16-32-16-4",
+      "family": "dense_dx",
+      "value": {
+        "m": 16,
+        "n": 32,
+        "k": 16,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dx-16-32-32-2",
+      "family": "dense_dx",
+      "value": {
+        "m": 16,
+        "n": 32,
+        "k": 32,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dx-16-32-32-4",
+      "family": "dense_dx",
+      "value": {
+        "m": 16,
+        "n": 32,
+        "k": 32,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dx-16-64-16-2",
+      "family": "dense_dx",
+      "value": {
+        "m": 16,
+        "n": 64,
+        "k": 16,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dx-16-64-16-4",
+      "family": "dense_dx",
+      "value": {
+        "m": 16,
+        "n": 64,
+        "k": 16,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dx-16-64-32-2",
+      "family": "dense_dx",
+      "value": {
+        "m": 16,
+        "n": 64,
+        "k": 32,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dx-16-64-32-4",
+      "family": "dense_dx",
+      "value": {
+        "m": 16,
+        "n": 64,
+        "k": 32,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dx-32-32-16-2",
+      "family": "dense_dx",
+      "value": {
+        "m": 32,
+        "n": 32,
+        "k": 16,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dx-32-32-16-4",
+      "family": "dense_dx",
+      "value": {
+        "m": 32,
+        "n": 32,
+        "k": 16,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dx-32-32-32-2",
+      "family": "dense_dx",
+      "value": {
+        "m": 32,
+        "n": 32,
+        "k": 32,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dx-32-32-32-4",
+      "family": "dense_dx",
+      "value": {
+        "m": 32,
+        "n": 32,
+        "k": 32,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dx-32-64-16-2",
+      "family": "dense_dx",
+      "value": {
+        "m": 32,
+        "n": 64,
+        "k": 16,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dx-32-64-16-4",
+      "family": "dense_dx",
+      "value": {
+        "m": 32,
+        "n": 64,
+        "k": 16,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dx-32-64-32-2",
+      "family": "dense_dx",
+      "value": {
+        "m": 32,
+        "n": 64,
+        "k": 32,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dx-32-64-32-4",
+      "family": "dense_dx",
+      "value": {
+        "m": 32,
+        "n": 64,
+        "k": 32,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dw-16-32-16-2",
+      "family": "dense_dw",
+      "value": {
+        "m": 16,
+        "n": 32,
+        "k": 16,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dw-16-32-16-4",
+      "family": "dense_dw",
+      "value": {
+        "m": 16,
+        "n": 32,
+        "k": 16,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dw-16-32-32-2",
+      "family": "dense_dw",
+      "value": {
+        "m": 16,
+        "n": 32,
+        "k": 32,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dw-16-32-32-4",
+      "family": "dense_dw",
+      "value": {
+        "m": 16,
+        "n": 32,
+        "k": 32,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dw-16-64-16-2",
+      "family": "dense_dw",
+      "value": {
+        "m": 16,
+        "n": 64,
+        "k": 16,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dw-16-64-16-4",
+      "family": "dense_dw",
+      "value": {
+        "m": 16,
+        "n": 64,
+        "k": 16,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dw-16-64-32-2",
+      "family": "dense_dw",
+      "value": {
+        "m": 16,
+        "n": 64,
+        "k": 32,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dw-16-64-32-4",
+      "family": "dense_dw",
+      "value": {
+        "m": 16,
+        "n": 64,
+        "k": 32,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dw-32-32-16-2",
+      "family": "dense_dw",
+      "value": {
+        "m": 32,
+        "n": 32,
+        "k": 16,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dw-32-32-16-4",
+      "family": "dense_dw",
+      "value": {
+        "m": 32,
+        "n": 32,
+        "k": 16,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dw-32-32-32-2",
+      "family": "dense_dw",
+      "value": {
+        "m": 32,
+        "n": 32,
+        "k": 32,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dw-32-32-32-4",
+      "family": "dense_dw",
+      "value": {
+        "m": 32,
+        "n": 32,
+        "k": 32,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dw-32-64-16-2",
+      "family": "dense_dw",
+      "value": {
+        "m": 32,
+        "n": 64,
+        "k": 16,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dw-32-64-16-4",
+      "family": "dense_dw",
+      "value": {
+        "m": 32,
+        "n": 64,
+        "k": 16,
+        "sg": 4
+      }
+    },
+    {
+      "id": "dense-dw-32-64-32-2",
+      "family": "dense_dw",
+      "value": {
+        "m": 32,
+        "n": 64,
+        "k": 32,
+        "sg": 2
+      }
+    },
+    {
+      "id": "dense-dw-32-64-32-4",
+      "family": "dense_dw",
+      "value": {
+        "m": 32,
+        "n": 64,
+        "k": 32,
+        "sg": 4
+      }
+    },
+    {
+      "id": "norm-1-1",
+      "family": "norm",
+      "value": {
+        "sg": 1,
+        "vec": 1
+      }
+    },
+    {
+      "id": "norm-1-4",
+      "family": "norm",
+      "value": {
+        "sg": 1,
+        "vec": 4
+      }
+    },
+    {
+      "id": "norm-2-1",
+      "family": "norm",
+      "value": {
+        "sg": 2,
+        "vec": 1
+      }
+    },
+    {
+      "id": "norm-2-4",
+      "family": "norm",
+      "value": {
+        "sg": 2,
+        "vec": 4
+      }
+    },
+    {
+      "id": "norm-4-1",
+      "family": "norm",
+      "value": {
+        "sg": 4,
+        "vec": 1
+      }
+    },
+    {
+      "id": "norm-4-4",
+      "family": "norm",
+      "value": {
+        "sg": 4,
+        "vec": 4
+      }
+    },
+    {
+      "id": "attention-1-1-register-saved",
+      "family": "attention",
+      "value": {
+        "rows": 1,
+        "sg": 1,
+        "stage": "register",
+        "backward": "saved"
+      }
+    },
+    {
+      "id": "attention-1-1-register-recompute",
+      "family": "attention",
+      "value": {
+        "rows": 1,
+        "sg": 1,
+        "stage": "register",
+        "backward": "recompute"
+      }
+    },
+    {
+      "id": "attention-1-1-threadgroup-saved",
+      "family": "attention",
+      "value": {
+        "rows": 1,
+        "sg": 1,
+        "stage": "threadgroup",
+        "backward": "saved"
+      }
+    },
+    {
+      "id": "attention-1-1-threadgroup-recompute",
+      "family": "attention",
+      "value": {
+        "rows": 1,
+        "sg": 1,
+        "stage": "threadgroup",
+        "backward": "recompute"
+      }
+    },
+    {
+      "id": "attention-1-2-register-saved",
+      "family": "attention",
+      "value": {
+        "rows": 1,
+        "sg": 2,
+        "stage": "register",
+        "backward": "saved"
+      }
+    },
+    {
+      "id": "attention-1-2-register-recompute",
+      "family": "attention",
+      "value": {
+        "rows": 1,
+        "sg": 2,
+        "stage": "register",
+        "backward": "recompute"
+      }
+    },
+    {
+      "id": "attention-1-2-threadgroup-saved",
+      "family": "attention",
+      "value": {
+        "rows": 1,
+        "sg": 2,
+        "stage": "threadgroup",
+        "backward": "saved"
+      }
+    },
+    {
+      "id": "attention-1-2-threadgroup-recompute",
+      "family": "attention",
+      "value": {
+        "rows": 1,
+        "sg": 2,
+        "stage": "threadgroup",
+        "backward": "recompute"
+      }
+    },
+    {
+      "id": "attention-2-1-register-saved",
+      "family": "attention",
+      "value": {
+        "rows": 2,
+        "sg": 1,
+        "stage": "register",
+        "backward": "saved"
+      }
+    },
+    {
+      "id": "attention-2-1-register-recompute",
+      "family": "attention",
+      "value": {
+        "rows": 2,
+        "sg": 1,
+        "stage": "register",
+        "backward": "recompute"
+      }
+    },
+    {
+      "id": "attention-2-1-threadgroup-saved",
+      "family": "attention",
+      "value": {
+        "rows": 2,
+        "sg": 1,
+        "stage": "threadgroup",
+        "backward": "saved"
+      }
+    },
+    {
+      "id": "attention-2-1-threadgroup-recompute",
+      "family": "attention",
+      "value": {
+        "rows": 2,
+        "sg": 1,
+        "stage": "threadgroup",
+        "backward": "recompute"
+      }
+    },
+    {
+      "id": "attention-2-2-register-saved",
+      "family": "attention",
+      "value": {
+        "rows": 2,
+        "sg": 2,
+        "stage": "register",
+        "backward": "saved"
+      }
+    },
+    {
+      "id": "attention-2-2-register-recompute",
+      "family": "attention",
+      "value": {
+        "rows": 2,
+        "sg": 2,
+        "stage": "register",
+        "backward": "recompute"
+      }
+    },
+    {
+      "id": "attention-2-2-threadgroup-saved",
+      "family": "attention",
+      "value": {
+        "rows": 2,
+        "sg": 2,
+        "stage": "threadgroup",
+        "backward": "saved"
+      }
+    },
+    {
+      "id": "attention-2-2-threadgroup-recompute",
+      "family": "attention",
+      "value": {
+        "rows": 2,
+        "sg": 2,
+        "stage": "threadgroup",
+        "backward": "recompute"
+      }
+    },
+    {
+      "id": "embedding-64",
+      "family": "embedding",
+      "value": {
+        "block": 64
+      }
+    },
+    {
+      "id": "embedding-128",
+      "family": "embedding",
+      "value": {
+        "block": 128
+      }
+    },
+    {
+      "id": "fusion-1-0",
+      "family": "fusion",
+      "value": {
+        "epilogue": true,
+        "adam_finite": false
+      }
+    },
+    {
+      "id": "fusion-0-1",
+      "family": "fusion",
+      "value": {
+        "epilogue": false,
+        "adam_finite": true
+      }
+    },
+    {
+      "id": "fusion-1-1",
+      "family": "fusion",
+      "value": {
+        "epilogue": true,
+        "adam_finite": true
+      }
+    }
+  ],
+  "warmups": 20,
+  "observations": 100,
+  "blocks": 5,
+  "minimum_improvement": 0.03,
+  "source_freeze_required": true
+}
