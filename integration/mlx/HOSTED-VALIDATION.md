@@ -32,22 +32,28 @@ request a larger paid runner. Actual runner capabilities are checked at runtime.
    reused CMake directory. Both compile the regular offline metallib; OFF also
    compiles the attention instantiation that the earlier runtime-JIT evidence
    could not validate. C++ tests are enabled. Debug assertions remain enabled;
-   `-g0` limits debug-symbol storage. Four compiler workers are bounded to one
+   `MLX_EXPORT_ALL_SYMBOLS=ON` supports linking internal C++ tests against the
+   same shared library used by Python; this is an integration build option.
+   `-g0` limits debug-symbol storage. Two compiler workers are bounded to one
    native build process.
 5. Package the actual extension, `libmlx.dylib`, any built `libjaccl.dylib`,
    freshly compiled metallib, and C++ executable. The normal package layout is
    `runtime/python/mlx/core*.so` plus `runtime/python/mlx/lib/`. The test binary
-   uses a relative RPATH. Retain complete patched sources and replay scripts.
+   uses relative RPATHs for both its CMake test-discovery location and retained
+   package location. Retain complete patched sources and replay scripts.
 6. Temporarily move the single build directory aside while running the package
    to expose accidental absolute build-path dependencies. Run all Python tests
-   and C++ tests serially on CPU and, when a real Metal dispatch succeeds, GPU.
+   serially with CPU and GPU defaults after their real dispatch probes pass.
+   Metal-enabled C++ tests contain explicit GPU operations even with a CPU
+   default, so both complete C++ invocations require the GPU probe to pass.
    Required new GPU regression cases cannot be missing, failed, or skipped.
 7. Preserve both archives and every result, including failures. A missing GPU
    remains `gpu_unavailable_not_validated`; the driver returns nonzero unless
    both configurations pass both CPU and GPU checks. Useful build artifacts
    still upload on failure for subsequent M4 replay.
 
-Storage guards require 20 GiB free and cap the isolated work tree at 12 GiB.
+Storage guards retain a 2 GiB free-space reserve and cap the isolated work tree
+at 10 GiB, checked before/after dependency installation and build/package stages.
 No unbounded compiler caches are used. The pre-commit cache is isolated inside
 that tree. Existing local build trees and evidence remain untouched.
 
@@ -55,7 +61,7 @@ that tree. Existing local build trees and evidence remain untouched.
 
 Copy the helper `.py` files, `hosted-requirements.txt`, and `inputs/` into
 `integration/mlx/` in the project repository. Review and install
-`hosted-workflow.yml.fragment` as `.github/workflows/mlx-integration.yml`.
+`hosted-workflow.yml.fragment` as `.github/workflows/upstream-mlx.yml`.
 Dispatch that workflow, or push the approved branch and relevant paths.
 This is an isolated integration study, not upstream CI approval.
 

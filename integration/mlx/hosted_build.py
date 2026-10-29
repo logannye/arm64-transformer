@@ -53,7 +53,7 @@ def source_identity(source):
 def storage(root):
     size = sum(p.stat().st_size for p in root.rglob("*") if p.is_file() and not p.is_symlink())
     free = shutil.disk_usage(root).free
-    if free < 20 * 1024**3 or size > 12 * 1024**3:
+    if free < 2 * 1024**3 or size > 10 * 1024**3:
         raise RuntimeError(f"Storage limit: {size} bytes retained; {free} bytes free")
     return {"retained_bytes": size, "free_bytes": free}
 
@@ -169,7 +169,7 @@ def package_mode(source, build, output, mode, provenance, env, logs):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--work-root", type=Path, required=True)
-    parser.add_argument("--parallel", type=int, default=4)
+    parser.add_argument("--parallel", type=int, default=2)
     args = parser.parse_args()
     root = args.work_root.resolve()
     if root.exists() or args.parallel not in range(1, 9):
@@ -241,6 +241,12 @@ def main():
         (logs / "runtime-lock.txt").write_bytes(
             subprocess.check_output([sys.executable, "-m", "pip", "freeze", "--all"], env=env)
         )
+        write(logs / "storage-after-dependencies.json", storage(root))
+        installed = {
+            d.metadata["Name"].lower().replace("_", "-") for d in importlib.metadata.distributions()
+        }
+        if installed & {"mlx", "mlx-metal", "mlx-cuda"}:
+            raise RuntimeError("Integration dependencies must not install an alternate MLX")
         run(["git", "init", str(source)], cwd=root, output=logs, name="git-init", env=env)
         run(
             ["git", "remote", "add", "origin", "https://github.com/ml-explore/mlx.git"],
@@ -321,6 +327,7 @@ def main():
                     "-DCMAKE_COMPILE_WARNING_AS_ERROR=ON",
                     "-DCMAKE_OSX_DEPLOYMENT_TARGET=14.0",
                     "-DBUILD_SHARED_LIBS=ON",
+                    "-DMLX_EXPORT_ALL_SYMBOLS=ON",
                     "-DMLX_BUILD_CPU=ON",
                     "-DMLX_BUILD_METAL=ON",
                     "-DMLX_BUILD_CUDA=OFF",
@@ -334,7 +341,9 @@ def main():
                     f"-DPython_EXECUTABLE={sys.executable}",
                     f"-DMLX_PYTHON_BINDINGS_OUTPUT_DIRECTORY={build / 'python/mlx'}",
                     "-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON",
-                    "-DCMAKE_INSTALL_RPATH=@loader_path;@loader_path/../python/mlx/lib",
+                    # CMake executes tests for discovery before packaging: allow
+                    # build/tests -> build/libmlx and build/libmlx -> build/jaccl.
+                    "-DCMAKE_INSTALL_RPATH=@loader_path;@loader_path/..;@loader_path/jaccl;@loader_path/../python/mlx/lib",
                 ]
                 run(command, cwd=root, output=logs, name=f"{mode}-configure", env=env, timeout=1800)
                 run(
@@ -356,6 +365,7 @@ def main():
                 )
                 if source_identity(source) != before:
                     raise RuntimeError("Build changed source files")
+                write(logs / f"{mode}-storage-after-build.json", storage(root))
                 artifact = root / "artifacts" / mode
                 provenance = {
                     "base": BASE,

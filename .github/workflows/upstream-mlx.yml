@@ -7,7 +7,7 @@ on:
       - codex/upstream-integration-v2
     paths:
       - integration/mlx/**
-      - .github/workflows/mlx-integration.yml
+      - .github/workflows/upstream-mlx.yml
   workflow_dispatch:
     inputs:
       macos_runner:
@@ -43,7 +43,7 @@ jobs:
         run: |
           "$RUNNER_TEMP/mlx-integration-venv/bin/python" \
             integration/mlx/hosted_build.py \
-            --work-root "$RUNNER_TEMP/mlx-integration-work" --parallel 4
+            --work-root "$RUNNER_TEMP/mlx-integration-work" --parallel 2
       - name: Retain binaries, inputs, failures, and validation receipts
         if: always()
         uses: actions/upload-artifact@v7

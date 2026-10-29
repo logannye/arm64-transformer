@@ -38,8 +38,8 @@ def main():
             name: importlib.metadata.version(name)
             for name in ("numpy", "torch", "tensorflow", "ml_dtypes", "pytest")
         }
-        result["available"] = args.device == "cpu" or mx.metal.is_available()
-        if not result["available"]:
+        result["metal_backend_compiled"] = mx.metal.is_available()
+        if args.device == "gpu" and not result["metal_backend_compiled"]:
             result["status"] = "gpu_unavailable_not_validated"
             return 2
         target = mx.gpu if args.device == "gpu" else mx.cpu
@@ -51,10 +51,15 @@ def main():
         if args.device == "gpu":
             mx.synchronize()
             result["metal_device_info"] = dict(mx.metal.device_info())
+        result["available"] = True
         result["status"] = "passed"
         return 0
     except BaseException as error:
         result["error"] = f"{type(error).__name__}: {error}"
+        if "No Metal device available" in str(error):
+            result["available"] = False
+            result["status"] = "gpu_unavailable_not_validated"
+            return 2
         return 1
     finally:
         write(args.output, result)

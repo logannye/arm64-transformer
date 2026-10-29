@@ -107,6 +107,7 @@ def validate(bundle, output, python=sys.executable):
         "formal_fits": 0,
         "admission_stream_opened": False,
         "devices": {},
+        "cpp": {"status": "gpu_required_not_validated"},
         "qualified": False,
     }
     try:
@@ -140,15 +141,6 @@ def validate(bundle, output, python=sys.executable):
             if execution["returncode"] != 0:
                 row["status"] = row["probe"]["status"]
                 continue
-            cpp = run(
-                [str(bundle / "runtime/bin/tests")],
-                cwd=bundle,
-                output=output,
-                name=f"{device}-cpp",
-                env=device_env,
-                timeout=1800,
-                check=False,
-            )
             xml = output / f"{device}-python.xml"
             tests = run(
                 [
@@ -170,18 +162,38 @@ def validate(bundle, output, python=sys.executable):
                 timeout=3600,
                 check=False,
             )
-            row["cpp_returncode"], row["python_returncode"] = cpp["returncode"], tests["returncode"]
+            row["python_returncode"] = tests["returncode"]
             try:
                 row["python_inventory"] = test_inventory(
                     xml, required_gpu_tests(bundle / "source") if device == "gpu" else ()
                 )
-                row["status"] = (
-                    "passed" if cpp["returncode"] == tests["returncode"] == 0 else "failed"
-                )
+                row["status"] = "passed" if tests["returncode"] == 0 else "failed"
             except (ValueError, OSError, ET.ParseError) as error:
                 row["error"] = str(error)
-        result["qualified"] = all(
-            result["devices"].get(d, {}).get("status") == "passed" for d in ("cpu", "gpu")
+        # Metal-enabled C++ suites explicitly dispatch GPU operations even when
+        # DEVICE=cpu. Neither full invocation is CPU-only on a headless runner.
+        if result["devices"].get("gpu", {}).get("probe", {}).get("status") == "passed":
+            cpp = {"status": "failed", "default_devices": {}}
+            result["cpp"] = cpp
+            for device in ("cpu", "gpu"):
+                execution = run(
+                    [str(bundle / "runtime/bin/tests")],
+                    cwd=bundle,
+                    output=output,
+                    name=f"{device}-default-full-cpp",
+                    env={**env, "DEVICE": device},
+                    timeout=1800,
+                    check=False,
+                )
+                cpp["default_devices"][device] = execution
+            if all(
+                r["returncode"] == 0 and not r.get("timed_out")
+                for r in cpp["default_devices"].values()
+            ):
+                cpp["status"] = "passed"
+        result["qualified"] = (
+            all(result["devices"].get(d, {}).get("status") == "passed" for d in ("cpu", "gpu"))
+            and result["cpp"]["status"] == "passed"
         )
         return result
     finally:
