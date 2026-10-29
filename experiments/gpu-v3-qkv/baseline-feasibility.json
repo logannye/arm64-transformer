@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "scope": "official_stable_source_inspection_only_no_runtime_qualification",
+  "recorded_at_utc": "2026-10-29T21:14:31Z",
+  "formal_campaign_allowed": false,
+  "formal_fits_completed": 0,
+  "reserved_admission_seed": 20261104,
+  "reserved_admission_opened": false,
+  "installed_study_versions": {
+    "torch": "2.14.1",
+    "mlx": "0.32.4",
+    "mlx-metal": "0.32.4"
+  },
+  "stable_update_rule": "At most one prospectively selected supported stable update per framework, only with official evidence of a relevant repair; pin versions and wheel identities before testing.",
+  "updates_selected_or_installed_by_this_check": [],
+  "frameworks": {
+    "pytorch": {
+      "latest_stable_tag": "v2.15.0",
+      "release_published_at": "2026-10-28T17:09:49Z",
+      "release_url": "https://github.com/pytorch/pytorch/releases/tag/v2.15.0",
+      "relevant_repair_found": false,
+      "finding": "The tagged MPS embedding dispatcher still calls alertNotDeterministic for embedding_dense_backward_mps and uses the atomic-add implementation. Source inspection indicates rejection in strict mode rather than a deterministic alternate implementation; this release was not executed locally.",
+      "sources": [
+        {
+          "path": "aten/src/ATen/native/mps/operations/Embedding.mm",
+          "url": "https://github.com/pytorch/pytorch/blob/v2.15.0/aten/src/ATen/native/mps/operations/Embedding.mm",
+          "github_blob_sha": "68f8e3c95de3f6347d7b6945508bb350c8a960a9",
+          "sha256": "38780d298bcf7dc4ebb59df464faeeee65351be5f87a812f5962d74e6976f7dc",
+          "bytes": 4833
+        },
+        {
+          "path": "aten/src/ATen/native/mps/kernels/Embedding.metal",
+          "url": "https://github.com/pytorch/pytorch/blob/v2.15.0/aten/src/ATen/native/mps/kernels/Embedding.metal",
+          "github_blob_sha": "ad6145e7df01b4e3b2060f4970b3915113fda2b6",
+          "sha256": "da1757ab1cf8c9c8ddad6b89904e55c7f7e584c5f2a03c777f3d4662a2e0d796",
+          "bytes": 4847
+        }
+      ]
+    },
+    "mlx": {
+      "latest_stable_tag": "v0.32.4",
+      "release_published_at": "2026-10-14T23:37:14Z",
+      "release_url": "https://github.com/ml-explore/mlx/releases/tag/v0.32.4",
+      "relevant_repair_found": false,
+      "finding": "The latest stable version is the same version retained in the failed baseline diagnostic. Its scatter implementation uses atomic_update, and the short-query attention dispatch still rejects training when outputs require saved logsumexp.",
+      "sources": [
+        {
+          "path": "mlx/backend/metal/kernels/indexing/scatter.h",
+          "url": "https://github.com/ml-explore/mlx/blob/v0.32.4/mlx/backend/metal/kernels/indexing/scatter.h",
+          "github_blob_sha": "56fead768035c95eb31bce4e310ba5d3b36baf42",
+          "sha256": "f419bc468396024b2bf368781277fc69880541f393850329c1a831892d9e5bca",
+          "bytes": 4347
+        },
+        {
+          "path": "mlx/backend/metal/scaled_dot_product_attention.cpp",
+          "url": "https://github.com/ml-explore/mlx/blob/v0.32.4/mlx/backend/metal/scaled_dot_product_attention.cpp",
+          "github_blob_sha": "5b157c6c5c90e42b243ee4af63a1d7409e91764d",
+          "sha256": "2bf90044647830e24c826ed35797d1cabca83d9270a00161eea5ad419b639a14",
+          "bytes": 54884
+        }
+      ]
+    }
+  },
+  "historical_failure_evidence": [
+    "experiments/gpu-v2/BASELINE-INVESTIGATION.md",
+    "experiments/gpu-v2/blocked-study.json"
+  ],
+  "limitations": [
+    "Official GitHub release metadata and exact tagged source bytes were inspected; no framework was installed, upgraded, patched, or executed by this check.",
+    "The separately prepared local deterministic-gradient and attention patches are development artifacts, not standard released baselines.",
+    "QKV source, binary, or policy changes require a new freeze and matching baseline/admission evidence before any formal campaign. Historical v2 evidence remains preserved for its original identities."
+  ]
+}
