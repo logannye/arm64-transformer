@@ -46,12 +46,33 @@ range of five paired block ratios, not a confidence interval. Training and
 inference remain separate; there is no pooled-width headline or comparison
 against framework/CPU performance.
 
+The latency table also reports p50 and p95 in microseconds and milliseconds,
+using linear interpolation over the 100 saved observations. Training throughput
+is 51,200 next-token targets divided by the summed durations of 100 B16T32
+updates at the same timing boundary. Direct comparisons require the retained
+fresh-pair proof: equal initial state, matching owned allocation counts/bytes,
+and exactly three batch buffers per backend. Device-global allocations and
+process RSS are not substituted for owned-buffer measurements.
+
+`metal-kernel-ablation.png` and its SVG compare the matched reference and final
+selected bundle at every width, separately for training and inference. They sum
+three-repetition stage medians into dense forward/dX/dW, QKV, normalization/bias
+reductions, attention, embedding, Adam, and other work. QKV matrix work includes
+its forward, input gradient, and weight gradient; its bias gradient remains in
+reductions. Raw observations and grouped costs are retained in
+`kernel-stage-costs.csv` and `kernel-category-costs.csv`. Each profile stage uses
+a separate synchronized command buffer, so this is an intrusive kernel-cost
+comparison, not an exact attribution of production wall time or an isolated
+causal ablation. The figure uses a separate microsecond scale in each panel.
+Stage command-buffer counts are retained separately from kernel dispatches;
+dispatch differences remain unavailable unless actual per-stage counts exist.
+
 ```sh
 PYTHONPATH=work/gpu-v1/python-site:. .venv/bin/python \
   scripts/report_gpu_v2_engineering.py \
   --baseline work/gpu-v2/repeatability/full-v3 \
   --profiles work/gpu-v2/profiles/reference-v3 \
-  --searches work/gpu-v2/selection-v2 \
+  --searches work/gpu-v2/search/selection-v2 \
   --output results/gpu-v2-engineering
 ```
 

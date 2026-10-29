@@ -21,6 +21,20 @@ ENGINES = ("mps", "mlx")
 MODES = ("training", "inference")
 SCOPE = "training_partition_development_only_no_formal_admission_or_speed_claim"
 MAX_JSON = 64 * 1024 * 1024
+PROFILE_SCOPE = (
+    "intrusive diagnostic: separate synchronized command buffers per stage; not production timing"
+)
+STAGE_CATEGORIES = (
+    ("dense_forward", "Dense forward", "#4477AA"),
+    ("dense_dx", "Dense dX", "#66AACC"),
+    ("dense_dw", "Dense dW", "#99CCEE"),
+    ("qkv", "QKV forward / dX / dW", "#AA3377"),
+    ("reductions", "Norm + bias reductions", "#EE6677"),
+    ("attention", "Attention", "#228833"),
+    ("embedding", "Embedding", "#66CCAA"),
+    ("adam", "Adam", "#CCBB44"),
+    ("other", "Other / elementwise / loss", "#BBBBBB"),
+)
 
 
 def require(condition, message):
@@ -199,7 +213,69 @@ def baseline_rows(root, receipts):
     return rows
 
 
-def paired_summary(pair):
+def percentile(values, quantile):
+    """Linear interpolation at (n - 1) * q, explicitly defined for saved samples."""
+    ordered = sorted(values)
+    require(bool(ordered) and 0 <= quantile <= 1, "Invalid percentile request")
+    position = (len(ordered) - 1) * quantile
+    low, high = math.floor(position), math.ceil(position)
+    return ordered[low] + (ordered[high] - ordered[low]) * (position - low)
+
+
+def validate_fresh_pair(receipt):
+    fields = (
+        "owned_buffer_count",
+        "workspace_buffer_count",
+        "input_buffer_count",
+        "batch_buffer_count",
+        "owned_buffer_bytes_including_guards",
+    )
+    require(
+        receipt.get("fresh_instances_without_qualification_allocations") is True
+        and receipt.get("equal_initial_state") is True,
+        "Direct pair lacks fresh instances or equal initial-state proof",
+    )
+    memories = receipt.get("memory_before_timing", {})
+    for label in ("reference", "candidate"):
+        memory = memories.get(label, {})
+        require(
+            all(type(memory.get(key)) is int and memory[key] >= 0 for key in fields),
+            "Direct pair lacks valid owned-buffer measurements",
+        )
+        require(
+            memory["workspace_buffer_count"] >= 1
+            and memory["input_buffer_count"] == 0
+            and memory["batch_buffer_count"] == 3,
+            "Direct pair does not contain only the B16T32/B1T32 batch buffers",
+        )
+        require(
+            memory["owned_buffer_count"]
+            == sum(
+                memory[key]
+                for key in ("workspace_buffer_count", "input_buffer_count", "batch_buffer_count")
+            ),
+            "Direct pair owned-buffer counts are inconsistent",
+        )
+    require(
+        all(memories["reference"][key] == memories["candidate"][key] for key in fields),
+        "Direct pair owned counts or bytes are asymmetric",
+    )
+    saved = receipt.get("allocation_validation", {})
+    require(
+        saved.get("equal_owned_counts_and_bytes") is True
+        and saved.get("compared_fields") == list(fields),
+        "Fresh-pair allocation validation receipt is incomplete",
+    )
+    return {
+        "compared_fields": list(fields),
+        "equal_owned_counts_and_bytes": True,
+        "batch_buffer_count_per_backend": 3,
+        "owned_buffer_bytes_including_guards_per_backend": memories["reference"][fields[-1]],
+        "device_global_allocation_or_process_rss_compared": False,
+    }
+
+
+def paired_summary(pair, *, mode=None):
     require(isinstance(pair, dict), "Missing direct paired timing")
     medians = {}
     for label in ("reference", "candidate"):
@@ -241,7 +317,7 @@ def paired_summary(pair):
         math.isclose(ratio, pair["median_paired_latency_ratio"], rel_tol=1e-12),
         "Stored paired summary disagrees",
     )
-    return {
+    result = {
         "candidate_over_reference_latency": ratio,
         "latency_reduction_fraction": 1 - ratio,
         "paired_ratios": ratios,
@@ -251,6 +327,161 @@ def paired_summary(pair):
         "reference_median_seconds": statistics.median(pair["reference"]["seconds"]),
         "boundary": pair.get("boundary"),
         "dispersion_label": "range of five paired block ratios; not a confidence interval",
+        "percentile_method": "linear interpolation at (100 - 1) * quantile",
+    }
+    for label in ("reference", "candidate"):
+        samples = pair[label]["seconds"]
+        for name, quantile in (("p50", 0.5), ("p95", 0.95)):
+            seconds = percentile(samples, quantile)
+            result[f"{label}_{name}_us"] = seconds * 1e6
+            result[f"{label}_{name}_ms"] = seconds * 1e3
+        result[f"{label}_training_targets_per_second"] = (
+            16 * 32 * len(samples) / sum(samples) if mode == "training" else None
+        )
+    result["training_throughput_definition"] = (
+        (
+            "51,200 next-token targets / summed durations of 100 B16T32 updates; "
+            "same production timing boundary, excludes warmups"
+        )
+        if mode == "training"
+        else None
+    )
+    return result
+
+
+def stage_category(name):
+    if name == "qkv_forward" or name.startswith("qkv_dx/") or name == "dense_dw/qkv":
+        return "qkv"
+    for prefix in ("dense_forward/", "dense_dx/", "dense_dw/"):
+        if name.startswith(prefix):
+            return prefix[:-1]
+    if name.startswith(("norm_", "bias_gradient/")):
+        return "reductions"
+    for prefix in ("attention", "embedding", "adam"):
+        if name.startswith(prefix):
+            return prefix
+    return "other"
+
+
+def profile_summary(profile):
+    require(profile.get("scope") == PROFILE_SCOPE, "Unexpected GPU profiling boundary")
+    require(
+        profile.get("repetitions") == 3 and profile.get("restored_warmups") == 20,
+        "Unexpected GPU profile repetition/warmup contract",
+    )
+    records = profile.get("records", [])
+    grouped = {}
+    for record in records:
+        name, seconds = record.get("stage"), record.get("gpu_seconds")
+        require(isinstance(name, str) and bool(name), "Unnamed GPU profile stage")
+        require(
+            isinstance(seconds, (int, float)) and math.isfinite(seconds) and seconds > 0,
+            "Invalid GPU stage duration",
+        )
+        host = record.get("host_completion_seconds")
+        require(
+            isinstance(host, (int, float)) and math.isfinite(host) and host > 0,
+            "Invalid host completion duration",
+        )
+        grouped.setdefault(name, []).append(record)
+    require(
+        bool(grouped) and all(len(values) == 3 for values in grouped.values()),
+        "Incomplete repeated GPU stage inventory",
+    )
+    stages = list(grouped)
+    require(
+        [record["stage"] for record in records] == stages * 3,
+        "GPU stage order changed between repetitions",
+    )
+    saved = profile.get("median_gpu_seconds", {})
+    require(set(saved) == set(grouped), "Stored stage median inventory differs")
+    medians = {
+        name: statistics.median(value["gpu_seconds"] for value in values)
+        for name, values in grouped.items()
+    }
+    require(
+        all(math.isclose(saved[name], value, rel_tol=1e-12) for name, value in medians.items()),
+        "Stored GPU stage median differs",
+    )
+    totals = {name: 0.0 for name, _, _ in STAGE_CATEGORIES}
+    for name, value in medians.items():
+        totals[stage_category(name)] += value
+    dispatch_count = None
+    if all("dispatch_count" in record for record in records):
+        require(
+            all(
+                type(record["dispatch_count"]) is int and record["dispatch_count"] >= 0
+                for record in records
+            ),
+            "Invalid retained dispatch count",
+        )
+        require(
+            all(
+                len({record["dispatch_count"] for record in values}) == 1
+                for values in grouped.values()
+            ),
+            "Dispatch counts differ across repetitions",
+        )
+        dispatch_count = sum(values[0]["dispatch_count"] for values in grouped.values())
+    return {
+        "scope": PROFILE_SCOPE,
+        "records": records,
+        "stage_median_gpu_seconds": medians,
+        "category_sum_of_stage_medians_seconds": totals,
+        "total_sum_of_stage_medians_seconds": sum(medians.values()),
+        "profiled_stage_command_buffers_per_repetition": len(stages),
+        "kernel_dispatches_per_repetition": dispatch_count,
+        "dispatch_count_scope": (
+            "Per-stage dispatch counts retained in each raw record"
+            if dispatch_count is not None
+            else "Unavailable: cumulative backend counters do not isolate matched profile stages"
+        ),
+        "production_runtime_attribution_claimed": False,
+    }
+
+
+def compare_profiles(reference, search, mode):
+    require(
+        search.get("profile_identity_verified") is True,
+        "Search did not authenticate its matching reference profile",
+    )
+    for key in (
+        "source_sha256",
+        "runtime_identity",
+        "input_sha256",
+        "input_directory",
+        "rows_used",
+        "environment",
+        "warmups",
+        "observations",
+        "blocks",
+        "profile_repeats",
+    ):
+        require(
+            key in reference and reference[key] == search.get(key),
+            f"Reference/selected profile identity differs: {key}",
+        )
+    require(reference.get("status") == "completed", "Reference profile was not completed")
+    original = profile_summary(reference["profiles"][mode])
+    selected = profile_summary(search["selected_profiles_after_production"][mode])
+    original_dispatches = original["kernel_dispatches_per_repetition"]
+    selected_dispatches = selected["kernel_dispatches_per_repetition"]
+    return {
+        "reference": original,
+        "selected": selected,
+        "selected_minus_reference_profiled_stage_command_buffers": (
+            selected["profiled_stage_command_buffers_per_repetition"]
+            - original["profiled_stage_command_buffers_per_repetition"]
+        ),
+        "selected_minus_reference_kernel_dispatches": (
+            selected_dispatches - original_dispatches
+            if original_dispatches is not None and selected_dispatches is not None
+            else None
+        ),
+        "interpretation": (
+            "Intrusive synchronized stage profiles of the reference and final selected bundle; "
+            "sums of stage medians do not attribute production wall time or isolate causal effects"
+        ),
     }
 
 
@@ -284,6 +515,9 @@ def metal_rows(profiles, searches, receipts, *, attempt_id="selection-v2"):
             search["reference_profile_sha256"] == receipts.sources[f"profiles/{name}"],
             "Profile hash changed",
         )
+        fresh_pair = None
+        if search.get("status") == "completed" and search.get("selected_vs_reference"):
+            fresh_pair = validate_fresh_pair(search.get("final_fresh_pair", {}))
         modes = {}
         for mode in MODES:
             saved = search.get("modes", {}).get(mode, {})
@@ -315,7 +549,9 @@ def metal_rows(profiles, searches, receipts, *, attempt_id="selection-v2"):
                 search.get("status") == "completed"
                 and search.get("sources_unchanged") is True
                 and search.get("inputs_unchanged") is True
+                and search.get("runtime_unchanged") is True
                 and search.get("selected_bundle_full_checks", {}).get("passed") is True
+                and fresh_pair is not None
             )
             modes[mode] = {
                 "candidate_status_counts": dict(Counter(row["status"] for row in candidates)),
@@ -323,8 +559,11 @@ def metal_rows(profiles, searches, receipts, *, attempt_id="selection-v2"):
                 "selected_policy": saved.get("selected_policy"),
                 "selected_policy_sha256": saved.get("selected_policy_sha256"),
                 "direct_pair_available": direct is not None and eligible,
-                "selected_vs_reference": paired_summary(direct)
+                "selected_vs_reference": paired_summary(direct, mode=mode)
                 if direct is not None and eligible
+                else None,
+                "kernel_profile_comparison": compare_profiles(profile, search, mode)
+                if eligible
                 else None,
                 "unavailable_reason": None
                 if direct is not None and eligible
@@ -340,6 +579,7 @@ def metal_rows(profiles, searches, receipts, *, attempt_id="selection-v2"):
                 "error": search.get("error"),
                 "tested_revision": search.get("tested_revision"),
                 "input_sha256": search["input_sha256"],
+                "fresh_pair_allocation_proof": fresh_pair,
                 "modes": modes,
                 "profile_stage_medians": {
                     mode: profile["profiles"][mode]["median_gpu_seconds"] for mode in MODES
@@ -347,6 +587,164 @@ def metal_rows(profiles, searches, receipts, *, attempt_id="selection-v2"):
             }
         )
     return rows
+
+
+def write_profile_tables(summary, output):
+    with (
+        (output / "kernel-stage-costs.csv").open("w", newline="") as raw_handle,
+        (output / "kernel-category-costs.csv").open("w", newline="") as category_handle,
+    ):
+        raw, categories = csv.writer(raw_handle), csv.writer(category_handle)
+        raw.writerow(
+            (
+                "width",
+                "mode",
+                "variant",
+                "repetition",
+                "stage",
+                "category",
+                "gpu_us",
+                "host_completion_us",
+                "stage_median_gpu_us",
+                "kernel_dispatch_count_if_retained",
+                "scope",
+            )
+        )
+        categories.writerow(
+            (
+                "width",
+                "mode",
+                "variant",
+                "category",
+                "sum_of_stage_medians_gpu_us",
+                "profiled_stage_command_buffers",
+                "kernel_dispatches_if_retained",
+                "scope",
+            )
+        )
+        for row in summary["metal"]:
+            for mode, data in row["modes"].items():
+                comparison = data["kernel_profile_comparison"]
+                if comparison is None:
+                    continue
+                for variant in ("reference", "selected"):
+                    profile = comparison[variant]
+                    seen = Counter()
+                    for record in profile["records"]:
+                        name = record["stage"]
+                        repetition = seen[name]
+                        seen[name] += 1
+                        raw.writerow(
+                            (
+                                row["width"],
+                                mode,
+                                variant,
+                                repetition,
+                                name,
+                                stage_category(name),
+                                record["gpu_seconds"] * 1e6,
+                                record["host_completion_seconds"] * 1e6,
+                                profile["stage_median_gpu_seconds"][name] * 1e6,
+                                record.get("dispatch_count", ""),
+                                PROFILE_SCOPE,
+                            )
+                        )
+                    for category, seconds in profile[
+                        "category_sum_of_stage_medians_seconds"
+                    ].items():
+                        names = [
+                            name
+                            for name in profile["stage_median_gpu_seconds"]
+                            if stage_category(name) == category
+                        ]
+                        dispatches = ""
+                        if profile["kernel_dispatches_per_repetition"] is not None:
+                            dispatches = sum(
+                                next(
+                                    record["dispatch_count"]
+                                    for record in profile["records"]
+                                    if record["stage"] == name
+                                )
+                                for name in names
+                            )
+                        categories.writerow(
+                            (
+                                row["width"],
+                                mode,
+                                variant,
+                                category,
+                                seconds * 1e6,
+                                len(names),
+                                dispatches,
+                                PROFILE_SCOPE,
+                            )
+                        )
+
+
+def render_profile_comparison(summary, output):
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Patch
+
+    fig, axes = plt.subplots(2, 6, figsize=(18, 8), squeeze=False)
+    for mode_index, mode in enumerate(MODES):
+        for index, row in enumerate(summary["metal"]):
+            axis = axes[mode_index, index]
+            comparison = row["modes"][mode]["kernel_profile_comparison"]
+            axis.set_xticks((0, 1), ("Reference", "Selected"), fontsize=9)
+            axis.set_title(f"Width {row['width']}", fontsize=11)
+            if index == 0:
+                label = "B16T32 training" if mode == "training" else "B1T32 inference"
+                axis.set_ylabel(label + "\nSummed stage GPU medians (µs)", fontsize=10)
+            if comparison is None:
+                axis.text(0.5, 0.5, "Unavailable", transform=axis.transAxes, ha="center")
+                continue
+            bottoms = [0.0, 0.0]
+            for category, _, color in STAGE_CATEGORIES:
+                values = [
+                    comparison[variant]["category_sum_of_stage_medians_seconds"][category] * 1e6
+                    for variant in ("reference", "selected")
+                ]
+                axis.bar((0, 1), values, bottom=bottoms, width=0.6, color=color)
+                bottoms = [a + b for a, b in zip(bottoms, values, strict=True)]
+            for position, variant in enumerate(("reference", "selected")):
+                count = comparison[variant]["profiled_stage_command_buffers_per_repetition"]
+                axis.text(
+                    position,
+                    bottoms[position],
+                    f"{bottoms[position]:.0f} µs\n{count} stages",
+                    ha="center",
+                    va="bottom",
+                    fontsize=8,
+                )
+            axis.set_ylim(0, max(bottoms) * 1.25)
+            axis.grid(axis="y", alpha=0.15)
+            axis.set_axisbelow(True)
+    fig.suptitle(
+        "How the final Metal policy changes measured kernel-stage costs",
+        fontsize=16,
+        weight="bold",
+        y=0.99,
+    )
+    fig.legend(
+        handles=[Patch(color=color, label=label) for _, label, color in STAGE_CATEGORIES],
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0.055),
+        ncol=3,
+        frameon=False,
+        fontsize=9,
+    )
+    fig.text(
+        0.5,
+        0.025,
+        "Intrusive synchronized command buffers · 3 repetitions per stage · "
+        "each panel has its own µs scale · not production wall-time attribution",
+        ha="center",
+        fontsize=9,
+    )
+    fig.tight_layout(rect=(0, 0.20, 1, 0.95))
+    fig.savefig(output / "metal-kernel-ablation.png", dpi=180)
+    fig.savefig(output / "metal-kernel-ablation.svg")
+    plt.close(fig)
 
 
 def render(summary, output):
@@ -421,12 +819,13 @@ def render(summary, output):
         xticklabels=WIDTHS,
         xlabel="Model width",
     )
+    axes[1].set_ylim(0, max(bottom, default=1) * 1.3)
     axes[1].legend(frameon=False, fontsize=9)
     fig.suptitle("Metal engineering evidence, separate from framework qualification", weight="bold")
     fig.text(
         0.5,
         0.015,
-        "Training partition only · bars show five-block range, not confidence intervals "
+        "Training partition only · whiskers show five-block range, not confidence intervals "
         "· no framework or CPU speedup claim",
         ha="center",
         fontsize=8,
@@ -468,6 +867,7 @@ def render(summary, output):
     fig.tight_layout(rect=(0, 0.05, 1, 1))
     fig.savefig(output / "baseline-qualification.png", dpi=180)
     plt.close(fig)
+    render_profile_comparison(summary, output)
 
 
 def report(baseline, profiles, searches, output, *, figures=True, attempt_id="selection-v2"):
@@ -510,6 +910,14 @@ def report(baseline, profiles, searches, output, *, figures=True, attempt_id="se
                 "candidate_over_reference",
                 "minimum_block_ratio",
                 "maximum_block_ratio",
+                *(
+                    f"{variant}_{percentile}_{unit}"
+                    for variant in ("reference", "candidate")
+                    for percentile in ("p50", "p95")
+                    for unit in ("us", "ms")
+                ),
+                "reference_B16T32_targets_per_second",
+                "candidate_B16T32_targets_per_second",
             )
         )
         for row in summary["metal"]:
@@ -528,8 +936,17 @@ def report(baseline, profiles, searches, output, *, figures=True, attempt_id="se
                                 "maximum_paired_ratio",
                             )
                         ),
+                        *(
+                            pair.get(f"{variant}_{percentile}_{unit}", "")
+                            for variant in ("reference", "candidate")
+                            for percentile in ("p50", "p95")
+                            for unit in ("us", "ms")
+                        ),
+                        pair.get("reference_training_targets_per_second", ""),
+                        pair.get("candidate_training_targets_per_second", ""),
                     )
                 )
+    write_profile_tables(summary, output)
     if figures:
         render(summary, output)
     for key, expected in receipts.sources.items():

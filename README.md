@@ -2,173 +2,171 @@
 
 [![Validation](https://github.com/logannye/arm64-transformer/actions/workflows/validate.yml/badge.svg)](https://github.com/logannye/arm64-transformer/actions/workflows/validate.yml)
 
-A small language model with complete training and forward inference in **PyTorch
-and handwritten Apple ARM64 assembly**. The experiment asks how much we can gain
-by designing a transformer's computation around the processor's instructions,
-registers, memory, and numerical precision.
+**How much can a transformer gain when its computation is designed around the
+machine that executes it?** This project implements a small language model's
+complete forward pass, backward pass, and Adam optimizer in handwritten ARM64
+CPU assembly and custom Metal GPU kernels. Standard PyTorch and MLX provide
+comparison implementations.
 
-## The idea: design the computation around the hardware
+## The idea: make the hardware shape the computation
 
-A mathematical expression leaves important choices open: which values stay in
-registers, how many outputs share each memory load, how partial sums are combined,
-and where rounding occurs. These choices determine both efficiency and accuracy.
-PyTorch already runs optimized native kernels on the same ARM CPU; our work
-changes how the computation is arranged.
+Transformer equations leave many engineering decisions open. Which outputs
+share an input load? Where do partial sums live? Which threads cooperate? When
+do values round to 32 bits? Those choices determine how much useful work a
+processor performs and whether the answer remains accurate.
 
-Dense layers compute tiles of outputs together, reusing inputs and weights while
-keeping partial sums in registers. Arm's **Scalable Matrix Extension (SME)**
-accumulates outer products in matrix registers. Packing puts operands in the layout
-those instructions consume, and backward uses the same hardware for input and
-weight gradients.
+On the CPU, tiles of outputs share packed operands and accumulate in Arm's
+**Scalable Matrix Extension (SME)** registers. NEON vector instructions handle
+attention, normalization, exponentials, and the remaining arithmetic. The
+native numerical path calls no BLAS, Accelerate, PyTorch, or external math
+library. Backward and the optimizer receive the same attention as inference.
 
-![Packing and matrix accumulation](docs/sme-dataflow.png)
+![Packing operands for matrix accumulation](docs/sme-dataflow.png)
 
-NEON vector instructions handle causal attention, two-pass normalization, exponentials, and
-much of the remaining arithmetic. Loss, gradients, Adam, and the training loop
-are also handwritten. The native numerical path calls no BLAS, Accelerate,
-PyTorch, or external math library. Four shorter accumulation chains improve
-wide dense-layer accuracy at the cost of additional operand loads. The
-[kernel notes](native/kernel_notes.md) explain the implementation and tradeoffs.
+On the Apple GPU, the useful unit of work becomes a cooperating group of
+threads. Our **Metal** implementation assigns matrix tiles, rows, and reductions
+to those groups, reuses data in registers and threadgroup memory, and combines
+operations to avoid unnecessary launches and global-memory reads. The model
+keeps the same equations and FP32 stored state.
 
-## Precision is part of the design
+LayerNorm gives a concrete example. The reference assigns an entire row to one
+GPU thread, which walks its channels serially. The replacement assigns a row to
+a cooperating group: adjacent lanes process adjacent channels, then combine
+their partial sums in a fixed, compensated reduction. The equations stay the
+same while much more work can proceed in parallel.
 
-Attention exposed a weakness that ordinary random-input tests missed. Two
-query–key scores can both be large while their small **difference** determines
-how probability is divided between the keys. Subtracting the maximum before
-softmax prevents overflow, but cannot recover bits lost while forming the scores.
+| Computation | Hardware mapping |
+|---|---|
+| Dense forward, input gradients, weight gradients | Cooperative FP32 SIMD-group matrix operations; guarded tiles and explicit output ownership |
+| LayerNorm and shared gradients | Parallel row/channel reductions with fixed trees and compensated sums |
+| Short-context attention | Fused score formation, centering, softmax, and value mixing; fused parts of backward |
+| Repeated-token embedding gradients | Stable integer grouping followed by a deterministic floating-point reduction |
+| Elementwise work | Selected matrix-output activation/residual fusion and Adam/finite-scan fusion |
+| Execution | Persistent pipelines and buffers, resident inputs, separate training and batch-one policies |
 
-At widths 512 and 1024, the new kernel widens stored 32-bit floating-point
-(FP32) queries and keys **before multiplication**, retaining 64-bit (FP64)
-precision through the dot products, scaling, maximum
-selection and subtraction, then rounds the centered scores to FP32. Existing
-exponentials, probabilities and value mixing follow. Ordinary NEON double
-instructions provide this precision; optional SME FP64 support is unnecessary.
+A faster primitive is only a candidate. We select schedules by the complete
+training step or synchronized forward pass, after checking numerical accuracy.
+A wide matrix tile can help a training batch and hurt a single-context request.
+The [GPU kernel notes](native/metal/OPTIMIZED-KERNELS.md) describe the layouts,
+barriers, precision, and retained reference paths.
 
-![Selective attention precision](docs/precision-dataflow.png)
+## Precision is part of the architecture
 
-Backward needed the same care. A forward-only fix exposed gradient cancellation
-under stress. The final implementation also improves attention-weight gradients,
-the softmax derivative, and query-gradient accumulation. Key contributions are
-added in FP64 before FP32 storage; value gradients retain FP32 accumulation.
-Parameters, stored activations, gradients and Adam state remain FP32. Extra
-precision has a cost, which we measure in the complete model.
+Attention can depend on the tiny difference between two large query–key scores.
+Subtracting the maximum before softmax prevents overflow, but cannot recover
+bits already lost while forming those scores. Normalization and backward
+reductions can expose similar cancellation.
 
-## The matched experiment
+The CPU uses selective FP64 intermediates for sensitive wide attention. The GPU
+uses **two-float arithmetic**: a pair of FP32 values carries a main value and its
+rounding residual through important contractions. Scores retain that information
+through centering and softmax; normalization and sensitive QKV paths also use
+compensated arithmetic. Parameters, saved activations, probabilities, gradients,
+and Adam moments remain FP32. Extra intermediate precision has a measurable cost.
 
-Each model has one causal decoder block, four heads, a feed-forward layer twice
-its width, learned embeddings, and an ASCII-128 output head. It predicts the next
-character from a 32-character context. Both engines receive identical initial
-weights, token rows and schedules within each seed and width.
+Accuracy, exact repeatability, and predictive quality are tested separately.
+Small aggregate loss differences do not waive a failed logit or gradient check.
+The [CPU numerical investigation](experiments/numerics-v6/README.md) records
+historical failures that remain unresolved.
 
-Pinned Tiny Shakespeare excerpts provide 65,536 training targets and 8,192 in each
-disjoint validation/test partition. Every fit uses **eight epochs, batch 16, and
-1,024 Adam updates**; lowest validation loss selects the checkpoint. Six widths,
-three seeds, two timing repeats and both engines produce **72 fits on an Apple
-M4 Max, with one CPU compute thread**.
+## The model and matched workload
 
-## Results
+One causal decoder block, four heads, context 32, feed-forward width 2W with
+ReLU, three LayerNorms, and an ASCII-128 vocabulary predict the next character.
+Widths range from 32 to 1024. Pinned Tiny Shakespeare partitions contain 65,536
+training targets and 8,192 targets each for validation and test.
 
-Widths **32–256 meet both engines' FP64 accuracy requirements**. Native training
-is **1.29–1.79× faster**, and full-context forward inference **1.43–3.53× faster**.
-The wider models expose precision limits and favor PyTorch on time.
+The formal workload uses batch 16, eight epochs, and 1,024 Adam updates, with
+identical initialization bytes and schedules for seeds 42, 43, and 44. Each seed
+has two timing repeats. Lowest own-engine validation NLL selects the checkpoint;
+the earliest epoch wins ties. This is a reused engineering benchmark with a
+fixed training budget, not a fresh generalization assessment or convergence study.
 
-| Width | Parameters | Training ratio | Forward ratio | FP64 accuracy: native / PyTorch |
-|---:|---:|---:|---:|---|
-| 32 | 17,952 | 1.79× | 3.53× | Pass / Pass |
-| 64 | 52,160 | 1.76× | 3.20× | Pass / Pass |
-| 128 | 169,728 | 1.47× | 2.12× | Pass / Pass |
-| 256 | 601,472 | 1.29× | 1.43× | Pass / Pass |
-| 512 | 2,251,392 | 0.93× | 0.79× | Pass / Fail |
-| 1024 | 8,696,960 | 0.72× | 0.72× | Fail / Fail |
+## GPU engineering results
 
-Ratios are **PyTorch time / native time**, so above one favors native. Training
-uses the geometric mean of six paired ratios; forward uses mean per-run median
-latencies. Widths 512 and 1024 are **not fully numerically qualified**; their
-timings remain descriptive. Repeats are averaged within seed before reporting
-variation across three seeds.
+The optimized Metal policies improve every tested width against the retained
+Metal reference. These are **training-partition development measurements** of a
+complete B16/T32 training step and a synchronized B1/T32 forward pass.
 
-![Time ratios and numerical qualification](experiments/width-sweep-v6/speedup.png)
+| Width | Training step, reference → selected | Step gain | Forward, reference → selected | Forward gain |
+|---:|---:|---:|---:|---:|
+| 32 | 1.158 → 0.480 ms | 2.40× | 0.227 → 0.189 ms | 1.22× |
+| 64 | 1.375 → 0.588 ms | 2.34× | 0.269 → 0.171 ms | 1.56× |
+| 128 | 1.775 → 0.853 ms | 2.08× | 0.362 → 0.193 ms | 1.86× |
+| 256 | 3.194 → 1.590 ms | 2.00× | 0.608 → 0.249 ms | 2.49× |
+| 512 | 8.251 → 4.321 ms | 1.91× | 1.005 → 0.362 ms | 2.76× |
+| 1024 | 25.079 → 13.641 ms | 1.84× | 2.062 → 0.818 ms | 2.51× |
 
-At width 32, native forward latency is **15.1 µs versus 53.2 µs**. At width 1024,
-native training takes **81.6 versus 58.7 seconds**, and forward takes **1.476
-versus 1.062 ms**. Native processes sequences individually during training while
-PyTorch batches them. Selective precision adds work; historical timing comparisons
-cannot isolate its cost from differences between campaigns.
+Times are sample medians; gains use the median of five paired block ratios.
+The final comparisons use fresh instances with matching owned allocations and
+initial state. Training includes backward, Adam, finite checks, and scalar-loss
+completion. These timings exclude full-fit validation and checkpoint work.
+The selected configurations pass the development stress and full-gradient
+checks, plus exact replay across two fresh processes per width. Parameters,
+optimizer moments, and checkpoint predictions repeat exactly. Their schedules are retained in the
+[versioned policy file](experiments/gpu-v2/policies/selected.json).
 
-Native peak resident memory (RSS) through training is lower at every width: **14.6 versus 314.3 MiB** at
-width 256, for example. RSS includes runtime and data, not just model allocations.
-Larger models also fail to improve this fixed-budget language-model result: mean
-test negative log-likelihood (NLL) is about **2.386 at width 128**, versus **2.73–2.74
-at width 1024**. This does not establish convergence or an optimal model size.
+![Direct Metal comparisons and candidate outcomes](experiments/gpu-v2/results/metal-engineering.png)
 
-Training timing includes validation, finite checks and checkpoint/history work.
-Forward timing covers a complete batch-one context, including attention softmax;
-it excludes output-probability softmax, sampling and I/O. It is not cached token
-generation. The [full report](experiments/width-sweep-v6/README.md) includes
-latency distributions, learning curves, memory and per-seed results.
+At width 1024, cooperative normalization and shared reductions reduce their
+isolated GPU stage cost from 3.478 to 0.301 ms during training. The protected QKV
+contractions remain a major cost. Its batch-one policy changes only the
+normalization reductions, yet improves forward latency by 2.51×. The full report
+separates instrumented profiles from the production latencies above.
 
-## What the numerical audit found
+The formal five-engine CPU/GPU study remains **blocked: 0 of 180 planned fits**.
+Both standard PyTorch MPS and compiled MLX fail the required byte-exact training
+repeatability checks at every width. The first divergent full-gradient case
+examined at each width localizes the initial difference to token embeddings;
+subsequent updates propagate it into parameters, optimizer moments, and predictions.
+All executed baseline FP64 accuracy comparisons pass, but MLX also fails T3
+full-model/training cases at widths 256–1024. Those missing results remain errors.
 
-Both engines evaluate every selected checkpoint from both training paths on all
-validation/test rows. Independent NumPy FP64 equations evaluate the exact saved
-FP32 parameters; PyTorch FP64 cross-checks the first and last sequence of each
-partition. Originating predictions and repeated training states must replay
-exactly. Accuracy uses the unchanged forward tolerances against FP64:
-`abs(error) <= 2e-5 + 2e-4*abs(FP64 reference)`.
+![Standard baseline qualification](experiments/gpu-v2/results/baseline-qualification.png)
 
-All **25,076 admission checks** and **58,462 evidence-integrity checks** passed.
-The separate numerical audit retains **147,600 comparisons**, including failures.
-After collapsing exact timing repeats, native exceeds the logit limit at **nine
-coordinates across eight sequences**, all at width 1024. PyTorch exceeds it at
-**two coordinates at width 512 and 173 at width 1024**. These counts include
-both checkpoint origins and validation/test data.
+The baseline algorithms, gate, and tolerances remain unchanged. No replacement
+embedding implementation or descriptive formal-campaign waiver was introduced.
+The reserved admission stream remains unopened. There are no new qualified
+CPU/GPU crossover, Metal/framework speedup, or model-quality results.
+The [GPU v2 report](experiments/gpu-v2/README.md) separates development measurements,
+failed attempts, baseline limitations, and work that remains unexecuted.
 
-![Logit errors against FP64](experiments/width-sweep-v6/numerical-accuracy.png)
+## Retained CPU results
 
-Native changes **no highest-probability characters** against FP64 across 589,824
-unique checkpoint/token evaluations; PyTorch changes two. All mean-NLL accuracy
-checks pass. These small prediction effects do not waive the logit failures:
-the overall result remains **`native_precision_limit`**.
+The completed CPU v6 study contains 72 fits. Widths **32–256 satisfy both
+implementations' FP64 accuracy requirements**: native training is **1.29–1.79×
+faster**, and full-context forward inference is **1.43–3.53× faster** than eager
+PyTorch on one CPU compute thread. At width 32, forward latency is 15.1 µs versus
+53.2 µs.
 
-The change eliminates the FP64 failures in the 25-case regression replay,
-while the new checkpoint audit exposes further work. On all eight native-failing sequence comparisons,
-attention passes when given identical Q/K/V inputs. Controlled FP64 replays
-trace most remaining error to normalization and QKV arithmetic upstream of
-attention. Each primitive can pass its local test while accumulated error still
-breaks the model-level requirement. The [numerical investigation](experiments/numerics-v6/README.md)
-records these diagnostic experiments, unfavorable results and provenance limits.
-No thresholds or kernels were changed after formal measurement began.
+![Historical CPU time ratios and numerical qualification](experiments/width-sweep-v6/speedup.png)
 
-## Extending the idea to the Apple GPU
-
-The GPU implementation provides complete handwritten **Metal** forward,
-backward and Adam kernels, alongside standard **PyTorch MPS** and compiled
-**MLX** baselines. All three retain the same model equations and FP32 stored
-state. Metal uses batch-wide matrix tiles, deterministic embedding reductions,
-and selective two-float arithmetic where ordinary FP32 accumulation loses
-important differences. This provides extra intermediate precision on a GPU
-without native FP64 arithmetic.
-
-The custom path passes its development stress inventory at all six widths,
-including attention, normalization and QKV gradients. Tiny training-only runs
-also pass independent FP64 checks. **This phase closes at the strict repeatability
-gate:** standard MPS and compiled MLX fail exact training repeats in the retained
-development runs. All **108 planned formal fits remain blocked and unrun**.
-The gate and tolerances stay unchanged; there is no GPU speedup claim. The
-[development report](experiments/gpu-development-v1/README.md) explains the completed
-implementation, retained failures and final outcome. The CPU results above remain
-unchanged.
+Widths 512 and 1024 are not fully numerically qualified and favor PyTorch on time.
+The retained audit finds native logit failures at width 1024, and PyTorch failures
+at widths 512 and 1024. These historical limitations have not been relabeled as
+resolved. See the [full CPU report](experiments/width-sweep-v6/README.md) for
+learning curves, memory, paired timings, and prediction-level effects. These
+historical CPU numbers are separate from the new GPU development measurements.
 
 ## Reproduce and inspect
 
-See the [frozen protocol](experiments/PROTOCOL-v6.md),
-[reproduction guide](docs/REPRODUCE.md), and [native interface](native/ABI.md).
-The [verified v6 evidence release](https://github.com/logannye/arm64-transformer/releases/tag/transformer-attention-precision-v6)
-contains exact source, binaries, inputs, checkpoints, optimizer states,
-predictions, timings and complete audits. The earlier
-[failed wide-model outcome](experiments/width-sweep-v5-outcome/README.md) remains
-unchanged; this new FP64 contract does not retroactively pass its FP32 comparison.
+The [GPU v2 protocol](experiments/PROTOCOL-gpu-v2.md) fixes the workload, candidate
+search, numerical gates, and measurement boundaries. The
+[formal-study guide](experiments/gpu-v2/FORMAL-STUDY.md) documents the authenticated
+runner and full-checkpoint auditor. Its 180-cell plan is committed; an ordinary
+flag or a self-reported pass cannot enable formal measurement.
 
-This is a reused, short-context CPU engineering benchmark against eager PyTorch.
-It does not establish fresh test-set generalization, GPU, graph-compiled PyTorch,
-long-context, energy, cached-decoding or production-serving performance.
+The [release guide](experiments/gpu-v2/RELEASE-TOOLS.md) describes report generation,
+complete evidence retention, and split-archive verification. The
+[GPU v2 evidence release](https://github.com/logannye/arm64-transformer/releases/tag/transformer-gpu-engineering-v2)
+contains raw states, predictions, candidate ledgers, timing samples, failures,
+runtime identities, source snapshots, and verification tools. The
+[CPU reproduction guide](docs/REPRODUCE.md) and [native ABI](native/ABI.md) cover the
+assembly implementation. Historical
+[CPU v6](https://github.com/logannye/arm64-transformer/releases/tag/transformer-attention-precision-v6)
+and [GPU development v1](https://github.com/logannye/arm64-transformer/releases/tag/transformer-gpu-development-v1)
+releases remain unchanged.
+
+The measurements concern short-context, full-context forward computation and a
+small training workload. They do not establish long-context, cached decoding,
+energy, production-serving, or larger-data performance.

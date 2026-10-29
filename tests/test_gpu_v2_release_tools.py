@@ -1,5 +1,6 @@
 """Tiny saved-data checks; no GPU, model arithmetic, plots, or real evidence writes."""
 
+import csv
 import hashlib
 import json
 
@@ -233,3 +234,158 @@ def test_report_does_not_silently_select_another_attempt(tmp_path):
     )
     with pytest.raises(ValueError, match="Explicit eligible"):
         report.metal_rows(tmp_path, tmp_path, report.Receipts())
+
+
+def test_saved_sample_percentiles_and_training_throughput_are_explicit():
+    assert report.percentile(list(range(1, 101)), 0.5) == 50.5
+    assert report.percentile(list(range(1, 101)), 0.95) == pytest.approx(95.05)
+    result = report.paired_summary(pair_fixture(), mode="training")
+    assert result["candidate_p50_us"] == 1e6
+    assert result["candidate_p95_ms"] == 1000
+    assert result["candidate_training_targets_per_second"] == 512
+    assert result["reference_training_targets_per_second"] == 256
+    inference = report.paired_summary(pair_fixture(), mode="inference")
+    assert inference["candidate_training_targets_per_second"] is None
+
+
+def fresh_pair_fixture():
+    fields = [
+        "owned_buffer_count",
+        "workspace_buffer_count",
+        "input_buffer_count",
+        "batch_buffer_count",
+        "owned_buffer_bytes_including_guards",
+    ]
+    memory = dict(zip(fields, (102, 99, 0, 3, 4096), strict=True))
+    return {
+        "fresh_instances_without_qualification_allocations": True,
+        "equal_initial_state": True,
+        "memory_before_timing": {
+            "reference": {**memory, "device_current_allocated_bytes": 10000},
+            "candidate": {**memory, "device_current_allocated_bytes": 20000},
+        },
+        "allocation_validation": {
+            "equal_owned_counts_and_bytes": True,
+            "compared_fields": fields,
+        },
+    }
+
+
+def test_fresh_pair_proof_checks_owned_buffers_and_ignores_global_device_counter():
+    result = report.validate_fresh_pair(fresh_pair_fixture())
+    assert result["batch_buffer_count_per_backend"] == 3
+    assert result["device_global_allocation_or_process_rss_compared"] is False
+    receipt = fresh_pair_fixture()
+    receipt["memory_before_timing"]["candidate"]["owned_buffer_bytes_including_guards"] += 1
+    with pytest.raises(ValueError, match="asymmetric"):
+        report.validate_fresh_pair(receipt)
+
+
+def test_fresh_pair_rejects_extra_qualification_buffers_or_missing_state_proof():
+    receipt = fresh_pair_fixture()
+    receipt["memory_before_timing"]["candidate"]["batch_buffer_count"] = 4
+    with pytest.raises(ValueError, match="B16T32/B1T32"):
+        report.validate_fresh_pair(receipt)
+    receipt = fresh_pair_fixture()
+    receipt["equal_initial_state"] = False
+    with pytest.raises(ValueError, match="initial-state"):
+        report.validate_fresh_pair(receipt)
+
+
+def profile_fixture():
+    stages = (
+        ("qkv_forward", 3),
+        ("dense_dw/qkv", 2),
+        ("bias_gradient/qkv", 1),
+        ("dense_forward/ff1", 4),
+    )
+    records = [
+        {
+            "stage": stage,
+            "gpu_seconds": cost * repetition * 1e-6,
+            "host_completion_seconds": cost * repetition * 2e-6,
+        }
+        for repetition in (1, 2, 3)
+        for stage, cost in stages
+    ]
+    return {
+        "scope": report.PROFILE_SCOPE,
+        "repetitions": 3,
+        "restored_warmups": 20,
+        "records": records,
+        "median_gpu_seconds": {stage: cost * 2e-6 for stage, cost in stages},
+    }
+
+
+def test_profile_cost_categories_are_recomputed_without_inventing_dispatch_counts():
+    result = report.profile_summary(profile_fixture())
+    assert result["category_sum_of_stage_medians_seconds"]["qkv"] == pytest.approx(10e-6)
+    assert result["category_sum_of_stage_medians_seconds"]["reductions"] == pytest.approx(2e-6)
+    assert result["total_sum_of_stage_medians_seconds"] == pytest.approx(20e-6)
+    assert result["profiled_stage_command_buffers_per_repetition"] == 4
+    assert result["kernel_dispatches_per_repetition"] is None
+    assert result["production_runtime_attribution_claimed"] is False
+
+
+def test_profile_rejects_changed_medians_and_records_optional_dispatches_only_if_retained():
+    profile = profile_fixture()
+    profile["median_gpu_seconds"]["qkv_forward"] *= 2
+    with pytest.raises(ValueError, match="median differs"):
+        report.profile_summary(profile)
+    profile = profile_fixture()
+    for record in profile["records"]:
+        record["dispatch_count"] = 2
+    assert report.profile_summary(profile)["kernel_dispatches_per_repetition"] == 8
+
+
+def test_profile_comparison_requires_matching_frozen_runtime_and_inputs():
+    identity = {
+        name: "identity"
+        for name in (
+            "source_sha256",
+            "runtime_identity",
+            "input_sha256",
+            "input_directory",
+            "rows_used",
+            "environment",
+            "warmups",
+            "observations",
+            "blocks",
+            "profile_repeats",
+        )
+    }
+    reference = {**identity, "status": "completed", "profiles": {"training": profile_fixture()}}
+    selected = {
+        **identity,
+        "profile_identity_verified": True,
+        "selected_profiles_after_production": {"training": profile_fixture()},
+    }
+    result = report.compare_profiles(reference, selected, "training")
+    assert result["selected_minus_reference_profiled_stage_command_buffers"] == 0
+    assert result["selected_minus_reference_kernel_dispatches"] is None
+    selected["runtime_identity"] = "other-runtime"
+    with pytest.raises(ValueError, match="identity differs: runtime_identity"):
+        report.compare_profiles(reference, selected, "training")
+
+
+def test_raw_profile_csv_retains_all_repetitions_and_labels_intrusive_scope(tmp_path):
+    profile = report.profile_summary(profile_fixture())
+    summary = {
+        "metal": [
+            {
+                "width": 32,
+                "modes": {
+                    "training": {
+                        "kernel_profile_comparison": {"reference": profile, "selected": profile},
+                    }
+                },
+            }
+        ]
+    }
+    report.write_profile_tables(summary, tmp_path)
+    with (tmp_path / "kernel-stage-costs.csv").open() as handle:
+        rows = list(csv.DictReader(handle))
+    assert len(rows) == 24
+    assert {row["repetition"] for row in rows} == {"0", "1", "2"}
+    assert all(row["scope"] == report.PROFILE_SCOPE for row in rows)
+    assert all(row["kernel_dispatch_count_if_retained"] == "" for row in rows)
