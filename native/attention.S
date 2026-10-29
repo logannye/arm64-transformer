@@ -1,7 +1,10 @@
 // Handwritten attention for widths32/64/128/256/512/1024, four heads, T in1..32.
 // Width32 retains its existing head-width-eight path. Wider heads use unrolled
 // vector-register blocks; other shapes retain the original general implementation.
-// Forward uses NEON QK/value operations and four-lane stable exponentiation.
+// Wide (512/1024) forward keeps QK scores in FP64 through max subtraction;
+// centered scores, probabilities, value mixing and stored tensors remain FP32.
+// Its backward retains dA, the softmax contraction, dScore and dQ sums in FP64.
+// Other forward paths use NEON FP32 QK/value operations and stable exponentiation.
 // Backward keeps each dA row on stack, avoiding recomputation of dot(dout,V).
 .text
 .p2align 2
@@ -711,17 +714,45 @@ Lab8_second:
     b.ne \tag\()_norm_tail
 .endm
 
-// Stack after saved registers: maximum96, scale100, feature-byte offset104.
+// Cache32 converted query channels in caller-saved v16-v31. Conversion before
+// multiplication preserves the exact stored FP32 operands, including cancellation
+// residuals; four FP64 chains bound the depth of each 32-channel block reduction.
+.macro AQ64BLOCK op
+    \op 16,17,0,0,1
+    \op 18,19,16,2,3
+    \op 20,21,32,0,1
+    \op 22,23,48,2,3
+    \op 24,25,64,0,1
+    \op 26,27,80,2,3
+    \op 28,29,96,0,1
+    \op 30,31,112,2,3
+.endm
+.macro AQ64LOAD lo,hi,off,acc0,acc1
+    ldr q4,[x26,#\off]
+    fcvtl v\lo\().2d,v4.2s
+    fcvtl2 v\hi\().2d,v4.4s
+.endm
+.macro AQ64DOT lo,hi,off,acc0,acc1
+    ldr q4,[x27,#\off]
+    fcvtl v5.2d,v4.2s
+    fcvtl2 v6.2d,v4.4s
+    fmla v\acc0\().2d,v\lo\().2d,v5.2d
+    fmla v\acc1\().2d,v\hi\().2d,v6.2d
+.endm
+
+// Stack after saved registers: FP32 centered maximum96 (=0), feature-byte
+// offset104, FP64 scale112, and32 FP64 scores128..383. One 400-byte frame serves
+// every supported T and head width. Future Q/K/V rows never enter a causal sum.
 .macro ABLOCK_FORWARD tag,w,h,lw,lh,scale
 \tag\()_start:
-    AENTER 128
+    AENTER 400
     mov x19,x0
     mov x20,x1
     mov x21,x2
     ldr w22,[x3]
     AADDR x9,\scale
-    ldr s0,[x9]
-    str s0,[sp,#100]
+    ldr d0,[x9]
+    str d0,[sp,#112]
     mov x23,#0
 \tag\()_head:
     mov x24,#0
@@ -729,9 +760,11 @@ Lab8_second:
     madd x9,x23,x22,x24
     mul x9,x9,x22
     add x25,x21,x9,lsl #2
+    add x15,sp,#128
     mov x9,#0
 \tag\()_clear_scores:
     str wzr,[x25,x9,lsl #2]
+    str xzr,[x15,x9,lsl #3]
     add x9,x9,#1
     cmp x9,x22
     b.lo \tag\()_clear_scores
@@ -743,7 +776,7 @@ Lab8_second:
     add x26,x26,x23,lsl #(\lh+2)
     ldr x10,[sp,#104]
     add x26,x26,x10
-    AHEAD AHLOAD,64
+    AQ64BLOCK AQ64LOAD
     add x27,x19,#(\w*4)
     add x27,x27,x23,lsl #(\lh+2)
     add x27,x27,x10
@@ -754,37 +787,47 @@ Lab8_second:
     movi v1.4s,#0
     movi v2.4s,#0
     movi v3.4s,#0
-    AHEAD AHDOT,64
-    fadd v0.4s,v0.4s,v1.4s
-    fadd v2.4s,v2.4s,v3.4s
-    fadd v0.4s,v0.4s,v2.4s
-    faddp v0.4s,v0.4s,v0.4s
-    faddp s0,v0.2s
-    ldr s7,[x25,x28,lsl #2]
-    fadd s0,s0,s7
-    str s0,[x25,x28,lsl #2]
+    AQ64BLOCK AQ64DOT
+    fadd v0.2d,v0.2d,v1.2d
+    fadd v2.2d,v2.2d,v3.2d
+    fadd v0.2d,v0.2d,v2.2d
+    faddp d0,v0.2d
+    ldr d7,[x15,x28,lsl #3]
+    fadd d0,d0,d7
+    str d0,[x15,x28,lsl #3]
     add x27,x27,x10
     add x28,x28,#1
     cmp x28,x24
     b.ls \tag\()_score_block
     ldr x9,[sp,#104]
-    add x9,x9,#256
+    add x9,x9,#128
     str x9,[sp,#104]
     cmp x9,#(\h*4)
     b.lo \tag\()_query_block
-    mov w9,#0xff800000
-    fmov s6,w9
-    ldr s7,[sp,#100]
+    mov x9,#0xfff0000000000000
+    fmov d6,x9
+    ldr d7,[sp,#112]
     mov x28,#0
 \tag\()_scale_scores:
-    ldr s0,[x25,x28,lsl #2]
-    fmul s0,s0,s7
-    str s0,[x25,x28,lsl #2]
-    fmax s6,s6,s0
+    ldr d0,[x15,x28,lsl #3]
+    fmul d0,d0,d7
+    str d0,[x15,x28,lsl #3]
+    fmax d6,d6,d0
     add x28,x28,#1
     cmp x28,x24
     b.ls \tag\()_scale_scores
-    str s6,[sp,#96]
+    // Keep both scores and their maximum in FP64 until their small differences
+    // are formed. Converting uncentered scores first loses the precision gain.
+    mov x28,#0
+\tag\()_center_scores:
+    ldr d0,[x15,x28,lsl #3]
+    fsub d0,d0,d6
+    fcvt s0,d0
+    str s0,[x25,x28,lsl #2]
+    add x28,x28,#1
+    cmp x28,x24
+    b.ls \tag\()_center_scores
+    str wzr,[sp,#96]
     ABLOCK_SOFTMAX \tag
 \tag\()_value_start:
     str xzr,[sp,#104]
@@ -819,41 +862,67 @@ Lab8_second:
     add x23,x23,#1
     cmp x23,#4
     b.lo \tag\()_head
-    ALEAVE 128
+    ALEAVE 400
 .endm
 
-// Cache32 query channels and their32 dQ accumulators together. This keeps the
-// query block in registers while visiting every causal key for that block.
-.macro BQBLOCK32 op
-    \op 16,24,0
-    \op 17,25,16
-    \op 18,26,32
-    \op 19,27,48
-    \op 20,28,64
-    \op 21,29,80
-    \op 22,30,96
-    \op 23,31,112
+// dA is a cancellation-sensitive reduction when K has a large common component.
+// Retain it in FP64 through the row contraction, scaled dScore and dQ sum. dV
+// retains its existing FP32 multiply-add order and caller-owned FP32 destination.
+.macro BHDV64 r,off,acc
+    ldr q5,[x9,#\off]
+    fcvtl v6.2d,v5.2s
+    fcvtl v7.2d,v\r\().2s
+    fmla v\acc\().2d,v6.2d,v7.2d
+    fcvtl2 v6.2d,v5.4s
+    fcvtl2 v7.2d,v\r\().4s
+    fmla v\acc\().2d,v6.2d,v7.2d
+    ldr q6,[x10,#\off]
+    fmla v6.4s,v\r\().4s,v4.4s
+    str q6,[x10,#\off]
 .endm
-.macro BQLOAD q,d,off
-    ldr q\q,[x27,#\off]
-    movi v\d\().4s,#0
+
+// Cache16 query channels and their16 dQ accumulators in FP64. Each dQ value is
+// rounded only after all causal keys. dK adds each query contribution in FP64
+// before rounding to its caller-owned FP32 accumulator; no quadratic cache.
+.macro BQ64BLOCK op
+    \op 16,17,24,25,0
+    \op 18,19,26,27,16
+    \op 20,21,28,29,32
+    \op 22,23,30,31,48
 .endm
-.macro BQUPDATE q,d,off
+.macro BQ64LOAD qlo,qhi,dlo,dhi,off
+    ldr q1,[x27,#\off]
+    fcvtl v\qlo\().2d,v1.2s
+    fcvtl2 v\qhi\().2d,v1.4s
+    movi v\dlo\().4s,#0
+    movi v\dhi\().4s,#0
+.endm
+.macro BQ64UPDATE qlo,qhi,dlo,dhi,off
     ldr q1,[x9,#\off]
-    ldr q2,[x10,#\off]
-    fmla v\d\().4s,v1.4s,v0.4s
-    fmla v2.4s,v\q\().4s,v0.4s
-    str q2,[x10,#\off]
+    fcvtl v2.2d,v1.2s
+    fcvtl2 v3.2d,v1.4s
+    fmla v\dlo\().2d,v2.2d,v0.2d
+    fmla v\dhi\().2d,v3.2d,v0.2d
+    ldr q4,[x10,#\off]
+    fcvtl v5.2d,v4.2s
+    fcvtl2 v6.2d,v4.4s
+    fmla v5.2d,v\qlo\().2d,v0.2d
+    fmla v6.2d,v\qhi\().2d,v0.2d
+    fcvtn v4.2s,v5.2d
+    fcvtn2 v4.4s,v6.2d
+    str q4,[x10,#\off]
 .endm
-.macro BQSTORE q,d,off
-    str q\d,[x28,#\off]
+.macro BQ64STORE qlo,qhi,dlo,dhi,off
+    fcvtn v1.2s,v\dlo\().2d
+    fcvtn2 v1.4s,v\dhi\().2d
+    str q1,[x28,#\off]
 .endm
 
-// dA[32] occupies96..223 and is replaced by dScore after one row contraction.
-// Scale224, row contraction228, feature-byte offset232; frame remains bounded.
+// FP64 dA[32] occupies96..351 and is replaced by FP64 dScore after contraction.
+// FP64 scale352, row contraction360, feature-byte offset368; one384-byte frame.
 .macro ABLOCK_BACKWARD tag,w,h,lw,lh,scale
 \tag\()_start:
-    AENTER 256
+    AENTER 384
     mov x19,x0
     mov x20,x1
     mov x21,x2
@@ -868,8 +937,8 @@ Lab8_second:
     subs x10,x10,#1
     b.ne \tag\()_zero
     AADDR x9,\scale
-    ldr s0,[x9]
-    str s0,[sp,#224]
+    ldr d0,[x9]
+    str d0,[sp,#352]
     mov x24,#0
 \tag\()_head:
     mov x25,#0
@@ -882,9 +951,13 @@ Lab8_second:
     stp q0,q0,[sp,#128]
     stp q0,q0,[sp,#160]
     stp q0,q0,[sp,#192]
-    str xzr,[sp,#232]
+    stp q0,q0,[sp,#224]
+    stp q0,q0,[sp,#256]
+    stp q0,q0,[sp,#288]
+    stp q0,q0,[sp,#320]
+    str xzr,[sp,#368]
 \tag\()_first_block:
-    ldr x14,[sp,#232]
+    ldr x14,[sp,#368]
     add x9,x21,x25,lsl #(\lw+2)
     add x9,x9,x24,lsl #(\lh+2)
     add x9,x9,x14
@@ -905,57 +978,58 @@ Lab8_second:
     movi v3.4s,#0
     ldr s4,[x26,x12,lsl #2]
     dup v4.4s,v4.s[0]
-    AHEAD BHDV,64
-    fadd v0.4s,v0.4s,v1.4s
-    fadd v2.4s,v2.4s,v3.4s
-    fadd v0.4s,v0.4s,v2.4s
-    faddp v0.4s,v0.4s,v0.4s
-    faddp s0,v0.2s
-    ldr s7,[x11,x12,lsl #2]
-    fadd s0,s0,s7
-    str s0,[x11,x12,lsl #2]
+    AHEAD BHDV64,64
+    fadd v0.2d,v0.2d,v1.2d
+    fadd v2.2d,v2.2d,v3.2d
+    fadd v0.2d,v0.2d,v2.2d
+    faddp d0,v0.2d
+    ldr d7,[x11,x12,lsl #3]
+    fadd d0,d0,d7
+    str d0,[x11,x12,lsl #3]
     add x9,x9,x13
     add x10,x10,x13
     add x12,x12,#1
     cmp x12,x25
     b.ls \tag\()_first
-    ldr x14,[sp,#232]
+    ldr x14,[sp,#368]
     add x14,x14,#256
-    str x14,[sp,#232]
+    str x14,[sp,#368]
     cmp x14,#(\h*4)
     b.lo \tag\()_first_block
     mov x12,#0
-    fmov s6,wzr
+    fmov d6,xzr
 \tag\()_row_dot:
-    ldr s0,[x11,x12,lsl #2]
+    ldr d0,[x11,x12,lsl #3]
     ldr s1,[x26,x12,lsl #2]
-    fmadd s6,s0,s1,s6
+    fcvt d1,s1
+    fmadd d6,d0,d1,d6
     add x12,x12,#1
     cmp x12,x25
     b.ls \tag\()_row_dot
-    str s6,[sp,#228]
-    ldr s7,[sp,#224]
+    str d6,[sp,#360]
+    ldr d7,[sp,#352]
     mov x12,#0
 \tag\()_dscore:
-    ldr s0,[x11,x12,lsl #2]
-    fsub s0,s0,s6
+    ldr d0,[x11,x12,lsl #3]
+    fsub d0,d0,d6
     ldr s1,[x26,x12,lsl #2]
-    fmul s0,s0,s1
-    fmul s0,s0,s7
-    str s0,[x11,x12,lsl #2]
+    fcvt d1,s1
+    fmul d0,d0,d1
+    fmul d0,d0,d7
+    str d0,[x11,x12,lsl #3]
     add x12,x12,#1
     cmp x12,x25
     b.ls \tag\()_dscore
-    str xzr,[sp,#232]
+    str xzr,[sp,#368]
 \tag\()_second_block:
-    ldr x14,[sp,#232]
+    ldr x14,[sp,#368]
     mov x9,#(\w*12)
     mul x9,x25,x9
     add x9,x9,x24,lsl #(\lh+2)
     add x9,x9,x14
     add x27,x19,x9
     add x28,x22,x9
-    BQBLOCK32 BQLOAD
+    BQ64BLOCK BQ64LOAD
     add x9,x19,#(\w*4)
     add x9,x9,x24,lsl #(\lh+2)
     add x9,x9,x14
@@ -966,18 +1040,18 @@ Lab8_second:
     mov x12,#0
     mov x13,#(\w*12)
 \tag\()_second:
-    ldr s0,[x11,x12,lsl #2]
-    dup v0.4s,v0.s[0]
-    BQBLOCK32 BQUPDATE
+    ldr d0,[x11,x12,lsl #3]
+    dup v0.2d,v0.d[0]
+    BQ64BLOCK BQ64UPDATE
     add x9,x9,x13
     add x10,x10,x13
     add x12,x12,#1
     cmp x12,x25
     b.ls \tag\()_second
-    BQBLOCK32 BQSTORE
-    ldr x14,[sp,#232]
-    add x14,x14,#128
-    str x14,[sp,#232]
+    BQ64BLOCK BQ64STORE
+    ldr x14,[sp,#368]
+    add x14,x14,#64
+    str x14,[sp,#368]
     cmp x14,#(\h*4)
     b.lo \tag\()_second_block
     add x25,x25,#1
@@ -986,7 +1060,7 @@ Lab8_second:
     add x24,x24,#1
     cmp x24,#4
     b.lo \tag\()_head
-    ALEAVE 256
+    ALEAVE 384
 .endm
 
 AWIDE_FORWARD Law64,64,16,6,4,Lattention_scale16
@@ -995,10 +1069,10 @@ AWIDE_FORWARD Law256,256,64,8,6,Lattention_scale64
 AWIDE_BACKWARD Labw64,64,16,6,4,Lattention_scale16
 AWIDE_BACKWARD Labw128,128,32,7,5,Lattention_scale32
 AWIDE_BACKWARD Labw256,256,64,8,6,Lattention_scale64
-ABLOCK_FORWARD Labf512,512,128,9,7,Lattention_scale128
-ABLOCK_FORWARD Labf1024,1024,256,10,8,Lattention_scale256
-ABLOCK_BACKWARD Labb512,512,128,9,7,Lattention_scale128
-ABLOCK_BACKWARD Labb1024,1024,256,10,8,Lattention_scale256
+ABLOCK_FORWARD Labf512,512,128,9,7,Lattention_scale128_f64
+ABLOCK_FORWARD Labf1024,1024,256,10,8,Lattention_scale256_f64
+ABLOCK_BACKWARD Labb512,512,128,9,7,Lattention_scale128_f64
+ABLOCK_BACKWARD Labb1024,1024,256,10,8,Lattention_scale256_f64
 
 .section __TEXT,__const
 .p2align 4
@@ -1012,7 +1086,8 @@ Lattention_scale32:
     .float 0.1767766952966368811
 Lattention_scale64:
     .float 0.125
-Lattention_scale128:
-    .float 0.08838834764831844055
-Lattention_scale256:
-    .float 0.0625
+.p2align 3
+Lattention_scale128_f64:
+    .double 0.08838834764831844055
+Lattention_scale256_f64:
+    .double 0.0625

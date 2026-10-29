@@ -57,6 +57,8 @@ SOURCE_FILES = (
     "transformer/backend.py",
     "transformer/audit.py",
     "transformer/runtime_replay.py",
+    "transformer/precision.py",
+    "transformer/precision_audit.py",
 )
 
 # Fixed admission limits, not selected from observed discrepancies.
@@ -195,6 +197,7 @@ class Checks:
     def __init__(self):
         self.records = []
         self.diagnostics = []
+        self.precision_diagnostics = []
 
     def require(self, name, condition, detail=None):
         self.records.append({"name": name, "passed": bool(condition), "detail": detail})
@@ -916,6 +919,132 @@ def check_vector_softmax_boundaries(native, checks, rng):
         checks.require(tag + "/logits_unchanged", np.array_equal(logits, original))
 
 
+def check_attention_precision(native, checks, *, width=None, split="admission"):
+    """V6 attention accuracy against independent FP64 equations.
+
+    Existing FP32 compatibility checks and thresholds remain unchanged. New
+    adversarial cases have their own FP32 compatibility diagnostics, with domain
+    failures blocking even when a magnitude disagreement is diagnostic.
+    """
+    from transformer.precision import (
+        ORACLE_TOLERANCES,
+        attention_reference,
+        attention_stress_cases,
+    )
+
+    width = spec.WIDTH if width is None else width
+    for case in attention_stress_cases(width, split=split):
+        tag = "v6/precision/" + case["name"]
+        tokens, heads = case["tokens"], case["heads"]
+        qkv, sq = guarded_array(case["qkv"].shape)
+        qkv[...] = case["qkv"]
+        dy, sy = guarded_array(case["dy"].shape)
+        dy[...] = case["dy"]
+        reference = attention_reference(qkv, heads, dy)
+        shape = arr([tokens, width, heads], np.int32)
+        output, so = guarded_array((tokens, width))
+        probabilities, sp = guarded_array((heads, tokens, tokens))
+        dqkv, sd = guarded_array(qkv.shape)
+        native.call("attention_forward", qkv, output, probabilities, shape)
+        before_probabilities = probabilities.copy()
+        native.call("attention_backward", qkv, probabilities, dy, dqkv, shape)
+
+        torch_references = {}
+        mask = torch.ones(tokens, tokens, dtype=torch.bool).tril()
+        for dtype in (torch.float64, torch.float32):
+            tqkv = tensor(qkv, grad=True, dtype=dtype)
+            q, k, v = [
+                part.reshape(tokens, heads, width // heads).transpose(0, 1)
+                for part in tqkv.chunk(3, dim=-1)
+            ]
+            scores = (q @ k.transpose(-1, -2)) / math.sqrt(width // heads)
+            probs = scores.masked_fill(~mask, -torch.inf).softmax(-1)
+            out = (probs @ v).transpose(0, 1).reshape(tokens, width)
+            (out * tensor(dy, dtype=dtype)).sum().backward()
+            torch_references[dtype] = {
+                "output": as_numpy(out),
+                "probabilities": as_numpy(probs),
+                "dqkv": as_numpy(tqkv.grad),
+            }
+        checks.require(
+            tag + "/fp64_oracles_agree",
+            all(
+                np.allclose(
+                    torch_references[torch.float64][key], reference[key], **ORACLE_TOLERANCES
+                )
+                for key in ("output", "probabilities", "dqkv")
+            ),
+            {
+                "tolerances": ORACLE_TOLERANCES,
+                "maximum_absolute_errors": {
+                    key: float(np.abs(torch_references[torch.float64][key] - reference[key]).max())
+                    for key in ("output", "probabilities", "dqkv")
+                },
+            },
+        )
+        checks.close(tag + "/output_fp64", output, reference["output"])
+        checks.close(tag + "/probabilities_fp64", probabilities, reference["probabilities"], "math")
+        checks.close(tag + "/dqkv_fp64", dqkv, reference["dqkv"], "gradient")
+        same_probabilities = attention_reference(qkv, heads, dy, probabilities=probabilities)
+        checks.close(
+            tag + "/dqkv_same_probabilities_fp64", dqkv, same_probabilities["dqkv"], "gradient"
+        )
+        checks.close(
+            tag + "/probability_mass", probabilities.sum(-1), np.ones((heads, tokens)), "math"
+        )
+        checks.require(tag + "/masked_exact_zero", np.all(probabilities[:, ~mask.numpy()] == 0))
+
+        repeated_output, repeated_probs = np.empty_like(output), np.empty_like(probabilities)
+        native.call("attention_forward", qkv, repeated_output, repeated_probs, shape)
+        checks.require(
+            tag + "/repeat_forward_exact",
+            np.array_equal(output, repeated_output)
+            and np.array_equal(probabilities, repeated_probs),
+        )
+        prefix = (tokens + 1) // 2
+        intervened = qkv.copy()
+        intervened[prefix:] = intervened[prefix:] * np.float32(-3.25) + np.float32(7.5)
+        native.call("attention_forward", intervened, repeated_output, repeated_probs, shape)
+        checks.require(
+            tag + "/future_intervention_exact",
+            np.array_equal(output[:prefix], repeated_output[:prefix])
+            and np.array_equal(probabilities[:, :prefix], repeated_probs[:, :prefix]),
+        )
+        prefix_dy = dy.copy()
+        prefix_dy[prefix:] = 0
+        prefix_derivative, sg = guarded_array(qkv.shape)
+        native.call("attention_backward", qkv, probabilities, prefix_dy, prefix_derivative, shape)
+        checks.close(
+            tag + "/prefix_dqkv_fp64",
+            prefix_derivative,
+            attention_reference(qkv, heads, prefix_dy)["dqkv"],
+            "gradient",
+        )
+        checks.require(tag + "/future_gradient_exact_zero", np.all(prefix_derivative[prefix:] == 0))
+        checks.require(tag + "/guards", all(guard_intact(s) for s in (sq, sy, so, sp, sd, sg)))
+        checks.require(
+            tag + "/inputs_unchanged",
+            np.array_equal(qkv, case["qkv"])
+            and np.array_equal(dy, case["dy"])
+            and np.array_equal(probabilities, before_probabilities),
+        )
+        actuals = {"output": output, "probabilities": probabilities, "dqkv": dqkv}
+        for group, actual, expected in (
+            ("native_vs_torch32", actuals, torch_references[torch.float32]),
+            ("torch32_vs_fp64", torch_references[torch.float32], reference),
+        ):
+            for key in ("output", "probabilities", "dqkv"):
+                tolerance = (
+                    "gradient" if key == "dqkv" else "math" if key == "probabilities" else "forward"
+                )
+                diagnostic = Checks()
+                diagnostic.close(
+                    tag + f"/{group}/{key}", actual[key], expected[key], tolerance, diagnostic=True
+                )
+                checks.precision_diagnostics.extend(diagnostic.diagnostics)
+                checks.records.extend(diagnostic.records)
+
+
 def check_vector_finite_boundaries(native, checks):
     pattern = arr(
         [
@@ -1154,6 +1283,8 @@ def numerical_checks(native, checks):
     check_width_boundaries(native, checks, np.random.default_rng(20261029))
     check_backend_boundaries(native, checks)
     check_wide_matrix_limits(native, checks)
+    # V6 uses a separate frozen admission stream and independent FP64 equations.
+    check_attention_precision(native, checks)
 
 
 def run_child(command, *, timeout=180, env=None):
@@ -1414,6 +1545,15 @@ def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE, *, native=N
 
 
 def main():
+    from transformer.precision import (
+        ORACLE_TOLERANCES,
+        PRECISION_CONTRACT,
+        PRECISION_SEEDS,
+        expected_precision_check_names,
+        expected_precision_diagnostic_names,
+        precision_case_specs,
+    )
+
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--library", type=Path, default=DEFAULT_LIBRARY)
     parser.add_argument("--executable", type=Path, default=DEFAULT_EXECUTABLE)
@@ -1461,6 +1601,16 @@ def main():
             [record["name"] for record in checks.diagnostics]
             == legacy_diagnostic_names(args.runtime),
         )
+    checks.require(
+        "audit/precision_checks_complete",
+        [record["name"] for record in checks.records if record["name"].startswith("v6/precision/")]
+        == expected_precision_check_names(spec.WIDTH),
+    )
+    checks.require(
+        "audit/precision_diagnostics_complete",
+        [record["name"] for record in checks.precision_diagnostics]
+        == expected_precision_diagnostic_names(spec.WIDTH),
+    )
     source_after = {
         name: sha256(ROOT / name) if (ROOT / name).is_file() else None for name in SOURCE_FILES
     }
@@ -1487,6 +1637,18 @@ def main():
             record["name"] for record in checks.diagnostics if not record["passed"]
         ],
         "legacy_contract_passed": all(record["passed"] for record in checks.diagnostics),
+        "precision": {
+            "contract": PRECISION_CONTRACT,
+            "fixture_stream": "admission",
+            "fixture_seed": PRECISION_SEEDS["admission"],
+            "case_count": len(precision_case_specs(spec.WIDTH)),
+            "oracle_tolerances": ORACLE_TOLERANCES,
+            "diagnostics": checks.precision_diagnostics,
+            "diagnostic_count": len(checks.precision_diagnostics),
+            "failed_diagnostics": [
+                record["name"] for record in checks.precision_diagnostics if not record["passed"]
+            ],
+        },
         "model_width": spec.WIDTH,
         "parameter_count": spec.PARAM_COUNT,
         "model_identity": identity,

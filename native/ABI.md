@@ -23,7 +23,24 @@ has its own compiled executable/library and matching binary fixtures.
   [tokens,3*width] with consecutive Q,K,V segments. out=[tokens,width],
   probs=[heads,tokens,tokens]. Causal mask includes diagonal; masked probs ZERO.
   Score scale = 1/sqrt(width/heads). Stable max-subtracted softmax.
+  For width 512 or 1024, four heads, and 1..32 tokens, Q/K operands are converted
+  from their stored float32 values before FP64 multiply-accumulation. Scores,
+  scaling, maximum selection, and maximum subtraction remain FP64; only centered
+  scores are rounded to float32. Probabilities and weighted values remain float32.
+  This path uses a 400-byte frame including one 32-double private score row.
+  Other shapes preserve their existing float32 score arithmetic.
 - `tf_attention_backward(qkv,probs,dout,dqkv,shape)`; overwrite dqkv, causal.
+  Uses the supplied forward probabilities and the same real-valued attention
+  derivative. For the optimized width-512/1024 shapes, dA dot products, the
+  softmax row contraction, scaled dScore, and the complete causal dQ sum remain
+  FP64. Each dK contribution is added in FP64 before rounding to its float32
+  destination; dV retains its float32 accumulation order. The frame is 384 bytes,
+  including one 32-double row reused for dA and dScore. Stored probabilities
+  are used unchanged, with no renormalization, clamping, or model alteration.
+  Other shapes retain their existing derivative arithmetic. Outputs are float32.
+  As with standard floating-point autodifferentiation, rounding operations are
+  not differentiated. No extra derivative of the subtracted maximum is needed:
+  the softmax Jacobian annihilates a constant score shift.
 - `tf_relu_forward(x,y,count)` and `tf_relu_backward(x,dy,dx,count)`; derivative
   at zero is zero, overwrite destinations.
 - `tf_cross_entropy(logits,targets,dlogits,rows,vocab)` returns float32 mean loss

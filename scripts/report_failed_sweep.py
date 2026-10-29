@@ -31,7 +31,30 @@ from transformer.audit import (  # noqa: E402
 from transformer.backend import read_backend, validate_runtime_backend  # noqa: E402
 from transformer.report import aggregate_runs, count_baselines, seed_statistics  # noqa: E402
 from transformer.sweep_report import validate_manifest  # noqa: E402
-from transformer.validate import SOURCE_FILES, Checks  # noqa: E402
+from transformer.validate import Checks  # noqa: E402
+
+# The historical v5 record inventory is immutable. Later validators add sources
+# that were not part of those 3,411 original checks and must not rewrite their schema.
+SOURCE_FILES = (
+    "native/kernels.S",
+    "native/linear.S",
+    "native/linear_sme.S",
+    "native/backend.S",
+    "native/attention.S",
+    "native/softmax.S",
+    "native/normalization.S",
+    "native/model.S",
+    "native/runtime.S",
+    "native/Makefile",
+    "transformer/spec.py",
+    "transformer/reference.py",
+    "transformer/prepare.py",
+    "transformer/python_train.py",
+    "transformer/validate.py",
+    "transformer/backend.py",
+    "transformer/audit.py",
+    "transformer/runtime_replay.py",
+)
 
 WIDTHS = (512, 1024)
 SEEDS = (42, 43, 44)

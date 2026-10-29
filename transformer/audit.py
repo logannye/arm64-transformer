@@ -53,7 +53,15 @@ def prediction_metrics(logits, targets):
     }
 
 
-def audit_run(fixture_dir, run_dir, checks=None, *, recompute=True):
+def audit_run(
+    fixture_dir,
+    run_dir,
+    checks=None,
+    *,
+    recompute=True,
+    numerical_contract=None,
+    implementation=None,
+):
     """Return independently measured metrics and add evidence to ``checks``."""
     if checks is None:
         checks = Checks()
@@ -122,7 +130,28 @@ def audit_run(fixture_dir, run_dir, checks=None, *, recompute=True):
     )
     checks.require(name + "/training_includes_epoch_time", performance[0] >= history[:, 2].sum())
     selected_validation_nll = None
-    if recompute:
+    numerical_audit = None
+    if numerical_contract is not None:
+        from transformer.precision_audit import POSTRUN_CONTRACT, checkpoint_audit
+
+        if numerical_contract != POSTRUN_CONTRACT or not recompute:
+            raise ValueError("Unknown or disabled checkpoint numerical contract")
+        validation = read_exact(fixture / "validation.i32", "<i4", (val_count, spec.CONTEXT + 1))
+        if np.any((validation < 0) | (validation >= spec.VOCAB)):
+            raise ValueError("Invalid fixture validation tokens")
+        numerical_audit = checkpoint_audit(
+            parameters["best.f32"],
+            test,
+            validation,
+            logits,
+            history,
+            batch,
+            implementation,
+            name,
+            checks,
+        )
+        selected_validation_nll = numerical_audit["split_metrics"]["validation"]["fp64"]["nll"]
+    elif recompute:
         torch.set_num_threads(1)
         flat = tensor(parameters["best.f32"])
         with torch.no_grad():
@@ -149,7 +178,7 @@ def audit_run(fixture_dir, run_dir, checks=None, *, recompute=True):
                 history[:, 1].min(),
             )
     quality = prediction_metrics(logits, test[:, 1:])
-    return {
+    result = {
         "seed": seed,
         "fixture": str(fixture.resolve()),
         "run": str(run.resolve()),
@@ -177,6 +206,9 @@ def audit_run(fixture_dir, run_dir, checks=None, *, recompute=True):
         "checkpoint_predictions_recomputed": bool(recompute),
         "selected_checkpoint_validation_nll": selected_validation_nll,
     }
+    if numerical_audit is not None:
+        result["numerical_audit"] = numerical_audit
+    return result
 
 
 def compare_repeats(first, second, checks):

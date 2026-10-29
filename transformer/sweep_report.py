@@ -19,8 +19,10 @@ from transformer import spec
 from transformer.backend import (
     WIDE_VALIDATION_CONTRACT,
     validate_backend_preflights,
+    validate_precision_preflight,
     validate_regression_preflights,
     validate_runtime_backend,
+    validation_contract,
 )
 from transformer.prepare import SOURCE_SHA256
 from transformer.report import COLORS, IMPLEMENTATIONS, LABELS, aggregate_runs, seed_statistics
@@ -63,6 +65,66 @@ def identity(entry):
     return (entry["width"], entry["seed"], entry["repeat"], entry["implementation"])
 
 
+def v6_qualification(summaries):
+    """Numerical limitations never masquerade as qualified matched results."""
+    summaries = list(summaries)
+    fields = (
+        "evidence_integrity_passed",
+        "native_fp64_accuracy_passed",
+        "python_fp64_accuracy_passed",
+        "cross_implementation_fp32_compatibility_passed",
+    )
+    if not summaries or any(
+        type(summary.get(key)) is not bool for summary in summaries for key in fields
+    ):
+        raise ValueError("Incomplete v6 numerical qualification fields")
+    result = {key: all(summary[key] for summary in summaries) for key in fields}
+    result["numerically_qualified"] = all(result[key] for key in fields[:3])
+    result["passed"] = result["numerically_qualified"]
+    result["status"] = (
+        "audit_failed"
+        if not result["evidence_integrity_passed"]
+        else "native_precision_limit"
+        if not result["native_fp64_accuracy_passed"]
+        else "baseline_precision_limit"
+        if not result["python_fp64_accuracy_passed"]
+        else "completed"
+    )
+    return result
+
+
+def validate_v6_numerical_report(summary, audit):
+    """Derive qualification from retained comparisons, never from a passed flag alone."""
+    from scripts.package_sweep_evidence import check_run_numerical_evidence
+    from transformer.precision_audit import numerical_status, summarize_numerical_runs
+
+    for run in summary["runs"]:
+        check_run_numerical_evidence(run)
+    categories = summarize_numerical_runs(summary["runs"])
+    expected = numerical_status(True, categories)
+    if any(summary.get(key) != value or audit.get(key) != value for key, value in expected.items()):
+        raise ValueError("V6 numerical qualification disagrees with retained records")
+    flat = [
+        record | {"category": category}
+        for category, group in categories.items()
+        for record in group["checks"]
+    ]
+    compact = {
+        category: {key: value for key, value in group.items() if key != "checks"}
+        for category, group in categories.items()
+    }
+    if (
+        audit.get("numerical_checks") != flat
+        or audit.get("numerical_categories") != compact
+        or summary.get("numerical_categories") != compact
+        or audit.get("numerical_check_count") != len(flat)
+        or summary.get("numerical_check_count") != len(flat)
+        or audit.get("passed") is not expected["numerically_qualified"]
+    ):
+        raise ValueError("V6 numerical records or counts are incomplete")
+    return flat
+
+
 def validate_manifest(manifest, width_manifests, checks):
     """Reject incomplete, duplicated or internally inconsistent campaign records."""
     widths = protocol_widths(manifest.get("protocol_version"))
@@ -70,9 +132,20 @@ def validate_manifest(manifest, width_manifests, checks):
         checks,
         "manifest/completed_width_protocol",
         manifest.get("status") == "completed"
-        and manifest.get("protocol_version") in ("v3", "v4", "v5"),
+        and manifest.get("protocol_version") in ("v3", "v4", "v5", "v6"),
     )
     require(checks, "manifest/protocol_widths", manifest.get("widths") == list(widths))
+    if manifest["protocol_version"] == "v6":
+        for field in ("precision_contract", "postrun_numerical_contract"):
+            require(
+                checks,
+                "manifest/" + field,
+                manifest.get(field) == "v6-fp64-centered-attention-v1"
+                and all(child.get(field) == manifest[field] for child in width_manifests.values()),
+            )
+        for width in widths:
+            for gate in manifest.get("regression_preflights", {}).get(str(width), {}).values():
+                validate_precision_preflight(gate, width)
     require(
         checks,
         "manifest/source_identity",
@@ -190,7 +263,7 @@ def validate_manifest(manifest, width_manifests, checks):
             require(
                 checks, f"width-{width}/manifest_matches_global/{field}", child[field] == expected
             )
-        if manifest["protocol_version"] in ("v4", "v5"):
+        if manifest["protocol_version"] in ("v4", "v5", "v6"):
             supplements = manifest["backend_preflights"][key]
             validate_backend_preflights(manifest["preflights"][key], supplements)
             require(
@@ -227,14 +300,26 @@ def validate_manifest(manifest, width_manifests, checks):
             and preflight.get("failed_checks") == []
             and preflight.get("error") is None,
         )
-    if manifest["protocol_version"] == "v5":
+    if manifest["protocol_version"] in ("v5", "v6"):
         require(
             checks,
             "manifest/validation_contract",
-            manifest.get("validation_contract") == WIDE_VALIDATION_CONTRACT
-            and all(
-                child.get("validation_contract") == WIDE_VALIDATION_CONTRACT
-                for child in width_manifests.values()
+            (
+                manifest.get("validation_contract") == WIDE_VALIDATION_CONTRACT
+                and all(
+                    child.get("validation_contract") == WIDE_VALIDATION_CONTRACT
+                    for child in width_manifests.values()
+                )
+            )
+            if manifest["protocol_version"] == "v5"
+            else (
+                manifest.get("validation_contract") == "v6-width-specific-v1"
+                and manifest.get("validation_contracts")
+                == {str(width): validation_contract(width) for width in widths}
+                and all(
+                    child.get("validation_contract") == validation_contract(width)
+                    for width, child in width_manifests.items()
+                )
             ),
         )
         counts = validate_regression_preflights(
@@ -332,7 +417,15 @@ def aggregate_summaries(manifest, summaries, checks):
         require(
             checks,
             tag + "/completed",
-            summary.get("status") == "completed"
+            (
+                summary.get("status") == "completed"
+                or (
+                    manifest["protocol_version"] == "v6"
+                    and summary.get("status")
+                    in ("baseline_precision_limit", "native_precision_limit")
+                    and summary.get("evidence_integrity_passed") is True
+                )
+            )
             and summary.get("protocol_version") == manifest["protocol_version"],
         )
         require(
@@ -374,13 +467,18 @@ def aggregate_summaries(manifest, summaries, checks):
             tag + "/preflight_count",
             summary["preflight_check_count"] == manifest["preflights"][str(width)]["check_count"],
         )
-        if manifest["protocol_version"] == "v5":
+        if manifest["protocol_version"] in ("v5", "v6"):
             require(
                 checks,
                 tag + "/validation_contract",
-                summary.get("validation_contract") == WIDE_VALIDATION_CONTRACT,
+                summary.get("validation_contract")
+                == (
+                    validation_contract(width)
+                    if manifest["protocol_version"] == "v6"
+                    else WIDE_VALIDATION_CONTRACT
+                ),
             )
-        if manifest["protocol_version"] in ("v4", "v5"):
+        if manifest["protocol_version"] in ("v4", "v5", "v6"):
             forced = validate_backend_preflights(
                 manifest["preflights"][str(width)], manifest["backend_preflights"][str(width)]
             )
@@ -425,6 +523,10 @@ def aggregate_summaries(manifest, summaries, checks):
             "retained_test_prediction_rows": retained_rows,
             "raw_manifest_sha256": summary["raw_manifest_sha256"],
         }
+        if manifest["protocol_version"] == "v6":
+            by_width[str(width)].update(v6_qualification([summary]))
+            by_width[str(width)]["numerical_categories"] = summary["numerical_categories"]
+            by_width[str(width)]["numerical_check_count"] = summary["numerical_check_count"]
     require(
         checks,
         "reports/all_test_rows_recomputed",
@@ -495,7 +597,10 @@ def charts(summary, output):
     metric(axes[0], "training_seconds", "Training + validation per fit", "Seconds", zero=True)
     metric(axes[1], "forward_p50_ms", "Full 32-character forward, p50", "Milliseconds", zero=True)
     axes[0].legend(frameon=False)
-    fig.suptitle("Matched transformer cost across model widths", fontsize=15, fontweight="bold")
+    title = "Matched transformer cost across model widths"
+    if summary["protocol_version"] == "v6":
+        title += f"\nNumerical status: {summary['status']}"
+    fig.suptitle(title, fontsize=13, fontweight="bold")
     fig.text(
         0.5,
         0.015,
@@ -507,7 +612,7 @@ def charts(summary, output):
     fig.savefig(output / "scaling.png")
     plt.close(fig)
 
-    if summary["protocol_version"] in ("v4", "v5"):
+    if summary["protocol_version"] in ("v4", "v5", "v6"):
         training = [
             summary["by_width"][str(width)]["aggregate"][
                 "geometric_mean_training_ratio_python_over_arm64"
@@ -535,7 +640,10 @@ def charts(summary, output):
         axis.invert_yaxis()
         axis.set_xlim(0, max(1, *training, *forward) * 1.20)
         axis.set_xlabel("PyTorch time / ARM64 time", labelpad=10)
-        axis.set_title("Implementation time ratios at every width", pad=16, weight="bold")
+        title = "Implementation time ratios at every width"
+        if summary["protocol_version"] == "v6":
+            title += f"\nNumerical status: {summary['status']}; see per-width qualification"
+        axis.set_title(title, pad=16, weight="bold", fontsize=12)
         axis.grid(axis="x", alpha=0.18)
         axis.set_axisbelow(True)
         axis.spines["left"].set_visible(False)
@@ -621,6 +729,43 @@ def charts(summary, output):
     fig.savefig(output / "memory-quality.png")
     plt.close(fig)
 
+    if summary["protocol_version"] == "v6":
+        fig, axis = plt.subplots(figsize=(10, 5.5))
+        positions = np.arange(len(widths))
+        for category, offset, color, label in (
+            ("native_fp64", -0.18, COLORS["arm64"], "Native vs FP64"),
+            ("python_fp64", 0.18, COLORS["python"], "PyTorch vs FP64"),
+        ):
+            values = [
+                summary["by_width"][str(width)]["numerical_categories"][category][
+                    "failed_logit_coordinates"
+                ]
+                for width in widths
+            ]
+            bars = axis.bar(positions + offset, values, width=0.32, color=color, label=label)
+            axis.bar_label(bars, padding=3, fontsize=9)
+        axis.set_xticks(positions, [str(width) for width in widths])
+        axis.set_xlabel("Model width")
+        axis.set_ylabel("Logit coordinates outside the fixed FP64 error limit")
+        axis.set_yscale("symlog", linthresh=1)
+        axis.set_ylim(bottom=0)
+        axis.grid(axis="y", alpha=0.18)
+        axis.set_axisbelow(True)
+        axis.legend(frameon=False)
+        axis.set_title("Accuracy is evaluated separately for both implementations", weight="bold")
+        fig.text(
+            0.5,
+            0.025,
+            "Same weights at every selected checkpoint, "
+            "including both training engines and repeats.\n"
+            "Forward limit: 2e-5 + 2e-4 × |FP64 reference|. Zero means no coordinates exceeded it.",
+            ha="center",
+            fontsize=9,
+        )
+        fig.tight_layout(rect=(0, 0.12, 1, 1))
+        fig.savefig(output / "numerical-accuracy.png")
+        plt.close(fig)
+
 
 def report_markdown(summary):
     def stat(record, field, digits=3):
@@ -660,8 +805,10 @@ def report_markdown(summary):
         for width in summary["widths"]
     )
     backend_note = ""
-    prior = {"v3": "v1/v2", "v4": "v1/v2/v3", "v5": "v1/v2/v3/v4"}[summary["protocol_version"]]
-    if summary["protocol_version"] in ("v4", "v5"):
+    prior = {"v3": "v1/v2", "v4": "v1/v2/v3", "v5": "v1/v2/v3/v4", "v6": "v1–v5"}[
+        summary["protocol_version"]
+    ]
+    if summary["protocol_version"] in ("v4", "v5", "v6"):
         rows = []
         for width in summary["widths"]:
             native = next(
@@ -704,6 +851,46 @@ def report_markdown(summary):
             "All six widths' gates are retained under `regression-preflights/`. "
             "The four smaller widths have no new timed fits in this campaign.\n\n"
         )
+    qualification_note = ""
+    if summary["protocol_version"] == "v6":
+        rows = []
+        for width in summary["widths"]:
+            item = summary["by_width"][str(width)]
+            rows.append(
+                f"| {width} | {item['native_fp64_accuracy_passed']} | "
+                f"{item['python_fp64_accuracy_passed']} | "
+                f"{item['cross_implementation_fp32_compatibility_passed']} | `{item['status']}` |"
+            )
+        qualification_note = (
+            f"## Numerical qualification\n\nOverall status: **`{summary['status']}`**. "
+            "Evidence integrity, each implementation's accuracy against independent FP64, "
+            "and mutual FP32 compatibility are separate results. Full numerical qualification "
+            "requires integrity and both FP64 accuracy checks. Timings remain descriptive "
+            "where either implementation misses that requirement; no failed comparison is "
+            "silently promoted to a pass.\n\n"
+            "| Width | Native FP64 accuracy | PyTorch FP64 accuracy | "
+            "FP32 compatibility | Status |\n"
+            "|---:|---|---|---|---|\n" + "\n".join(rows) + "\n\n"
+            "![Numerical accuracy against FP64](numerical-accuracy.png)\n\n"
+            "The unchanged forward limit is `2e-5 + 2e-4*abs(reference)`. Both engines "
+            "are evaluated at every selected checkpoint from both training paths. Originating "
+            "predictions must replay exactly with their original batch semantics. All "
+            "numerical failures are retained separately in each audit's `numerical_checks`.\n\n"
+        )
+        regression_note = (
+            "Widths 32–256 retain the strict trajectory contract; widths 512/1024 retain "
+            "the explicit common-state/optimizer-replay contract and its original trajectory "
+            "diagnostics. The additional prospective FP64 attention stress contract covers "
+            "large competing scores, gradients, causal interventions, and independent oracles. "
+            "All six widths were measured anew. All "
+            f"{summary['regression_all_backend_preflight_check_count']:,} "
+            "automatic/forced regression checks and their diagnostics are retained under "
+            "`regression-preflights/`. Stored model state remains FP32; wide native attention "
+            "uses selective FP64 accumulation in forward and backward. "
+            "The separate numerical audit retains "
+            f"{summary['numerical_check_count']:,} comparisons, "
+            "including every failed FP64 and FP32-compatibility check.\n\n"
+        )
     return f"""# Transformer width sweep, {summary["protocol_version"]}
 
 The complete sweep contains **{len(summary["runs"])} fits**
@@ -716,7 +903,7 @@ This is the reused engineering benchmark from {prior}, not a fresh untouched tes
 set. Widths and training rules were fixed before timing. Wider models change
 capacity and computational cost; this report does not select a width from test quality.
 
-{backend_note}## Training and forward timing
+{qualification_note}{backend_note}## Training and forward timing
 
 | Width | Parameters | PyTorch training (s) | ARM64 training (s) | Paired training ratio |
 |---:|---:|---:|---:|---:|
@@ -769,7 +956,7 @@ tuning used this test set during the sweep.
 
 ## Evidence and limits
 
-{regression_note}The post-run audit contains **{summary["audit_check_count"]:,} checks**:
+{regression_note}The evidence-integrity audit contains **{summary["audit_check_count"]:,} checks**:
 {summary["sweep_audit_check_count"]:,} sweep consistency checks plus all per-width
 post-run records. The primary automatic-policy numerical/runtime preflights contain
 **{summary["preflight_check_count"]:,} checks** in total. Forced-policy gates add
@@ -804,6 +991,7 @@ def create_report(results, inputs, output):
     results, inputs, output = (Path(path).resolve() for path in (results, inputs, output))
     output.mkdir(parents=True, exist_ok=False)
     checks, child_checks, processes = Checks(), [], []
+    numerical_checks = []
     summary = {"schema_version": 1, "status": "audit_failed", "protocol_version": "v3"}
     error = None
     try:
@@ -819,7 +1007,10 @@ def create_report(results, inputs, output):
             width: sha256(results / f"width-{width}/manifest.json") for width in widths
         }
         validate_manifest(manifest, width_manifests, checks)
-        for name in REPORT_SOURCES:
+        report_sources = REPORT_SOURCES
+        if manifest["protocol_version"] == "v6":
+            report_sources += ("scripts/package_sweep_evidence.py",)
+        for name in report_sources:
             require(
                 checks, "source/" + name, sha256(ROOT / name) == manifest["source_sha256"].get(name)
             )
@@ -871,7 +1062,11 @@ def create_report(results, inputs, output):
             require(
                 checks,
                 f"width-{width}/audit_records",
-                child_audit.get("passed") is True
+                (
+                    child_audit.get("evidence_integrity_passed") is True
+                    if manifest["protocol_version"] == "v6"
+                    else child_audit.get("passed") is True
+                )
                 and bool(records)
                 and child_audit.get("check_count") == len(records)
                 and child_summary.get("audit_check_count") == len(records)
@@ -882,6 +1077,11 @@ def create_report(results, inputs, output):
             child_checks.extend(
                 item | {"name": f"width-{width}/{item['name']}"} for item in records
             )
+            if manifest["protocol_version"] == "v6":
+                numerical_checks.extend(
+                    record | {"name": f"width-{width}/{record['name']}"}
+                    for record in validate_v6_numerical_report(child_summary, child_audit)
+                )
             audit_counts[str(width)] = len(records)
             require(
                 checks,
@@ -892,7 +1092,7 @@ def create_report(results, inputs, output):
             write_json(destination / "preflight.json", manifest["preflights"][str(width)])
             for mode, gate in manifest.get("backend_preflights", {}).get(str(width), {}).items():
                 write_json(destination / f"preflight-{mode}.json", gate)
-        if manifest["protocol_version"] == "v5":
+        if manifest["protocol_version"] in ("v5", "v6"):
             regression_dir = output / "regression-preflights"
             regression_dir.mkdir()
             for width, modes in manifest["regression_preflights"].items():
@@ -947,7 +1147,7 @@ def create_report(results, inputs, output):
         summary["all_backend_preflight_check_count"] = (
             summary["preflight_check_count"] + summary["forced_backend_preflight_check_count"]
         )
-        if manifest["protocol_version"] == "v5":
+        if manifest["protocol_version"] in ("v5", "v6"):
             counts = validate_regression_preflights(
                 manifest["regression_preflights"], REGRESSION_WIDTHS, manifest["source_sha256"]
             )
@@ -968,6 +1168,25 @@ def create_report(results, inputs, output):
                 regression_forced_backend_preflight_check_count=counts["forced"],
                 regression_all_backend_preflight_check_count=counts["all"],
             )
+        if manifest["protocol_version"] == "v6":
+            from transformer.precision_audit import CATEGORIES, category_summary
+
+            summary.update(v6_qualification(summaries.values()))
+            summary["precision_contract"] = manifest["precision_contract"]
+            summary["postrun_numerical_contract"] = manifest["postrun_numerical_contract"]
+            summary["validation_contract"] = manifest["validation_contract"]
+            summary["validation_contracts"] = manifest["validation_contracts"]
+            summary["numerical_check_count"] = len(numerical_checks)
+            summary["numerical_categories"] = {
+                category: {
+                    key: value
+                    for key, value in category_summary(
+                        [record for record in numerical_checks if record["category"] == category]
+                    ).items()
+                    if key != "checks"
+                }
+                for category in CATEGORIES
+            }
         charts(summary, output)
         (output / "README.md").write_text(report_markdown(summary))
     except Exception as exc:
@@ -990,6 +1209,26 @@ def create_report(results, inputs, output):
         "error": error,
         "failed_checks": [item["name"] for item in records if not item["passed"]],
     }
+    if summary["protocol_version"] == "v6":
+        integrity = audit["passed"]
+        flags = v6_qualification(summaries.values()) if integrity else {}
+        audit.update(
+            flags,
+            evidence_integrity_passed=integrity,
+            numerical_checks=numerical_checks,
+            numerical_check_count=len(numerical_checks),
+        )
+        audit["passed"] = integrity and flags.get("numerically_qualified", False)
+        audit["schema_version"] = 2
+        audit["postrun_numerical_contract"] = summary.get("postrun_numerical_contract")
+        audit["numerical_categories"] = summary.get("numerical_categories", {})
+        audit["integrity_check_count"] = len(records)
+        audit["integrity_failed_checks"] = audit["failed_checks"]
+        audit["numerical_failed_checks"] = [
+            record["name"]
+            for record in numerical_checks
+            if record["category"] != "fp32_compatibility" and not record["passed"]
+        ]
     write_json(output / "report-processes.json", processes)
     write_json(output / "audit.json", audit)
     write_json(output / "summary.json", summary)
@@ -1006,7 +1245,7 @@ def main():
     print(
         json.dumps({key: audit[key] for key in ("passed", "check_count", "failed_checks", "error")})
     )
-    return 0 if audit["passed"] else 1
+    return 0 if audit.get("evidence_integrity_passed", audit["passed"]) else 1
 
 
 if __name__ == "__main__":
