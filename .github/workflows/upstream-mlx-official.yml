@@ -1,0 +1,55 @@
+# Review and install only in logannye/arm64-transformer, never in upstream MLX.
+# Copy this new contract's helper bundle to integration/mlx-official/ first.
+name: Isolated MLX official matrix v1
+on:
+  push:
+    branches:
+      - codex/upstream-integration-v2
+    paths:
+      - integration/mlx-official/**
+      - .github/workflows/upstream-mlx-official.yml
+  workflow_dispatch:
+    inputs:
+      macos_runner:
+        description: Approved Apple-silicon runner with a complete Xcode Metal toolchain
+        required: true
+        type: choice
+        default: macos-26
+        options:
+          - macos-26
+permissions:
+  contents: read
+concurrency:
+  group: isolated-mlx-patch-integration
+  cancel-in-progress: false
+jobs:
+  build-and-check:
+    if: github.repository == 'logannye/arm64-transformer'
+    runs-on: ${{ inputs.macos_runner || 'macos-26' }}
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12.10'
+          architecture: arm64
+      - name: Create isolated interpreter environment
+        shell: bash
+        run: python -m venv "$RUNNER_TEMP/mlx-official-matrix-venv"
+      - name: Exact-base source build and serial CPU/GPU validation
+        shell: bash
+        run: |
+          "$RUNNER_TEMP/mlx-official-matrix-venv/bin/python" \
+            integration/mlx-official/hosted_build.py \
+            --work-root "$RUNNER_TEMP/mlx-official-matrix-v1-work" --parallel 2
+      - name: Retain binaries, inputs, failures, and validation receipts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: isolated-mlx-official-matrix-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/mlx-official-matrix-v1-work/publish/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
