@@ -67,8 +67,9 @@ while model parameters, stored activations, gradients and Adam moments stay FP32
 **Embedding gradients have deterministic ownership.** The optimized path builds
 stable per-token occurrence lists with SIMD prefix operations. One output owner
 then sums occurrences in a fixed order. This avoids floating-point atomic
-scatter updates. At widths 512 and 1024, the reference deterministic embedding
-path remained faster under the selection rule, so it was retained.
+scatter updates. At widths 512 and 1024, the grouped candidates improved the
+complete step by about 1–2%, below the required 3% threshold, so the reference
+deterministic embedding path was retained.
 
 **Fusion removes separate passes where it helps.** A dense epilogue can apply
 ReLU or a residual addition before its output leaves the owning lane, while
