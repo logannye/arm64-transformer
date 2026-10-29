@@ -1,0 +1,63 @@
+# Isolated integration validation approved by the owner on 2026-10-29.
+# This does not admit patched frameworks into the transformer study.
+name: PyTorch upstream integration validation
+on:
+  push:
+    branches: [codex/upstream-integration-v2]
+    paths:
+      - '.github/workflows/upstream-pytorch.yml'
+      - 'validation/upstream-pytorch/**'
+  workflow_dispatch:
+    inputs:
+      runner_label:
+        description: macOS arm64 runner with at least 40 GiB free and offline Metal compiler
+        type: string
+        required: true
+        default: macos-26
+permissions:
+  contents: read
+concurrency:
+  group: pytorch-upstream-integration
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.repository == 'logannye/arm64-transformer'
+    runs-on: ${{ inputs.runner_label || 'macos-26' }}
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: study
+      - uses: actions/checkout@v4
+        with:
+          repository: pytorch/pytorch
+          ref: 71d2a08507ab47dd6b2fa9b66319d17ce2377de4
+          persist-credentials: false
+          path: pytorch-source
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.13'
+          architecture: arm64
+      - name: Provision OpenMP from a binary bottle only
+        run: brew install --force-bottle libomp
+      - name: Build and verify full framework with frozen patch
+        run: >-
+          python study/validation/upstream-pytorch/hosted_build.py
+          --source pytorch-source
+          --patch study/validation/upstream-pytorch/changes.patch
+          --output integration-result
+      - name: Retain receipts, failures, archive, and dependency wheels
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytorch-integration-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            integration-result/*.json
+            integration-result/*.log
+            integration-result/CMakeCache.txt
+            integration-result/pytorch-integrated-runtime.tar.gz
+            integration-result/wheels/
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
