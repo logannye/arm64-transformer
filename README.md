@@ -7,39 +7,6 @@ and handwritten Apple ARM64 assembly**. Both implementations learn the same
 transformer. The experiment asks how much execution improves when its calculations
 are organized around the processor's matrix instructions, registers, and memory.
 
-The results reveal a boundary. At widths 32–256, the earlier validated study found
-**1.29–1.82× faster training and 1.43–3.63× faster forward execution** in assembly.
-The new 512/1024 study loses that advantage as the model grows. It also **fails the
-frozen post-training numerical audit**. Those wider measurements are retained as
-descriptive development results, not a qualified speedup or equivalence claim.
-
-## What happens as the model grows?
-
-The latest campaign contains **24 fresh fits**: two widths, three seeds, two timing
-repeats, and both implementations on one Apple M4 Max with one CPU compute thread.
-The dataset and training budget are unchanged.
-
-| Width | Parameters | Training, PyTorch / ARM64 | Forward p50, PyTorch / ARM64 | Test NLL, PyTorch / ARM64 |
-|---:|---:|---:|---:|---:|
-| 512 | 2.25 million | 15.94 / 15.62 s | 298 / 362 µs | 2.500 / 2.486 |
-| 1024 | 8.70 million | 58.66 / 74.62 s | 1,053 / 1,480 µs | 2.741 / 2.738 |
-
-**Both wider rows failed the post-training audit.** Values describe the recorded
-runs. Training is near parity at width 512; at width 1024, ARM64 takes about 27%
-longer. Forward execution is about 22% and 40% slower, respectively.
-
-![Scaling reveals the limits of the implementation](docs/width-overview.png)
-
-The chart separates historical v4 measurements from the failed v5 campaign.
-Training ratios are geometric means of six paired PyTorch/ARM64 times; forward
-ratios compare mean per-run median latencies. Values above one favor assembly.
-
-Adding parameters also failed to improve saved-prediction quality under this
-budget: test NLL rose from roughly 2.5 to 2.74 in both implementations as width
-increased from 512 to 1024. Lower is better. Memory remains a native advantage:
-peak process RSS through training was **47 versus 392 MiB** at width 512 and
-**173 versus 656 MiB** at width 1024. These include framework, runtime, and data.
-
 ## The idea: make the mathematics fit the machine
 
 PyTorch already calls optimized native kernels. Assembly becomes useful when it
@@ -87,6 +54,39 @@ latency covers a complete batch-one context, including attention, but excludes
 output-probability softmax, sampling, and I/O. It is not cached token generation.
 The baseline is eager CPU PyTorch; there are no GPU, compiled-PyTorch, energy, or
 production-serving claims.
+
+## What happens as the model grows?
+
+The results reveal a boundary. At widths 32–256, the earlier validated study found
+**1.29–1.82× faster training and 1.43–3.63× faster forward execution** in assembly.
+The new 512/1024 study loses that advantage as the model grows. It also **fails the
+frozen post-training numerical audit**. Those wider measurements are retained as
+descriptive development results, not a qualified speedup or equivalence claim.
+
+The latest campaign contains **24 fresh fits**: two widths, three seeds, two timing
+repeats, and both implementations on one Apple M4 Max with one CPU compute thread.
+The dataset and training budget are unchanged.
+
+| Width | Parameters | Training, PyTorch / ARM64 | Forward p50, PyTorch / ARM64 | Test NLL, PyTorch / ARM64 |
+|---:|---:|---:|---:|---:|
+| 512 | 2.25 million | 15.94 / 15.62 s | 298 / 362 µs | 2.500 / 2.486 |
+| 1024 | 8.70 million | 58.66 / 74.62 s | 1,053 / 1,480 µs | 2.741 / 2.738 |
+
+**Both wider rows failed the post-training audit.** Values describe the recorded
+runs. Training is near parity at width 512; at width 1024, ARM64 takes about 27%
+longer. Forward execution is about 22% and 40% slower, respectively.
+
+![Scaling reveals the limits of the implementation](docs/width-overview.png)
+
+The chart separates historical v4 measurements from the failed v5 campaign.
+Training ratios are geometric means of six paired PyTorch/ARM64 times; forward
+ratios compare mean per-run median latencies. Values above one favor assembly.
+
+Adding parameters also failed to improve saved-prediction quality under this
+budget: test NLL rose from roughly 2.5 to 2.74 in both implementations as width
+increased from 512 to 1024. Lower is better. Memory remains a native advantage:
+peak process RSS through training was **47 versus 392 MiB** at width 512 and
+**173 versus 656 MiB** at width 1024. These include framework, runtime, and data.
 
 ## Numerical findings and reproducible evidence
 
