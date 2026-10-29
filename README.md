@@ -69,6 +69,16 @@ Small aggregate loss differences do not waive a failed logit or gradient check.
 The [CPU numerical investigation](experiments/numerics-v6/README.md) records
 historical failures that remain unresolved.
 
+The latest QKV experiment asks whether we can reuse more operands **without
+changing even the output bytes**. A cooperating group loads a tile of inputs
+and weights; each thread maintains four or eight independent two-float sums.
+Padded, transposed shared-memory tiles improve access layout, and every output
+still visits its products in the original order. This avoids atomics and
+cross-thread floating-point sums. Larger tiles also need more live accumulators
+and barrier coordination, so their value must be established by complete-step
+measurements. The [QKV kernel notes](native/metal/QKV-KERNELS.md) explain the
+ownership, guarded tails, precision, and versioned dispatch policy.
+
 ## The model and matched workload
 
 One causal decoder block, four heads, context 32, feed-forward width 2W with
@@ -84,35 +94,50 @@ fixed training budget, not a fresh generalization assessment or convergence stud
 
 ## GPU engineering results
 
-The optimized Metal policies improve every tested width against the retained
-Metal reference. These are **training-partition development measurements** of a
-complete B16/T32 training step and a synchronized B1/T32 forward pass.
+The [QKV v3 protocol](experiments/PROTOCOL-gpu-v3-qkv.md) freezes eight forward
+and eight input-gradient schedules at each width. Candidates must pass the
+existing FP64 gates and match the retained implementation byte for byte before
+timing. A policy changes only after at least a 3% improvement in the complete
+B16/T32 training step or B1/T32 forward pass. Training and inference are selected
+separately. The search uses original training sequences, with no validation or
+test outcomes used for optimization.
 
-| Width | Training step, reference → selected | Step gain | Forward, reference → selected | Forward gain |
-|---:|---:|---:|---:|---:|
-| 32 | 1.158 → 0.480 ms | 2.40× | 0.227 → 0.189 ms | 1.22× |
-| 64 | 1.375 → 0.588 ms | 2.34× | 0.269 → 0.171 ms | 1.56× |
-| 128 | 1.775 → 0.853 ms | 2.08× | 0.362 → 0.193 ms | 1.86× |
-| 256 | 3.194 → 1.590 ms | 2.00× | 0.608 → 0.249 ms | 2.49× |
-| 512 | 8.251 → 4.321 ms | 1.91× | 1.005 → 0.362 ms | 2.76× |
-| 1024 | 25.079 → 13.641 ms | 1.84× | 2.062 → 0.818 ms | 2.51× |
+**All 144 candidates passed their numerical checks; none met the 3% adoption
+threshold.** Every width retains its previous kernel choices. The target widths
+illustrate the result:
 
-Times are sample medians; gains use the median of five paired block ratios.
-The final comparisons use fresh instances with matching owned allocations and
-initial state. Training includes backward, Adam, finite checks, and scalar-loss
-completion. These timings exclude full-fit validation and checkpoint work.
-The selected configurations pass the development stress and full-gradient
-checks, plus exact replay across two fresh processes per width. Parameters,
-optimizer moments, and checkpoint predictions repeat exactly. Their schedules are retained in the
-[versioned policy file](experiments/gpu-v2/policies/selected.json).
+| Width | Best training candidate | Best batch-one candidate | Decision |
+|---:|---:|---:|---|
+| 512 | 1.63% lower latency | 8.90% higher latency | Retain incumbent |
+| 1024 | 2.41% lower latency | 1.03% higher latency | Retain incumbent |
 
-![Direct Metal comparisons and candidate outcomes](experiments/gpu-v2/results/metal-engineering.png)
+![Every QKV schedule and its complete-operation effect](experiments/gpu-v3-qkv/results/qkv-candidate-grid.png)
 
-At width 1024, cooperative normalization and shared reductions reduce their
-isolated GPU stage cost from 3.478 to 0.301 ms during training. The protected QKV
-contractions remain a major cost. Its batch-one policy changes only the
-normalization reductions, yet improves forward latency by 2.51×. The full report
-separates instrumented profiles from the production latencies above.
+The wider tiles reuse more operands but keep the same compensated arithmetic
+work and need more live accumulators. They also create fewer independent
+groups, a potential disadvantage for small batches. These are structural
+tradeoffs; hardware counters were unavailable, so register pressure and
+occupancy are not claimed as measured causes.
+
+Final FP64 checks and exact replay pass in two fresh processes per width,
+including full gradients, six-step parameters and moments, and checkpoint
+predictions. The [QKV report](experiments/gpu-v3-qkv/README.md) includes all
+candidate outcomes, p50/p95, paired timing variation and separate stage profiles.
+The final selected-versus-incumbent measurements compare unchanged kernel
+choices; their small differences around 1× are not a new speedup.
+
+### Retained GPU v2 results
+
+The earlier cooperative dense, normalization, reduction and fusion work did
+produce substantial gains against the original Metal reference: individual
+widths show **1.84–2.40× training-step** and **1.22–2.76× forward** improvements.
+At width 1024, training-step latency fell from 25.079 to 13.641 ms, and forward
+latency from 2.062 to 0.818 ms. These development measurements include backward,
+Adam, finite checks and completion, but exclude full-fit validation and checkpoint
+work. Their [full results and figures](experiments/gpu-v2/README.md) and
+[selected policies](experiments/gpu-v2/policies/selected.json) remain unchanged.
+
+### Full-study status
 
 The formal five-engine CPU/GPU study remains **blocked: 0 of 180 planned fits**.
 Both standard PyTorch MPS and compiled MLX fail the required byte-exact training
@@ -122,14 +147,29 @@ subsequent updates propagate it into parameters, optimizer moments, and predicti
 All executed baseline FP64 accuracy comparisons pass, but MLX also fails T3
 full-model/training cases at widths 256–1024. Those missing results remain errors.
 
-![Standard baseline qualification](experiments/gpu-v2/results/baseline-qualification.png)
-
 The baseline algorithms, gate, and tolerances remain unchanged. No replacement
 embedding implementation or descriptive formal-campaign waiver was introduced.
 The reserved admission stream remains unopened. There are no new qualified
 CPU/GPU crossover, Metal/framework speedup, or model-quality results.
 The [GPU v2 report](experiments/gpu-v2/README.md) separates development measurements,
 failed attempts, baseline limitations, and work that remains unexecuted.
+
+| Study component | Current evidence |
+|---|---|
+| Complete forward, backward and Adam implementations | Native CPU, PyTorch CPU, custom Metal, PyTorch MPS and MLX are implemented |
+| Matched full CPU fits | 72 historical v6 fits; wide-model precision limitations remain |
+| Custom GPU kernel development | Six widths, full-step/forward comparisons, FP64 checks and exact replay; no full-fit quality claim |
+| Standard GPU baseline admission | Blocked by repeatability failures and MLX short-sequence attention errors |
+| Fresh five-engine study and checkpoint audit | 0/180 fits; admission remains unopened |
+
+Official stable-source inspection found no eligible repair in PyTorch 2.15.0 or
+MLX 0.32.4. The separately prepared framework patches remain development work;
+they do not qualify the released standard baselines. Unblocking the full study
+requires suitable supported releases, successful baseline checks, a new bound
+source/runtime/policy freeze, admission, and the 180 fits with all-checkpoint
+audits. The [feasibility receipt](experiments/gpu-v3-qkv/baseline-feasibility.json)
+records the inspected tagged sources and distinguishes source inspection from
+runtime validation.
 
 ## Retained CPU results
 
@@ -149,6 +189,12 @@ learning curves, memory, paired timings, and prediction-level effects. These
 historical CPU numbers are separate from the new GPU development measurements.
 
 ## Reproduce and inspect
+
+The [QKV v3 reproduction guide](experiments/gpu-v3-qkv/REPRODUCE.md) covers the
+fixed candidate sweep, exact replay, report generation and evidence packaging.
+Its [evidence release](https://github.com/logannye/arm64-transformer/releases/tag/transformer-gpu-qkv-v3)
+contains the new source snapshots, raw states and logits, timing samples,
+candidate records and archive verification.
 
 The [GPU v2 protocol](experiments/PROTOCOL-gpu-v2.md) fixes the workload, candidate
 search, numerical gates, and measurement boundaries. The
