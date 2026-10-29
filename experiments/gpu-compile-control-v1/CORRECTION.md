@@ -30,3 +30,9 @@ MLX backend initialization now executes a GPU compilation probe before construct
 The prospective repeatability and five-engine protocol identifiers advance to `gpu-v2-standard-baseline-repeatability-v2` and `gpu-v2-five-engine-v2`. Old environment receipts cannot satisfy these contracts. CPU-only negative controls test forbidden values, child-environment removal, stale manifests, eager execution, missing compiled primitives, incorrect outputs, and unavailable GPU execution. They do not constitute real-device numerical qualification.
 
 Fresh baseline diagnostics, required framework repairs in eligible standard releases, a new bound freeze, and complete admission remain prerequisites for the 180-fit campaign. The correction changes neither the selected engines nor the strict repeatability requirement. Admission stream `20261104` remains unopened.
+
+## Compiled gradient state capture
+
+Actual graph compilation exposed a separate bug in our MLX adapter: the standalone gradient wrapper captured model state as an input but omitted it from the outputs. MLX's `nn.value_and_grad` updates that state while tracing, so the adapter could leave unevaluable placeholder arrays in the model. The repair adds `outputs=self.model.state`; the transformer equations and numerical tolerances do not change.
+
+A fresh-process GPU negative control reproduced the precise state-export failure. The repaired control completed three calls with one trace, passed the unchanged FP64 gradient checks, and preserved all parameter bytes. CPU-only regression controls also reject missing captures and substitution of optimizer state. The earlier failed run remains retained. This focused check does not establish full-model training repeatability or formal admission; separate embedding repeatability and attention-dispatch failures remain in the baseline evidence.

@@ -211,7 +211,9 @@ class Backend:
             lambda tokens, targets: _loss(self.model, tokens, targets), inputs=self.model.state
         )
         self._loss_grad = mx.compile(
-            lambda tokens, targets: loss_grad(self.model, tokens, targets), inputs=self.model.state
+            lambda tokens, targets: loss_grad(self.model, tokens, targets),
+            inputs=self.model.state,
+            outputs=self.model.state,
         )
         self._train = mx.compile(train, inputs=self._state, outputs=self._state)
         self._finite = mx.compile(

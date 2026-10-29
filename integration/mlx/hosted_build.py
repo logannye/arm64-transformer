@@ -104,6 +104,61 @@ def copy_source(source, output):
         shutil.copy2(source / relative, destination)
 
 
+def install_public_headers(source, python_package):
+    """Match the pinned CMake headers component, without a build or substitution."""
+    source, python_package = Path(source), Path(python_package)
+    header_root = source / "mlx"
+    destination = python_package / "include"
+    if destination.exists() or destination.is_symlink():
+        raise ValueError("Public-header destination already exists")
+    if header_root.is_symlink() or not header_root.is_dir():
+        raise ValueError("Public-header source must be a real directory")
+    if any(path.is_symlink() for path in header_root.rglob("*")):
+        raise ValueError("Symlink in public-header source")
+    headers = sorted(
+        path
+        for path in header_root.rglob("*.h")
+        if path.is_file() and path.relative_to(header_root).as_posix() != "backend/metal/kernels.h"
+    )
+    if len(headers) != 250 or sum(path.stat().st_size for path in headers) != 1837067:
+        raise ValueError("Pinned public-header inventory must be 250 files / 1837067 bytes")
+    if not (header_root / "backend/cpu/compiled_preamble.h").is_file():
+        raise ValueError("Missing CPU JIT public preamble")
+    identities = {
+        path.relative_to(source).as_posix(): {
+            "sha256": digest(path),
+            "bytes": path.stat().st_size,
+        }
+        for path in headers
+    }
+    for relative, expected in identities.items():
+        target = destination / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source / relative, target)
+        if digest(target) != expected["sha256"] or target.stat().st_size != expected["bytes"]:
+            raise ValueError(f"Public header changed while copying: {relative}")
+        if digest(source / relative) != expected["sha256"]:
+            raise ValueError(f"Public header source changed while copying: {relative}")
+    copied = {
+        name: {key: item[key] for key in ("sha256", "bytes")}
+        for name, item in inventory(destination).items()
+    }
+    if copied != identities:
+        raise ValueError("Installed public-header inventory differs")
+    if any(digest(source / name) != item["sha256"] for name, item in identities.items()):
+        raise ValueError("Public-header source changed during transport")
+    return {
+        "schema": 1,
+        "scope": "upstream_cmake_headers_component_transport",
+        "base": BASE,
+        "install_rule": "mlx/**/*.h except mlx/backend/metal/kernels.h -> include/mlx/",
+        "cmake_source_sha256": digest(source / "CMakeLists.txt"),
+        "file_count": 250,
+        "bytes": 1837067,
+        "headers": identities,
+    }
+
+
 def package_mode(source, build, output, mode, provenance, env, logs):
     output.mkdir(parents=True)
     python_package = output / "runtime/python/mlx"
@@ -112,6 +167,7 @@ def package_mode(source, build, output, mode, provenance, env, logs):
         python_package,
         ignore=shutil.ignore_patterns("__pycache__", "*.pyc", "*.so", "*.dylib", "*.metallib"),
     )
+    write(output / "PUBLIC-HEADERS.json", install_public_headers(source, python_package))
     core = list((build / "python/mlx").glob("core*.so"))
     if len(core) != 1:
         raise ValueError("Missing or ambiguous newly built core extension")
