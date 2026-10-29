@@ -103,6 +103,17 @@ composed inventory also receives a fresh compile/resource preflight before that
 family's timing. An unused unsupported optional kernel does not disqualify a
 policy that does not dispatch it.
 
+Qualification contexts are destroyed before performance measurement. Primitive
+audits retain diagnostic buffers, so merely restoring parameters and optimizer
+state does not restore the allocation state. Each paired comparison creates two
+fresh contexts and uploads exactly the same B16T32 training and B1T32 inference
+batch shapes. Before warmup, the harness records and requires equality of owned
+buffer counts, workspace/input/batch counts, total owned bytes including guards,
+and initial numerical state. Device-global allocation counters remain descriptive.
+The final selected-bundle comparison uses the same clean-context rule, followed
+by intrusive profiling in another fresh context. This harness repair leaves the
+75-candidate inventory unchanged; earlier attempts remain separate evidence.
+
 Before timing a policy, compile it on the actual device and check all three dense
 directions against FP64, including a final batch with a row count below or between
 tile sizes. Check all six widths and short contexts including T=1 and T=3 for

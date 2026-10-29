@@ -311,10 +311,12 @@ struct Context {
     }
     const char* profile(){NSData* data=[NSJSONSerialization dataWithJSONObject:profileSamples options:NSJSONWritingSortedKeys error:nil];
         receipt.assign(static_cast<const char*>(data.bytes),data.length);return receipt.c_str();}
-    const char* memory(){size_t allocated=0;for(auto& e:buffers)allocated+=e.second->object.length;
+    const char* memory(){size_t allocated=0,batchBuffers=0;for(auto& e:buffers)allocated+=e.second->object.length;
         for(auto& e:inputs)allocated+=e.second.values->object.length;
-        for(auto& e:batches){allocated+=e.second.tokens->object.length;if(e.second.targets)allocated+=e.second.targets->object.length;}
+        for(auto& e:batches){allocated+=e.second.tokens->object.length;++batchBuffers;if(e.second.targets){allocated+=e.second.targets->object.length;++batchBuffers;}}
         NSDictionary* info=@{@"owned_buffer_bytes_including_guards":@(allocated),@"device_current_allocated_bytes":@(device.currentAllocatedSize),
+            @"owned_buffer_count":@(buffers.size()+inputs.size()+batchBuffers),
+            @"workspace_buffer_count":@(buffers.size()),@"input_buffer_count":@(inputs.size()),@"batch_buffer_count":@(batchBuffers),
             @"profiling_enabled":@(profileEnabled),
             @"dispatches":@(dispatchCount),@"command_buffers":@(commandCount),@"last_synchronized_gpu_seconds":@(lastGPUTime),
             @"definition":@"Owned shared MTLBuffer allocations plus guards; device counter includes pipeline/driver allocations, not peak RSS"};

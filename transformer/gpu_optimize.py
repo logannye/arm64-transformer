@@ -18,6 +18,7 @@ import statistics
 import subprocess
 import sys
 import time
+from contextlib import contextmanager
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -366,6 +367,83 @@ def batches(backend, fixture):
         ),
         "inference": backend.upload_inputs(np.ascontiguousarray(rows[:1, :32])),
     }
+
+
+def validate_fresh_pair_memory(reference_memory, candidate_memory):
+    fields = (
+        "owned_buffer_count",
+        "workspace_buffer_count",
+        "input_buffer_count",
+        "batch_buffer_count",
+        "owned_buffer_bytes_including_guards",
+    )
+    for label, memory in (("reference", reference_memory), ("candidate", candidate_memory)):
+        if any(type(memory.get(key)) is not int or memory[key] < 0 for key in fields):
+            raise RuntimeError(f"Missing/invalid {label} owned-memory identity")
+        if (
+            memory["workspace_buffer_count"] < 1
+            or memory["input_buffer_count"] != 0
+            or memory["batch_buffer_count"] != 3
+        ):
+            raise RuntimeError(f"Unexpected {label} fresh allocation inventory")
+        if memory["owned_buffer_count"] != sum(
+            memory[key]
+            for key in ("workspace_buffer_count", "input_buffer_count", "batch_buffer_count")
+        ):
+            raise RuntimeError(f"Inconsistent {label} owned-buffer count")
+    if any(reference_memory[key] != candidate_memory[key] for key in fields):
+        raise RuntimeError("Paired owned allocation counts/bytes differ before timing")
+    return {
+        "equal_owned_counts_and_bytes": True,
+        "compared_fields": list(fields),
+        "batch_inventory": (
+            "Exactly one uploaded B16T32 training batch and one B1T32 inference batch per backend"
+        ),
+        "device_current_allocated_bytes": (
+            "Descriptive device-global counter; not an owned-allocation equality criterion"
+        ),
+    }
+
+
+@contextmanager
+def fresh_timing_pair(fixture, reference_policy, candidate_policy, receipt):
+    """Qualification contexts never enter timing; both new contexts own equal buffers."""
+    from transformer.gpu_metal import Backend
+
+    reference_backend = candidate_backend = None
+    try:
+        reference_backend = Backend(fixture["initial"], kernel_policy=reference_policy)
+        candidate_backend = Backend(fixture["initial"], kernel_policy=candidate_policy)
+        reference_batches = batches(reference_backend, fixture)
+        candidate_batches = batches(candidate_backend, fixture)
+        receipt["memory_before_timing"] = {
+            "reference": reference_backend.memory_stats(),
+            "candidate": candidate_backend.memory_stats(),
+        }
+        receipt["allocation_validation"] = validate_fresh_pair_memory(
+            receipt["memory_before_timing"]["reference"],
+            receipt["memory_before_timing"]["candidate"],
+        )
+        receipt["fresh_instances_without_qualification_allocations"] = True
+        receipt["equal_initial_state"] = state_equal(
+            reference_backend.export_state(), candidate_backend.export_state()
+        )
+        if not receipt["equal_initial_state"]:
+            raise RuntimeError("Fresh paired initial parameters/moments/step differ")
+        receipt["capabilities"] = {
+            "reference": reference_backend.capabilities(),
+            "candidate": candidate_backend.capabilities(),
+        }
+        yield reference_backend, candidate_backend, reference_batches, candidate_batches
+    finally:
+        actions = []
+        for label, backend in (
+            ("fresh_candidate.close", candidate_backend),
+            ("fresh_reference.close", reference_backend),
+        ):
+            if backend is not None:
+                actions.append((label, backend.close))
+        cleanup_actions(actions)
 
 
 def production_sample(backend, batch, mode):
@@ -1323,6 +1401,13 @@ def search_policies(width, output, profile_path):
             "is known, compile and freeze all actual next-family compositions before that "
             "family's timing. Unsupported configurations are excluded without ranking."
         ),
+        timing_instance_rule=(
+            "Close every qualification instance before timing. Create fresh incumbent and "
+            "candidate instances, each with exactly one B16T32 training upload and one B1T32 "
+            "inference upload. Before warmup, require equal initial state, equal owned buffer "
+            "counts by category, and equal owned bytes including guards. Capture both memory "
+            "receipts; device-global allocation is descriptive only."
+        ),
     )
     evidence = output.with_suffix(output.suffix + ".evidence")
     evidence.mkdir(parents=True, exist_ok=False)
@@ -1444,7 +1529,15 @@ def search_policies(width, output, profile_path):
                             evidence / f"{mode}-{family}-incumbent-rejection.json", base_checks
                         )
                         raise RuntimeError(f"Incumbent numerical rejection before {mode}/{family}")
+                    error = cleanup(
+                        result, "incumbent_qualification.close", baseline.close, "failed"
+                    )
+                    if error is not None:
+                        raise error
+                    baseline = Backend(fixture["initial"], kernel_policy=incumbent)
                     base_batch = batches(baseline, fixture)[mode]
+                    family_record["incumbent_memory_before_timing"] = baseline.memory_stats()
+                    family_record["incumbent_timing_instance_fresh"] = True
                     base_timing = measure(baseline, base_batch, mode)
                 finally:
                     primary = sys.exc_info()[1]
@@ -1491,26 +1584,33 @@ def search_policies(width, output, profile_path):
                         if not row["qualification"]["passed"]:
                             row["status"] = "numerically_rejected_unranked"
                         else:
-                            paired_reference = Backend(fixture["initial"], kernel_policy=incumbent)
-                            try:
+                            error = cleanup(
+                                row,
+                                "qualification_instance.close",
+                                backend.close,
+                                "cleanup_rejected_unranked",
+                            )
+                            if error is not None:
+                                raise error
+                            backend = None
+                            row["fresh_pair"] = {}
+                            with fresh_timing_pair(
+                                fixture, incumbent, policy, row["fresh_pair"]
+                            ) as pair:
+                                (
+                                    paired_reference,
+                                    paired_candidate,
+                                    reference_batches,
+                                    candidate_batches,
+                                ) = pair
                                 row["paired_timing"] = measure_paired(
                                     paired_reference,
-                                    backend,
-                                    batches(paired_reference, fixture)[mode],
-                                    batches(backend, fixture)[mode],
+                                    paired_candidate,
+                                    reference_batches[mode],
+                                    candidate_batches[mode],
                                     mode,
                                     order_offset=candidate_index % 2,
                                 )
-                            finally:
-                                primary = sys.exc_info()[1]
-                                error = cleanup(
-                                    row,
-                                    "paired_reference.close",
-                                    paired_reference.close,
-                                    "cleanup_rejected_unranked",
-                                )
-                                if error is not None and primary is None:
-                                    raise error
                             row["timing"] = row["paired_timing"]["candidate"]
                             row["improvement_fraction"] = row["paired_timing"][
                                 "median_paired_improvement_fraction"
@@ -1592,17 +1692,19 @@ def search_policies(width, output, profile_path):
                 if error is not None and primary is None:
                     raise error
         backend = Backend(fixture["initial"], kernel_policy=selected)
-        original = None
         try:
             result["selected_bundle_full_checks"] = full_checks(backend, cache)
             if not result["selected_bundle_full_checks"]["passed"]:
                 raise RuntimeError("Combined final policy failed full-model qualification")
             result["selected_capabilities"] = backend.capabilities()
-            original = Backend(fixture["initial"], kernel_policy=reference())
-            original_batches, selected_batches = (
-                batches(original, fixture),
-                batches(backend, fixture),
-            )
+        finally:
+            primary = sys.exc_info()[1]
+            error = cleanup(result, "selected_bundle_qualification.close", backend.close, "failed")
+            if error is not None and primary is None:
+                raise error
+        result["final_fresh_pair"] = {}
+        with fresh_timing_pair(fixture, reference(), selected, result["final_fresh_pair"]) as pair:
+            original, backend, original_batches, selected_batches = pair
             result["selected_vs_reference"] = {}
             for index, mode in enumerate(("training", "inference")):
                 check_conditions(result, f"final_{mode}_conditions_before")
@@ -1615,32 +1717,21 @@ def search_policies(width, output, profile_path):
                     order_offset=index,
                 )
                 check_conditions(result, f"final_{mode}_conditions_after")
-            # Reference stage profiles used one resident backend. Restore that
-            # same residency for the final selected diagnostic profiles.
-            error = cleanup(
-                result, "original_reference.close_before_profiles", original.close, "failed"
-            )
-            if error is not None:
-                raise error
-            original = None
-            # Intrusive profiles come strictly after both production comparisons.
+        # Use another fresh, single resident context for intrusive diagnostics,
+        # after both clean production comparisons and their resource teardown.
+        backend = Backend(fixture["initial"], kernel_policy=selected)
+        try:
+            selected_batches = batches(backend, fixture)
+            result["selected_profile_memory_before_execution"] = backend.memory_stats()
             result["selected_profiles_after_production"] = {
                 mode: stage_profile(backend, selected_batches[mode], mode)
                 for mode in ("training", "inference")
             }
         finally:
             primary = sys.exc_info()[1]
-            errors = []
-            for label, owned in (
-                ("selected_bundle.close", backend),
-                ("original_reference.close", original),
-            ):
-                if owned is not None:
-                    error = cleanup(result, label, owned.close, "failed")
-                    if error is not None:
-                        errors.append(error)
-            if errors and primary is None:
-                raise errors[0]
+            error = cleanup(result, "selected_profile.close", backend.close, "failed")
+            if error is not None and primary is None:
+                raise error
         result["selected_policy"] = selected
         result["sources_unchanged"] = frozen["source_sha256"] == source_identity()
         result["inputs_unchanged"] = (

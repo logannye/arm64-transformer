@@ -516,3 +516,112 @@ def test_preflight_persists_primary_and_close_errors(tmp_path, monkeypatch):
     receipt = json.loads((tmp_path / "preflight.json.entries/reference.json").read_text())
     assert receipt["error"] == "ValueError: primary capability failure"
     assert receipt["cleanup_errors"][0]["error"] == "RuntimeError: secondary close failure"
+
+
+def fresh_memory():
+    return {
+        "owned_buffer_count": 11,
+        "workspace_buffer_count": 8,
+        "input_buffer_count": 0,
+        "batch_buffer_count": 3,
+        "owned_buffer_bytes_including_guards": 4096,
+        "device_current_allocated_bytes": 999999,
+    }
+
+
+def test_fresh_pair_compares_owned_counts_and_bytes_but_not_device_global_counter():
+    from transformer.gpu_optimize import validate_fresh_pair_memory
+
+    left, right = fresh_memory(), fresh_memory()
+    right["device_current_allocated_bytes"] += 10000
+    assert validate_fresh_pair_memory(left, right)["equal_owned_counts_and_bytes"]
+    for key in (
+        "owned_buffer_count",
+        "workspace_buffer_count",
+        "input_buffer_count",
+        "batch_buffer_count",
+        "owned_buffer_bytes_including_guards",
+    ):
+        changed = fresh_memory()
+        changed[key] += 1
+        with pytest.raises(RuntimeError):
+            validate_fresh_pair_memory(left, changed)
+    missing = fresh_memory()
+    del missing["workspace_buffer_count"]
+    with pytest.raises(RuntimeError, match="Missing/invalid"):
+        validate_fresh_pair_memory(left, missing)
+
+
+def test_fresh_timing_pair_uses_only_matching_uploads_and_closes_both(monkeypatch):
+    from transformer import gpu_metal
+    from transformer.gpu_optimize import fresh_timing_pair
+
+    instances = []
+
+    class FreshBackend(FakeBackend):
+        def __init__(self, initial, *, kernel_policy):
+            super().__init__()
+            self.profile = False
+            self.uploads, self.closed, self.policy = [], False, kernel_policy
+            instances.append(self)
+
+        def upload_inputs(self, tokens, targets=None):
+            self.uploads.append((tokens.shape, targets is not None))
+            return object()
+
+        def memory_stats(self):
+            assert self.uploads == [((16, 32), True), ((1, 32), False)]
+            return fresh_memory()
+
+        def capabilities(self):
+            return {"kernel_policy": self.policy}
+
+        def close(self):
+            self.closed = True
+
+    monkeypatch.setattr(gpu_metal, "Backend", FreshBackend)
+    fixture = {"initial": np.zeros(3, "f4"), "rows": np.zeros((16, 33), "i4")}
+    receipt = {}
+    with fresh_timing_pair(fixture, reference(), reference(), receipt) as pair:
+        baseline, candidate, baseline_batches, candidate_batches = pair
+        assert baseline is not candidate
+        assert set(baseline_batches) == set(candidate_batches) == {"training", "inference"}
+        assert not baseline.closed and not candidate.closed
+        assert baseline.training_calls == candidate.training_calls == 0
+        assert receipt["allocation_validation"]["equal_owned_counts_and_bytes"]
+        assert receipt["equal_initial_state"]
+    assert len(instances) == 2 and all(instance.closed for instance in instances)
+
+
+def test_asymmetric_pair_is_rejected_before_yield_and_both_instances_close(monkeypatch):
+    from transformer import gpu_metal
+    from transformer.gpu_optimize import fresh_timing_pair
+
+    instances = []
+
+    class DifferentBackend(FakeBackend):
+        def __init__(self, initial, *, kernel_policy):
+            super().__init__()
+            self.closed = False
+            self.number = len(instances)
+            instances.append(self)
+
+        def upload_inputs(self, tokens, targets=None):
+            return object()
+
+        def memory_stats(self):
+            value = fresh_memory()
+            value["owned_buffer_bytes_including_guards"] += self.number * 512
+            return value
+
+        def close(self):
+            self.closed = True
+
+    monkeypatch.setattr(gpu_metal, "Backend", DifferentBackend)
+    fixture = {"initial": np.zeros(3, "f4"), "rows": np.zeros((16, 33), "i4")}
+    receipt = {}
+    with pytest.raises(RuntimeError, match="allocation counts/bytes differ"):
+        with fresh_timing_pair(fixture, reference(), reference(), receipt):
+            pytest.fail("An asymmetric pair must never enter timing")
+    assert "memory_before_timing" in receipt
+    assert len(instances) == 2 and all(instance.closed for instance in instances)
