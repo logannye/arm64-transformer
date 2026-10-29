@@ -569,6 +569,11 @@ def package(
         files[name] = {**value, "category": item["category"]}
     report_summary = old.read_json(report / "summary.json")
     validate_report_inventory(report_summary)
+    old.require(
+        report_summary.get("reporter_sha256")
+        == files["source/scripts/report_gpu_v2_engineering.py"]["sha256"],
+        "Executed reporter source is absent or changed",
+    )
     report_roots, report_bindings = bind_report_files(evidence, report_summary, files)
     validate_retained_baseline_members(evidence, report_roots["baseline"], files)
     for record in original_inputs:

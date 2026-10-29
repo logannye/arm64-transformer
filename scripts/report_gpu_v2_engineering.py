@@ -66,6 +66,9 @@ def exact_pass(check):
         check.get("passed") is True
         and check.get("different_coordinates") == 0
         and isinstance(check.get("actual"), dict)
+        and set(check["actual"]) == {"dtype", "shape", "sha256"}
+        and isinstance(check["actual"]["dtype"], str)
+        and isinstance(check["actual"]["shape"], list)
         and check["actual"] == check.get("expected")
         and len(check["actual"].get("sha256", "")) == 64
     )
