@@ -150,7 +150,10 @@ def mock_runtime(monkeypatch):
     monkeypatch.setattr(gpu_inputs, "PARAM_COUNT", 8)
     monkeypatch.setattr(spec, "PARAM_COUNT", 8)
     for key, value in gpu_run.ENVIRONMENT.items():
-        monkeypatch.setenv(key, value)
+        if value is None:
+            monkeypatch.delenv(key, raising=False)
+        else:
+            monkeypatch.setenv(key, value)
     instances, imports = [], []
     settings = {"fault": None}
 

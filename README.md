@@ -140,11 +140,15 @@ work. Their [full results and figures](experiments/gpu-v2/README.md) and
 ### Full-study status
 
 The formal five-engine CPU/GPU study remains **blocked: 0 of 180 planned fits**.
-Both standard PyTorch MPS and compiled MLX fail the required byte-exact training
-repeatability checks at every width. The first divergent full-gradient case
+The historical PyTorch MPS and MLX runs fail the required byte-exact training
+repeatability checks at every width. A later environment audit found that those
+runs used forced-Metal MPS dispatch and graph-disabled MLX: both presence-based
+controls had incorrectly been set to `"0"`. The [configuration correction](experiments/gpu-compile-control-v1/CORRECTION.md)
+preserves the evidence and requires fresh checks with ordinary MPS dispatch and
+verified MLX compilation. The first divergent full-gradient case
 examined at each width localizes the initial difference to token embeddings;
 subsequent updates propagate it into parameters, optimizer moments, and predictions.
-All executed baseline FP64 accuracy comparisons pass, but MLX also fails T3
+The historical baseline FP64 accuracy comparisons pass, but MLX also fails T3
 full-model/training cases at widths 256–1024. Those missing results remain errors.
 
 The baseline algorithms, gate, and tolerances remain unchanged. No replacement
@@ -159,7 +163,7 @@ failed attempts, baseline limitations, and work that remains unexecuted.
 | Complete forward, backward and Adam implementations | Native CPU, PyTorch CPU, custom Metal, PyTorch MPS and MLX are implemented |
 | Matched full CPU fits | 72 historical v6 fits; wide-model precision limitations remain |
 | Custom GPU kernel development | Six widths, full-step/forward comparisons, FP64 checks and exact replay; no full-fit quality claim |
-| Standard GPU baseline admission | Blocked by repeatability failures and MLX short-sequence attention errors |
+| Standard GPU baseline admission | Fresh qualification with corrected controls is required; historical failures remain recorded |
 | Fresh five-engine study and checkpoint audit | 0/180 fits; admission remains unopened |
 
 Official stable-source inspection found no eligible repair in PyTorch 2.15.0 or

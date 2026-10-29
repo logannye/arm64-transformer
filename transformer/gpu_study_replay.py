@@ -8,10 +8,15 @@ authoritative. This command performs no training and is never inside timing.
 from __future__ import annotations
 
 import argparse
+import runpy
 from pathlib import Path
 
 
 def replay(engine, fixture_path, checkpoint, output):
+    # Load only controls from the current script tree; numerical imports below
+    # must continue resolving through the selected immutable CPU source tree.
+    controls = runpy.run_path(str(Path(__file__).with_name("gpu_environment.py")))
+    controls["require_environment"](controls["ENVIRONMENT"])
     import numpy as np
     import torch
 

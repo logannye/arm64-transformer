@@ -13,6 +13,7 @@ import sys
 import time
 from pathlib import Path
 
+from transformer.gpu_environment import child_environment, require_environment
 from transformer.gpu_study import (
     ENVIRONMENT,
     digest,
@@ -187,8 +188,7 @@ def run_cell(manifest_path, expected_hash, admission, roots, cell_id, output):
         os.environ.get("ARM64_TRANSFORMER_WIDTH") == str(cell["width"]),
         "Width must be selected before process imports",
     )
-    for key, value in ENVIRONMENT.items():
-        require(os.environ.get(key) == value, f"Wrong execution environment: {key}")
+    require_environment(ENVIRONMENT)
     require(
         os.environ.get("ARM64_TRANSFORMER_METAL_POLICY") == str(policy_path(manifest, roots)),
         "Selected policy path changed",
@@ -204,7 +204,7 @@ def run_cell(manifest_path, expected_hash, admission, roots, cell_id, output):
             if cell["engine"] == "cpu_arm64"
             else [sys.executable, "-m", "transformer.python_train"]
         )
-        env = os.environ.copy()
+        env = child_environment(ENVIRONMENT)
         env["PYTHONPATH"] = python_path(manifest, roots, cpu=True)
         subprocess.run(
             command + [str(fixture_path.resolve()), str(output.resolve())],

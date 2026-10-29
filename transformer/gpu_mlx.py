@@ -8,6 +8,7 @@ Standard MLX kernel/compiler arithmetic is recorded rather than reimplemented.
 # Environment controls must be pinned before framework imports.
 # ruff: noqa: E402
 
+import copy
 import importlib.metadata
 import math
 import os
@@ -15,12 +16,18 @@ import sys
 import time
 from dataclasses import dataclass
 
-for _name in ("MLX_ENABLE_TF32", "MLX_DISABLE_COMPILE", "MLX_SDPA_VJP_FALLBACK"):
-    if "mlx.core" in sys.modules and os.environ.get(_name) != "0":
-        raise RuntimeError(f"{_name}=0 must be pinned before the first MLX import")
-    if os.environ.get(_name, "0") != "0":
-        raise RuntimeError(f"{_name}=0 is required before importing MLX")
-    os.environ[_name] = "0"
+from transformer.gpu_environment import (
+    MLX_ENVIRONMENT,
+    configure_environment,
+    require_environment,
+)
+from transformer.gpu_mlx_compile import require_compilation_environment, verify_compilation
+
+require_compilation_environment()
+if "mlx.core" in sys.modules:
+    require_environment(MLX_ENVIRONMENT)
+else:
+    configure_environment(MLX_ENVIRONMENT)
 
 import mlx.core as mx
 import mlx.nn as nn
@@ -174,6 +181,14 @@ class Backend:
         if not mx.metal.is_available():
             raise RuntimeError("A usable MLX Metal device is required; CPU fallback is forbidden")
         mx.set_default_device(mx.gpu)
+        require_environment(MLX_ENVIRONMENT)
+        # Stable MLX 0.32.4 has no config API; its controls are pinned by the
+        # fresh worker before import. Newer builds also expose cached values.
+        if hasattr(mx, "config"):
+            for name in ("MLX_ENABLE_TF32", "MLX_SDPA_VJP_FALLBACK"):
+                if mx.config.get(name, -1) != 0:
+                    raise RuntimeError(f"Cached MLX configuration does not match {name}=0")
+        self._compilation_probe = verify_compilation(mx)
         self.model = Transformer(initial_flat)
         self.optimizer = optim.Adam(
             learning_rate=LR, betas=(0.9, 0.999), eps=1e-8, bias_correction=True
@@ -543,9 +558,10 @@ class Backend:
             "storage_dtype": "float32",
             "cpu_tensor_fallback": False,
             "MLX_ENABLE_TF32": os.environ["MLX_ENABLE_TF32"],
-            "MLX_DISABLE_COMPILE": os.environ["MLX_DISABLE_COMPILE"],
+            "MLX_DISABLE_COMPILE": os.environ.get("MLX_DISABLE_COMPILE"),
             "MLX_SDPA_VJP_FALLBACK": os.environ["MLX_SDPA_VJP_FALLBACK"],
-            "compiled": True,
+            "compiled": self._compilation_probe["status"] == "passed",
+            "compilation_probe": copy.deepcopy(self._compilation_probe),
             "compiler_math": "Pinned MLX framework defaults; no custom shader options",
             "repeatability_note": (
                 "Exact training repeatability is separately audited; "

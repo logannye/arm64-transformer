@@ -17,6 +17,19 @@ from pathlib import Path
 
 from integration_common import digest, inventory, run, write
 
+REPLAY_CONTROLS = {
+    "MLX_DISABLE_COMPILE": None,
+    "PYTORCH_MPS_PREFER_METAL": None,
+    "MLX_ENABLE_TF32": "0",
+    "MLX_SDPA_VJP_FALLBACK": "0",
+    "PYTORCH_ENABLE_MPS_FALLBACK": "0",
+    "PYTORCH_MPS_FAST_MATH": "0",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+}
+
 
 def required_gpu_tests(source):
     names = []
@@ -88,13 +101,12 @@ def validate(bundle, output, python=sys.executable):
                 f"Replay dependency differs: {name}; "
                 "use runtime-lock.txt in an isolated environment"
             )
-    output.mkdir()
+    output.mkdir(parents=True)
     env = dict(
         os.environ,
         PYTHONPATH=str(bundle / "runtime/python"),
         PYTHONDONTWRITEBYTECODE="1",
-        VECLIB_MAXIMUM_THREADS="1",
-        OMP_NUM_THREADS="1",
+        PYTHONNOUSERSITE="1",
         METAL_DEBUG_ERROR_MODE="0",
         METAL_DEVICE_WRAPPER_TYPE="1",
         TF_CPP_MIN_LOG_LEVEL="2",
@@ -104,15 +116,22 @@ def validate(bundle, output, python=sys.executable):
         "DYLD_LIBRARY_PATH",
         "DYLD_FRAMEWORK_PATH",
         "DYLD_INSERT_LIBRARIES",
+        "PYTHONHOME",
         "DEVICE",
     ):
         env.pop(name, None)
+    for name, value in REPLAY_CONTROLS.items():
+        if value is None:
+            env.pop(name, None)
+        else:
+            env[name] = value
     result = {
         "scope": "mlx_official_three_mode_integration_v1",
         "mode": expected["mode"],
         "manifest_sha256": digest(bundle / "MANIFEST.json"),
         "formal_fits": 0,
         "admission_stream_opened": False,
+        "environment": {name: env.get(name) for name in REPLAY_CONTROLS},
         "required_default_device": device,
         "device_override": None,
         "cpp": {"status": "not_executed"},
@@ -143,7 +162,12 @@ def validate(bundle, output, python=sys.executable):
         result["probe"] = (
             json.loads(probe.read_text()) if probe.is_file() else {"status": "missing"}
         )
-        if execution["returncode"] != 0 or result["probe"].get("status") != "passed":
+        result["probe_execution"] = execution
+        if (
+            execution["returncode"] != 0
+            or execution.get("timed_out")
+            or result["probe"].get("status") != "passed"
+        ):
             return result
         cpp = run(
             [str(bundle / "runtime/bin/tests")],

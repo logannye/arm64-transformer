@@ -9,7 +9,6 @@ import hashlib
 import importlib
 import json
 import math
-import os
 import platform
 import resource
 import subprocess
@@ -18,18 +17,8 @@ import time
 import traceback
 from pathlib import Path
 
-ENVIRONMENT = {
-    "PYTORCH_ENABLE_MPS_FALLBACK": "0",
-    "PYTORCH_MPS_FAST_MATH": "0",
-    "PYTORCH_MPS_PREFER_METAL": "0",
-    "MLX_ENABLE_TF32": "0",
-    "MLX_DISABLE_COMPILE": "0",
-    "MLX_SDPA_VJP_FALLBACK": "0",
-    "OMP_NUM_THREADS": "1",
-    "MKL_NUM_THREADS": "1",
-    "OPENBLAS_NUM_THREADS": "1",
-    "VECLIB_MAXIMUM_THREADS": "1",
-}
+from transformer.gpu_environment import ENVIRONMENT
+from transformer.gpu_environment import configure_environment as _configure_environment
 
 
 def digest(path):
@@ -50,10 +39,7 @@ def source_manifest():
 
 
 def configure_environment():
-    for name, expected in ENVIRONMENT.items():
-        if name in os.environ and os.environ[name] != expected:
-            raise ValueError(f"{name} must be {expected!r}")
-        os.environ[name] = expected
+    _configure_environment(ENVIRONMENT)
 
 
 def state_equal(left, right):

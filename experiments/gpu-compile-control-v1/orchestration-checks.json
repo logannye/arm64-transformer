@@ -1,0 +1,57 @@
+{
+  "checks": {
+    "git_diff_check": {
+      "exit_code": 0
+    },
+    "pytest": {
+      "command": ".venv/bin/python -m pytest tests/test_gpu_environment.py tests/test_gpu_mlx_compile.py tests/test_gpu_run.py tests/test_gpu_repeatability.py tests/test_gpu_study.py tests/test_gpu_admission_checks.py tests/test_gpu_study_runtime.py tests/test_gpu_qkv_report.py -q",
+      "exit_code": 0,
+      "observed_terminal_summary": "229 passed in 2.51s"
+    },
+    "ruff": {
+      "exit_code": 0,
+      "observed_terminal_summary": "All checks passed!",
+      "scope": "All 18 changed Python modules/test files"
+    }
+  },
+  "formal_admission_stream_opened": false,
+  "formal_fits": 0,
+  "git_head": "ead99e19d0e270fa9f8870579a8884b2b4255e97",
+  "historical_artifacts_changed": false,
+  "recorded_at_utc": "2026-10-29T22:49:10Z",
+  "schema": 1,
+  "scope": "Prospective GPU environment orchestration repair; no GPU numerical qualification",
+  "self_review": {
+    "active_presence_controls_are_absent": true,
+    "cached_disabled_mlx_guard": "Execution probe implemented; negative controls tested with a pure-Python test double; actual GPU validation pending",
+    "cpu_replay_keeps_immutable_cpu_numerical_import_path": true,
+    "direct_backend_and_worker_controls_run_before_framework_work": true,
+    "gpu_probe_validation": "Pure-Python negative controls only; real GPU execution must be performed separately",
+    "managed_subprocess_builders_remove_inherited_definitions": true,
+    "new_helpers_in_source_bindings": true,
+    "only_remaining_zero_assignments": "Historical scripts/report_gpu_qkv.py and deliberate test mutations"
+  },
+  "source_sha256": {
+    "README.md": "531ef5dbd2e4e75c0d23b8500efbb85322d5c82ed76a60df4d0270a89e673f64",
+    "experiments/gpu-compile-control-v1/CORRECTION.md": "c2ccbdb227b0b27d9d7bf4cc774e90d3b6070c46d953d14a95afc5f84d6ac38e",
+    "tests/test_gpu_environment.py": "37b5d688800982999e076b6f0eea8975dc9d96d550d5e26067a876ebc3681b3c",
+    "tests/test_gpu_mlx_compile.py": "800723381bd3b34aeefe9f2c7080b25797f4628fb3ccf1b8849d99deec9d7c24",
+    "tests/test_gpu_repeatability.py": "8b6c2525c8347c5a35cadbeb0a5c68dc061cdd7297ac60badec55f7b81a553cb",
+    "tests/test_gpu_run.py": "e1ed4d15c4535c6cc209b09e4175b2a664c3755e7ac8dd5eb15dd74b1fff2180",
+    "transformer/gpu_admission_checks.py": "4aa0a032d8b9d25e953bc44dfca8bebaff01c89dbb835f39dea6ba36769a114d",
+    "transformer/gpu_environment.py": "128fac4a81e1d1d472f3f34839f03f8531b7f47e653d10a23d57610642fc4277",
+    "transformer/gpu_mlx.py": "6249fcf3b3c220d58de5ea1f3bf7d31b88ffa4b32da6ca0d83a9c360befa78f8",
+    "transformer/gpu_mlx_compile.py": "6029935a51aeb76707828270b430dc7f4f5374276b96c574de847c30c79ffa6d",
+    "transformer/gpu_mps.py": "715e2727588df9f48c33e38185a6ec2196b8c662cb69f6a94fe98681056ff1ca",
+    "transformer/gpu_optimize.py": "26ab494682b08d9932cdaefc2ef95b1be38ee08114972656802aac50f1b9ac72",
+    "transformer/gpu_repeatability.py": "54372951833e053830f2d6e0cb27786a5ab4b11184a9e4f15057bbba886f7965",
+    "transformer/gpu_run.py": "f4ab423bce76f136b3cef8c3f6cf0bc3f93e99394329e77e4142925c839eb1cc",
+    "transformer/gpu_study.py": "4d51d24299e592095ece5fc835bed5cafd791c9b5aff3504c7612d550b29ea87",
+    "transformer/gpu_study_admission.py": "5dc85af071b1842a15b5f0b0018512e9f3f791241ac27a6b293e877dc59eece3",
+    "transformer/gpu_study_audit.py": "bf1e460c78e3da46fbf4eeac95f8c8402e56f92e3be48fd6326927fdf4e7b490",
+    "transformer/gpu_study_cpu_admission.py": "1f90b9be2c23573f72b578f01bc5260dfa427d3c10e0165606bd0ab194bd0f67",
+    "transformer/gpu_study_replay.py": "0d875dbb1a5171f42b304b1f25009c3910806dfe25dad5b2766b9b9d4e129618",
+    "transformer/gpu_study_worker.py": "f3d1a45ba8bed212d04453ebf8f869d95640322213aea06cd5d9f8281bec459d"
+  },
+  "source_state": "uncommitted scoped changes; root will review and commit"
+}

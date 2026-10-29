@@ -13,12 +13,16 @@ import sys
 import time
 from dataclasses import dataclass
 
-for _name in ("PYTORCH_ENABLE_MPS_FALLBACK", "PYTORCH_MPS_FAST_MATH", "PYTORCH_MPS_PREFER_METAL"):
-    if "torch" in sys.modules and os.environ.get(_name) != "0":
-        raise RuntimeError(f"{_name}=0 must be pinned before the first torch import")
-    if os.environ.get(_name, "0") != "0":
-        raise RuntimeError(f"{_name}=0 is required before importing torch")
-    os.environ[_name] = "0"
+from transformer.gpu_environment import (
+    MPS_ENVIRONMENT,
+    configure_environment,
+    require_environment,
+)
+
+if "torch" in sys.modules:
+    require_environment(MPS_ENVIRONMENT)
+else:
+    configure_environment(MPS_ENVIRONMENT)
 
 import numpy as np
 import torch
@@ -421,7 +425,7 @@ class Backend:
             "cpu_tensor_fallback": False,
             "fast_math": False,
             "deterministic_algorithms": True,
-            "PYTORCH_MPS_PREFER_METAL": os.environ["PYTORCH_MPS_PREFER_METAL"],
+            "PYTORCH_MPS_PREFER_METAL": os.environ.get("PYTORCH_MPS_PREFER_METAL"),
             "repeatability_note": (
                 "Deterministic setting is requested; exact training repeatability "
                 "is separately audited"

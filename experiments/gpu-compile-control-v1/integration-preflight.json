@@ -1,0 +1,38 @@
+{
+  "admission_stream_opened": false,
+  "argv": [
+    "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+    "-I",
+    "-S",
+    "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/tests/test_mlx_integration_preflight.py"
+  ],
+  "files": {
+    "integration/mlx-official/validate_bundle.py": {
+      "bytes": 8216,
+      "sha256": "d51c0828665479080a7c8ea90068b38cdca98ad7d2d701b909a4a48987c4e138"
+    },
+    "integration/mlx/validate_bundle.py": {
+      "bytes": 9449,
+      "sha256": "0213f615d8e5eca61b453d20adee1a55e1776e88b5ded81399b16db5f299218f"
+    },
+    "tests/test_mlx_integration_preflight.py": {
+      "bytes": 23149,
+      "sha256": "d07138a719805cd49fcd61fd6a504756b9a38990e75ee9d81ceedcb8eac927a2"
+    }
+  },
+  "formal_fits": 0,
+  "historical_tests_reused_from": "work/upstream-integration-v2/mlx/test_mlx_integration_preflight.py",
+  "log_sha256": "07aa914fb746a214b71f6cab48af5f132c60f5a0ee25ad25b7cc93d1f4ad22ff",
+  "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+  "returncode": 0,
+  "ruff": "passed; three owned files only",
+  "schema": "mlx-validator-control-preflight-v1",
+  "scope": "Framework-free mocked orchestration only; no GPU, native builds, or framework imports",
+  "status": "passed",
+  "superseded_attempt": {
+    "interpreter": "Homebrew python3 3.14.6",
+    "reason": "pyexpat unresolved _XML_SetAllocTrackerActivationThreshold; existing compatible CPython 3.12.13 reused without installation",
+    "result": "environment_error"
+  },
+  "tests": 18
+}
