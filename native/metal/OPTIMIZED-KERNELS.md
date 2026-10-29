@@ -19,6 +19,7 @@ batch is at most 16. Use complete threadgroups for every cooperative kernel.
 | `v2_norm_forward` | X, gamma, beta, Y, saved norm, saved inverse | M | 32*normSG |
 | `v2_norm_dx` | saved norm, saved inverse, gamma, dY, dX | M | 32*normSG |
 | `v2_norm_dparam` | saved norm, dY, dGamma, dBeta | W | 32*normSG |
+| `v2_linear_db` | dY, dBias | N | 32*normSG |
 | `v2_attention_forward` | QKV, scores, score low, P, output | ceil(T/rows), H, B | 32*rows*attSG |
 | `v2_attention_da` | QKV, dOutput, dA, dA low | ceil(B*H*T*T/rows) | 32*rows*attSG |
 | `v2_attention_ds` | dA, dA low, P, dScore, dScore low | ceil(B*H*T/rows) | 32*rows*attSG |
@@ -63,6 +64,12 @@ tree differs from the reference, so repeatability does not imply bitwise equalit
 to the reference. Compare against the unchanged numerical tolerances and FP64
 oracle.
 
+The same six reduction-policy choices also cover dense bias gradients. A group
+owns an output channel and reduces its input rows with the fixed compensated
+tree. Here `V2_NORM_VEC` controls one or four consecutive rows per lane; these
+loads are row-strided, rather than contiguous `float4` loads. Bias-gradient
+stages contribute to the reduction family's measured reference cost.
+
 `V2_ATT_ROWS` and `V2_ATT_SG` are each 1 or 2. `V2_ATT_STAGE` is 0 or 1 and
 controls Q-vector staging only. It does not stage full K/V matrices. Scores,
 score residuals, maximum selection, centering, denominator summation and quotient
@@ -86,6 +93,15 @@ chooses 64 or 128 input rows per iteration: each lane counts matches in its 2 or
 The two candidates change the amount of local work per prefix operation.
 
 ## Required device checks
+
+The policy search compiles the reference and all 75 isolated candidate
+configurations before its first performance score. It records shader compilation,
+SIMD width, required threadgroup size and static threadgroup-memory limits in a
+separate eligibility receipt. Unsupported configurations remain unranked. Greedy
+composition depends on earlier winners, so each subsequent family's complete
+composed inventory also receives a fresh compile/resource preflight before that
+family's timing. An unused unsupported optional kernel does not disqualify a
+policy that does not dispatch it.
 
 Before timing a policy, compile it on the actual device and check all three dense
 directions against FP64, including a final batch with a row count below or between

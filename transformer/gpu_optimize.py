@@ -13,8 +13,10 @@ import json
 import math
 import os
 import platform
+import re
 import statistics
 import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -25,6 +27,11 @@ BLOCKS = 5
 MIN_IMPROVEMENT = 0.03
 PROFILE_REPEATS = 3
 SCOPE = "training_partition_development_only_no_formal_admission_or_speed_claim"
+CAPABILITY_IDENTITY_EXCLUSIONS = {"initialization_seconds_including_shader_compilation"}
+
+
+class MeasurementConditionsError(RuntimeError):
+    pass
 
 
 def digest(path):
@@ -67,6 +74,149 @@ def source_identity():
     return {str(path.relative_to(ROOT)): digest(path) for path in paths if path.is_file()}
 
 
+def environment_identity():
+    from transformer.gpu_run import ENVIRONMENT
+
+    return {
+        key: os.environ.get(key) for key in (*ENVIRONMENT, "ARM64_TRANSFORMER_WIDTH", "PYTHONPATH")
+    }
+
+
+def runtime_identity():
+    """Verify installed runtime bytes outside measured intervals, once per boundary."""
+    import importlib.util
+
+    path = ROOT / "work/gpu-v2/runtime-identity.json"
+    inventory = json.loads(path.read_text())
+    if inventory.get("record_integrity_passed") is not True:
+        raise ValueError("Runtime inventory did not pass its original integrity checks")
+    executable_hash = digest(Path(sys.executable).resolve())
+    if executable_hash != inventory["python"]["executable_identity"]["sha256"]:
+        raise ValueError("Executing interpreter differs from the runtime inventory")
+    packages = sorted(set(inventory["groups"]["runtime"]) - {"mlx", "mlx-metal"})
+    verified = {}
+    for package in packages:
+        for relative, expected in inventory["packages"][package]["installed_files"].items():
+            if relative.startswith("$PYTHON_BASE/"):
+                installed = Path(sys.base_prefix) / relative.removeprefix("$PYTHON_BASE/")
+            elif relative.startswith("$"):
+                raise ValueError(f"Unsupported runtime path alias: {relative}")
+            else:
+                installed = ROOT / relative
+            actual = digest(installed)
+            if actual != expected["sha256"]:
+                raise ValueError(f"Installed runtime file changed: {relative}")
+            verified[relative] = actual
+    origins = {}
+    for module in ("numpy", "torch"):
+        found = importlib.util.find_spec(module)
+        if found is None or found.origin is None:
+            raise ValueError(f"Missing runtime module: {module}")
+        origin = Path(found.origin).resolve()
+        if not any(
+            origin == (ROOT / relative).resolve()
+            for relative in verified
+            if relative.endswith(f"/{module}/__init__.py")
+        ):
+            raise ValueError(f"Runtime module resolves outside verified files: {module}")
+        origins[module] = str(origin)
+    return {
+        "inventory_sha256": digest(path),
+        "inventory_path": str(path.relative_to(ROOT)),
+        "interpreter_sha256": executable_hash,
+        "python_version": sys.version,
+        "verified_packages": packages,
+        "verified_file_count": len(verified),
+        "verified_file_set_sha256": hashlib.sha256(
+            json.dumps(verified, sort_keys=True).encode()
+        ).hexdigest(),
+        "module_origins": origins,
+        "limits": (
+            "Installed runtime closure excluding unused MLX packages; stdlib and OS GPU driver "
+            "bytes are outside the package inventory; Python/OS versions are separately pinned"
+        ),
+    }
+
+
+def validate_profile_identity(profile, sources, runtime, fixture, capabilities=None):
+    expected = {
+        "source_sha256": sources,
+        "runtime_identity": runtime,
+        "environment": environment_identity(),
+        "python": platform.python_version(),
+        "platform": platform.platform(),
+        "input_sha256": fixture["input_sha256"],
+        "input_directory": fixture["input_directory"],
+        "rows_used": fixture["rows_used"],
+        "warmups": WARMUPS,
+        "observations": OBSERVATIONS,
+        "blocks": BLOCKS,
+        "profile_repeats": PROFILE_REPEATS,
+        "min_improvement": MIN_IMPROVEMENT,
+    }
+    for key, value in expected.items():
+        if profile.get(key) != value:
+            raise ValueError(f"Reference profile identity mismatch: {key}")
+    recorded = profile.get("capabilities", {})
+    for field, relative in (
+        ("binary_sha256", "native/metal/build/libtransformer_metal.dylib"),
+        ("host_source_sha256", "native/metal/backend.mm"),
+    ):
+        if recorded.get(field) != sources.get(relative):
+            raise ValueError(f"Reference profile identity mismatch: capabilities/{field}")
+    if capabilities is not None:
+
+        def stable(value):
+            return {
+                key: item
+                for key, item in value.items()
+                if key not in CAPABILITY_IDENTITY_EXCLUSIONS
+            }
+
+        if stable(recorded) != stable(capabilities):
+            raise ValueError(
+                "Reference profile identity mismatch: full device/compiler/pipeline "
+                "capability identity"
+            )
+
+
+def record_failure(record, error, status):
+    record.update(status=status, error=f"{type(error).__name__}: {error}")
+    if getattr(error, "_gpu_cleanup_errors", None):
+        record.setdefault("cleanup_errors", []).extend(error._gpu_cleanup_errors)
+
+
+def cleanup(record, label, action, status):
+    """Capture secondary errors without replacing an already-recorded failure."""
+    try:
+        action()
+        return None
+    except Exception as error:
+        record.setdefault("cleanup_errors", []).append(
+            {"stage": label, "error": f"{type(error).__name__}: {error}"}
+        )
+        record.setdefault("status_before_cleanup_failure", record.get("status"))
+        record["status"] = status
+        return error
+
+
+def cleanup_actions(actions):
+    """Restore all resources while preserving an exception already in flight."""
+    primary = sys.exc_info()[1]
+    record, errors = {}, []
+    for label, action in actions:
+        error = cleanup(record, label, action, "failed")
+        if error is not None:
+            errors.append(error)
+    if errors:
+        target = primary if primary is not None else errors[0]
+        target._gpu_cleanup_errors = (
+            getattr(target, "_gpu_cleanup_errors", []) + record["cleanup_errors"]
+        )
+        if primary is None:
+            raise target
+
+
 def conditions():
     commands = {}
     for name, command in (
@@ -89,6 +239,72 @@ def conditions():
         "load_average": list(os.getloadavg()),
         **commands,
     }
+
+
+def condition_assessment(snapshot):
+    power, thermal = snapshot.get("power", {}), snapshot.get("thermal", {})
+    ac = power.get("returncode") == 0 and "AC Power" in power.get("stdout", "")
+    text = thermal.get("stdout", "")
+    limits = {
+        name: int(value)
+        for name, value in re.findall(
+            r"\b(CPU_Speed_Limit|CPU_Scheduler_Limit|GPU_Speed_Limit)\s*=\s*(\d+)", text
+        )
+    }
+    known_throttle = any(value < 100 for value in limits.values()) or bool(
+        re.search(
+            r"\bthermal\s+(?:pressure|state)\s*[:=]\s*(?:serious|critical|heavy|throttled)\b",
+            text,
+            re.I,
+        )
+    )
+    unsupported = bool(re.search(r"unsupported|0xe00002bc", thermal.get("stderr", ""), re.I))
+    available = thermal.get("returncode") == 0 and bool(text.strip()) and not unsupported
+    return {
+        "valid": ac and not known_throttle,
+        "ac_power_confirmed": ac,
+        "thermal_status": "known_throttling"
+        if known_throttle
+        else "available_no_known_throttling"
+        if available
+        else "unavailable",
+        "reported_limits": limits,
+        "load_average_is_descriptive_only": True,
+    }
+
+
+def check_conditions(record, key):
+    record[key] = conditions()
+    assessment = condition_assessment(record[key])
+    record[key + "_assessment"] = assessment
+    if not assessment["valid"]:
+        raise MeasurementConditionsError(
+            "Measurement requires confirmed AC power and no known thermal throttling"
+        )
+
+
+def finish_record(record, path, backend=None):
+    primary = sys.exc_info()[1]
+    errors = []
+    if backend is not None:
+        error = cleanup(record, "backend.close", backend.close, "failed")
+        if error is not None:
+            errors.append(error)
+    error = cleanup(
+        record, "conditions_after", lambda: check_conditions(record, "conditions_after"), "failed"
+    )
+    if error is not None:
+        errors.append(error)
+    try:
+        write_fresh(path, record)
+    except Exception as error:
+        # A filesystem failure cannot be repaired by hiding the original failure.
+        if primary is not None:
+            primary.add_note(f"Also failed to persist {path}: {type(error).__name__}: {error}")
+        else:
+            raise
+    if errors and primary is None:
+        raise errors[0]
 
 
 def load_development(width):
@@ -212,7 +428,7 @@ def measure(backend, batch, mode, *, warmups=WARMUPS, observations=OBSERVATIONS,
             else "forward + GPU completion; finite/guard/readback checks outside timing",
         }
     finally:
-        restore_exact(backend, saved)
+        cleanup_actions([("restore_state", lambda: restore_exact(backend, saved))])
 
 
 def measure_paired(
@@ -303,18 +519,25 @@ def measure_paired(
             ),
         }
     finally:
-        for name, backend in backends.items():
-            restore_exact(backend, saved[name])
+        cleanup_actions(
+            [
+                (
+                    f"restore_{name}",
+                    lambda backend=backend, state=saved[name]: restore_exact(backend, state),
+                )
+                for name, backend in backends.items()
+            ]
+        )
 
 
 def stage_profile(backend, batch, mode):
     saved = backend.export_state()
-    backend.enable_profiling(False)
-    for _ in range(WARMUPS):
-        production_sample(backend, batch, mode)
-    restore_exact(backend, saved)
-    backend.enable_profiling(True)
     try:
+        backend.enable_profiling(False)
+        for _ in range(WARMUPS):
+            production_sample(backend, batch, mode)
+        restore_exact(backend, saved)
+        backend.enable_profiling(True)
         for _ in range(PROFILE_REPEATS):
             restore_exact(backend, saved)
             if mode == "training":
@@ -351,11 +574,15 @@ def stage_profile(backend, batch, mode):
             },
         }
     finally:
-        backend.enable_profiling(False)
-        restore_exact(backend, saved)
+        cleanup_actions(
+            [
+                ("disable_profiling", lambda: backend.enable_profiling(False)),
+                ("restore_state", lambda: restore_exact(backend, saved)),
+            ]
+        )
 
 
-def reserve(output, width, mode, fixture, **extra):
+def reserve(output, width, mode, fixture, *, runtime_record=None, **extra):
     output = Path(output).resolve()
     if output.exists() or output.is_symlink():
         raise FileExistsError(output)
@@ -376,16 +603,8 @@ def reserve(output, width, mode, fixture, **extra):
         "blocks": BLOCKS,
         "profile_repeats": PROFILE_REPEATS,
         "min_improvement": MIN_IMPROVEMENT,
-        "environment": {
-            key: os.environ.get(key)
-            for key in (
-                "ARM64_TRANSFORMER_WIDTH",
-                "OMP_NUM_THREADS",
-                "OPENBLAS_NUM_THREADS",
-                "VECLIB_MAXIMUM_THREADS",
-                "PYTORCH_ENABLE_MPS_FALLBACK",
-            )
-        },
+        "environment": environment_identity(),
+        "runtime_identity": runtime_record if runtime_record is not None else runtime_identity(),
         "python": platform.python_version(),
         "platform": platform.platform(),
         **extra,
@@ -405,11 +624,11 @@ def profile_reference(width, output):
     result = {
         **frozen,
         "ledger_sha256": digest(ledger),
-        "conditions_before": conditions(),
         "status": "started",
     }
     backend = None
     try:
+        check_conditions(result, "conditions_before")
         backend = Backend(fixture["initial"], kernel_policy=reference())
         prepared = batches(backend, fixture)
         result["capabilities"] = backend.capabilities()
@@ -426,15 +645,15 @@ def profile_reference(width, output):
         )
         if not result["sources_unchanged"] or not result["inputs_unchanged"]:
             raise RuntimeError("Source/input identity changed during profiling")
+        result["runtime_unchanged"] = frozen["runtime_identity"] == runtime_identity()
+        if not result["runtime_unchanged"]:
+            raise RuntimeError("Runtime identity changed during profiling")
         result["status"] = "completed"
     except Exception as error:
-        result.update(status="failed", error=f"{type(error).__name__}: {error}")
+        record_failure(result, error, "failed")
         raise
     finally:
-        if backend is not None:
-            backend.close()
-        result["conditions_after"] = conditions()
-        write_fresh(output, result)
+        finish_record(result, output, backend)
     return result
 
 
@@ -848,7 +1067,7 @@ def family_costs(profile, mode):
         "dense_forward": ("dense_forward/",),
         "dense_dx": ("dense_dx/",),
         "dense_dw": ("dense_dw/",),
-        "norm": ("norm_",),
+        "norm": ("norm_", "bias_gradient/"),
         "attention": ("attention_",),
         "embedding": ("embedding_backward",),
         "fusion": ("elementwise/", "adam"),
@@ -908,6 +1127,152 @@ def select_winner(records):
     )
 
 
+def pipeline_resource_checks(policy, capabilities):
+    """Validate compiled pipeline limits without dispatching numerical work."""
+    from transformer.gpu_policy import validate
+
+    policy = validate(policy)
+    required = {"qkv_forward": 256, "qkv_dx": 256, "attention_dqkv": None}
+    for direction, name in (
+        ("forward", "linear_forward"),
+        ("dx", "linear_dx"),
+        ("dw", "linear_dw"),
+    ):
+        tile = policy["dense"][direction]
+        required[("v2_" if tile else "") + name] = 32 * tile["sg"] if tile else 256
+        # A later fusion family checks this composition before its timing.
+        # An unsupported unused epilogue must not reject a valid dense policy.
+        if direction == "forward" and tile and policy["fusion"]["epilogue"]:
+            required["v2_linear_forward_epilogue"] = 32 * tile["sg"]
+    if policy["norm"]:
+        for name in ("norm_forward", "norm_dx", "norm_dparam", "linear_db"):
+            required["v2_" + name] = 32 * policy["norm"]["sg"]
+    else:
+        for name in ("norm_forward", "norm_dx", "norm_dparam", "linear_db"):
+            required[name] = None
+    if policy["attention"]:
+        threads = 32 * policy["attention"]["rows"] * policy["attention"]["sg"]
+        required.update(v2_attention_forward=threads, v2_attention_dads=threads)
+    else:
+        for name in (
+            "attention_scores",
+            "attention_softmax",
+            "attention_values",
+            "attention_da",
+            "attention_ds",
+        ):
+            required[name] = None
+    if policy["embedding"]:
+        required.update(v2_embedding_index=32, v2_embedding_grad=None)
+    else:
+        required["embedding_grad"] = None
+    if policy["fusion"]["epilogue"] and policy["dense"]["forward"] is None:
+        required["v2_reference_forward_epilogue"] = 256
+    required["v2_adam_finite" if policy["fusion"]["adam_finite"] else "adam"] = None
+    apple_families = [
+        int(name[5:])
+        for name in capabilities.get("families", [])
+        if name.startswith("Apple") and name[5:].isdigit()
+    ]
+    matrix_selected = any(policy["dense"].values())
+    checks = [
+        {
+            "name": "simdgroup_matrix_feature",
+            "required": matrix_selected,
+            "passed": not matrix_selected or bool(apple_families and max(apple_families) >= 7),
+        }
+    ]
+    maximum_memory = capabilities.get("max_threadgroup_memory_bytes", 0)
+    pipelines = capabilities.get("pipelines", {})
+    for prefix in ("", "inference:"):
+        for name, fixed_threads in required.items():
+            key = prefix + name
+            pipeline = pipelines.get(key, {})
+            maximum_threads = pipeline.get("max_threads_per_group", 0)
+            threads = fixed_threads if fixed_threads is not None else min(256, maximum_threads)
+            memory = pipeline.get("static_threadgroup_memory_bytes")
+            passed = (
+                pipeline.get("thread_execution_width") == 32
+                and threads > 0
+                and threads <= maximum_threads
+                and memory is not None
+                and 0 <= memory <= maximum_memory
+            )
+            checks.append(
+                {
+                    "name": key,
+                    "requested_threads": threads,
+                    "max_threads_per_group": maximum_threads,
+                    "static_threadgroup_memory_bytes": memory,
+                    "max_threadgroup_memory_bytes": maximum_memory,
+                    "passed": passed,
+                }
+            )
+    return {"checks": checks, "passed": all(check["passed"] for check in checks)}
+
+
+def preflight_policies(fixture, policies, output):
+    """Compile the entire supplied inventory, then freeze eligibility before timing."""
+    from transformer.gpu_metal import Backend
+    from transformer.gpu_policy import identity
+
+    output = Path(output)
+    entries = output.with_suffix(output.suffix + ".entries")
+    entries.mkdir(parents=True, exist_ok=False)
+    sources = source_identity()
+    records = []
+    for item in policies:
+        if sources != source_identity():
+            raise RuntimeError("Source changed during compile preflight")
+        record = {
+            "id": item["id"],
+            "policy_sha256": identity(item["policy"]),
+            "policy": item["policy"],
+        }
+        backend = None
+        try:
+            backend = Backend(fixture["initial"], kernel_policy=item["policy"])
+            record["capabilities"] = backend.capabilities()
+            record["resources"] = pipeline_resource_checks(item["policy"], record["capabilities"])
+            record["status"] = (
+                "supported" if record["resources"]["passed"] else "resource_rejected_unranked"
+            )
+        except Exception as error:
+            record_failure(record, error, "compile_rejected_unranked")
+        finally:
+            if backend is not None:
+                cleanup(record, "backend.close", backend.close, "cleanup_rejected_unranked")
+            path = entries / f"{item['id']}.json"
+            write_fresh(path, record)
+            records.append(
+                {
+                    "id": item["id"],
+                    "status": record["status"],
+                    "policy_sha256": record["policy_sha256"],
+                    "evidence": path.name,
+                    "evidence_sha256": digest(path),
+                }
+            )
+        print(
+            json.dumps(
+                {"phase": "compile_preflight", "candidate": item["id"], "status": record["status"]}
+            ),
+            flush=True,
+        )
+    result = {
+        "scope": SCOPE,
+        "source_sha256": sources,
+        "records": records,
+        "numeric_dispatches": 0,
+        "timing_observations": 0,
+        "eligibility_frozen_before_next_scoring_phase": True,
+    }
+    if sources != source_identity():
+        raise RuntimeError("Source changed during compile preflight")
+    write_fresh(output, result)
+    return result
+
+
 def search_policies(width, output, profile_path):
     fixture = load_development(width)
     from transformer.gpu_metal import Backend
@@ -922,18 +1287,8 @@ def search_policies(width, output, profile_path):
     ):
         raise ValueError("Require a completed reference profile for this width")
     sources = source_identity()
-    for critical in (
-        "native/metal/backend.mm",
-        "native/metal/kernels.metal",
-        "native/metal/optimized.metal",
-        "transformer/gpu_metal.py",
-        "transformer/gpu_policy.py",
-        "transformer/spec.py",
-    ):
-        if profile["source_sha256"].get(critical) != sources.get(critical):
-            raise ValueError(f"Reference profile execution source changed: {critical}")
-    if profile["input_sha256"] != fixture["input_sha256"]:
-        raise ValueError("Reference profile input differs")
+    runtime = runtime_identity()
+    validate_profile_identity(profile, sources, runtime, fixture)
     revision = committed_revision(sources)
     inventory = candidate_inventory()
     costs = {mode: family_costs(profile, mode) for mode in ("training", "inference")}
@@ -950,6 +1305,7 @@ def search_policies(width, output, profile_path):
         width,
         "policy_search",
         fixture,
+        runtime_record=runtime,
         candidate_inventory=inventory,
         candidate_filters=filters,
         family_order=order,
@@ -961,44 +1317,122 @@ def search_policies(width, output, profile_path):
             "alternating incumbent/candidate blocks of 20 observations each. Select the "
             "largest median paired fractional reduction if at least 3%; ties by candidate ID"
         ),
+        preflight_rule=(
+            "Compile reference and all 75 isolated candidate configurations and freeze their "
+            "pipeline-resource eligibility before the first score. After each greedy incumbent "
+            "is known, compile and freeze all actual next-family compositions before that "
+            "family's timing. Unsupported configurations are excluded without ranking."
+        ),
     )
     evidence = output.with_suffix(output.suffix + ".evidence")
     evidence.mkdir(parents=True, exist_ok=False)
     result = {
         **frozen,
         "ledger_sha256": digest(ledger),
-        "conditions_before": conditions(),
         "status": "started",
         "modes": {},
     }
     try:
+        check_conditions(result, "conditions_before")
+        initial_preflight_path = evidence / "initial-compile-preflight.json"
+        initial_preflight = preflight_policies(
+            fixture,
+            [{"id": "reference", "policy": reference()}]
+            + [
+                {"id": candidate["id"], "policy": apply_candidate(reference(), candidate)}
+                for candidate in inventory
+            ],
+            initial_preflight_path,
+        )
+        initial_support = {
+            row["id"]: row["status"] == "supported" for row in initial_preflight["records"]
+        }
+        result["initial_preflight"] = {
+            "evidence": initial_preflight_path.name,
+            "sha256": digest(initial_preflight_path),
+        }
+        if not initial_support["reference"]:
+            raise RuntimeError(
+                "Reference failed compile/resource preflight; no scoring is permitted"
+            )
+        reference_receipt = json.loads(
+            initial_preflight_path.with_suffix(initial_preflight_path.suffix + ".entries")
+            .joinpath("reference.json")
+            .read_text()
+        )
+        validate_profile_identity(
+            profile, sources, runtime, fixture, reference_receipt["capabilities"]
+        )
+        result["profile_identity_verified"] = True
+        result["capability_identity_exclusions"] = sorted(CAPABILITY_IDENTITY_EXCLUSIONS)
         cache = OracleCache(fixture, width)
         qualification_cache = {}
         for mode in ("training", "inference"):
             incumbent, mode_records, families = reference(), [], []
+            result["modes"][mode] = {
+                "status": "running",
+                "families": families,
+                "candidates": mode_records,
+            }
+            exclusions = dict(filters[mode])
+            for candidate in inventory:
+                if exclusions[candidate["id"]] is None and not initial_support[candidate["id"]]:
+                    exclusions[candidate["id"]] = (
+                        "Initial compile/resource preflight rejected this candidate"
+                    )
             for family in order[mode]:
                 if frozen["source_sha256"] != source_identity():
                     raise RuntimeError(
                         "Source changed during selection; stop before further scoring"
                     )
                 candidates = [row for row in inventory if row["family"] == family]
-                active = [row for row in candidates if filters[mode][row["id"]] is None]
+                active = [row for row in candidates if exclusions[row["id"]] is None]
                 family_record = {
                     "family": family,
                     "incumbent_policy_sha256": identity(incumbent),
                     "selection": "retained",
                 }
+                families.append(family_record)
+                if active:
+                    family_preflight_path = evidence / f"{mode}-{family}-compile-preflight.json"
+                    family_preflight = preflight_policies(
+                        fixture,
+                        [{"id": "incumbent", "policy": incumbent}]
+                        + [
+                            {"id": row["id"], "policy": apply_candidate(incumbent, row)}
+                            for row in active
+                        ],
+                        family_preflight_path,
+                    )
+                    support = {
+                        row["id"]: row["status"] == "supported"
+                        for row in family_preflight["records"]
+                    }
+                    family_record["compile_preflight"] = {
+                        "evidence": family_preflight_path.name,
+                        "sha256": digest(family_preflight_path),
+                    }
+                    if not support["incumbent"]:
+                        raise RuntimeError("Composed incumbent failed compile/resource preflight")
+                    for row in active:
+                        if not support[row["id"]]:
+                            exclusions[row["id"]] = (
+                                "Composed policy failed this family's compile/resource preflight"
+                            )
+                    active = [row for row in active if support[row["id"]]]
                 if not active:
                     for candidate in candidates:
                         mode_records.append(
                             {
                                 "id": candidate["id"],
-                                "status": "structurally_excluded",
-                                "reason": filters[mode][candidate["id"]],
+                                "status": "structurally_excluded"
+                                if filters[mode][candidate["id"]]
+                                else "unsupported_unranked",
+                                "reason": exclusions[candidate["id"]],
                             }
                         )
-                    families.append(family_record)
                     continue
+                check_conditions(family_record, "conditions_before")
                 baseline = Backend(fixture["initial"], kernel_policy=incumbent)
                 try:
                     key = (identity(incumbent), "all" if incumbent == reference() else family)
@@ -1013,20 +1447,26 @@ def search_policies(width, output, profile_path):
                     base_batch = batches(baseline, fixture)[mode]
                     base_timing = measure(baseline, base_batch, mode)
                 finally:
-                    baseline.close()
+                    primary = sys.exc_info()[1]
+                    error = cleanup(result, "incumbent.close", baseline.close, "failed")
+                    if error is not None and primary is None:
+                        raise error
                 family_record["incumbent_timing"] = base_timing
+                check_conditions(family_record, "conditions_after")
                 eligible = []
                 for candidate_index, candidate in enumerate(candidates):
                     if frozen["source_sha256"] != source_identity():
                         raise RuntimeError(
                             "Source changed during selection; stop before further scoring"
                         )
-                    exclusion = filters[mode][candidate["id"]]
+                    exclusion = exclusions[candidate["id"]]
                     if exclusion:
                         mode_records.append(
                             {
                                 "id": candidate["id"],
-                                "status": "structurally_excluded",
+                                "status": "structurally_excluded"
+                                if filters[mode][candidate["id"]]
+                                else "unsupported_unranked",
                                 "reason": exclusion,
                             }
                         )
@@ -1038,10 +1478,13 @@ def search_policies(width, output, profile_path):
                         "policy": policy,
                         "policy_sha256": identity(policy),
                         "status": "started",
-                        "conditions_before": conditions(),
                     }
+                    # Keep an in-flight row in the outer receipt if finalizing
+                    # its individual evidence file itself fails.
+                    result["active_candidate"] = row
                     backend = None
                     try:
+                        check_conditions(row, "conditions_before")
                         backend = Backend(fixture["initial"], kernel_policy=policy)
                         row["capabilities"] = backend.capabilities()
                         row["qualification"] = qualify(backend, cache, family)
@@ -1059,7 +1502,15 @@ def search_policies(width, output, profile_path):
                                     order_offset=candidate_index % 2,
                                 )
                             finally:
-                                paired_reference.close()
+                                primary = sys.exc_info()[1]
+                                error = cleanup(
+                                    row,
+                                    "paired_reference.close",
+                                    paired_reference.close,
+                                    "cleanup_rejected_unranked",
+                                )
+                                if error is not None and primary is None:
+                                    raise error
                             row["timing"] = row["paired_timing"]["candidate"]
                             row["improvement_fraction"] = row["paired_timing"][
                                 "median_paired_improvement_fraction"
@@ -1067,14 +1518,20 @@ def search_policies(width, output, profile_path):
                             row["status"] = "qualified_measured"
                             eligible.append(row)
                     except Exception as error:
-                        row.update(
-                            status="execution_rejected_unranked",
-                            error=f"{type(error).__name__}: {error}",
-                        )
+                        record_failure(row, error, "execution_rejected_unranked")
+                        if isinstance(error, MeasurementConditionsError):
+                            raise
                     finally:
                         if backend is not None:
-                            backend.close()
-                        row["conditions_after"] = conditions()
+                            cleanup(
+                                row, "backend.close", backend.close, "cleanup_rejected_unranked"
+                            )
+                        condition_error = cleanup(
+                            row,
+                            "conditions_after",
+                            lambda: check_conditions(row, "conditions_after"),
+                            "conditions_rejected_unranked",
+                        )
                         destination = evidence / f"{mode}-{candidate['id']}.json"
                         write_fresh(destination, row)
                         mode_records.append(
@@ -1086,6 +1543,9 @@ def search_policies(width, output, profile_path):
                                 "improvement_fraction": row.get("improvement_fraction"),
                             }
                         )
+                        result.pop("active_candidate", None)
+                        if condition_error is not None and sys.exc_info()[1] is None:
+                            raise condition_error
                     print(
                         json.dumps(
                             {
@@ -1107,8 +1567,8 @@ def search_policies(width, output, profile_path):
                             "median_paired_latency_ratio"
                         ],
                     )
-                families.append(family_record)
             result["modes"][mode] = {
+                "status": "completed",
                 "selected_policy": incumbent,
                 "selected_policy_sha256": identity(incumbent),
                 "families": families,
@@ -1117,14 +1577,70 @@ def search_policies(width, output, profile_path):
         selected = {
             mode: result["modes"][mode]["selected_policy"] for mode in ("training", "inference")
         }
+        result["selected_policy_qualification"] = {}
+        for mode, policy in selected.items():
+            backend = Backend(fixture["initial"], kernel_policy=policy)
+            try:
+                result["selected_policy_qualification"][mode] = qualify(backend, cache, "all")
+                if not result["selected_policy_qualification"][mode]["passed"]:
+                    raise RuntimeError(
+                        f"Final {mode} policy failed full development stress qualification"
+                    )
+            finally:
+                primary = sys.exc_info()[1]
+                error = cleanup(result, f"selected_{mode}.close", backend.close, "failed")
+                if error is not None and primary is None:
+                    raise error
         backend = Backend(fixture["initial"], kernel_policy=selected)
+        original = None
         try:
             result["selected_bundle_full_checks"] = full_checks(backend, cache)
             if not result["selected_bundle_full_checks"]["passed"]:
                 raise RuntimeError("Combined final policy failed full-model qualification")
             result["selected_capabilities"] = backend.capabilities()
+            original = Backend(fixture["initial"], kernel_policy=reference())
+            original_batches, selected_batches = (
+                batches(original, fixture),
+                batches(backend, fixture),
+            )
+            result["selected_vs_reference"] = {}
+            for index, mode in enumerate(("training", "inference")):
+                check_conditions(result, f"final_{mode}_conditions_before")
+                result["selected_vs_reference"][mode] = measure_paired(
+                    original,
+                    backend,
+                    original_batches[mode],
+                    selected_batches[mode],
+                    mode,
+                    order_offset=index,
+                )
+                check_conditions(result, f"final_{mode}_conditions_after")
+            # Reference stage profiles used one resident backend. Restore that
+            # same residency for the final selected diagnostic profiles.
+            error = cleanup(
+                result, "original_reference.close_before_profiles", original.close, "failed"
+            )
+            if error is not None:
+                raise error
+            original = None
+            # Intrusive profiles come strictly after both production comparisons.
+            result["selected_profiles_after_production"] = {
+                mode: stage_profile(backend, selected_batches[mode], mode)
+                for mode in ("training", "inference")
+            }
         finally:
-            backend.close()
+            primary = sys.exc_info()[1]
+            errors = []
+            for label, owned in (
+                ("selected_bundle.close", backend),
+                ("original_reference.close", original),
+            ):
+                if owned is not None:
+                    error = cleanup(result, label, owned.close, "failed")
+                    if error is not None:
+                        errors.append(error)
+            if errors and primary is None:
+                raise errors[0]
         result["selected_policy"] = selected
         result["sources_unchanged"] = frozen["source_sha256"] == source_identity()
         result["inputs_unchanged"] = (
@@ -1132,11 +1648,13 @@ def search_policies(width, output, profile_path):
         )
         if not result["sources_unchanged"] or not result["inputs_unchanged"]:
             raise RuntimeError("Source/input identity changed during selection")
+        result["runtime_unchanged"] = frozen["runtime_identity"] == runtime_identity()
+        if not result["runtime_unchanged"]:
+            raise RuntimeError("Runtime identity changed during selection")
         result["status"] = "completed"
     except Exception as error:
-        result.update(status="failed", error=f"{type(error).__name__}: {error}")
+        record_failure(result, error, "failed")
         raise
     finally:
-        result["conditions_after"] = conditions()
-        write_fresh(output, result)
+        finish_record(result, output)
     return result

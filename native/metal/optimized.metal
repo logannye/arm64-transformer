@@ -171,6 +171,20 @@ inline float2 v2_group_ff_sum(float2 v,threadgroup float2* scratch,uint lane,uin
     return total;
 }
 
+// One group owns one bias channel. The reduction policy shares the fixed
+// compensated tree with LayerNorm; VEC selects consecutive rows per lane here
+// (row-strided data, so this is not a contiguous float4 load).
+kernel void v2_linear_db(device const float* dy [[buffer(0)]],device float* db [[buffer(1)]],
+                         constant Args& a [[buffer(7)]],uint c [[threadgroup_position_in_grid]],
+                         uint tid [[thread_index_in_threadgroup]],ushort lane [[thread_index_in_simdgroup]],
+                         ushort sg [[simdgroup_index_in_threadgroup]]){
+    threadgroup float2 scratch[V2_NORM_SG];float2 sum=0;
+    for(uint base=tid*V2_NORM_VEC;base<a.m;base+=32*V2_NORM_SG*V2_NORM_VEC)
+        for(uint v=0;v<V2_NORM_VEC;++v)if(base+v<a.m)sum=ff_add(sum,float2(dy[(base+v)*a.n+c],0));
+    sum=v2_group_ff_sum(sum,scratch,lane,sg);
+    if(tid==0)db[c]=sum.x+sum.y;
+}
+
 // Widths are multiples of 32 and row bases are aligned. The vector candidate
 // therefore loads complete aligned float4s without crossing a logical row.
 inline float4 v2_norm_load(device const float* values,uint offset){

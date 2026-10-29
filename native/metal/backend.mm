@@ -97,7 +97,7 @@ struct Context {
             if(!p)throw std::runtime_error(std::string("Pipeline ")+name+": "+error.localizedDescription.UTF8String);
             if(p.maxTotalThreadsPerThreadgroup<256)throw std::runtime_error("Pipeline does not support 256-thread tile");
             pipelines[name]=p;}
-        const char* optimized[]={"v2_linear_forward","v2_linear_dx","v2_linear_dw","v2_norm_forward","v2_norm_dx","v2_norm_dparam",
+        const char* optimized[]={"v2_linear_forward","v2_linear_dx","v2_linear_dw","v2_linear_db","v2_norm_forward","v2_norm_dx","v2_norm_dparam",
             "v2_attention_forward","v2_attention_da","v2_attention_ds","v2_attention_dads","v2_embedding_index","v2_embedding_grad",
             "v2_linear_forward_epilogue","v2_reference_forward_epilogue","v2_adam_finite"};
         if(controls){for(auto name:optimized){id<MTLFunction> f=[library newFunctionWithName:[NSString stringWithUTF8String:name]];
@@ -138,7 +138,7 @@ struct Context {
     void commit(id<MTLCommandBuffer> c){[c commit];pending.push_back(c);}
     void encode(id<MTLComputeCommandEncoder> e,const char* name,std::initializer_list<Ref> refs,const Args& a,size_t count){
         std::string selected=name;
-        bool norm=policy().normSG&&(selected=="norm_forward"||selected=="norm_dx"||selected=="norm_dparam");
+        bool norm=policy().normSG&&(selected=="norm_forward"||selected=="norm_dx"||selected=="norm_dparam"||selected=="linear_db");
         if(norm)selected="v2_"+selected;
         auto pipe=pipeline(selected);[e setComputePipelineState:pipe];uint32_t slot=0;
         for(auto ref:refs){[e setBuffer:ref.buffer->object offset:GUARD+ref.offset atIndex:slot++];}
@@ -303,7 +303,7 @@ struct Context {
             @"attention_scale_hi":@(attentionScaleHi),@"attention_scale_lo":@(attentionScaleLo),
             @"attention_scale_setup":@"Host double scalar 1/sqrt(head_width), split once into two FP32 constants; no tensor computation on CPU",
             @"normalization_precision":@"Two-float reductions, centered variance and backward contractions; FP32 saved norm/inverse/output",
-            @"qkv_precision":@"Two-float forward and input-gradient contractions; other dense and QKV weight/bias gradients retain FP32 arithmetic",
+            @"qkv_precision":@"Two-float forward and input-gradient contractions; weight gradients follow the FP32 dense policy, bias gradients follow the reference or compensated reduction policy; stored gradients are FP32",
             @"matrix_instruction_path":@"Explicit v2 policy: reference scalar FMA or FP32 SIMD-group 8x8 matrix operations; QKV forward/dX compensated",
             @"pipelines":pipes,@"adam_scalar_bookkeeping":@"Host step and double scalar pow for bias correction; all tensor arithmetic on GPU"};
         NSData* data=[NSJSONSerialization dataWithJSONObject:info options:NSJSONWritingSortedKeys error:nil];
