@@ -207,7 +207,7 @@ _tf_backend_info:
  ldr w9,[\shape,#4]
  cmp w9,#64
  b.lo \fallback
- cmp w9,#512
+ cmp w9,#2048
  b.hi \fallback
  sub w10,w9,#1
  tst w9,w10
@@ -215,7 +215,7 @@ _tf_backend_info:
  ldr w9,[\shape,#8]
  cmp w9,#64
  b.lo \fallback
- cmp w9,#768
+ cmp w9,#3072
  b.hi \fallback
  tst w9,#31
  b.ne \fallback

@@ -8,7 +8,7 @@ Kernels can use private stack scratch. The backend has an immutable selection
 policy after initialization and mutable diagnostic call counters; model parameters,
 gradients, optimizer state, and numerical scratch are never shared globals.
 The model/layout is transformer/spec.py; the build-specific layout.inc contains
-byte offsets. The supported width ladder is 32, 64, 128, 256, with context 32,
+byte offsets. The supported width ladder is 32, 64, 128, 256, 512, 1024, with context 32,
 four heads, feed-forward width twice model width, and vocabulary 128. Each width
 has its own compiled executable/library and matching binary fixtures.
 
@@ -74,9 +74,20 @@ Detection queries Darwin `hw.optional.arm.FEAT_SME` and
 The current implementation also requires a streaming vector length of **64 bytes**,
 or 16 float32 lanes. Before dispatch, it checks the current vector length and
 execution state again. SME linear shapes are exactly `rows=32`,
-`input in {64,128,256,512}`, and `output` a multiple of 32 in `[64,768]`.
-All five projections in full models of width 64, 128, and 256 satisfy this rule;
+`input in {64,128,256,512,1024,2048}`, and `output` a multiple of 32 in `[64,3072]`.
+All five projections in full models of width 64, 128, 256, 512, and 1024 satisfy this rule;
 the width-32 model uses NEON. Other positive shapes retain the NEON/generic path.
+Callers must provide enough thread stack for the selected shape: forward can use
+512 KiB of scratch plus its 160-byte frame, and backward can use 384 KiB plus its
+192-byte frame, in addition to the caller's live stack. The standalone runtime
+uses the process's main thread. A thread with only a 512 KiB stack is insufficient
+for the largest forward shape; custom FFI threads must provision more space or
+select the NEON policy before loading the library.
+Compiled widths 512 and 1024 use four interleaved FP32 forward accumulators per
+output, combined in NEON's pairwise order; smaller compiled models retain their
+previous SME reduction order. This changes no public signature, tensor layout,
+scratch bound, or backward accumulation contract. See `kernel_notes.md` for the
+accuracy and operand-load tradeoff.
 
 `tf_backend_info(out)` writes ten uint64 words (80 bytes), with word 1 interpreted
 as signed int64:

@@ -1,4 +1,4 @@
-"""Audit all 48 width-sweep fits and retain per-width and aggregate reports.
+"""Audit every protocol-declared width-sweep fit and retain per-width and aggregate reports.
 
 Each width's mathematical audit runs in a separate process selected before imports.
 This module never trains a model or performs performance measurements.
@@ -16,10 +16,21 @@ from pathlib import Path
 import numpy as np
 
 from transformer import spec
-from transformer.backend import validate_backend_preflights, validate_runtime_backend
+from transformer.backend import (
+    WIDE_VALIDATION_CONTRACT,
+    validate_backend_preflights,
+    validate_regression_preflights,
+    validate_runtime_backend,
+)
 from transformer.prepare import SOURCE_SHA256
 from transformer.report import COLORS, IMPLEMENTATIONS, LABELS, aggregate_runs, seed_statistics
-from transformer.sweep import child_environment, on_ac_power, study_order
+from transformer.sweep import (
+    REGRESSION_WIDTHS,
+    child_environment,
+    on_ac_power,
+    protocol_widths,
+    study_order,
+)
 from transformer.validate import ROOT, Checks, sha256
 
 REPORT_SOURCES = (
@@ -54,22 +65,24 @@ def identity(entry):
 
 def validate_manifest(manifest, width_manifests, checks):
     """Reject incomplete, duplicated or internally inconsistent campaign records."""
+    widths = protocol_widths(manifest.get("protocol_version"))
     require(
         checks,
         "manifest/completed_width_protocol",
-        manifest.get("status") == "completed" and manifest.get("protocol_version") in ("v3", "v4"),
+        manifest.get("status") == "completed"
+        and manifest.get("protocol_version") in ("v3", "v4", "v5"),
     )
-    require(checks, "manifest/four_widths", manifest.get("widths") == list(spec.WIDTHS))
+    require(checks, "manifest/protocol_widths", manifest.get("widths") == list(widths))
     require(
         checks,
         "manifest/source_identity",
         bool(manifest.get("revision")) and bool(manifest.get("source_sha256")),
     )
-    expected_order = study_order()
+    expected_order = study_order(manifest["protocol_version"])
     observed = [identity(entry) for entry in manifest["runs"]]
     require(
         checks,
-        "manifest/exact_48_run_identities",
+        "manifest/exact_run_identities",
         len(observed) == len(expected_order)
         and len(set(observed)) == len(observed)
         and set(observed) == set(expected_order),
@@ -79,12 +92,12 @@ def validate_manifest(manifest, width_manifests, checks):
         "manifest/frozen_order",
         observed == expected_order and [tuple(row) for row in manifest["order"]] == expected_order,
     )
-    require(checks, "manifest/width_reports", set(width_manifests) == set(spec.WIDTHS))
+    require(checks, "manifest/width_reports", set(width_manifests) == set(widths))
     require(
         checks,
         "manifest/models_and_fixtures",
         all(
-            set(manifest[key]) == {str(width) for width in spec.WIDTHS}
+            set(manifest[key]) == {str(width) for width in widths}
             for key in ("models", "fixtures", "preflights")
         ),
     )
@@ -138,7 +151,7 @@ def validate_manifest(manifest, width_manifests, checks):
             tag + "/process_timer",
             math.isfinite(entry["process_wall_seconds"]) and entry["process_wall_seconds"] > 0,
         )
-    for width in spec.WIDTHS:
+    for width in widths:
         key = str(width)
         child = width_manifests[width]
         model = manifest["models"][key]
@@ -177,7 +190,7 @@ def validate_manifest(manifest, width_manifests, checks):
             require(
                 checks, f"width-{width}/manifest_matches_global/{field}", child[field] == expected
             )
-        if manifest["protocol_version"] == "v4":
+        if manifest["protocol_version"] in ("v4", "v5"):
             supplements = manifest["backend_preflights"][key]
             validate_backend_preflights(manifest["preflights"][key], supplements)
             require(
@@ -214,13 +227,42 @@ def validate_manifest(manifest, width_manifests, checks):
             and preflight.get("failed_checks") == []
             and preflight.get("error") is None,
         )
-    validate_shared_fixtures(manifest["fixtures"], checks)
+    if manifest["protocol_version"] == "v5":
+        require(
+            checks,
+            "manifest/validation_contract",
+            manifest.get("validation_contract") == WIDE_VALIDATION_CONTRACT
+            and all(
+                child.get("validation_contract") == WIDE_VALIDATION_CONTRACT
+                for child in width_manifests.values()
+            ),
+        )
+        counts = validate_regression_preflights(
+            manifest["regression_preflights"], REGRESSION_WIDTHS, manifest["source_sha256"]
+        )
+        require(
+            checks,
+            "manifest/regression_widths",
+            manifest.get("regression_widths") == list(REGRESSION_WIDTHS)
+            and manifest.get("regression_gate_counts") == counts,
+        )
+        for width in widths:
+            modes = manifest["regression_preflights"][str(width)]
+            require(
+                checks,
+                f"width-{width}/regression_gate_alignment",
+                modes["auto"] == manifest["preflights"][str(width)]
+                and {mode: gate for mode, gate in modes.items() if mode != "auto"}
+                == manifest["backend_preflights"][str(width)],
+            )
+    validate_shared_fixtures(manifest["fixtures"], checks, widths)
 
 
-def validate_shared_fixtures(fixtures, checks):
-    base = fixtures[str(spec.WIDTHS[0])]
+def validate_shared_fixtures(fixtures, checks, widths=None):
+    widths = tuple(sorted(map(int, fixtures))) if widths is None else widths
+    base = fixtures[str(widths[0])]
     first = base[str(spec.SEEDS[0])]
-    for width in spec.WIDTHS:
+    for width in widths:
         require(
             checks,
             f"fixtures/{width}/seeds",
@@ -272,18 +314,19 @@ def validate_shared_fixtures(fixtures, checks):
         require(
             checks,
             f"fixtures/{seed}/distinct_width_initializations",
-            len({fixtures[str(width)][str(seed)]["sha256"]["initial.f32"] for width in spec.WIDTHS})
-            == len(spec.WIDTHS),
+            len({fixtures[str(width)][str(seed)]["sha256"]["initial.f32"] for width in widths})
+            == len(widths),
         )
 
 
 def aggregate_summaries(manifest, summaries, checks):
     """Recompute aggregations from all runs, with no pooling across model widths."""
-    require(checks, "reports/all_widths", set(summaries) == set(spec.WIDTHS))
+    widths = protocol_widths(manifest["protocol_version"])
+    require(checks, "reports/all_widths", set(summaries) == set(widths))
     by_width, all_runs = {}, []
     expected_runs = {identity(entry): entry for entry in manifest["runs"]}
-    first_baseline = summaries[spec.WIDTHS[0]]["baselines"]
-    for width in spec.WIDTHS:
+    first_baseline = summaries[widths[0]]["baselines"]
+    for width in widths:
         summary = summaries[width]
         tag = f"report/width-{width}"
         require(
@@ -331,7 +374,13 @@ def aggregate_summaries(manifest, summaries, checks):
             tag + "/preflight_count",
             summary["preflight_check_count"] == manifest["preflights"][str(width)]["check_count"],
         )
-        if manifest["protocol_version"] == "v4":
+        if manifest["protocol_version"] == "v5":
+            require(
+                checks,
+                tag + "/validation_contract",
+                summary.get("validation_contract") == WIDE_VALIDATION_CONTRACT,
+            )
+        if manifest["protocol_version"] in ("v4", "v5"):
             forced = validate_backend_preflights(
                 manifest["preflights"][str(width)], manifest["backend_preflights"][str(width)]
             )
@@ -372,6 +421,7 @@ def aggregate_summaries(manifest, summaries, checks):
                 "forced_backend_preflight_check_count", 0
             ),
             "backend": summary.get("backend"),
+            "legacy_diagnostic_counts": summary.get("legacy_diagnostic_counts", {}),
             "retained_test_prediction_rows": retained_rows,
             "raw_manifest_sha256": summary["raw_manifest_sha256"],
         }
@@ -457,7 +507,7 @@ def charts(summary, output):
     fig.savefig(output / "scaling.png")
     plt.close(fig)
 
-    if summary["protocol_version"] == "v4":
+    if summary["protocol_version"] in ("v4", "v5"):
         training = [
             summary["by_width"][str(width)]["aggregate"][
                 "geometric_mean_training_ratio_python_over_arm64"
@@ -495,7 +545,7 @@ def charts(summary, output):
             0.5,
             0.025,
             "Above 1 favors assembly; below 1 favors PyTorch. "
-            "48 fits · 3 seeds · 2 repeats · 1 CPU thread",
+            f"{len(summary['runs'])} fits · 3 seeds · 2 repeats · 1 CPU thread",
             ha="center",
             fontsize=9,
         )
@@ -610,8 +660,8 @@ def report_markdown(summary):
         for width in summary["widths"]
     )
     backend_note = ""
-    prior = "v1/v2/v3" if summary["protocol_version"] == "v4" else "v1/v2"
-    if summary["protocol_version"] == "v4":
+    prior = {"v3": "v1/v2", "v4": "v1/v2/v3", "v5": "v1/v2/v3/v4"}[summary["protocol_version"]]
+    if summary["protocol_version"] in ("v4", "v5"):
         rows = []
         for width in summary["widths"]:
             native = next(
@@ -633,9 +683,31 @@ def report_markdown(summary):
             "| Width | SME forward / backward | NEON forward / backward |\n"
             "|---:|---:|---:|\n" + "\n".join(rows) + "\n\n"
         )
+    regression_note = ""
+    if summary["protocol_version"] == "v5":
+        regression_note = (
+            f"Validation contract: `{summary['validation_contract']}`. "
+            "The wide-model gates compare both engines at identical evolving states and replay "
+            "each engine's gradients through both optimizers using unchanged tolerances. "
+            f"The original free-running comparisons are retained as "
+            f"{summary['legacy_diagnostic_count']:,} diagnostic records, including "
+            f"{summary['legacy_failed_diagnostic_count']:,} failures. These are excluded from the "
+            "passing gate counts; the original wide trajectory contract is not claimed to pass. "
+            "Independent four-update control replays require exact own saved states/history "
+            "and verify actual partial-batch normalization plus identical-input Adam updates. "
+            "The failed initial admission remains preserved. "
+            "The measured-width admission counts below cover widths 512 and 1024 only. "
+            f"The complete six-width correctness regression contains "
+            f"{summary['regression_all_backend_preflight_check_count']:,} checks: "
+            f"{summary['regression_preflight_check_count']:,} automatic and "
+            f"{summary['regression_forced_backend_preflight_check_count']:,} forced-policy checks. "
+            "All six widths' gates are retained under `regression-preflights/`. "
+            "The four smaller widths have no new timed fits in this campaign.\n\n"
+        )
     return f"""# Transformer width sweep, {summary["protocol_version"]}
 
-The complete sweep contains **{len(summary["runs"])} fits** at widths 32, 64, 128 and 256:
+The complete sweep contains **{len(summary["runs"])} fits**
+at widths {", ".join(str(width) for width in summary["widths"])}:
 three seeds, two timing repeats and both implementations at each width.
 Each comparison uses the same initial weights, token rows and schedules within
 its width/seed pair. Source revision: `{summary["revision"]}`.
@@ -663,7 +735,7 @@ history bookkeeping. Each fit performs {OPTIMIZER_STEPS:,} updates over eight ep
 {chr(10).join(forward)}
 
 Forward latency is one full 32-character context, batch one, after 20 warmups,
-with 100 samples per fit. It excludes token loading, loss, softmax, sampling and
+with 100 samples per fit. It excludes token loading, loss, output-probability softmax, sampling and
 I/O. It is not cached next-token generation. The forward ratio uses the two
 implementation means, a different statistic from the primary training ratio.
 
@@ -675,7 +747,7 @@ OS scheduling, temperatures and clock frequencies were not experimentally fixed.
 
 ## Throughput, memory and prediction quality
 
-| Width | Implementation | Target ktoken/s | Peak RSS (MiB) | Test NLL | Accuracy (%) |
+| Width | Implementation | Target ktoken/s | Training peak RSS (MiB) | Test NLL | Accuracy (%) |
 |---:|---|---:|---:|---:|---:|
 {chr(10).join(quality)}
 
@@ -697,7 +769,7 @@ tuning used this test set during the sweep.
 
 ## Evidence and limits
 
-The post-run audit contains **{summary["audit_check_count"]:,} checks**:
+{regression_note}The post-run audit contains **{summary["audit_check_count"]:,} checks**:
 {summary["sweep_audit_check_count"]:,} sweep consistency checks plus all per-width
 post-run records. The primary automatic-policy numerical/runtime preflights contain
 **{summary["preflight_check_count"]:,} checks** in total. Forced-policy gates add
@@ -724,7 +796,7 @@ The scope is this short-context float32 model family on one CPU machine against
 eager PyTorch. Native training still accumulates per-sequence gradients. These
 results establish neither fresh test-set generalization nor GPU, long-context,
 graph-compiled PyTorch, energy, cached decoding or production-serving performance.
-Historical v1/v2 comparisons remain separate campaigns with different conditions.
+Historical {prior} comparisons remain separate campaigns with different conditions.
 """
 
 
@@ -739,11 +811,12 @@ def create_report(results, inputs, output):
         manifest_hash = sha256(manifest_path)
         manifest = read_json(manifest_path)
         summary["protocol_version"] = manifest.get("protocol_version")
+        widths = protocol_widths(manifest.get("protocol_version"))
         width_manifests = {
-            width: read_json(results / f"width-{width}/manifest.json") for width in spec.WIDTHS
+            width: read_json(results / f"width-{width}/manifest.json") for width in widths
         }
         manifest_hashes = {
-            width: sha256(results / f"width-{width}/manifest.json") for width in spec.WIDTHS
+            width: sha256(results / f"width-{width}/manifest.json") for width in widths
         }
         validate_manifest(manifest, width_manifests, checks)
         for name in REPORT_SOURCES:
@@ -751,7 +824,7 @@ def create_report(results, inputs, output):
                 checks, "source/" + name, sha256(ROOT / name) == manifest["source_sha256"].get(name)
             )
         summaries, audit_counts = {}, {}
-        for width in spec.WIDTHS:
+        for width in widths:
             destination = output / f"width-{width}"
             command = [
                 sys.executable,
@@ -819,6 +892,13 @@ def create_report(results, inputs, output):
             write_json(destination / "preflight.json", manifest["preflights"][str(width)])
             for mode, gate in manifest.get("backend_preflights", {}).get(str(width), {}).items():
                 write_json(destination / f"preflight-{mode}.json", gate)
+        if manifest["protocol_version"] == "v5":
+            regression_dir = output / "regression-preflights"
+            regression_dir.mkdir()
+            for width, modes in manifest["regression_preflights"].items():
+                for mode, gate in modes.items():
+                    suffix = "" if mode == "auto" else "-" + mode
+                    write_json(regression_dir / f"width-{width}{suffix}.json", gate)
         aggregate = aggregate_summaries(manifest, summaries, checks)
         require(
             checks,
@@ -826,10 +906,10 @@ def create_report(results, inputs, output):
             sha256(manifest_path) == manifest_hash
             and all(
                 sha256(results / f"width-{width}/manifest.json") == manifest_hashes[width]
-                for width in spec.WIDTHS
+                for width in widths
             ),
         )
-        for width in spec.WIDTHS:
+        for width in widths:
             item = aggregate["by_width"][str(width)]
             item["report_summary_sha256"] = sha256(output / f"width-{width}/summary.json")
             item["report_audit_sha256"] = sha256(output / f"width-{width}/audit.json")
@@ -839,7 +919,7 @@ def create_report(results, inputs, output):
             revision=manifest["revision"],
             source_sha256=manifest["source_sha256"],
             raw_manifest_sha256=manifest_hash,
-            widths=list(spec.WIDTHS),
+            widths=list(widths),
             models=manifest["models"],
             platform=manifest["platform"],
             hardware=manifest["hardware"],
@@ -867,6 +947,27 @@ def create_report(results, inputs, output):
         summary["all_backend_preflight_check_count"] = (
             summary["preflight_check_count"] + summary["forced_backend_preflight_check_count"]
         )
+        if manifest["protocol_version"] == "v5":
+            counts = validate_regression_preflights(
+                manifest["regression_preflights"], REGRESSION_WIDTHS, manifest["source_sha256"]
+            )
+            summary.update(
+                validation_contract=WIDE_VALIDATION_CONTRACT,
+                legacy_diagnostic_count=sum(
+                    gate["legacy_diagnostic_count"]
+                    for modes in manifest["regression_preflights"].values()
+                    for gate in modes.values()
+                ),
+                legacy_failed_diagnostic_count=sum(
+                    len(gate["legacy_failed_checks"])
+                    for modes in manifest["regression_preflights"].values()
+                    for gate in modes.values()
+                ),
+                regression_widths=list(REGRESSION_WIDTHS),
+                regression_preflight_check_count=counts["auto"],
+                regression_forced_backend_preflight_check_count=counts["forced"],
+                regression_all_backend_preflight_check_count=counts["all"],
+            )
         charts(summary, output)
         (output / "README.md").write_text(report_markdown(summary))
     except Exception as exc:

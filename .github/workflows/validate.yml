@@ -26,12 +26,12 @@ jobs:
       - run: ruff check . && ruff format --check .
       - name: Reference checks at every model width
         run: |
-          for width in 32 64 128 256; do
+          for width in 32 64 128 256 512 1024; do
             ARM64_TRANSFORMER_WIDTH=$width python -m pytest -q
           done
   native:
     runs-on: macos-26
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       OMP_NUM_THREADS: "1"
       MKL_NUM_THREADS: "1"
@@ -48,7 +48,7 @@ jobs:
       - run: make -C native widths PYTHON=python
       - name: Numerical and executable checks at every width and supported backend
         run: |
-          for width in 32 64 128 256; do
+          for width in 32 64 128 256 512 1024; do
             export ARM64_TRANSFORMER_WIDTH=$width
             export ARM64_TRANSFORMER_BACKEND=auto
             python -m pytest -q

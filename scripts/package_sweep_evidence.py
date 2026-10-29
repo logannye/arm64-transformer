@@ -1,4 +1,4 @@
-"""Stream a completed v3/v4 width sweep into a deterministic, verified release archive.
+"""Stream a completed protocol-declared width sweep into a deterministic, verified release archive.
 
 This utility reads saved evidence only. It performs no training or numerical audit.
 Temporary disk use is one Git source tar plus the eventual compressed archive;
@@ -22,6 +22,10 @@ import tempfile
 from pathlib import Path, PurePosixPath
 
 WIDTHS = (32, 64, 128, 256)
+PROTOCOL_WIDTHS = {"v3": WIDTHS, "v4": WIDTHS, "v5": (512, 1024)}
+REGRESSION_WIDTHS = (*WIDTHS, 512, 1024)
+WIDE_VALIDATION_CONTRACT = "v5-common-state-replay-v1"
+STRICT_VALIDATION_CONTRACT = "strict-free-running-v1"
 SEEDS = (42, 43, 44)
 CHUNK = 1024 * 1024
 FIXTURE_FILES = {
@@ -113,13 +117,14 @@ def check_audit(audit, label):
     )
 
 
-def expected_order():
+def expected_order(protocol="v3"):
+    widths = PROTOCOL_WIDTHS[protocol]
     result = []
     for repeat in (1, 2):
-        for width in WIDTHS if repeat == 1 else WIDTHS[::-1]:
+        for width in widths if repeat == 1 else widths[::-1]:
             for index, seed in enumerate(SEEDS):
                 pair = ("python", "arm64")
-                if (WIDTHS.index(width) + index) % 2:
+                if (widths.index(width) + index) % 2:
                     pair = pair[::-1]
                 if repeat == 2:
                     pair = pair[::-1]
@@ -136,6 +141,309 @@ def identity(row, width=None):
     )
 
 
+PARAMETER_NAMES = (
+    "token",
+    "position",
+    "ln1_weight",
+    "ln1_bias",
+    "qkv_weight",
+    "qkv_bias",
+    "attention_weight",
+    "attention_bias",
+    "ln2_weight",
+    "ln2_bias",
+    "ff1_weight",
+    "ff1_bias",
+    "ff2_weight",
+    "ff2_bias",
+    "ln3_weight",
+    "ln3_bias",
+    "head_weight",
+    "head_bias",
+)
+TRACE_NAMES = (
+    "x",
+    "norm1",
+    "inv1",
+    "norm2",
+    "inv2",
+    "norm3",
+    "inv3",
+    "n1",
+    "qkv",
+    "attention",
+    "projected",
+    "r1",
+    "n2",
+    "ff1",
+    "relu",
+    "ff2",
+    "r2",
+    "n3",
+    "logits",
+    "probs",
+)
+
+
+def expected_legacy_names(runtime=True):
+    names = []
+    for step in (1, 2, 3):
+        names.append(f"trajectory/{step}/loss")
+        names.extend(f"trajectory/{step}/gradient/{name}" for name in PARAMETER_NAMES)
+        names.extend(f"trajectory/{step}/{name}" for name in ("parameters", "m", "v"))
+    if runtime:
+        names.extend(
+            "runtime/matched/" + name
+            for name in ("best.f32", "last.f32", "adam_m.f32", "adam_v.f32", "test_logits.f32")
+        )
+        names.extend(("runtime/history", "runtime/python/best_epoch"))
+    return names
+
+
+def required_contract_records(runtime=True):
+    """Complete owned-name/tolerance schema, independently reconstructed from gate data."""
+    required = {"audit/legacy_diagnostics_complete": None}
+    for step in (1, 2, 3):
+        for origin in ("native", "python"):
+            tag = f"common_state/{step}/{origin}"
+            required[tag + "/input_state_shape_finite"] = None
+            required[tag + "/loss"] = "forward"
+            required.update({tag + "/trace/" + name: "forward" for name in TRACE_NAMES})
+            required.update({tag + "/gradient/" + name: "gradient" for name in PARAMETER_NAMES})
+            for gradient in ("native", "python"):
+                replay = tag + "/adam/" + gradient
+                required[replay + "/step"] = None
+                required[replay + "/all_state_finite"] = None
+                required.update(
+                    {replay + "/" + name: "optimizer" for name in ("parameters", "m", "v")}
+                )
+    for name in expected_legacy_names(runtime):
+        if name != "runtime/python/best_epoch":
+            required[name + "/finite_shape"] = None
+    if runtime:
+        required["runtime/shared_checkpoints_complete"] = None
+        required["runtime/python/own_best_epoch"] = None
+        for owner in ("native", "python"):
+            for checkpoint in ("best", "last"):
+                for split in ("test", "validation"):
+                    tag = f"runtime/shared_checkpoint/{owner}/{checkpoint}/{split}"
+                    required[tag + "/native_vs_python"] = "forward"
+                    required[tag + "/all_logits_finite"] = None
+                    if checkpoint == "best" and split == "test":
+                        required[tag + "/native_vs_own_saved"] = "forward"
+                        required[tag + "/python_vs_own_saved"] = "forward"
+                        required[tag + "/own_engine_saved_logits_exact"] = None
+                    if split == "validation":
+                        required[tag + "/native_vs_own_history"] = "trajectory"
+                        required[tag + "/python_vs_own_history"] = "trajectory"
+            for name in (
+                "fixture_manifest_files",
+                "second_moment_nonnegative",
+                "history_nonnegative",
+                "timers_positive",
+                "latencies_positive",
+                "rss_monotone",
+                "native_wall_includes_training",
+                "best_validation_epoch",
+                "optimizer_step_count",
+                "training_includes_epoch_time",
+            ):
+                required[owner + "/" + name] = None
+            for filename in (
+                "config.bin",
+                "initial.f32",
+                "train.i32",
+                "validation.i32",
+                "test.i32",
+                "schedule.i32",
+            ):
+                required[owner + "/fixture_hash/" + filename] = None
+            for sequence in (0, 1):
+                required[f"{owner}/selected_checkpoint/sequence_{sequence}"] = "forward"
+            required[owner + "/selected_checkpoint_validation_nll"] = "forward"
+            replay = f"runtime/replay/{owner}"
+            for name in (
+                "batch_sizes",
+                "scheduled_rows",
+                "steps",
+                "best_epoch",
+                "state_finite",
+                "history_exact",
+            ):
+                required[replay + "/" + name] = None
+            required[replay + "/history"] = "trajectory"
+            for name in ("best.f32", "last.f32", "adam_m.f32", "adam_v.f32"):
+                required[replay + "/" + name] = "trajectory"
+                required[replay + "/" + name + "_exact"] = None
+            for step in (1, 2, 3, 4):
+                prefix = f"{replay}/step-{step}"
+                required[prefix + "/gradient_finite"] = None
+                required[prefix + "/state_finite"] = None
+                if owner == "native":
+                    required[prefix + "/adam/step"] = None
+                    required.update(
+                        {prefix + "/adam/" + name: "optimizer" for name in ("parameters", "m", "v")}
+                    )
+        required["runtime/replay/complete"] = None
+    return required
+
+
+def check_validation_contract(gate, width):
+    if gate.get("validation_contract") != (
+        WIDE_VALIDATION_CONTRACT if width >= 512 else STRICT_VALIDATION_CONTRACT
+    ):
+        raise ValueError("Missing or incompatible prospective validation contract")
+    diagnostics = gate.get("legacy_diagnostics", [])
+    failed = [record["name"] for record in diagnostics if record.get("passed") is not True]
+    if (
+        gate.get("legacy_diagnostic_count") != len(diagnostics)
+        or gate.get("legacy_failed_checks") != failed
+        or gate.get("legacy_contract_passed") is not (not failed)
+    ):
+        raise ValueError("Legacy diagnostic records/counts are incomplete or inconsistent")
+    if width >= 512:
+        runtime = gate.get("runtime_included") is True
+        if [record.get("name") for record in diagnostics] != expected_legacy_names(runtime):
+            raise ValueError("Original legacy diagnostic sequence is incomplete or reordered")
+        for record in diagnostics:
+            expected_tolerance = (
+                None if record["name"] == "runtime/python/best_epoch" else "trajectory"
+            )
+            if (
+                record.get("admission_role") != "diagnostic"
+                or type(record.get("passed")) is not bool
+                or record.get("tolerance") != expected_tolerance
+            ):
+                raise ValueError("Original legacy diagnostic semantics were altered")
+        records = gate.get("checks", [])
+        for name, tolerance in required_contract_records(runtime).items():
+            selected = [record for record in records if record.get("name") == name]
+            if (
+                len(selected) != 1
+                or selected[0].get("passed") is not True
+                or selected[0].get("tolerance") != tolerance
+            ):
+                raise ValueError(f"Missing, duplicate, failed or altered contract check: {name}")
+    elif diagnostics:
+        raise ValueError("Strict historical widths cannot demote trajectory checks")
+    return len(diagnostics), len(failed)
+
+
+def validate_regression_evidence(manifest, summary, report, preflight_dir, repo):
+    """V5 retains all six current binaries and policy gates, including untimed widths."""
+    require(
+        manifest.get("regression_widths") == list(REGRESSION_WIDTHS)
+        and summary.get("regression_widths") == list(REGRESSION_WIDTHS),
+        "Wrong regression width ladder",
+    )
+    regression = manifest.get("regression_preflights", {})
+    require(
+        set(regression) == {str(width) for width in REGRESSION_WIDTHS},
+        "Incomplete regression preflight set",
+    )
+    counts = {"auto": 0, "forced": 0, "all": 0}
+    diagnostic_total = diagnostic_failed = 0
+    payload = {}
+    for width in REGRESSION_WIDTHS:
+        tag = f"width-{width}"
+        modes = regression[str(width)]
+        main = modes["auto"]
+        expected_modes = (
+            {"auto", "neon", "sme"} if main["backend"]["sme_supported"] else {"auto", "neon"}
+        )
+        require(set(modes) == expected_modes, "Incomplete regression backend policy set")
+        if width in manifest["widths"]:
+            require(
+                main == manifest["preflights"][str(width)]
+                and {mode: gate for mode, gate in modes.items() if mode != "auto"}
+                == manifest["backend_preflights"][str(width)],
+                "Regression/measured gate mismatch",
+            )
+        for mode, gate in modes.items():
+            suffix = "" if mode == "auto" else "-" + mode
+            name = tag + suffix + ".json"
+            gate_path = file_in(preflight_dir, name)
+            require(
+                gate
+                == read_json(gate_path)
+                == read_json(file_in(Path(report) / "regression-preflights", name)),
+                "Retained regression gate identity mismatch",
+            )
+            check_audit(gate, tag + " " + mode + " regression")
+            total, failed = check_validation_contract(gate, width)
+            diagnostic_total += total
+            diagnostic_failed += failed
+            parameters = 8 * width**2 + 301 * width + 128
+            require(
+                gate.get("runtime_included") is True
+                and gate.get("model_width") == width
+                and gate.get("parameter_count") == parameters
+                and gate.get("model_identity")
+                == {"width": width, "parameter_count": parameters, "verified": True},
+                "Regression model identity mismatch",
+            )
+            for field in (
+                "source_sha256",
+                "library_sha256",
+                "executable_sha256",
+                "generated_layout_sha256",
+                "tolerances",
+            ):
+                require(
+                    gate.get(field) == main.get(field), "Regression policy source/binary mismatch"
+                )
+            hashes = gate.get("source_sha256", {})
+            require(
+                bool(hashes)
+                and all(
+                    manifest["source_sha256"].get(key) == value for key, value in hashes.items()
+                ),
+                "Regression source mismatch",
+            )
+            backend = gate["backend"]
+            require(
+                backend["version"] == 1
+                and backend["init_status"] == 0
+                and backend["requested_policy"] == {"auto": 0, "neon": 1, "sme": 2}[mode]
+                and backend["sme_supported"] == main["backend"]["sme_supported"]
+                and backend["streaming_vector_bytes"] == main["backend"]["streaming_vector_bytes"],
+                "Regression backend identity mismatch",
+            )
+            expected_kind = 0 if mode == "neon" else backend["sme_supported"]
+            require(
+                backend["selected_kind"] == expected_kind
+                and (not expected_kind or backend["streaming_vector_bytes"] == 64),
+                "Regression backend selection mismatch",
+            )
+            counts["auto" if mode == "auto" else "forced"] += gate["check_count"]
+            payload["preflights/" + name] = gate_path
+        for stem, filename in (
+            ("library", "libtransformer.dylib"),
+            ("executable", "transformer-arm64"),
+            ("generated_layout", "layout.inc"),
+        ):
+            native = Path(repo) / f"native/build/{tag}/{filename}"
+            recorded = Path(main[stem + "_path"])
+            recorded = recorded if recorded.is_absolute() else Path(repo) / recorded
+            require(recorded.resolve() == native.resolve(), "Regression binary path mismatch")
+            check_hash(native, main[stem + "_sha256"])
+            payload[f"bin/{tag}/{filename}"] = native
+    require(
+        summary.get("legacy_diagnostic_count") == diagnostic_total
+        and summary.get("legacy_failed_diagnostic_count") == diagnostic_failed,
+        "Global legacy diagnostic counts mismatch",
+    )
+    counts["all"] = counts["auto"] + counts["forced"]
+    require(manifest.get("regression_gate_counts") == counts, "Regression manifest count mismatch")
+    for key, field in (
+        ("auto", "regression_preflight_check_count"),
+        ("forced", "regression_forced_backend_preflight_check_count"),
+        ("all", "regression_all_backend_preflight_check_count"),
+    ):
+        require(summary.get(field) == counts[key], "Regression summary count mismatch")
+    return payload
+
+
 def validate_evidence(inputs, results, report, preflight_dir, repo):
     """Authenticate all reported raw bytes and the complete cross-file identity chain."""
     manifest_path = file_in(results, "manifest.json")
@@ -144,35 +452,44 @@ def validate_evidence(inputs, results, report, preflight_dir, repo):
     audit = read_json(file_in(report, "audit.json"))
     check_audit(audit, "global report")
     protocol = manifest.get("protocol_version")
-    require(protocol in ("v3", "v4"), "Unsupported study protocol")
+    require(protocol in PROTOCOL_WIDTHS, "Unsupported study protocol")
+    widths = PROTOCOL_WIDTHS[protocol]
+    if protocol == "v5":
+        require(
+            manifest.get("validation_contract")
+            == summary.get("validation_contract")
+            == WIDE_VALIDATION_CONTRACT,
+            "Missing prospective wide-study validation contract",
+        )
     for value in (manifest, summary):
         require(
             value.get("status") == "completed" and value.get("protocol_version") == protocol,
             "Only completed matching-protocol studies and reports can be packaged",
         )
-        require(value.get("widths") == list(WIDTHS), "Wrong width ladder")
+        require(value.get("widths") == list(widths), "Wrong width ladder")
     require(bool(manifest.get("source_sha256")), "Missing measured source hashes")
     for field in ("revision", "source_sha256", "models"):
         require(summary[field] == manifest[field], f"Global report {field} mismatch")
     require(summary["raw_manifest_sha256"] == digest(manifest_path), "Global raw manifest changed")
     require(summary["audit_check_count"] == audit["check_count"], "Global audit count mismatch")
-    order = expected_order()
+    order = expected_order(protocol)
     require(
-        [identity(row) for row in manifest["runs"]] == order, "Incomplete or reordered 48-run sweep"
+        [identity(row) for row in manifest["runs"]] == order,
+        f"Incomplete or reordered {len(order)}-run sweep",
     )
     require([tuple(row) for row in manifest["order"]] == order, "Declared sweep order mismatch")
     global_runs = {identity(row): row for row in summary["runs"]}
     require(
-        len(summary["runs"]) == 48 and set(global_runs) == set(order),
+        len(summary["runs"]) == len(order) and set(global_runs) == set(order),
         "Global report run identities mismatch",
     )
     require(
-        summary["retained_test_prediction_rows"] == 48 * 256 * 32,
+        summary["retained_test_prediction_rows"] == len(order) * 256 * 32,
         "Global prediction count mismatch",
     )
     natives, preflights = {}, {}
     total_preflight = total_child_audit = total_forced = 0
-    for width in WIDTHS:
+    for width in widths:
         key, tag = str(width), f"width-{width}"
         model = manifest["models"][key]
         expected_model = {
@@ -217,6 +534,13 @@ def validate_evidence(inputs, results, report, preflight_dir, repo):
         require(
             selected["fixtures"] == manifest["fixtures"][key], f"{tag} fixture manifest mismatch"
         )
+        if protocol == "v5":
+            require(
+                selected.get("validation_contract")
+                == child_summary.get("validation_contract")
+                == WIDE_VALIDATION_CONTRACT,
+                "Child validation contract mismatch",
+            )
         require(selected["preflight"] == manifest["preflights"][key], f"{tag} preflight mismatch")
         require(
             child_summary["raw_manifest_sha256"] == digest(selected_path),
@@ -287,7 +611,7 @@ def validate_evidence(inputs, results, report, preflight_dir, repo):
             natives[f"bin/{tag}/{filename}"] = native
         preflights[f"preflights/{tag}.json"] = preflight_path
         total_preflight += preflight["check_count"]
-        if protocol == "v4":
+        if protocol in ("v4", "v5"):
             modes = ("neon", "sme") if preflight["backend"]["sme_supported"] else ("neon",)
             supplements = manifest["backend_preflights"][key]
             require(
@@ -377,7 +701,7 @@ def validate_evidence(inputs, results, report, preflight_dir, repo):
             for filename, expected in hashes.items():
                 check_hash(file_in(directory, filename), expected)
         for row in selected_entries:
-            if protocol == "v4" and row["implementation"] == "arm64":
+            if protocol in ("v4", "v5") and row["implementation"] == "arm64":
                 backend_path = file_in(Path(results) / tag / row["name"], "backend.u64")
                 check_hash(backend_path, row["backend_sha256"])
                 words = struct.unpack("<10Q", backend_path.read_bytes())
@@ -414,7 +738,7 @@ def validate_evidence(inputs, results, report, preflight_dir, repo):
                 ),
                 f"Invalid measured child: {row['name']}",
             )
-    if protocol == "v4":
+    if protocol in ("v4", "v5"):
         require(
             summary["forced_backend_preflight_check_count"] == total_forced
             and summary["all_backend_preflight_check_count"] == total_preflight + total_forced,
@@ -425,7 +749,10 @@ def validate_evidence(inputs, results, report, preflight_dir, repo):
         summary["audit_check_count"] == summary["sweep_audit_check_count"] + total_child_audit,
         "Total report audit count mismatch",
     )
-    return manifest, summary, natives | preflights
+    regression = {}
+    if protocol == "v5":
+        regression = validate_regression_evidence(manifest, summary, report, preflight_dir, repo)
+    return manifest, summary, natives | preflights | regression
 
 
 def archive_source(repo, revision, destination, expected):
@@ -619,8 +946,8 @@ def package(args):
             "payload_bytes": raw_bytes,
             "verified_payload_files": len(verified),
             "measured_revision": manifest["revision"],
-            "widths": list(WIDTHS),
-            "measured_fits": 48,
+            "widths": manifest["widths"],
+            "measured_fits": len(manifest["runs"]),
             "models": manifest["models"],
             "extra_evidence": extra_records,
             "extra_evidence_scope": (
@@ -633,6 +960,14 @@ def package(args):
             ),
             "all_backend_preflight_checks": summary.get(
                 "all_backend_preflight_check_count", summary["preflight_check_count"]
+            ),
+            "validation_contract": summary.get("validation_contract"),
+            "legacy_diagnostic_count": summary.get("legacy_diagnostic_count", 0),
+            "legacy_failed_diagnostic_count": summary.get("legacy_failed_diagnostic_count", 0),
+            "regression_widths": summary.get("regression_widths", manifest["widths"]),
+            "regression_all_backend_preflight_checks": summary.get(
+                "regression_all_backend_preflight_check_count",
+                summary.get("all_backend_preflight_check_count", summary["preflight_check_count"]),
             ),
             "postrun_checks": summary["audit_check_count"],
             "retained_test_prediction_rows": summary["retained_test_prediction_rows"],

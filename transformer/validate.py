@@ -26,7 +26,12 @@ import torch
 import torch.nn.functional as F
 
 from transformer import spec
-from transformer.backend import library_backend, read_backend, validate_runtime_backend
+from transformer.backend import (
+    library_backend,
+    read_backend,
+    validate_runtime_backend,
+    validation_contract,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_BUILD = ROOT / f"native/build/width-{spec.WIDTH}"
@@ -50,6 +55,8 @@ SOURCE_FILES = (
     "transformer/python_train.py",
     "transformer/validate.py",
     "transformer/backend.py",
+    "transformer/audit.py",
+    "transformer/runtime_replay.py",
 )
 
 # Fixed admission limits, not selected from observed discrepancies.
@@ -187,16 +194,32 @@ def workspace_tensor(workspace, name):
 class Checks:
     def __init__(self):
         self.records = []
+        self.diagnostics = []
 
     def require(self, name, condition, detail=None):
         self.records.append({"name": name, "passed": bool(condition), "detail": detail})
 
-    def close(self, name, actual, expected, tolerance="forward"):
+    def diagnostic_require(self, name, condition, detail=None):
+        self.diagnostics.append(
+            {
+                "name": name,
+                "passed": bool(condition),
+                "detail": detail,
+                "admission_role": "diagnostic",
+            }
+        )
+
+    def close(self, name, actual, expected, tolerance="forward", *, diagnostic=False):
         actual = as_numpy(actual)
         expected = as_numpy(expected)
         thresholds = TOLERANCES[tolerance]
         same_shape = actual.shape == expected.shape
-        passed = same_shape and np.allclose(actual, expected, equal_nan=False, **thresholds)
+        passed = (
+            same_shape
+            and np.isfinite(actual).all()
+            and np.isfinite(expected).all()
+            and np.allclose(actual, expected, equal_nan=False, **thresholds)
+        )
         finite = np.isfinite(actual) & np.isfinite(expected) if same_shape else np.array([])
         if finite.any():
             errors = np.abs(actual[finite].astype(np.float64) - expected[finite])
@@ -204,17 +227,24 @@ class Checks:
             rmse = float(np.sqrt(np.mean(errors**2)))
         else:
             max_error = rmse = None
-        self.records.append(
-            {
-                "name": name,
-                "passed": bool(passed),
-                "actual_shape": list(actual.shape),
-                "expected_shape": list(expected.shape),
-                "tolerance": tolerance,
-                "max_absolute_error": max_error,
-                "rmse": rmse,
-            }
-        )
+        record = {
+            "name": name,
+            "passed": bool(passed),
+            "actual_shape": list(actual.shape),
+            "expected_shape": list(expected.shape),
+            "tolerance": tolerance,
+            "max_absolute_error": max_error,
+            "rmse": rmse,
+        }
+        if diagnostic:
+            self.diagnostics.append(record | {"admission_role": "diagnostic"})
+            self.require(
+                name + "/finite_shape",
+                same_shape and bool(np.all(finite)),
+                {"actual_shape": list(actual.shape), "expected_shape": list(expected.shape)},
+            )
+        else:
+            self.records.append(record)
 
     @property
     def passed(self):
@@ -447,6 +477,88 @@ def check_adam(native, checks, rng):
         checks.close(f"adam/{step}/v", v, optimizer.state[tp]["exp_avg_sq"], "optimizer")
 
 
+def check_common_state(native, checks, params, moment_m, moment_v, tokens, targets, step, origin):
+    """Compare both engines at identical evolving weights, then replay identical gradients."""
+    tag = f"common_state/{step}/{origin}"
+    params, moment_m, moment_v = (arr(value).copy() for value in (params, moment_m, moment_v))
+    checks.require(
+        tag + "/input_state_shape_finite",
+        all(
+            value.shape == (spec.PARAM_COUNT,) and np.isfinite(value).all()
+            for value in (params, moment_m, moment_v)
+        ),
+    )
+    point = tensor(params, grad=True)
+    expected, traces = reference_forward(point, tensor(tokens, dtype=torch.long), trace=True)
+    expected_loss = F.cross_entropy(expected, tensor(targets, dtype=torch.long))
+    expected_loss.backward()
+    workspace = native.forward(params, tokens)
+    native_loss, gradients = native.backward(params, tokens, targets, workspace)
+    for name, value in traces.items():
+        checks.close(tag + "/trace/" + name, workspace_tensor(workspace, name), value)
+    checks.close(tag + "/loss", native_loss, expected_loss)
+    for name, (start, count) in spec.PARAMS.items():
+        checks.close(
+            tag + "/gradient/" + name,
+            gradients[start : start + count],
+            point.grad[start : start + count],
+            "gradient",
+        )
+    for gradient_origin, gradient in (("native", gradients), ("python", point.grad.numpy())):
+        replay = tag + "/adam/" + gradient_origin
+        candidate = tensor(params, grad=True)
+        optimizer = torch.optim.Adam([candidate], lr=spec.LR, foreach=False)
+        optimizer.state[candidate] = {
+            "step": torch.tensor(float(step - 1)),
+            "exp_avg": tensor(moment_m),
+            "exp_avg_sq": tensor(moment_v),
+        }
+        candidate.grad = tensor(gradient)
+        native_params, native_m, native_v = params.copy(), moment_m.copy(), moment_v.copy()
+        optimizer.step()
+        native.call(
+            "adam", native_params, arr(gradient), native_m, native_v, step, spec.PARAM_COUNT
+        )
+        state = optimizer.state[candidate]
+        checks.require(
+            replay + "/step",
+            int(state["step"].item()) == step,
+            {"requested_native_step": step, "reference_step": float(state["step"])},
+        )
+        checks.close(replay + "/parameters", native_params, candidate, "optimizer")
+        checks.close(replay + "/m", native_m, state["exp_avg"], "optimizer")
+        checks.close(replay + "/v", native_v, state["exp_avg_sq"], "optimizer")
+        checks.require(
+            replay + "/all_state_finite",
+            all(
+                np.isfinite(as_numpy(value)).all()
+                for value in (
+                    native_params,
+                    native_m,
+                    native_v,
+                    candidate,
+                    state["exp_avg"],
+                    state["exp_avg_sq"],
+                )
+            ),
+        )
+
+
+def legacy_diagnostic_names(runtime):
+    names = []
+    for step in range(1, 4):
+        names.append(f"trajectory/{step}/loss")
+        names.extend(f"trajectory/{step}/gradient/{name}" for name in spec.PARAMS)
+        names.extend(f"trajectory/{step}/{name}" for name in ("parameters", "m", "v"))
+    if runtime:
+        names.extend(
+            "runtime/matched/" + name
+            for name in ("best.f32", "last.f32", "adam_m.f32", "adam_v.f32", "test_logits.f32")
+        )
+        names.extend(("runtime/history", "runtime/python/best_epoch"))
+    return names
+
+
 def check_complete_model(native, checks, rng):
     params = initial_parameters(rng)
     tokens = rng.integers(0, spec.VOCAB, spec.CONTEXT, dtype=np.int32)
@@ -531,6 +643,20 @@ def check_complete_model(native, checks, rng):
     for step in range(1, 4):
         tokens = rng.integers(0, spec.VOCAB, spec.CONTEXT, dtype=np.int32)
         targets = rng.integers(0, spec.VOCAB, spec.CONTEXT, dtype=np.int32)
+        if spec.WIDTH >= 512:
+            state = optimizer.state.get(tp, {})
+            check_common_state(native, checks, params, m, v, tokens, targets, step, "native")
+            check_common_state(
+                native,
+                checks,
+                tp.detach().numpy(),
+                as_numpy(state["exp_avg"]) if state else np.zeros_like(params),
+                as_numpy(state["exp_avg_sq"]) if state else np.zeros_like(params),
+                tokens,
+                targets,
+                step,
+                "python",
+            )
         workspace = native.forward(params, tokens)
         native_loss, gradients = native.backward(params, tokens, targets, workspace)
         optimizer.zero_grad(set_to_none=True)
@@ -539,19 +665,40 @@ def check_complete_model(native, checks, rng):
             tensor(targets, dtype=torch.long),
         )
         reference_loss.backward()
-        checks.close(f"trajectory/{step}/loss", native_loss, reference_loss, "trajectory")
+        checks.close(
+            f"trajectory/{step}/loss",
+            native_loss,
+            reference_loss,
+            "trajectory",
+            diagnostic=spec.WIDTH >= 512,
+        )
         for name, (start, count) in spec.PARAMS.items():
             checks.close(
                 f"trajectory/{step}/gradient/{name}",
                 gradients[start : start + count],
                 tp.grad[start : start + count],
                 "trajectory",
+                diagnostic=spec.WIDTH >= 512,
             )
         optimizer.step()
         native.call("adam", params, gradients, m, v, step, spec.PARAM_COUNT)
-        checks.close(f"trajectory/{step}/parameters", params, tp, "trajectory")
-        checks.close(f"trajectory/{step}/m", m, optimizer.state[tp]["exp_avg"], "trajectory")
-        checks.close(f"trajectory/{step}/v", v, optimizer.state[tp]["exp_avg_sq"], "trajectory")
+        checks.close(
+            f"trajectory/{step}/parameters", params, tp, "trajectory", diagnostic=spec.WIDTH >= 512
+        )
+        checks.close(
+            f"trajectory/{step}/m",
+            m,
+            optimizer.state[tp]["exp_avg"],
+            "trajectory",
+            diagnostic=spec.WIDTH >= 512,
+        )
+        checks.close(
+            f"trajectory/{step}/v",
+            v,
+            optimizer.state[tp]["exp_avg_sq"],
+            "trajectory",
+            diagnostic=spec.WIDTH >= 512,
+        )
 
 
 def guarded_array(shape, *, fill=np.nan):
@@ -946,6 +1093,44 @@ def check_backend_boundaries(native, checks):
     checks.require("backend/repeated_init_identity", before == native.backend_identity)
 
 
+def check_wide_matrix_limits(native, checks):
+    """V5 public SME limit/fallback checks, separate from historical random streams."""
+    if spec.WIDTH < 512:
+        return
+    rng = np.random.default_rng(20261031)
+    for shape in (
+        (32, 2048, 64),
+        (32, 2049, 64),
+        (32, 1536, 64),
+        (32, 64, 3072),
+        (32, 64, 3073),
+        (31, 2048, 64),
+    ):
+        before = native.backend_identity
+        check_tiled_linear_boundaries(native, checks, rng, shapes=(shape,), prefix="v5")
+        after = native.backend_identity
+        rows, inputs, outputs = shape
+        eligible = (
+            rows == 32
+            and 64 <= inputs <= 2048
+            and inputs & (inputs - 1) == 0
+            and 64 <= outputs <= 3072
+            and outputs % 32 == 0
+        )
+        selected = "sme" if before["selected_kind"] and eligible else "neon"
+        other = "neon" if selected == "sme" else "sme"
+        expected = {
+            f"{selected}_forward_calls": 1,
+            f"{selected}_backward_calls": 2,
+            f"{other}_forward_calls": 0,
+            f"{other}_backward_calls": 0,
+        }
+        checks.require(
+            f"v5/linear/{rows}x{inputs}x{outputs}/observed_dispatch",
+            all(after[key] - before[key] == value for key, value in expected.items()),
+        )
+
+
 def numerical_checks(native, checks):
     torch.set_num_threads(1)
     checks.require("model/library_identity_verified", native.model_identity["verified"])
@@ -968,6 +1153,7 @@ def numerical_checks(native, checks):
     # V3 fixtures do not perturb either historical random stream.
     check_width_boundaries(native, checks, np.random.default_rng(20261029))
     check_backend_boundaries(native, checks)
+    check_wide_matrix_limits(native, checks)
 
 
 def run_child(command, *, timeout=180, env=None):
@@ -984,7 +1170,64 @@ def run_child(command, *, timeout=180, env=None):
     }
 
 
-def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE):
+def check_runtime_shared_checkpoints(native, checks, fixture, directory):
+    """Replay each engine's own saved weights through both complete implementations."""
+    from transformer.audit import audit_run, prediction_metrics, read_exact
+    from transformer.reference import Transformer
+
+    model = Transformer(seed=1729)
+    splits = {
+        name: read_exact(fixture / f"{name}.i32", "<i4", (2, spec.CONTEXT + 1))
+        for name in ("test", "validation")
+    }
+    for owner in ("native", "python"):
+        run = directory / owner
+        # Independent functional PyTorch recomputation also enforces exact file
+        # sizes, finite states, second moments, selection and optimizer step count.
+        audit_run(fixture, run, checks, recompute=True)
+        history = read_exact(run / "history.f64", "<f8", (2, 3))
+        saved_logits = read_exact(run / "test_logits.f32", "<f4", (2, spec.CONTEXT, spec.VOCAB))
+        for checkpoint in ("best", "last"):
+            params = read_exact(run / f"{checkpoint}.f32", "<f4", (spec.PARAM_COUNT,))
+            model.load_flat(params)
+            for split, sequences in splits.items():
+                tag = f"runtime/shared_checkpoint/{owner}/{checkpoint}/{split}"
+                native_logits = np.stack(
+                    [
+                        workspace_tensor(
+                            native.forward(params, arr(row[:-1], np.int32)), "logits"
+                        ).copy()
+                        for row in sequences
+                    ]
+                )
+                with torch.no_grad():
+                    python_logits = model(tensor(sequences[:, :-1], dtype=torch.long)).numpy()
+                checks.close(tag + "/native_vs_python", native_logits, python_logits)
+                checks.require(
+                    tag + "/all_logits_finite",
+                    np.isfinite(native_logits).all() and np.isfinite(python_logits).all(),
+                )
+                if checkpoint == "best" and split == "test":
+                    checks.close(tag + "/native_vs_own_saved", native_logits, saved_logits)
+                    checks.close(tag + "/python_vs_own_saved", python_logits, saved_logits)
+                    own = native_logits if owner == "native" else python_logits
+                    checks.require(
+                        tag + "/own_engine_saved_logits_exact", np.array_equal(own, saved_logits)
+                    )
+                if split == "validation":
+                    expected_loss = history[:, 1].min() if checkpoint == "best" else history[-1, 1]
+                    for engine, logits in (("native", native_logits), ("python", python_logits)):
+                        checks.close(
+                            tag + f"/{engine}_vs_own_history",
+                            prediction_metrics(logits, sequences[:, 1:])["nll"],
+                            expected_loss,
+                            "trajectory",
+                        )
+
+    checks.require("runtime/shared_checkpoints_complete", True)
+
+
+def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE, *, native=None):
     from transformer.prepare import prepare_fixture
 
     directory = Path(directory).resolve()
@@ -1058,7 +1301,13 @@ def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE):
     for filename in ("best.f32", "last.f32", "adam_m.f32", "adam_v.f32", "test_logits.f32"):
         python_values = np.fromfile(directory / "python" / filename, dtype="<f4")
         native_values = np.fromfile(directory / "native" / filename, dtype="<f4")
-        checks.close("runtime/matched/" + filename, native_values, python_values, "trajectory")
+        checks.close(
+            "runtime/matched/" + filename,
+            native_values,
+            python_values,
+            "trajectory",
+            diagnostic=spec.WIDTH >= 512,
+        )
         checks.require(
             "runtime/repeat/" + filename,
             (directory / "native" / filename).read_bytes()
@@ -1066,7 +1315,13 @@ def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE):
         )
     python_history = np.fromfile(directory / "python/history.f64", "<f8").reshape(2, 3)
     native_history = np.fromfile(directory / "native/history.f64", "<f8").reshape(2, 3)
-    checks.close("runtime/history", native_history[:, :2], python_history[:, :2], "trajectory")
+    checks.close(
+        "runtime/history",
+        native_history[:, :2],
+        python_history[:, :2],
+        "trajectory",
+        diagnostic=spec.WIDTH >= 512,
+    )
     native_repeat = np.fromfile(directory / "native-repeat/history.f64", "<f8").reshape(2, 3)
     checks.require(
         "runtime/repeat/history", np.array_equal(native_history[:, :2], native_repeat[:, :2])
@@ -1076,14 +1331,31 @@ def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE):
         checks.require(f"runtime/{name}/performance_shape", performance.shape == (8,))
         checks.require(f"runtime/{name}/four_optimizer_steps", performance[6] == 4)
         checks.require(f"runtime/{name}/positive_timers", np.all(performance[[0, 1, 7]] > 0))
-        checks.require(
-            f"runtime/{name}/best_epoch", performance[5] == 1 + native_history[:, 1].argmin()
-        )
+        if spec.WIDTH >= 512 and name == "python":
+            checks.diagnostic_require(
+                f"runtime/{name}/best_epoch", performance[5] == 1 + native_history[:, 1].argmin()
+            )
+            checks.require(
+                f"runtime/{name}/own_best_epoch",
+                performance[5] == 1 + python_history[:, 1].argmin(),
+            )
+        else:
+            checks.require(
+                f"runtime/{name}/best_epoch", performance[5] == 1 + native_history[:, 1].argmin()
+            )
         timings = np.fromfile(directory / name / "timings.f64", "<f8")
         checks.require(
             f"runtime/{name}/timings",
             timings.shape == (100,) and bool(np.all(np.isfinite(timings) & (timings > 0))),
         )
+
+    if spec.WIDTH >= 512:
+        if native is None:
+            raise ValueError("Wide runtime checkpoint replay requires the audited native library")
+        check_runtime_shared_checkpoints(native, checks, fixture, directory)
+        from transformer.runtime_replay import check_runtime_updates
+
+        check_runtime_updates(native, checks, fixture, directory)
 
     # Preserve the output bytes across a rejected duplicate invocation.
     before = {
@@ -1094,6 +1366,7 @@ def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE):
     after = {path.name: sha256(path) for path in (directory / "native").iterdir() if path.is_file()}
     checks.require("runtime/reject_existing_output", result["returncode"] != 0 and before == after)
 
+    fixture_hashes = {path.name: sha256(path) for path in fixture.iterdir() if path.is_file()}
     corruptions = {
         "truncated_weights": ("initial.f32", lambda data: data[:-4]),
         "extra_weights": ("initial.f32", lambda data: data + b"\x00\x00\x00\x00"),
@@ -1116,9 +1389,12 @@ def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE):
     }
     for name, (filename, corrupt) in corruptions.items():
         bad = directory / ("bad-" + name)
-        shutil.copytree(fixture, bad)
+        # Shared immutable payloads avoid duplicating wide initial weights in every bad case.
+        shutil.copytree(fixture, bad, copy_function=os.link)
         path = bad / filename
-        path.write_bytes(corrupt(path.read_bytes()))
+        corrupted = corrupt(path.read_bytes())
+        path.unlink()
+        path.write_bytes(corrupted)
         result = run_child([str(executable), str(bad), str(directory / ("rejected-" + name))])
         records.append(result)
         checks.require(
@@ -1130,6 +1406,10 @@ def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE):
             "runtime/rejected_output_absent/" + name,
             not (directory / ("rejected-" + name)).exists(),
         )
+    checks.require(
+        "runtime/rejection_fixtures_preserve_original_inputs",
+        fixture_hashes == {path.name: sha256(path) for path in fixture.iterdir() if path.is_file()},
+    )
     (directory / "child-processes.json").write_text(json.dumps(records, indent=2) + "\n")
 
 
@@ -1171,10 +1451,16 @@ def main():
             backend["neon_forward_calls"] > 0 and backend["neon_backward_calls"] > 0,
         )
         if args.runtime:
-            runtime_checks(checks, args.work_dir, args.executable)
+            runtime_checks(checks, args.work_dir, args.executable, native=native)
     except Exception as exc:
         error = f"{type(exc).__name__}: {exc}"
         checks.require("audit/exception", False, error)
+    if spec.WIDTH >= 512:
+        checks.require(
+            "audit/legacy_diagnostics_complete",
+            [record["name"] for record in checks.diagnostics]
+            == legacy_diagnostic_names(args.runtime),
+        )
     source_after = {
         name: sha256(ROOT / name) if (ROOT / name).is_file() else None for name in SOURCE_FILES
     }
@@ -1194,6 +1480,13 @@ def main():
     checks.require("audit/binaries_unchanged_during_checks", binary_before == binary_after)
     result = {
         "schema_version": 1,
+        "validation_contract": validation_contract(spec.WIDTH),
+        "legacy_diagnostics": checks.diagnostics,
+        "legacy_diagnostic_count": len(checks.diagnostics),
+        "legacy_failed_checks": [
+            record["name"] for record in checks.diagnostics if not record["passed"]
+        ],
+        "legacy_contract_passed": all(record["passed"] for record in checks.diagnostics),
         "model_width": spec.WIDTH,
         "parameter_count": spec.PARAM_COUNT,
         "model_identity": identity,

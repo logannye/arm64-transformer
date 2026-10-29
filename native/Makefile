@@ -13,6 +13,8 @@ widths:
 	$(MAKE) WIDTH=64 all
 	$(MAKE) WIDTH=128 all
 	$(MAKE) WIDTH=256 all
+	$(MAKE) WIDTH=512 all
+	$(MAKE) WIDTH=1024 all
 $(BUILD):
 	mkdir -p $@
 $(BUILD)/layout.inc: ../transformer/spec.py | $(BUILD)

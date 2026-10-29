@@ -6,27 +6,29 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
+from contract_fixtures import attach_contract
 
 from transformer import spec, sweep_report
 from transformer.report import aggregate_runs
-from transformer.sweep import study_order
+from transformer.sweep import REGRESSION_WIDTHS, protocol_widths, study_order
 from transformer.validate import Checks
 
 
-def synthetic_campaign():
+def synthetic_campaign(protocol="v3"):
+    widths = protocol_widths(protocol)
     manifest = {
         "status": "completed",
-        "protocol_version": "v3",
-        "widths": list(spec.WIDTHS),
+        "protocol_version": protocol,
+        "widths": list(widths),
         "revision": "frozen-revision",
         "source_sha256": {"source": "frozen"},
         "models": {},
         "preflights": {},
         "fixtures": {},
-        "order": study_order(),
+        "order": study_order(protocol),
         "runs": [],
     }
-    for width in spec.WIDTHS:
+    for width in widths:
         parameters = 8 * width**2 + 301 * width + 128
         manifest["models"][str(width)] = {
             "width": width,
@@ -73,7 +75,7 @@ def synthetic_campaign():
                     "initial.f32": f"init-{width}-{seed}",
                 },
             }
-    for width, seed, repeat, impl in study_order():
+    for width, seed, repeat, impl in study_order(protocol):
         name = f"seed-{seed}-repeat-{repeat}-{impl}"
         power = {"power": {"returncode": 0, "stdout": "AC Power"}}
         manifest["runs"].append(
@@ -102,10 +104,10 @@ def synthetic_campaign():
             }
         )
     children = {}
-    for width in spec.WIDTHS:
+    for width in widths:
         children[width] = {
             "status": "completed",
-            "protocol_version": "v3",
+            "protocol_version": protocol,
             "width": width,
             "model_width": width,
             "parameter_count": manifest["models"][str(width)]["parameters"],
@@ -115,14 +117,14 @@ def synthetic_campaign():
             "preflight": copy.deepcopy(manifest["preflights"][str(width)]),
             "fixtures": copy.deepcopy(manifest["fixtures"][str(width)]),
             "runs": copy.deepcopy([entry for entry in manifest["runs"] if entry["width"] == width]),
-            "order": [list(row[1:]) for row in study_order() if row[0] == width],
+            "order": [list(row[1:]) for row in study_order(protocol) if row[0] == width],
         }
     return manifest, children
 
 
 def synthetic_summaries(manifest):
     summaries = {}
-    for width in spec.WIDTHS:
+    for width in manifest["widths"]:
         runs = []
         for entry in manifest["runs"]:
             if entry["width"] != width:
@@ -165,7 +167,7 @@ def synthetic_summaries(manifest):
             )
         summaries[width] = {
             "status": "completed",
-            "protocol_version": "v3",
+            "protocol_version": manifest["protocol_version"],
             "revision": manifest["revision"],
             "source_sha256": manifest["source_sha256"],
             "model": manifest["models"][str(width)],
@@ -274,7 +276,7 @@ def test_failed_report_preserves_error_evidence_and_refuses_overwrite(tmp_path, 
     manifest["source_sha256"] = {
         name: sweep_report.sha256(sweep_report.ROOT / name) for name in sweep_report.REPORT_SOURCES
     }
-    for width in spec.WIDTHS:
+    for width in protocol_widths():
         children[width]["source_sha256"] = manifest["source_sha256"]
         path = results / f"width-{width}"
         path.mkdir()
@@ -303,13 +305,13 @@ def test_failed_report_preserves_error_evidence_and_refuses_overwrite(tmp_path, 
     assert (output / "audit.json").read_bytes() == before
 
 
-def v4_campaign():
+def v4_campaign(protocol="v4"):
     from transformer.backend import FIELDS
 
-    manifest, children = synthetic_campaign()
-    manifest["protocol_version"] = "v4"
+    manifest, children = synthetic_campaign(protocol)
+    manifest["protocol_version"] = protocol
     manifest["backend_preflights"] = {}
-    for width in spec.WIDTHS:
+    for width in manifest["widths"]:
         key = str(width)
         values = [1, 0, 0, 1, 1, 64, 0, 0, 0, 0]
         values[6 if width >= 64 else 8] = 94040
@@ -317,6 +319,7 @@ def v4_campaign():
         backend = dict(zip(FIELDS, values, strict=True))
         main = manifest["preflights"][key]
         main["backend"] = backend
+        main["source_sha256"] = manifest["source_sha256"]
         modes = {}
         for policy, number in (("neon", 1), ("sme", 2)):
             selected = copy.deepcopy(main)
@@ -340,10 +343,48 @@ def v4_campaign():
                     backend_sha256="authenticated",
                 )
         children[width].update(
-            protocol_version="v4",
+            protocol_version=protocol,
             preflight=copy.deepcopy(main),
             backend_preflights=copy.deepcopy(modes),
             runs=copy.deepcopy([row for row in manifest["runs"] if row["width"] == width]),
+        )
+    if protocol == "v5":
+        from transformer.backend import validate_regression_preflights
+
+        regression = {}
+        for width in REGRESSION_WIDTHS:
+            if width in manifest["widths"]:
+                main = manifest["preflights"][str(width)]
+                modes = manifest["backend_preflights"][str(width)]
+            else:
+                main = copy.deepcopy(manifest["preflights"]["512"])
+                count = 8 * width**2 + 301 * width + 128
+                main.update(
+                    model_width=width,
+                    parameter_count=count,
+                    model_identity={"width": width, "parameter_count": count, "verified": True},
+                )
+                modes = copy.deepcopy(manifest["backend_preflights"]["512"])
+                for gate in modes.values():
+                    gate.update(
+                        model_width=width,
+                        parameter_count=count,
+                        model_identity=copy.deepcopy(main["model_identity"]),
+                    )
+            for gate in (main, *modes.values()):
+                attach_contract(gate, width)
+            regression[str(width)] = {"auto": main, **modes}
+        manifest["validation_contract"] = "v5-common-state-replay-v1"
+        for width in manifest["widths"]:
+            children[width].update(
+                validation_contract="v5-common-state-replay-v1",
+                preflight=copy.deepcopy(manifest["preflights"][str(width)]),
+                backend_preflights=copy.deepcopy(manifest["backend_preflights"][str(width)]),
+            )
+        manifest["regression_preflights"] = regression
+        manifest["regression_widths"] = list(REGRESSION_WIDTHS)
+        manifest["regression_gate_counts"] = validate_regression_preflights(
+            regression, REGRESSION_WIDTHS, manifest["source_sha256"]
         )
     return manifest, children
 
@@ -390,3 +431,34 @@ def test_v4_aggregation_preserves_separate_auto_forced_and_combined_counts():
     summaries[64]["forced_backend_preflight_check_count"] = 99
     with pytest.raises(ValueError, match="forced_backend_counts"):
         sweep_report.aggregate_summaries(manifest, summaries, Checks())
+
+
+def test_v5_requires_24_fits_but_all_six_regression_widths():
+    manifest, children = v4_campaign("v5")
+    checks = Checks()
+    sweep_report.validate_manifest(manifest, children, checks)
+    assert checks.passed
+    assert manifest["widths"] == [512, 1024]
+    assert len(manifest["runs"]) == 24
+    assert manifest["regression_gate_counts"] == {"auto": 1018, "forced": 2036, "all": 3054}
+    manifest["regression_preflights"].pop("32")
+    with pytest.raises(ValueError, match="regression width"):
+        sweep_report.validate_manifest(manifest, children, Checks())
+
+
+def test_v5_summary_has_only_measured_widths_and_correct_prediction_count():
+    manifest, _ = v4_campaign("v5")
+    summaries = synthetic_summaries(manifest)
+    for width, summary in summaries.items():
+        summary.update(
+            validation_contract="v5-common-state-replay-v1",
+            preflight_check_count=507,
+            forced_backend_preflight_check_count=1014,
+            all_backend_preflight_check_count=1521,
+            backend=manifest["preflights"][str(width)]["backend"],
+        )
+
+    aggregate = sweep_report.aggregate_summaries(manifest, summaries, Checks())
+    assert set(aggregate["by_width"]) == {"512", "1024"}
+    assert len(aggregate["runs"]) == 24
+    assert aggregate["retained_test_prediction_rows"] == 196608

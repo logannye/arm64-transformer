@@ -1,0 +1,168 @@
+{
+  "scope": "Compact Git evidence with byte-identical original gate files. Full coordinate tables and original source/binaries are retained as release development extras.",
+  "release_archive_status": "Expected paths for the planned release archive; publication is handled with the completed campaign.",
+  "release_extra_arguments": {
+    "initial-admission": "work/v5/initial-admission",
+    "numerical-diagnosis": "work/v5-diagnosis",
+    "sme-striped": "work/v5-sme-striped"
+  },
+  "raw_artifacts": [
+    {
+      "workspace_path": "work/v5/initial-admission/identity.json",
+      "release_path": "development/initial-admission/identity.json",
+      "sha256": "369ab154bb94f835be7ac5cf174ee024d8e826b416a5c189283306723d4b8157",
+      "bytes": 3648
+    },
+    {
+      "workspace_path": "work/v5/initial-admission/preflights/width-1024.json",
+      "release_path": "development/initial-admission/preflights/width-1024.json",
+      "sha256": "86b885d3b3cb8cf124a281db1628685ffbe91b260f5f7c7f1557fd8d27214b52",
+      "bytes": 243463
+    },
+    {
+      "workspace_path": "work/v5/initial-admission/preflights/width-512-neon.json",
+      "release_path": "development/initial-admission/preflights/width-512-neon.json",
+      "sha256": "eac92ef2b02476cea59f189d8a7951fbfacc2870cc03fb3f7fe762ddd7f294b7",
+      "bytes": 242332
+    },
+    {
+      "workspace_path": "work/v5/initial-admission/preflights/width-512.json",
+      "release_path": "development/initial-admission/preflights/width-512.json",
+      "sha256": "ca81e4a51c475ccb11d394f0834a345a16e381516b3131e9262da56d39c6f962",
+      "bytes": 242606
+    },
+    {
+      "workspace_path": "work/v5/initial-admission/preflights/width-1024-neon.json",
+      "release_path": "development/initial-admission/preflights/width-1024-neon.json",
+      "sha256": "cf53b2d6cf520cc3a81c7937c0f9a22b20b29281278951de2c0136a8a24a18cc",
+      "bytes": 242876
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/provenance.json",
+      "release_path": "development/numerical-diagnosis/provenance.json",
+      "sha256": "9a23550f880eb58f7a159d87a30e9be65716db90f2848795302046a09edd0fe1",
+      "bytes": 4750
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/findings.txt",
+      "release_path": "development/numerical-diagnosis/findings.txt",
+      "sha256": "62ff057d8f78b2fd4eaec2d86cf491c44eb63d20f0bcbeba7c7bc49c5192b1e5",
+      "bytes": 4933
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/width-1024-findings.txt",
+      "release_path": "development/numerical-diagnosis/width-1024-findings.txt",
+      "sha256": "59c810c8e73857d1cdd19f9ec6839a85d0f3ad8ee864e883e6f40d5cffb48d52",
+      "bytes": 7787
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/trace_trajectory.py",
+      "release_path": "development/numerical-diagnosis/trace_trajectory.py",
+      "sha256": "0b4e7475a5f9c90d4abe75ea671f9ea25fc0ecef421edd0d6f133efa4752d5d4",
+      "bytes": 6912
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/isolate_ff2.py",
+      "release_path": "development/numerical-diagnosis/isolate_ff2.py",
+      "sha256": "83478fe864700bee9540b6bab6e021c8eb0ec222a0c3b0b105081959cbf0468b",
+      "bytes": 4676
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/trace_wide.py",
+      "release_path": "development/numerical-diagnosis/trace_wide.py",
+      "sha256": "9ac6b1b291e7ba2089b27c3f662ee739d70a52414c907de3e288f68baadaeb41",
+      "bytes": 10301
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/trace_runtime.py",
+      "release_path": "development/numerical-diagnosis/trace_runtime.py",
+      "sha256": "a71d0b08e9dafcba1c919d543ba52bbabef45aa56f7ec5fdde4db783eae28910",
+      "bytes": 6805
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/ff2-isolation.json",
+      "release_path": "development/numerical-diagnosis/ff2-isolation.json",
+      "sha256": "fd58b9cd4e6ffdd2e82942cb04882716ae09b35ad7992c2a10bd4d4521367691",
+      "bytes": 12543
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/width-512-auto.json",
+      "release_path": "development/numerical-diagnosis/width-512-auto.json",
+      "sha256": "782a60249fbca859dd65a4921218a3232b25a237f739e9339ba5381507fc80e4",
+      "bytes": 9894
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/width-1024-auto-extended.json",
+      "release_path": "development/numerical-diagnosis/width-1024-auto-extended.json",
+      "sha256": "f5656254870af9b8155877d1dc7406546750ff68083b4cbc21f26d84dc44932d",
+      "bytes": 8567183
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/width-1024-neon-extended.json",
+      "release_path": "development/numerical-diagnosis/width-1024-neon-extended.json",
+      "sha256": "478fa4dca40486ab209b1541c885e53b9a15b62a7f5f4ca2bd86f82f8b2c18ae",
+      "bytes": 223261
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/width-1024-auto-runtime-trace.json",
+      "release_path": "development/numerical-diagnosis/width-1024-auto-runtime-trace.json",
+      "sha256": "92e26b0c909faa2fa8babb8d368a421e0abf7fc12613abb53e6330cee134c6f5",
+      "bytes": 1045803
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/width-1024-neon-runtime-trace.json",
+      "release_path": "development/numerical-diagnosis/width-1024-neon-runtime-trace.json",
+      "sha256": "1aa6efd1adb61f159bdd4a79106f4183b9c18d7195973a848777fb12e2ee4c92",
+      "bytes": 358483
+    },
+    {
+      "workspace_path": "work/v5-sme-striped/linear_sme.S",
+      "release_path": "development/sme-striped/linear_sme.S",
+      "sha256": "53b204c74aa0eba3a32c5c388d0cd68eeb81cbfc238b5bb007a3de1d35e161fd",
+      "bytes": 9206
+    },
+    {
+      "workspace_path": "work/v5-sme-striped/check_primitives.py",
+      "release_path": "development/sme-striped/check_primitives.py",
+      "sha256": "fe0ac27cf38f6d20e0835b51422a254a810fb65d78b106285d951df090efde27",
+      "bytes": 3595
+    },
+    {
+      "workspace_path": "work/v5-sme-striped/check_accuracy.py",
+      "release_path": "development/sme-striped/check_accuracy.py",
+      "sha256": "74c57f17a21810f27d785af4b61b9097d8ba8d516777ce8e7252033f7877413d",
+      "bytes": 3517
+    },
+    {
+      "workspace_path": "work/v5-sme-striped/check_model.py",
+      "release_path": "development/sme-striped/check_model.py",
+      "sha256": "9146e085fd0c24a61ae3a6494e7a17aa0a9cee80c6644c1d796a6276404dd508",
+      "bytes": 1435
+    },
+    {
+      "workspace_path": "work/v5-sme-striped/primitive-parity-attempt1.json",
+      "release_path": "development/sme-striped/primitive-parity-attempt1.json",
+      "sha256": "0e25fe27befdde077cb4433b581df8943a7ffcfed6f2bddf360ba41340b51184",
+      "bytes": 22961
+    },
+    {
+      "workspace_path": "work/v5-sme-striped/fp64-accuracy-attempt1.json",
+      "release_path": "development/sme-striped/fp64-accuracy-attempt1.json",
+      "sha256": "18e149f941c54808c15fab67465368c85b6a91f42cf9e38c11b35993ee870736",
+      "bytes": 31562
+    },
+    {
+      "workspace_path": "work/v5-sme-striped/numerical-512-attempt1.json",
+      "release_path": "development/sme-striped/numerical-512-attempt1.json",
+      "sha256": "3022649aaab8da19724143a6daf9f731d96109e76aed8f96d11c9fc340f6889c",
+      "bytes": 227567
+    },
+    {
+      "workspace_path": "work/v5-sme-striped/numerical-1024-attempt1.json",
+      "release_path": "development/sme-striped/numerical-1024-attempt1.json",
+      "sha256": "bdc9d29c4b5445d42346cce56f89661e304d3b78a3f175637052d6cf7a0217d3",
+      "bytes": 228795
+    }
+  ],
+  "limitations": "Extended reports recorded source hashes matching the preserved original snapshot. Runtime reports did not independently record import-time source hashes; their library hash matches the snapshot and they reproduce both original saved final checkpoints bit-for-bit. See provenance.json for script/source provenance."
+}

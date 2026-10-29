@@ -11,7 +11,13 @@ import numpy as np
 
 from transformer import spec
 from transformer.audit import audit_run, compare_repeats, paired_predictions, read_exact
-from transformer.backend import read_backend, validate_backend_preflights, validate_runtime_backend
+from transformer.backend import (
+    WIDE_VALIDATION_CONTRACT,
+    read_backend,
+    validate_backend_preflights,
+    validate_runtime_backend,
+    validate_validation_contract,
+)
 from transformer.validate import ROOT, SOURCE_FILES, Checks, sha256
 
 IMPLEMENTATIONS = ("python", "arm64")
@@ -263,11 +269,11 @@ def report_markdown(summary):
         "It is an engineering regression benchmark, not a fresh untouched test set. "
         "Kernel development used synthetic correctness and timing inputs; the model, "
         "optimizer, seeds and stopping rule were unchanged.\n\n"
-        if version in ("v2", "v3", "v4")
+        if version in ("v2", "v3", "v4", "v5")
         else ""
     )
     backend_note = ""
-    if version == "v4":
+    if version in ("v4", "v5"):
         actual = next(run["backend"] for run in summary["runs"] if run["implementation"] == "arm64")
         backend_note = (
             f"Native processes requested automatic dispatch. Hardware SME capability: "
@@ -281,6 +287,22 @@ def report_markdown(summary):
             f"The auto-policy preflight contains {summary['preflight_check_count']:,} checks; "
             f"forced-policy gates add {summary['forced_backend_preflight_check_count']:,}, "
             f"for {summary['all_backend_preflight_check_count']:,} admission checks.\n\n"
+        )
+    contract_note = ""
+    if version == "v5":
+        total = sum(value["count"] for value in summary["legacy_diagnostic_counts"].values())
+        failed = sum(value["failed"] for value in summary["legacy_diagnostic_counts"].values())
+        contract_note = (
+            f"Validation contract: `{summary['validation_contract']}`. "
+            "The prospective wide-model criterion compares both engines at identical "
+            "evolving states "
+            "and replays each gradient through both optimizers with unchanged tolerances. "
+            f"The original free-running comparisons remain {total:,} explicit diagnostic records, "
+            f"including {failed:,} failures, and are excluded from the passing admission count. "
+            "This does not claim the original cross-implementation trajectory contract passed. "
+            "Independent four-update control replays also require exact own saved states/history "
+            "and check actual partial-batch normalization plus identical-input Adam updates. "
+            "The failed initial admission and its source/binaries remain preserved.\n\n"
         )
     aggregate = summary["aggregate"]["by_implementation"]
     ratio = summary["aggregate"]["geometric_mean_training_ratio_python_over_arm64"]
@@ -338,7 +360,7 @@ initialization seeds, two timing repeats, and both implementations.
 Measured source revision: `{summary["revision"]}`. Hardware: {summary["hardware"]}.
 Platform: `{summary["platform"]}`. PyTorch: `{summary["torch"]}`.
 
-{backend_note}{table_text}
+{backend_note}{contract_note}{table_text}
 
 Entries are mean ± sample SD of three seed means. Timing repeats are averaged
 within seed; they are not six independent quality seeds. The primary ratio is
@@ -469,8 +491,22 @@ def create_report(results, inputs, output):
             manifest["preflight"].get("passed") is True
             and manifest["preflight"].get("runtime_included") is True,
         )
+        diagnostic_counts = {}
+        if manifest.get("protocol_version") == "v5":
+            if manifest.get("validation_contract") != WIDE_VALIDATION_CONTRACT:
+                raise ValueError("Missing prospective wide-model validation contract")
+            for mode, gate in {
+                "auto": manifest["preflight"],
+                **manifest["backend_preflights"],
+            }.items():
+                total, failed = validate_validation_contract(gate, spec.WIDTH)
+                diagnostic_counts[mode] = {
+                    "count": total,
+                    "failed": failed,
+                    "failed_checks": gate["legacy_failed_checks"],
+                }
         forced_count = 0
-        if manifest.get("protocol_version") == "v4":
+        if manifest.get("protocol_version") in ("v4", "v5"):
             forced_count = validate_backend_preflights(
                 manifest["preflight"], manifest["backend_preflights"]
             )
@@ -494,7 +530,10 @@ def create_report(results, inputs, output):
                 entry["name"] + "/runner_fixture_identity",
                 run["fixture_sha256"] == manifest["fixtures"][str(entry["seed"])]["sha256"],
             )
-            if manifest.get("protocol_version") == "v4" and entry["implementation"] == "arm64":
+            if (
+                manifest.get("protocol_version") in ("v4", "v5")
+                and entry["implementation"] == "arm64"
+            ):
                 backend_path = results / entry["name"] / "backend.u64"
                 backend = read_backend(backend_path, policy="auto")
                 validate_runtime_backend(
@@ -560,6 +599,8 @@ def create_report(results, inputs, output):
                 all_backend_preflight_check_count=manifest["preflight"]["check_count"]
                 + forced_count,
                 backend=manifest["preflight"].get("backend"),
+                validation_contract=manifest.get("validation_contract"),
+                legacy_diagnostic_counts=diagnostic_counts,
                 platform=manifest["platform"],
                 hardware=hardware,
                 supplementary_hardware_evidence=hardware_evidence,

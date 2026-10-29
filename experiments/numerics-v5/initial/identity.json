@@ -1,0 +1,41 @@
+{
+  "scope": "Initial v5 synthetic admission, including failed free-running trajectory checks; not a formal matched benchmark.",
+  "source_sha256": {
+    "native/kernels.S": "5120dc3b4553a40f1e35cd09206bee61df94018cef3bac4731443e1adefcd654",
+    "native/linear.S": "bff254cd0dc65321e8c76a2a5ec4d3c54b4a10746e44cc30e2dcee9b544290bd",
+    "native/linear_sme.S": "4de6ebf01eece9bc128569a941d520ef7225895b9eb074b13115391a7e11892c",
+    "native/backend.S": "314fbcc72ced7dd907461d37d3b92a01dd9592668687d21ccacad70a75cc8616",
+    "native/attention.S": "8abc67e4c2f3d5b5866f8b032b0f98797282810118b4c797c1e5caf8a622afc2",
+    "native/softmax.S": "4f61cf45328aac18c0abd779c9738a86f0048ca00850b054bb3bf3ef3bfa4161",
+    "native/normalization.S": "c5001fd8bdca68375f72599df39d3b99aaf856cc94f37a2ef07a27738b1e72ec",
+    "native/model.S": "bba4485a53f75e88749953dae1c5aa7da033c978ce4ccf281e7d9e97bc27de90",
+    "native/runtime.S": "80952e3cca2ad4e0680b0689aa6981f45fbe553072074f3eddf201a68154c19a",
+    "native/Makefile": "90ac1a0c088d60ee59dd94bfd9950eedd9f2094e32016bc806b996d5b6304ff2",
+    "transformer/spec.py": "b36d58ee1494399175016a59c0becc9d37597d05241969791fb7ca2234e2f1e3",
+    "transformer/reference.py": "54a20341c9e96196961fd6770ebeda8052b9378f20f9f4934e2781e78d11b19f",
+    "transformer/prepare.py": "a6d18bd2195140711e6db23a11878e69211fa0a36c45fb6e74c72a0d8cdb5dbe",
+    "transformer/python_train.py": "7452ffcb13328bcf51cb3ccdfc0884449dffce3284fe034ae4eaa5a0985b2d32",
+    "transformer/validate.py": "5904b0ae3a379cc71b0afb53d0e086321e3c007b0376b6b0d176cd45848c0a30",
+    "transformer/backend.py": "ca09dd1b8b8c6e3f78dc574e0a8702dda6979000707d29f642d2862ddcc4fd94"
+  },
+  "binaries": {
+    "native/width-512/transformer-arm64": "a59c63525e7215cc8a35d58420cda5db64c29a577022eb038005c7ef765b8da7",
+    "native/width-512/libtransformer.dylib": "b743f69c0c357fc818869f00e7458a98950b34096232ddb4cdf4dc635cad5626",
+    "native/width-512/layout.inc": "9f2270d788a932f03a7fd1e909388b4d1feaab0e185846f8fe3f1637a1db1d0f",
+    "native/width-64/transformer-arm64": "d13ca257f8e2c5c15113938eb99f06c98407b363372445db4731816299f9133e",
+    "native/width-64/libtransformer.dylib": "54c5e3b1e2dba02c1a6af1f02207954636cc96b1ed8ad1b6650a9e1c07d077b5",
+    "native/width-64/layout.inc": "4ee413672f2fd55d66d33807ee872f593b409872e31421323faab00ad1ad626d",
+    "native/width-1024/transformer-arm64": "8f72efda9ee1c2e42b7d016bd8012c8bbe5959845e28ca8f99966d734090878c",
+    "native/width-1024/libtransformer.dylib": "64fff5cc0d969107708c2c4533d601c1771e7e19ca9d79703ed3881e86241777",
+    "native/width-1024/layout.inc": "79426b864649550e62f8a7a9188344954f1b8a9c1d48087a899ad205a2ed0b67",
+    "native/width-128/transformer-arm64": "5a1d90522536b49838a76728ee97889dbec8ade0a92bfc9cc860cf1fa509fee8",
+    "native/width-128/libtransformer.dylib": "c3a4d8d7872be0fc10426871eeb6c2b754c77e561bcccf7471569d53eeea2264",
+    "native/width-128/layout.inc": "8bb99341fef6804c66e66a3f718a90a7132cc932452100bfb23c42b309ba6e12",
+    "native/width-256/transformer-arm64": "238755c8cd2932933efaa7e48c145cd2a13021f8e17eed1463ecae64e91dd47a",
+    "native/width-256/libtransformer.dylib": "394ab4c5ca08c7fa8347f899f31fe876621d036dd8a52cad08ef0342b009ff96",
+    "native/width-256/layout.inc": "bb7a10f395628aa5e832e1b0f5995d06d8ce79767cd0cac198f0ff366a207bb2",
+    "native/width-32/transformer-arm64": "e6069c92c5101fe8e11833a11ae9c0fde1b093ce11a7fa1dd27d5fdf6ba4e0a9",
+    "native/width-32/libtransformer.dylib": "c054e8cfa958891f01ab7ebf95f0cf5cea4fb452555d195a76f002d89056dad5",
+    "native/width-32/layout.inc": "1d43b72afe41a7d68cf987da96d8b487c20bd021c9363ac5ae96566df3b7b00e"
+  }
+}

@@ -2,7 +2,10 @@
 // Entry is non-streaming, with no live caller ZA state. The outer dispatcher
 // checks hardware/OS support; these entries check shapes and 512-bit streaming
 // vector length. No numerical library, allocation routine, or shared scratch.
-// Four ZA 16x16 tiles hold one 32x32 result. Scratch is bounded and page-touched.
+// Four ZA tiles hold32x32 outputs at smaller compiled widths, or four
+// interleaved partial sums for16x16 outputs at compiled widths512/1024.
+// Scratch is bounded and page-touched.
+#include <layout.inc>
 .text
 .p2align 4
 
@@ -52,7 +55,7 @@
     ldr w10,[\shape,#4]
     cmp w10,#64
     b.lo \fallback
-    cmp w10,#512
+    cmp w10,#2048
     b.hi \fallback
     sub w12,w10,#1
     tst w10,w12
@@ -60,7 +63,7 @@
     ldr w11,[\shape,#8]
     cmp w11,#64
     b.lo \fallback
-    cmp w11,#768
+    cmp w11,#3072
     b.hi \fallback
     tst w11,#31
     b.ne \fallback
@@ -106,6 +109,7 @@ Lsme_pack_store:
 // x0 X[32,I],x1 W[O,I],x2 bias[O],x3 Y[32,O],x4 shape.
 .globl _tf_linear_forward_sme
 _tf_linear_forward_sme:
+.if WIDTH >= 512
     SME_SHAPE x4,Lsme_forward_fallback
     SME_SAVE 160
     smstart
@@ -120,7 +124,113 @@ _tf_linear_forward_sme:
     mov x23,x10 // I
     mov x24,x11 // O
     lsl x28,x23,#2
-    lsl x10,x23,#8 // two32-by-I float32 packs, at most128KiB
+    lsl x10,x23,#8 // two32-by-I float32 packs, at most512KiB
+    SME_ALLOC x10
+    mov x25,sp
+    add x26,x25,x23,lsl #7
+    mov x1,x25
+    mov x2,x28
+    mov x3,x23
+    bl Lsme_pack32
+    mov x27,#0
+Lsme_forward_panel:
+    madd x0,x27,x28,x20
+    mov x1,x26
+    mov x2,x28
+    mov x3,x23
+    bl Lsme_pack32
+    // Four subtiles cover the32-by32 panel. Within each16-by16 subtile,
+    // ZA0..ZA3 retain I modulo4 partial sums, matching NEON's lane chains.
+    mov x0,#0
+Lsme_forward_subtile:
+    and x1,x0,#1
+    lsl x1,x1,#6 // packed output-half byte offset0/64
+    lsr x2,x0,#1
+    lsl x2,x2,#6 // packed token-half byte offset0/64
+    zero {za}
+    add x9,x25,x2
+    add x10,x26,x1
+    lsr x11,x23,#2
+Lsme_forward_reduce:
+    ld1w {z0.s},p0/z,[x9]
+    ld1w {z1.s},p0/z,[x10]
+    fmopa za0.s,p0/m,p0/m,z0.s,z1.s
+    add x9,x9,#128
+    add x10,x10,#128
+    ld1w {z0.s},p0/z,[x9]
+    ld1w {z1.s},p0/z,[x10]
+    fmopa za1.s,p0/m,p0/m,z0.s,z1.s
+    add x9,x9,#128
+    add x10,x10,#128
+    ld1w {z0.s},p0/z,[x9]
+    ld1w {z1.s},p0/z,[x10]
+    fmopa za2.s,p0/m,p0/m,z0.s,z1.s
+    add x9,x9,#128
+    add x10,x10,#128
+    ld1w {z0.s},p0/z,[x9]
+    ld1w {z1.s},p0/z,[x10]
+    fmopa za3.s,p0/m,p0/m,z0.s,z1.s
+    add x9,x9,#128
+    add x10,x10,#128
+    subs x11,x11,#1
+    b.ne Lsme_forward_reduce
+    add x9,x21,x27,lsl #2
+    add x9,x9,x1
+    ld1w {z4.s},p0/z,[x9]
+    add x9,x22,x27,lsl #2
+    add x9,x9,x1
+    // Packed token-half offset is rowindex*4, so multiply by O to addressY.
+    madd x9,x2,x24,x9
+    lsl x11,x24,#2
+    mov w12,#0
+Lsme_forward_store:
+    mov z0.s,p0/m,za0h.s[w12,0]
+    mov z1.s,p0/m,za1h.s[w12,0]
+    mov z2.s,p0/m,za2h.s[w12,0]
+    mov z3.s,p0/m,za3h.s[w12,0]
+    // NEON FADDP order: (lane0+lane1)+(lane2+lane3), followed bybias.
+    fadd z0.s,z0.s,z1.s
+    fadd z2.s,z2.s,z3.s
+    fadd z0.s,z0.s,z2.s
+    fadd z0.s,z0.s,z4.s
+    st1w {z0.s},p0,[x9]
+    add x9,x9,x11
+    add w12,w12,#1
+    cmp w12,#16
+    b.lo Lsme_forward_store
+    add x0,x0,#1
+    cmp x0,#4
+    b.lo Lsme_forward_subtile
+    add x27,x27,#32
+    cmp x27,x24
+    b.lo Lsme_forward_panel
+    lsl x9,x23,#8
+    add sp,sp,x9
+    smstop
+    SME_RESTORE 160
+    ret
+Lsme_forward_wrong_svl:
+    smstop
+    SME_RESTORE 160
+Lsme_forward_fallback:
+    b _tf_linear_forward_neon
+
+.else
+    SME_SHAPE x4,Lsme_forward_fallback
+    SME_SAVE 160
+    smstart
+    cntw x9
+    cmp x9,#16
+    b.ne Lsme_forward_wrong_svl
+    ptrue p0.s
+    mov x19,x0
+    mov x20,x1
+    mov x21,x2
+    mov x22,x3
+    mov x23,x10 // I
+    mov x24,x11 // O
+    lsl x28,x23,#2
+    lsl x10,x23,#8 // two32-by-I float32 packs, at most512KiB
     SME_ALLOC x10
     mov x25,sp
     add x26,x25,x23,lsl #7
@@ -191,6 +301,8 @@ Lsme_forward_wrong_svl:
 Lsme_forward_fallback:
     b _tf_linear_forward_neon
 
+.endif
+
 // x0 X,x1 W,x2 dY,x3 dX,x4 dW,x5 db,x6 shape[32,I,O].
 // dX overwrite, dW/db ADD. Outer products preserve the O/R accumulation order.
 .p2align 4
@@ -215,7 +327,7 @@ _tf_linear_backward_sme:
     str x9,[x29,#160]
     lsl x9,x26,#2
     str x9,[x29,#168]
-    lsl x10,x26,#7 //32-by-O float32 pack, at most96KiB
+    lsl x10,x26,#7 //32-by-O float32 pack, at most384KiB
     SME_ALLOC x10
     mov x27,sp
     mov x0,x21

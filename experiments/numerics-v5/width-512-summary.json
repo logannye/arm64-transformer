@@ -1,0 +1,340 @@
+{
+  "scope": "Original width-512 automatic-SME failed-trajectory diagnosis; original gate remains failed.",
+  "width": 512,
+  "library_sha256": "b743f69c0c357fc818869f00e7458a98950b34096232ddb4cdf4dc635cad5626",
+  "source_sha256": {
+    "transformer/validate.py": "5904b0ae3a379cc71b0afb53d0e086321e3c007b0376b6b0d176cd45848c0a30",
+    "native/attention.S": "8abc67e4c2f3d5b5866f8b032b0f98797282810118b4c797c1e5caf8a622afc2",
+    "native/linear_sme.S": "4de6ebf01eece9bc128569a941d520ef7225895b9eb074b13115391a7e11892c"
+  },
+  "tolerances": {
+    "forward": {
+      "atol": 2e-05,
+      "rtol": 0.0002
+    },
+    "gradient": {
+      "atol": 3e-05,
+      "rtol": 0.003
+    },
+    "optimizer": {
+      "atol": 3e-06,
+      "rtol": 0.0003
+    },
+    "math": {
+      "atol": 2e-07,
+      "rtol": 2e-06
+    },
+    "trajectory": {
+      "atol": 0.0002,
+      "rtol": 0.002
+    },
+    "finite_difference": {
+      "atol": 2e-05,
+      "rtol": 0.005
+    }
+  },
+  "parameter": "ff2_weight[2,378]",
+  "steps": [
+    {
+      "step": 1,
+      "failed_count": 1,
+      "max_parameter_error": 0.0004048924893140793,
+      "worst_parameter": {
+        "flat_index": 1662330,
+        "parameter": "ff2_weight",
+        "coordinate": [
+          2,
+          378
+        ]
+      },
+      "fp64_min_relu_margin": {
+        "native_point": 1.1176534046889217e-05,
+        "reference_point": 1.1176534046889217e-05
+      },
+      "failures": [
+        {
+          "flat_index": 1662330,
+          "parameter": "ff2_weight",
+          "coordinate": [
+            2,
+            378
+          ],
+          "native_before": 0.02189714089035988,
+          "reference_before": 0.02189714089035988,
+          "native_after": 0.021669792011380196,
+          "reference_after": 0.022074684500694275,
+          "error": 0.0004048924893140793,
+          "allowed_error": 0.000244149356149137,
+          "native_gradient": 2.942443400044681e-09,
+          "reference_gradient": -2.158706546850908e-09,
+          "fp64_gradient_at_native": 1.5071677356999234e-10,
+          "fp64_gradient_at_reference": 1.5071677356999234e-10,
+          "native_m": 2.9424435110669833e-10,
+          "reference_m": -2.158706546850908e-10,
+          "native_v": 8.657973455796097e-21,
+          "reference_v": 4.660014069284113e-21
+        }
+      ]
+    },
+    {
+      "step": 2,
+      "failed_count": 1,
+      "max_parameter_error": 0.0004048943519592285,
+      "worst_parameter": {
+        "flat_index": 1662330,
+        "parameter": "ff2_weight",
+        "coordinate": [
+          2,
+          378
+        ]
+      },
+      "fp64_min_relu_margin": {
+        "native_point": 7.470159164510178e-06,
+        "reference_point": 7.328526297435304e-06
+      },
+      "failures": [
+        {
+          "flat_index": 1662330,
+          "parameter": "ff2_weight",
+          "coordinate": [
+            2,
+            378
+          ],
+          "native_before": 0.021669792011380196,
+          "reference_before": 0.022074684500694275,
+          "native_after": 0.02092566154897213,
+          "reference_after": 0.02133055590093136,
+          "error": 0.0004048943519592285,
+          "allowed_error": 0.00024266110267490149,
+          "native_gradient": 0.0013431489933282137,
+          "reference_gradient": 0.001343140029348433,
+          "fp64_gradient_at_native": 0.0013431484212160795,
+          "fp64_gradient_at_reference": 0.0013431419885564602,
+          "native_m": 0.00013431516708806157,
+          "reference_m": 0.00013431381375994533,
+          "native_v": 1.8040493543480807e-09,
+          "reference_v": 1.8040251514861438e-09
+        }
+      ]
+    },
+    {
+      "step": 3,
+      "failed_count": 1,
+      "max_parameter_error": 0.00040489621460437775,
+      "worst_parameter": {
+        "flat_index": 1662330,
+        "parameter": "ff2_weight",
+        "coordinate": [
+          2,
+          378
+        ]
+      },
+      "fp64_min_relu_margin": {
+        "native_point": 6.09367370771293e-06,
+        "reference_point": 9.052777175800742e-06
+      },
+      "failures": [
+        {
+          "flat_index": 1662330,
+          "parameter": "ff2_weight",
+          "coordinate": [
+            2,
+            378
+          ],
+          "native_before": 0.02092566154897213,
+          "reference_before": 0.02133055590093136,
+          "native_after": 0.020350448787212372,
+          "reference_after": 0.02075534500181675,
+          "error": 0.00040489621460437775,
+          "allowed_error": 0.00024151068646460772,
+          "native_gradient": 0.0,
+          "reference_gradient": 0.0,
+          "fp64_gradient_at_native": 0.0,
+          "fp64_gradient_at_reference": 0.0,
+          "native_m": 0.00012088364746887237,
+          "reference_m": 0.0001208824323839508,
+          "native_v": 1.8022453529553673e-09,
+          "reference_v": 1.8022211500934304e-09
+        }
+      ]
+    }
+  ],
+  "same_operand_dot_isolation": {
+    "reference32": {
+      "dot_fp64": -2.1930400867682665e-09,
+      "sum_abs_terms": 0.005541477112249511,
+      "cancellation_ratio": 2526847.1587382643,
+      "active_relu_count": 15,
+      "native_sequential_fma_same_operands": -2.158706546850908e-09,
+      "torch_dot_same_operands": -2.270098775625229e-09,
+      "torch_matmul_same_operands": -2.2118911147117615e-09
+    },
+    "reference64": {
+      "dot_fp64": 1.5071677369679626e-10,
+      "sum_abs_terms": 0.005541472537873128,
+      "cancellation_ratio": 36767457.277324416,
+      "active_relu_count": 15
+    },
+    "native": {
+      "dot_fp64": 2.9354779804841025e-09,
+      "sum_abs_terms": 0.005541469212470595,
+      "cancellation_ratio": 1887757.036268665,
+      "active_relu_count": 15,
+      "native_sequential_fma_same_operands": 2.942443400044681e-09,
+      "torch_dot_same_operands": 2.9103830456733704e-09,
+      "torch_matmul_same_operands": 2.8812792152166367e-09
+    }
+  },
+  "cross_dots": {
+    "native_x_reference_dy": 2.8675358639245613e-09,
+    "reference_x_native_dy": -2.125097462585268e-09,
+    "native_x_fp64_dy": 3.2104106769932986e-09,
+    "fp64_x_native_dy": -1.242164165580692e-10,
+    "reference_x_fp64_dy": -1.850164093328624e-09,
+    "fp64_x_reference_dy": -1.9215911576785788e-10,
+    "max_x_difference": 4.6193599700927734e-07,
+    "max_dy_difference": 1.3969838619232178e-09,
+    "native_vs_fp64_relu_active_equal": true,
+    "reference_vs_fp64_relu_active_equal": true
+  },
+  "same_gradient_adam_replays": {
+    "native_gradient": [
+      {
+        "step": 1,
+        "gradient": 2.942443400044681e-09,
+        "native_parameter": 0.021669792011380196,
+        "torch_parameter": 0.021669792011380196,
+        "same_parameter_bits": true,
+        "native_m": 2.9424435110669833e-10,
+        "torch_m": 2.9424435110669833e-10,
+        "native_v": 8.657973455796097e-21,
+        "torch_v": 8.657973455796097e-21
+      },
+      {
+        "step": 2,
+        "gradient": 0.0013431489933282137,
+        "native_parameter": 0.02092566154897213,
+        "torch_parameter": 0.02092566154897213,
+        "same_parameter_bits": true,
+        "native_m": 0.00013431516708806157,
+        "torch_m": 0.00013431516708806157,
+        "native_v": 1.8040493543480807e-09,
+        "torch_v": 1.8040492433257782e-09
+      },
+      {
+        "step": 3,
+        "gradient": 0.0,
+        "native_parameter": 0.020350448787212372,
+        "torch_parameter": 0.020350448787212372,
+        "same_parameter_bits": true,
+        "native_m": 0.00012088364746887237,
+        "torch_m": 0.00012088364746887237,
+        "native_v": 1.8022453529553673e-09,
+        "torch_v": 1.8022452419330648e-09
+      }
+    ],
+    "reference_gradient": [
+      {
+        "step": 1,
+        "gradient": -2.158706546850908e-09,
+        "native_parameter": 0.022074684500694275,
+        "torch_parameter": 0.022074684500694275,
+        "same_parameter_bits": true,
+        "native_m": -2.158706546850908e-10,
+        "torch_m": -2.158706546850908e-10,
+        "native_v": 4.660014069284113e-21,
+        "torch_v": 4.660014069284113e-21
+      },
+      {
+        "step": 2,
+        "gradient": 0.001343140029348433,
+        "native_parameter": 0.02133055590093136,
+        "torch_parameter": 0.02133055590093136,
+        "same_parameter_bits": true,
+        "native_m": 0.00013431381375994533,
+        "torch_m": 0.00013431381375994533,
+        "native_v": 1.8040252625084463e-09,
+        "torch_v": 1.8040251514861438e-09
+      },
+      {
+        "step": 3,
+        "gradient": 0.0,
+        "native_parameter": 0.02075534500181675,
+        "torch_parameter": 0.02075534500181675,
+        "same_parameter_bits": true,
+        "native_m": 0.0001208824323839508,
+        "torch_m": 0.0001208824323839508,
+        "native_v": 1.8022212611157329e-09,
+        "torch_v": 1.8022211500934304e-09
+      }
+    ],
+    "fp64_gradient": [
+      {
+        "step": 1,
+        "gradient": 1.5071677239575365e-10,
+        "native_parameter": 0.02188229374587536,
+        "torch_parameter": 0.02188229374587536,
+        "same_parameter_bits": true,
+        "native_m": 1.507167828040945e-11,
+        "torch_m": 1.507167828040945e-11,
+        "native_v": 2.2715546377539398e-23,
+        "torch_v": 2.2715546377539398e-23
+      },
+      {
+        "step": 2,
+        "gradient": 0.0013431484112516046,
+        "native_parameter": 0.021138165146112442,
+        "torch_parameter": 0.021138165146112442,
+        "same_parameter_bits": true,
+        "native_m": 0.00013431486149784178,
+        "torch_m": 0.00013431486149784178,
+        "native_v": 1.8040476890135437e-09,
+        "torch_v": 1.8040478000358462e-09
+      },
+      {
+        "step": 3,
+        "gradient": 0.0,
+        "native_parameter": 0.020562952384352684,
+        "torch_parameter": 0.020562952384352684,
+        "same_parameter_bits": true,
+        "native_m": 0.00012088337825844064,
+        "torch_m": 0.00012088337825844064,
+        "native_v": 1.8022436876208303e-09,
+        "torch_v": 1.8022437986431328e-09
+      }
+    ]
+  },
+  "interpretation": "The captured activation column dominates the gradient sign difference; the native generic FMA reproduces both original gradients with their own operands. Identical-gradient Adam parameters agree bitwise. This does not prove every upstream kernel correct.",
+  "raw_evidence": [
+    {
+      "workspace_path": "work/v5-diagnosis/width-512-auto.json",
+      "release_path": "development/numerical-diagnosis/width-512-auto.json",
+      "sha256": "782a60249fbca859dd65a4921218a3232b25a237f739e9339ba5381507fc80e4",
+      "bytes": 9894
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/ff2-isolation.json",
+      "release_path": "development/numerical-diagnosis/ff2-isolation.json",
+      "sha256": "fd58b9cd4e6ffdd2e82942cb04882716ae09b35ad7992c2a10bd4d4521367691",
+      "bytes": 12543
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/trace_trajectory.py",
+      "release_path": "development/numerical-diagnosis/trace_trajectory.py",
+      "sha256": "0b4e7475a5f9c90d4abe75ea671f9ea25fc0ecef421edd0d6f133efa4752d5d4",
+      "bytes": 6912
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/isolate_ff2.py",
+      "release_path": "development/numerical-diagnosis/isolate_ff2.py",
+      "sha256": "83478fe864700bee9540b6bab6e021c8eb0ec222a0c3b0b105081959cbf0468b",
+      "bytes": 4676
+    },
+    {
+      "workspace_path": "work/v5-diagnosis/width-512-auto-initial.f32",
+      "release_path": "development/numerical-diagnosis/width-512-auto-initial.f32",
+      "sha256": "f2c362ab543d58fc37036ceed582d864b40a89efe06f46d9104ed6196da73a32",
+      "bytes": 9005568
+    }
+  ]
+}

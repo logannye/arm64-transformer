@@ -1,0 +1,1119 @@
+{
+  "scope": "Original width-1024 candidate only; original auto and NEON gates remain failed. No candidate-change result is inferred from this diagnosis.",
+  "width": 1024,
+  "policies": {
+    "auto": {
+      "library_sha256": "64fff5cc0d969107708c2c4533d601c1771e7e19ca9d79703ed3881e86241777",
+      "source_sha256": {
+        "transformer/validate.py": "5904b0ae3a379cc71b0afb53d0e086321e3c007b0376b6b0d176cd45848c0a30",
+        "native/attention.S": "8abc67e4c2f3d5b5866f8b032b0f98797282810118b4c797c1e5caf8a622afc2",
+        "native/linear_sme.S": "4de6ebf01eece9bc128569a941d520ef7225895b9eb074b13115391a7e11892c",
+        "native/linear.S": "bff254cd0dc65321e8c76a2a5ec4d3c54b4a10746e44cc30e2dcee9b544290bd"
+      },
+      "tolerances": {
+        "forward": {
+          "atol": 2e-05,
+          "rtol": 0.0002
+        },
+        "gradient": {
+          "atol": 3e-05,
+          "rtol": 0.003
+        },
+        "optimizer": {
+          "atol": 3e-06,
+          "rtol": 0.0003
+        },
+        "math": {
+          "atol": 2e-07,
+          "rtol": 2e-06
+        },
+        "trajectory": {
+          "atol": 0.0002,
+          "rtol": 0.002
+        },
+        "finite_difference": {
+          "atol": 2e-05,
+          "rtol": 0.005
+        }
+      },
+      "numerical_trajectory": {
+        "failed_check_coordinates": [
+          {
+            "check": "trajectory/1/parameters",
+            "failed_count": 1,
+            "failed_by_tensor": {
+              "qkv_weight": 1
+            },
+            "max_absolute_error": 0.00028623081743717194,
+            "rmse": 4.670082929471753e-07
+          },
+          {
+            "check": "trajectory/2/gradient/ff1_weight",
+            "failed_count": 52,
+            "failed_by_tensor": {
+              "ff1_weight": 52
+            },
+            "max_absolute_error": 0.00037408387288451195,
+            "rmse": 2.3350645842819524e-06
+          },
+          {
+            "check": "trajectory/2/parameters",
+            "failed_count": 20,
+            "failed_by_tensor": {
+              "token": 1,
+              "qkv_weight": 7,
+              "qkv_bias": 1,
+              "attention_weight": 2,
+              "ff1_weight": 7,
+              "ff2_weight": 2
+            },
+            "max_absolute_error": 0.0014871228486299515,
+            "rmse": 1.3141290855404051e-06
+          },
+          {
+            "check": "trajectory/3/gradient/token",
+            "failed_count": 1018,
+            "failed_by_tensor": {
+              "token": 1018
+            },
+            "max_absolute_error": 0.0007986221462488174,
+            "rmse": 4.1847643809257256e-05
+          },
+          {
+            "check": "trajectory/3/gradient/position",
+            "failed_count": 805,
+            "failed_by_tensor": {
+              "position": 805
+            },
+            "max_absolute_error": 0.0007185190916061401,
+            "rmse": 8.012194165992846e-05
+          },
+          {
+            "check": "trajectory/3/gradient/attention_weight",
+            "failed_count": 11,
+            "failed_by_tensor": {
+              "attention_weight": 11
+            },
+            "max_absolute_error": 0.00027498509734869003,
+            "rmse": 2.3020717446385843e-05
+          },
+          {
+            "check": "trajectory/3/gradient/attention_bias",
+            "failed_count": 31,
+            "failed_by_tensor": {
+              "attention_bias": 31
+            },
+            "max_absolute_error": 0.0003643222153186798,
+            "rmse": 0.0001008889634136005
+          },
+          {
+            "check": "trajectory/3/gradient/ff1_weight",
+            "failed_count": 2126,
+            "failed_by_tensor": {
+              "ff1_weight": 2126
+            },
+            "max_absolute_error": 0.0028869090601801872,
+            "rmse": 2.3683867379500002e-05
+          },
+          {
+            "check": "trajectory/3/gradient/ff1_bias",
+            "failed_count": 3,
+            "failed_by_tensor": {
+              "ff1_bias": 3
+            },
+            "max_absolute_error": 0.0008856970816850662,
+            "rmse": 2.3650384709044564e-05
+          },
+          {
+            "check": "trajectory/3/gradient/ff2_weight",
+            "failed_count": 34,
+            "failed_by_tensor": {
+              "ff2_weight": 34
+            },
+            "max_absolute_error": 0.00039036013185977936,
+            "rmse": 2.7362602725447407e-06
+          },
+          {
+            "check": "trajectory/3/parameters",
+            "failed_count": 289,
+            "failed_by_tensor": {
+              "token": 54,
+              "qkv_weight": 17,
+              "qkv_bias": 8,
+              "attention_weight": 6,
+              "ff1_weight": 197,
+              "ff2_weight": 7
+            },
+            "max_absolute_error": 0.002636473625898361,
+            "rmse": 5.032441630143539e-06
+          },
+          {
+            "check": "trajectory/3/m",
+            "failed_count": 21,
+            "failed_by_tensor": {
+              "ff1_weight": 21
+            },
+            "max_absolute_error": 0.0002886917209252715,
+            "rmse": 1.763398952063259e-06
+          }
+        ],
+        "step_summaries": [
+          {
+            "step": 1,
+            "native_loss": 4.959835529327393,
+            "reference_loss": 4.959835529327393,
+            "same_preupdate_parameters": true,
+            "max_gradient_gap": 2.1606683731079102e-07,
+            "relu_mask_difference_count": 0,
+            "min_relu_abs_native": 1.211303356285498e-06,
+            "min_relu_abs_reference": 1.513632241767482e-06,
+            "first_state_fp64_loss": 4.959835465267931,
+            "first_state_fp64_min_relu_margin": 9.782791806490145e-07,
+            "native_fp64_relu_mask_differences": 0,
+            "reference_fp64_relu_mask_differences": 0,
+            "native_fp64_max_gradient_error": 2.1446836152849702e-07,
+            "reference_fp64_max_gradient_error": 2.1043881125865083e-07
+          },
+          {
+            "step": 2,
+            "native_loss": 6.242881774902344,
+            "reference_loss": 6.242883682250977,
+            "same_preupdate_parameters": false,
+            "max_gradient_gap": 0.00037408387288451195,
+            "relu_mask_difference_count": 1,
+            "min_relu_abs_native": 9.194482117891312e-07,
+            "min_relu_abs_reference": 1.7923246105056023e-06
+          },
+          {
+            "step": 3,
+            "native_loss": 6.538956642150879,
+            "reference_loss": 6.539042949676514,
+            "same_preupdate_parameters": false,
+            "max_gradient_gap": 0.0028869090601801872,
+            "relu_mask_difference_count": 3,
+            "min_relu_abs_native": 1.3262091670185328e-05,
+            "min_relu_abs_reference": 2.4493922410329105e-06
+          }
+        ],
+        "first_failed_parameter_origins": [
+          {
+            "flat_index": 2593547,
+            "tensor": "qkv_weight",
+            "coordinate": [
+              2370,
+              779
+            ],
+            "initial": 0.02638551965355873,
+            "first_native_gradient": 5.588043361370865e-09,
+            "first_reference_gradient": 7.787879785503549e-10,
+            "first_fp64_gradient": 4.679744733781604e-09,
+            "steps": [
+              {
+                "step": 1,
+                "native_before": 0.02638551965355873,
+                "reference_before": 0.02638551965355873,
+                "native_gradient": 5.588043361370865e-09,
+                "reference_gradient": 7.787879785503549e-10,
+                "native_after": 0.02602703683078289,
+                "reference_after": 0.026313267648220062
+              },
+              {
+                "step": 2,
+                "native_before": 0.02602703683078289,
+                "reference_before": 0.026313267648220062,
+                "native_gradient": 0.0018107271753251553,
+                "reference_gradient": 0.0018073436804115772,
+                "native_after": 0.025282904505729675,
+                "reference_after": 0.025569137185811996
+              },
+              {
+                "step": 3,
+                "native_before": 0.025282904505729675,
+                "reference_before": 0.025569137185811996,
+                "native_gradient": 0.0007130752201192081,
+                "reference_gradient": 0.0007112526800483465,
+                "native_after": 0.02451355755329132,
+                "reference_after": 0.024799883365631104
+              }
+            ]
+          }
+        ],
+        "union_affected_coordinates": 4175,
+        "same_gradient_adam_replays": {
+          "native_gradient_sequence": [
+            {
+              "step": 1,
+              "coordinates": 4175,
+              "bit_equal_parameters": 4091,
+              "max_parameter_gap": 3.725290298461914e-09,
+              "parameters_within_optimizer_tolerance": true,
+              "max_m_gap": 0.0,
+              "max_v_gap": 9.094947017729282e-13
+            },
+            {
+              "step": 2,
+              "coordinates": 4175,
+              "bit_equal_parameters": 4056,
+              "max_parameter_gap": 3.725290298461914e-09,
+              "parameters_within_optimizer_tolerance": true,
+              "max_m_gap": 0.0,
+              "max_v_gap": 9.094947017729282e-13
+            },
+            {
+              "step": 3,
+              "coordinates": 4175,
+              "bit_equal_parameters": 4001,
+              "max_parameter_gap": 3.725290298461914e-09,
+              "parameters_within_optimizer_tolerance": true,
+              "max_m_gap": 0.0,
+              "max_v_gap": 9.094947017729282e-13
+            }
+          ],
+          "reference_gradient_sequence": [
+            {
+              "step": 1,
+              "coordinates": 4175,
+              "bit_equal_parameters": 4090,
+              "max_parameter_gap": 1.862645149230957e-09,
+              "parameters_within_optimizer_tolerance": true,
+              "max_m_gap": 0.0,
+              "max_v_gap": 9.094947017729282e-13
+            },
+            {
+              "step": 2,
+              "coordinates": 4175,
+              "bit_equal_parameters": 4026,
+              "max_parameter_gap": 3.725290298461914e-09,
+              "parameters_within_optimizer_tolerance": true,
+              "max_m_gap": 0.0,
+              "max_v_gap": 9.094947017729282e-13
+            },
+            {
+              "step": 3,
+              "coordinates": 4175,
+              "bit_equal_parameters": 3975,
+              "max_parameter_gap": 3.725290298461914e-09,
+              "parameters_within_optimizer_tolerance": true,
+              "max_m_gap": 0.0,
+              "max_v_gap": 9.094947017729282e-13
+            }
+          ]
+        }
+      },
+      "runtime": {
+        "saved_final_reproduction": {
+          "native": {
+            "bit_equal": true,
+            "max_gap": 0.0
+          },
+          "python": {
+            "bit_equal": true,
+            "max_gap": 0.0
+          }
+        },
+        "step_summaries": [
+          {
+            "step": 1,
+            "epoch": 1,
+            "start": 0,
+            "batch": 3,
+            "same_preupdate_parameters": true,
+            "native_loss": 4.8835248947143555,
+            "reference_loss": 4.883525371551514,
+            "max_gradient_gap": 2.849847078323364e-07,
+            "relu_mask_difference_count": 0,
+            "first_state_fp64_loss": 4.883524985724355,
+            "first_state_fp64_min_relu_margin": 5.543275028499652e-06,
+            "native_fp64_relu_mask_differences": 0,
+            "reference_fp64_relu_mask_differences": 0,
+            "native_fp64_max_gradient_gap": 2.10118849486296e-07,
+            "reference_fp64_max_gradient_gap": 2.144165666129183e-07,
+            "parameter_failed_count": 0,
+            "parameter_failed_by_tensor": {},
+            "parameter_max_gap": 0.00017555803060531616
+          },
+          {
+            "step": 2,
+            "epoch": 1,
+            "start": 3,
+            "batch": 2,
+            "same_preupdate_parameters": false,
+            "native_loss": 6.681735992431641,
+            "reference_loss": 6.681733131408691,
+            "max_gradient_gap": 0.0007946053519845009,
+            "relu_mask_difference_count": 3,
+            "parameter_failed_count": 123,
+            "parameter_failed_by_tensor": {
+              "position": 1,
+              "qkv_weight": 19,
+              "qkv_bias": 1,
+              "attention_weight": 6,
+              "ff1_weight": 96
+            },
+            "parameter_max_gap": 0.0014395881444215775
+          },
+          {
+            "step": 3,
+            "epoch": 2,
+            "start": 0,
+            "batch": 3,
+            "same_preupdate_parameters": false,
+            "native_loss": 4.788492520650228,
+            "reference_loss": 4.788643836975098,
+            "max_gradient_gap": 0.0009026355110108852,
+            "relu_mask_difference_count": 18,
+            "parameter_failed_count": 266,
+            "parameter_failed_by_tensor": {
+              "position": 1,
+              "qkv_weight": 24,
+              "qkv_bias": 6,
+              "attention_weight": 10,
+              "ff1_weight": 225
+            },
+            "parameter_max_gap": 0.002552357502281666
+          },
+          {
+            "step": 4,
+            "epoch": 2,
+            "start": 3,
+            "batch": 2,
+            "same_preupdate_parameters": false,
+            "native_loss": 4.642040491104126,
+            "reference_loss": 4.642159461975098,
+            "max_gradient_gap": 0.0011053008493036032,
+            "relu_mask_difference_count": 29,
+            "parameter_failed_count": 460,
+            "parameter_failed_by_tensor": {
+              "position": 1,
+              "qkv_weight": 27,
+              "qkv_bias": 22,
+              "attention_weight": 11,
+              "ff1_weight": 392,
+              "ff2_weight": 7
+            },
+            "parameter_max_gap": 0.0034638461656868458
+          }
+        ],
+        "first_update_failed_parameter_origins": [],
+        "union_affected_coordinates": 460,
+        "same_gradient_adam_replays": {
+          "native_gradient_sequence": [
+            {
+              "step": 1,
+              "coordinates": 460,
+              "bit_equal_parameters": 452,
+              "max_parameter_gap": 9.313225746154785e-10,
+              "parameters_within_optimizer_tolerance": true
+            },
+            {
+              "step": 2,
+              "coordinates": 460,
+              "bit_equal_parameters": 448,
+              "max_parameter_gap": 9.313225746154785e-10,
+              "parameters_within_optimizer_tolerance": true
+            },
+            {
+              "step": 3,
+              "coordinates": 460,
+              "bit_equal_parameters": 442,
+              "max_parameter_gap": 1.862645149230957e-09,
+              "parameters_within_optimizer_tolerance": true
+            },
+            {
+              "step": 4,
+              "coordinates": 460,
+              "bit_equal_parameters": 439,
+              "max_parameter_gap": 1.862645149230957e-09,
+              "parameters_within_optimizer_tolerance": true
+            }
+          ],
+          "reference_gradient_sequence": [
+            {
+              "step": 1,
+              "coordinates": 460,
+              "bit_equal_parameters": 445,
+              "max_parameter_gap": 9.313225746154785e-10,
+              "parameters_within_optimizer_tolerance": true
+            },
+            {
+              "step": 2,
+              "coordinates": 460,
+              "bit_equal_parameters": 444,
+              "max_parameter_gap": 9.313225746154785e-10,
+              "parameters_within_optimizer_tolerance": true
+            },
+            {
+              "step": 3,
+              "coordinates": 460,
+              "bit_equal_parameters": 442,
+              "max_parameter_gap": 9.313225746154785e-10,
+              "parameters_within_optimizer_tolerance": true
+            },
+            {
+              "step": 4,
+              "coordinates": 460,
+              "bit_equal_parameters": 436,
+              "max_parameter_gap": 9.313225746154785e-10,
+              "parameters_within_optimizer_tolerance": true
+            }
+          ]
+        },
+        "artifact_comparisons": {
+          "best.f32": {
+            "failed_count": 460,
+            "max_absolute_error": 0.0034638461656868458,
+            "rmse": 6.294545249994086e-06,
+            "failed_by_tensor": {
+              "position": 1,
+              "qkv_weight": 27,
+              "qkv_bias": 22,
+              "attention_weight": 11,
+              "ff1_weight": 392,
+              "ff2_weight": 7
+            },
+            "native_sha256": "96dc53ca968cc5a309f166006d91c7d0e808670afaf3f98976d987df70b8e590",
+            "reference_sha256": "410d4f1c2524fa2e33119c6a8b47587b7aefd76475a2872f45e29ffc5fbe4ae3"
+          },
+          "last.f32": {
+            "failed_count": 460,
+            "max_absolute_error": 0.0034638461656868458,
+            "rmse": 6.294545249994086e-06,
+            "failed_by_tensor": {
+              "position": 1,
+              "qkv_weight": 27,
+              "qkv_bias": 22,
+              "attention_weight": 11,
+              "ff1_weight": 392,
+              "ff2_weight": 7
+            },
+            "native_sha256": "96dc53ca968cc5a309f166006d91c7d0e808670afaf3f98976d987df70b8e590",
+            "reference_sha256": "410d4f1c2524fa2e33119c6a8b47587b7aefd76475a2872f45e29ffc5fbe4ae3"
+          },
+          "adam_m.f32": {
+            "failed_count": 0,
+            "max_absolute_error": 0.0001912902225740254,
+            "rmse": 1.2533025020365367e-06,
+            "failed_by_tensor": {},
+            "native_sha256": "f6370e3410919d3ac9d813331b8d4148cc1305bd7462e12a0932b4b91235b223",
+            "reference_sha256": "e5f3cc39e397918f65360bc2e0868f91ba11a02c1a919e3ac02f6dcd1545df7e"
+          },
+          "adam_v.f32": {
+            "failed_count": 0,
+            "max_absolute_error": 5.787587724626064e-07,
+            "rmse": 1.4604603587893443e-09,
+            "failed_by_tensor": {},
+            "native_sha256": "3b947849fed58b7f904ae40b0ed9794967980425a1be673f65bc489af1970688",
+            "reference_sha256": "5b785dfcc5f3d96af07eab7b9c4e277d92765c34a9e18909cf4c078622c4abcf"
+          },
+          "test_logits.f32": {
+            "failed_count": 63,
+            "max_absolute_error": 0.0029469430446624756,
+            "rmse": 0.0005928979971912701,
+            "failed_by_tensor": {
+              "test_logits": 63
+            },
+            "native_sha256": "f4efbb72aef4cc27399eaceb27984005055fbcb120d48b6634eae2a00065ea9f",
+            "reference_sha256": "b443fae28877d594981af79c8e3f48e332b753d4a38a7726322d099318ac9011"
+          }
+        },
+        "common_checkpoint_forward": {
+          "native": {
+            "failed_count": 0,
+            "max_absolute_error": 3.337860107421875e-06,
+            "rmse": 5.745107132415706e-07,
+            "failed_by_tensor": {},
+            "own_saved_logit_max_gap": 0.0,
+            "own_saved_logit_bit_equal": true
+          },
+          "python": {
+            "failed_count": 0,
+            "max_absolute_error": 3.5762786865234375e-06,
+            "rmse": 5.734673361966491e-07,
+            "failed_by_tensor": {},
+            "own_saved_logit_max_gap": 0.0,
+            "own_saved_logit_bit_equal": true
+          }
+        }
+      },
+      "raw_evidence": [
+        {
+          "workspace_path": "work/v5-diagnosis/width-1024-auto-extended.json",
+          "release_path": "development/numerical-diagnosis/width-1024-auto-extended.json",
+          "sha256": "f5656254870af9b8155877d1dc7406546750ff68083b4cbc21f26d84dc44932d",
+          "bytes": 8567183
+        },
+        {
+          "workspace_path": "work/v5-diagnosis/width-1024-auto-runtime-trace.json",
+          "release_path": "development/numerical-diagnosis/width-1024-auto-runtime-trace.json",
+          "sha256": "92e26b0c909faa2fa8babb8d368a421e0abf7fc12613abb53e6330cee134c6f5",
+          "bytes": 1045803
+        }
+      ]
+    },
+    "neon": {
+      "library_sha256": "64fff5cc0d969107708c2c4533d601c1771e7e19ca9d79703ed3881e86241777",
+      "source_sha256": {
+        "transformer/validate.py": "5904b0ae3a379cc71b0afb53d0e086321e3c007b0376b6b0d176cd45848c0a30",
+        "native/attention.S": "8abc67e4c2f3d5b5866f8b032b0f98797282810118b4c797c1e5caf8a622afc2",
+        "native/linear_sme.S": "4de6ebf01eece9bc128569a941d520ef7225895b9eb074b13115391a7e11892c",
+        "native/linear.S": "bff254cd0dc65321e8c76a2a5ec4d3c54b4a10746e44cc30e2dcee9b544290bd"
+      },
+      "tolerances": {
+        "forward": {
+          "atol": 2e-05,
+          "rtol": 0.0002
+        },
+        "gradient": {
+          "atol": 3e-05,
+          "rtol": 0.003
+        },
+        "optimizer": {
+          "atol": 3e-06,
+          "rtol": 0.0003
+        },
+        "math": {
+          "atol": 2e-07,
+          "rtol": 2e-06
+        },
+        "trajectory": {
+          "atol": 0.0002,
+          "rtol": 0.002
+        },
+        "finite_difference": {
+          "atol": 2e-05,
+          "rtol": 0.005
+        }
+      },
+      "numerical_trajectory": {
+        "failed_check_coordinates": [
+          {
+            "check": "trajectory/1/parameters",
+            "failed_count": 1,
+            "failed_by_tensor": {
+              "qkv_weight": 1
+            },
+            "max_absolute_error": 0.0003468003123998642,
+            "rmse": 4.826835588411636e-07
+          },
+          {
+            "check": "trajectory/2/parameters",
+            "failed_count": 2,
+            "failed_by_tensor": {
+              "qkv_weight": 1,
+              "ff2_weight": 1
+            },
+            "max_absolute_error": 0.00034680403769016266,
+            "rmse": 7.015442372050524e-07
+          },
+          {
+            "check": "trajectory/3/parameters",
+            "failed_count": 12,
+            "failed_by_tensor": {
+              "qkv_weight": 1,
+              "qkv_bias": 9,
+              "ff2_weight": 2
+            },
+            "max_absolute_error": 0.00043047068174928427,
+            "rmse": 8.561655054543277e-07
+          }
+        ],
+        "step_summaries": [
+          {
+            "step": 1,
+            "native_loss": 4.959835529327393,
+            "reference_loss": 4.959835529327393,
+            "same_preupdate_parameters": true,
+            "max_gradient_gap": 2.2351741790771484e-07,
+            "relu_mask_difference_count": 0,
+            "min_relu_abs_native": 1.1324882507324219e-06,
+            "min_relu_abs_reference": 1.513632241767482e-06,
+            "first_state_fp64_loss": 4.959835465267931,
+            "first_state_fp64_min_relu_margin": 9.782791806490145e-07,
+            "native_fp64_relu_mask_differences": 0,
+            "reference_fp64_relu_mask_differences": 0,
+            "native_fp64_max_gradient_error": 1.9744957334422164e-07,
+            "reference_fp64_max_gradient_error": 2.1043881125865083e-07
+          },
+          {
+            "step": 2,
+            "native_loss": 6.242882251739502,
+            "reference_loss": 6.242883682250977,
+            "same_preupdate_parameters": false,
+            "max_gradient_gap": 3.0402326956391335e-05,
+            "relu_mask_difference_count": 0,
+            "min_relu_abs_native": 3.7512509152293205e-06,
+            "min_relu_abs_reference": 1.7923246105056023e-06
+          },
+          {
+            "step": 3,
+            "native_loss": 6.53904390335083,
+            "reference_loss": 6.539042949676514,
+            "same_preupdate_parameters": false,
+            "max_gradient_gap": 2.899765968322754e-05,
+            "relu_mask_difference_count": 0,
+            "min_relu_abs_native": 1.0844320058822632e-05,
+            "min_relu_abs_reference": 2.4493922410329105e-06
+          }
+        ],
+        "first_failed_parameter_origins": [
+          {
+            "flat_index": 2593547,
+            "tensor": "qkv_weight",
+            "coordinate": [
+              2370,
+              779
+            ],
+            "initial": 0.02638551965355873,
+            "first_native_gradient": 7.213269537231781e-09,
+            "first_reference_gradient": 7.787879785503549e-10,
+            "first_fp64_gradient": 4.679744733781604e-09,
+            "steps": [
+              {
+                "step": 1,
+                "native_before": 0.02638551965355873,
+                "reference_before": 0.02638551965355873,
+                "native_gradient": 7.213269537231781e-09,
+                "reference_gradient": 7.787879785503549e-10,
+                "native_after": 0.025966467335820198,
+                "reference_after": 0.026313267648220062
+              },
+              {
+                "step": 2,
+                "native_before": 0.025966467335820198,
+                "reference_before": 0.026313267648220062,
+                "native_gradient": 0.001807618304155767,
+                "reference_gradient": 0.0018073436804115772,
+                "native_after": 0.025222333148121834,
+                "reference_after": 0.025569137185811996
+              },
+              {
+                "step": 3,
+                "native_before": 0.025222333148121834,
+                "reference_before": 0.025569137185811996,
+                "native_gradient": 0.0007113693282008171,
+                "reference_gradient": 0.0007112526800483465,
+                "native_after": 0.024453075602650642,
+                "reference_after": 0.024799883365631104
+              }
+            ]
+          }
+        ],
+        "union_affected_coordinates": 12,
+        "same_gradient_adam_replays": {
+          "native_gradient_sequence": [
+            {
+              "step": 1,
+              "coordinates": 12,
+              "bit_equal_parameters": 12,
+              "max_parameter_gap": 0.0,
+              "parameters_within_optimizer_tolerance": true,
+              "max_m_gap": 0.0,
+              "max_v_gap": 1.5777218104420236e-30
+            },
+            {
+              "step": 2,
+              "coordinates": 12,
+              "bit_equal_parameters": 12,
+              "max_parameter_gap": 0.0,
+              "parameters_within_optimizer_tolerance": true,
+              "max_m_gap": 0.0,
+              "max_v_gap": 2.220446049250313e-16
+            },
+            {
+              "step": 3,
+              "coordinates": 12,
+              "bit_equal_parameters": 12,
+              "max_parameter_gap": 0.0,
+              "parameters_within_optimizer_tolerance": true,
+              "max_m_gap": 0.0,
+              "max_v_gap": 5.421010862427522e-20
+            }
+          ],
+          "reference_gradient_sequence": [
+            {
+              "step": 1,
+              "coordinates": 12,
+              "bit_equal_parameters": 12,
+              "max_parameter_gap": 0.0,
+              "parameters_within_optimizer_tolerance": true,
+              "max_m_gap": 0.0,
+              "max_v_gap": 1.0097419586828951e-28
+            },
+            {
+              "step": 2,
+              "coordinates": 12,
+              "bit_equal_parameters": 12,
+              "max_parameter_gap": 0.0,
+              "parameters_within_optimizer_tolerance": true,
+              "max_m_gap": 0.0,
+              "max_v_gap": 1.0097419586828951e-28
+            },
+            {
+              "step": 3,
+              "coordinates": 12,
+              "bit_equal_parameters": 12,
+              "max_parameter_gap": 0.0,
+              "parameters_within_optimizer_tolerance": true,
+              "max_m_gap": 0.0,
+              "max_v_gap": 1.0097419586828951e-28
+            }
+          ]
+        }
+      },
+      "runtime": {
+        "saved_final_reproduction": {
+          "native": {
+            "bit_equal": true,
+            "max_gap": 0.0
+          },
+          "python": {
+            "bit_equal": true,
+            "max_gap": 0.0
+          }
+        },
+        "step_summaries": [
+          {
+            "step": 1,
+            "epoch": 1,
+            "start": 0,
+            "batch": 3,
+            "same_preupdate_parameters": true,
+            "native_loss": 4.8835248947143555,
+            "reference_loss": 4.883525371551514,
+            "max_gradient_gap": 2.60770320892334e-07,
+            "relu_mask_difference_count": 0,
+            "first_state_fp64_loss": 4.883524985724355,
+            "first_state_fp64_min_relu_margin": 5.543275028499652e-06,
+            "native_fp64_relu_mask_differences": 0,
+            "reference_fp64_relu_mask_differences": 0,
+            "native_fp64_max_gradient_gap": 1.6203084259036604e-07,
+            "reference_fp64_max_gradient_gap": 2.144165666129183e-07,
+            "parameter_failed_count": 2,
+            "parameter_failed_by_tensor": {
+              "qkv_weight": 1,
+              "attention_weight": 1
+            },
+            "parameter_max_gap": 0.00024288147687911987
+          },
+          {
+            "step": 2,
+            "epoch": 1,
+            "start": 3,
+            "batch": 2,
+            "same_preupdate_parameters": false,
+            "native_loss": 6.681735038757324,
+            "reference_loss": 6.681733131408691,
+            "max_gradient_gap": 0.000794634222984314,
+            "relu_mask_difference_count": 2,
+            "parameter_failed_count": 25,
+            "parameter_failed_by_tensor": {
+              "position": 1,
+              "qkv_weight": 15,
+              "qkv_bias": 1,
+              "attention_weight": 6,
+              "ff1_weight": 2
+            },
+            "parameter_max_gap": 0.0013432670384645462
+          },
+          {
+            "step": 3,
+            "epoch": 2,
+            "start": 0,
+            "batch": 3,
+            "same_preupdate_parameters": false,
+            "native_loss": 4.788554032643636,
+            "reference_loss": 4.788643836975098,
+            "max_gradient_gap": 0.0009030075743794441,
+            "relu_mask_difference_count": 13,
+            "parameter_failed_count": 38,
+            "parameter_failed_by_tensor": {
+              "position": 1,
+              "qkv_weight": 18,
+              "qkv_bias": 10,
+              "attention_weight": 6,
+              "ff1_weight": 3
+            },
+            "parameter_max_gap": 0.0013949079439043999
+          },
+          {
+            "step": 4,
+            "epoch": 2,
+            "start": 3,
+            "batch": 2,
+            "same_preupdate_parameters": false,
+            "native_loss": 4.642059564590454,
+            "reference_loss": 4.642159461975098,
+            "max_gradient_gap": 0.0011055951472371817,
+            "relu_mask_difference_count": 24,
+            "parameter_failed_count": 160,
+            "parameter_failed_by_tensor": {
+              "position": 1,
+              "qkv_weight": 20,
+              "qkv_bias": 42,
+              "attention_weight": 7,
+              "ff1_weight": 87,
+              "ff2_weight": 3
+            },
+            "parameter_max_gap": 0.0014010164886713028
+          }
+        ],
+        "first_update_failed_parameter_origins": [
+          {
+            "flat_index": 1508539,
+            "tensor": "qkv_weight",
+            "coordinate": [
+              1311,
+              187
+            ],
+            "initial": 0.016928397119045258,
+            "first_native_gradient": 1.3660650388658269e-09,
+            "first_reference_gradient": -1.3985435032282112e-09,
+            "first_fp64_gradient": 6.291257228716041e-11,
+            "steps": [
+              {
+                "step": 1,
+                "native_before": 0.016928397119045258,
+                "reference_before": 0.016928397119045258,
+                "native_gradient": 1.3660650388658269e-09,
+                "reference_gradient": -1.3985435032282112e-09,
+                "native_after": 0.01680820994079113,
+                "reference_after": 0.01705109141767025
+              },
+              {
+                "step": 2,
+                "native_before": 0.01680820994079113,
+                "reference_before": 0.01705109141767025,
+                "native_gradient": -8.339885243913159e-05,
+                "reference_gradient": -8.357372280443087e-05,
+                "native_after": 0.01755221001803875,
+                "reference_after": 0.01779511384665966
+              },
+              {
+                "step": 3,
+                "native_before": 0.01755221001803875,
+                "reference_before": 0.01779511384665966,
+                "native_gradient": -1.851185515988618e-05,
+                "reference_gradient": -1.737495585985016e-05,
+                "native_after": 0.018252091482281685,
+                "reference_after": 0.018488239496946335
+              },
+              {
+                "step": 4,
+                "native_before": 0.018252091482281685,
+                "reference_before": 0.018488239496946335,
+                "native_gradient": -0.00027974520344287157,
+                "reference_gradient": -0.0002815649495460093,
+                "native_after": 0.01897520385682583,
+                "reference_after": 0.01920897886157036
+              }
+            ]
+          },
+          {
+            "flat_index": 4209692,
+            "tensor": "attention_weight",
+            "coordinate": [
+              874,
+              28
+            ],
+            "initial": -0.011385156773030758,
+            "first_native_gradient": -1.086286971485606e-08,
+            "first_reference_gradient": -4.198073000338809e-09,
+            "first_fp64_gradient": -7.701189375444728e-09,
+            "steps": [
+              {
+                "step": 1,
+                "native_before": -0.011385156773030758,
+                "reference_before": -0.011385156773030758,
+                "native_gradient": -1.086286971485606e-08,
+                "reference_gradient": -4.198073000338809e-09,
+                "native_after": -0.01086447760462761,
+                "reference_after": -0.011089477688074112
+              },
+              {
+                "step": 2,
+                "native_before": -0.01086447760462761,
+                "reference_before": -0.011089477688074112,
+                "native_gradient": 0.00609902897849679,
+                "reference_gradient": 0.006110173184424639,
+                "native_after": -0.011608611792325974,
+                "reference_after": -0.01183361280709505
+              },
+              {
+                "step": 3,
+                "native_before": -0.011608611792325974,
+                "reference_before": -0.01183361280709505,
+                "native_gradient": 0.007735832594335079,
+                "reference_gradient": 0.007734405342489481,
+                "native_after": -0.012466385029256344,
+                "reference_after": -0.012691440992057323
+              },
+              {
+                "step": 4,
+                "native_before": -0.012466385029256344,
+                "reference_before": -0.012691440992057323,
+                "native_gradient": -0.0073649394325912,
+                "reference_gradient": -0.007338781841099262,
+                "native_after": -0.01268086489289999,
+                "reference_after": -0.012907717376947403
+              }
+            ]
+          }
+        ],
+        "union_affected_coordinates": 161,
+        "same_gradient_adam_replays": {
+          "native_gradient_sequence": [
+            {
+              "step": 1,
+              "coordinates": 161,
+              "bit_equal_parameters": 158,
+              "max_parameter_gap": 1.862645149230957e-09,
+              "parameters_within_optimizer_tolerance": true
+            },
+            {
+              "step": 2,
+              "coordinates": 161,
+              "bit_equal_parameters": 156,
+              "max_parameter_gap": 1.862645149230957e-09,
+              "parameters_within_optimizer_tolerance": true
+            },
+            {
+              "step": 3,
+              "coordinates": 161,
+              "bit_equal_parameters": 152,
+              "max_parameter_gap": 1.862645149230957e-09,
+              "parameters_within_optimizer_tolerance": true
+            },
+            {
+              "step": 4,
+              "coordinates": 161,
+              "bit_equal_parameters": 153,
+              "max_parameter_gap": 1.862645149230957e-09,
+              "parameters_within_optimizer_tolerance": true
+            }
+          ],
+          "reference_gradient_sequence": [
+            {
+              "step": 1,
+              "coordinates": 161,
+              "bit_equal_parameters": 157,
+              "max_parameter_gap": 4.656612873077393e-10,
+              "parameters_within_optimizer_tolerance": true
+            },
+            {
+              "step": 2,
+              "coordinates": 161,
+              "bit_equal_parameters": 156,
+              "max_parameter_gap": 9.313225746154785e-10,
+              "parameters_within_optimizer_tolerance": true
+            },
+            {
+              "step": 3,
+              "coordinates": 161,
+              "bit_equal_parameters": 157,
+              "max_parameter_gap": 9.313225746154785e-10,
+              "parameters_within_optimizer_tolerance": true
+            },
+            {
+              "step": 4,
+              "coordinates": 161,
+              "bit_equal_parameters": 155,
+              "max_parameter_gap": 9.313225746154785e-10,
+              "parameters_within_optimizer_tolerance": true
+            }
+          ]
+        },
+        "artifact_comparisons": {
+          "best.f32": {
+            "failed_count": 160,
+            "max_absolute_error": 0.0014010164886713028,
+            "rmse": 3.3409506529252387e-06,
+            "failed_by_tensor": {
+              "position": 1,
+              "qkv_weight": 20,
+              "qkv_bias": 42,
+              "attention_weight": 7,
+              "ff1_weight": 87,
+              "ff2_weight": 3
+            },
+            "native_sha256": "d02eac3212d414232448b2261c150880eadccc71677cf76c45bc6c3d301c4f16",
+            "reference_sha256": "410d4f1c2524fa2e33119c6a8b47587b7aefd76475a2872f45e29ffc5fbe4ae3"
+          },
+          "last.f32": {
+            "failed_count": 160,
+            "max_absolute_error": 0.0014010164886713028,
+            "rmse": 3.3409506529252387e-06,
+            "failed_by_tensor": {
+              "position": 1,
+              "qkv_weight": 20,
+              "qkv_bias": 42,
+              "attention_weight": 7,
+              "ff1_weight": 87,
+              "ff2_weight": 3
+            },
+            "native_sha256": "d02eac3212d414232448b2261c150880eadccc71677cf76c45bc6c3d301c4f16",
+            "reference_sha256": "410d4f1c2524fa2e33119c6a8b47587b7aefd76475a2872f45e29ffc5fbe4ae3"
+          },
+          "adam_m.f32": {
+            "failed_count": 0,
+            "max_absolute_error": 0.00019131461158394814,
+            "rmse": 1.1127459360300685e-06,
+            "failed_by_tensor": {},
+            "native_sha256": "bafc0b3750f6473efb6f4472859bea5c90cd66705d666251c306916376a95f0a",
+            "reference_sha256": "e5f3cc39e397918f65360bc2e0868f91ba11a02c1a919e3ac02f6dcd1545df7e"
+          },
+          "adam_v.f32": {
+            "failed_count": 0,
+            "max_absolute_error": 6.158370524644852e-07,
+            "rmse": 1.406312076172407e-09,
+            "failed_by_tensor": {},
+            "native_sha256": "d16623475dc0338283c8fe34bda50750cadecbfda1dc841a77460905680e493d",
+            "reference_sha256": "5b785dfcc5f3d96af07eab7b9c4e277d92765c34a9e18909cf4c078622c4abcf"
+          },
+          "test_logits.f32": {
+            "failed_count": 46,
+            "max_absolute_error": 0.0025391578674316406,
+            "rmse": 0.0005276875862754529,
+            "failed_by_tensor": {
+              "test_logits": 46
+            },
+            "native_sha256": "2a41db39dc4c6fee0d64f0604b3d16fadbc0b34a0ab369404f63df1a0ea37f28",
+            "reference_sha256": "b443fae28877d594981af79c8e3f48e332b753d4a38a7726322d099318ac9011"
+          }
+        },
+        "common_checkpoint_forward": {
+          "native": {
+            "failed_count": 0,
+            "max_absolute_error": 8.58306884765625e-06,
+            "rmse": 1.1176738413079653e-06,
+            "failed_by_tensor": {},
+            "own_saved_logit_max_gap": 0.0,
+            "own_saved_logit_bit_equal": true
+          },
+          "python": {
+            "failed_count": 0,
+            "max_absolute_error": 1.0013580322265625e-05,
+            "rmse": 1.133639533688203e-06,
+            "failed_by_tensor": {},
+            "own_saved_logit_max_gap": 0.0,
+            "own_saved_logit_bit_equal": true
+          }
+        }
+      },
+      "raw_evidence": [
+        {
+          "workspace_path": "work/v5-diagnosis/width-1024-neon-extended.json",
+          "release_path": "development/numerical-diagnosis/width-1024-neon-extended.json",
+          "sha256": "478fa4dca40486ab209b1541c885e53b9a15b62a7f5f4ca2bd86f82f8b2c18ae",
+          "bytes": 223261
+        },
+        {
+          "workspace_path": "work/v5-diagnosis/width-1024-neon-runtime-trace.json",
+          "release_path": "development/numerical-diagnosis/width-1024-neon-runtime-trace.json",
+          "sha256": "1aa6efd1adb61f159bdd4a79106f4183b9c18d7195973a848777fb12e2ee4c92",
+          "bytes": 358483
+        }
+      ]
+    }
+  },
+  "provenance_limits": "Extended reports recorded source hashes matching the preserved original snapshot. Runtime reports did not independently record import-time source hashes; their library hash matches the snapshot and they reproduce both original saved final checkpoints bit-for-bit. See provenance.json for script/source provenance."
+}

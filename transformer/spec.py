@@ -9,16 +9,16 @@ import json
 import os
 from pathlib import Path
 
-WIDTHS = (32, 64, 128, 256)
+WIDTHS = (32, 64, 128, 256, 512, 1024)
 
 
 def selected_width(value):
     try:
         width = int(value)
     except (TypeError, ValueError) as exc:
-        raise ValueError("ARM64_TRANSFORMER_WIDTH must be 32, 64, 128, or 256") from exc
+        raise ValueError(f"ARM64_TRANSFORMER_WIDTH must be one of {WIDTHS}") from exc
     if width not in WIDTHS:
-        raise ValueError("ARM64_TRANSFORMER_WIDTH must be 32, 64, 128, or 256")
+        raise ValueError(f"ARM64_TRANSFORMER_WIDTH must be one of {WIDTHS}")
     return width
 
 

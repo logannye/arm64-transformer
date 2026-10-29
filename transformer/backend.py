@@ -11,6 +11,14 @@ import ctypes as ct
 import struct
 from pathlib import Path
 
+STRICT_VALIDATION_CONTRACT = "strict-free-running-v1"
+WIDE_VALIDATION_CONTRACT = "v5-common-state-replay-v1"
+
+
+def validation_contract(width):
+    return WIDE_VALIDATION_CONTRACT if width >= 512 else STRICT_VALIDATION_CONTRACT
+
+
 FIELDS = (
     "version",
     "init_status",
@@ -143,7 +151,235 @@ def validate_backend_preflights(main, supplements):
             "generated_layout_sha256",
             "source_sha256",
             "tolerances",
+            "validation_contract",
         ):
             if preflight.get(key) != main.get(key):
                 raise ValueError(f"Forced-backend gate authenticates different {key}")
     return sum(item["check_count"] for item in supplements.values())
+
+
+def validate_regression_preflights(regression, widths, source_sha256):
+    """Authenticate every supported-width correctness gate independently of measured fits."""
+    if set(regression) != {str(width) for width in widths}:
+        raise ValueError("Incomplete regression width gate set")
+    auto = forced = 0
+    for width in widths:
+        modes = regression[str(width)]
+        if "auto" not in modes:
+            raise ValueError("Missing automatic regression gate")
+        main = modes["auto"]
+        for gate in modes.values():
+            validate_validation_contract(gate, width)
+        records = main.get("checks", [])
+        if not (
+            main.get("passed") is True
+            and main.get("runtime_included") is True
+            and records
+            and main.get("check_count") == len(records)
+            and all(item.get("passed") is True for item in records)
+            and main.get("failed_checks") == []
+            and main.get("error") is None
+        ):
+            raise ValueError("Incomplete automatic regression gate")
+        parameters = 8 * width**2 + 301 * width + 128
+        if (
+            main.get("model_width") != width
+            or main.get("parameter_count") != parameters
+            or main.get("model_identity")
+            != {"width": width, "parameter_count": parameters, "verified": True}
+        ):
+            raise ValueError("Regression gate model identity mismatch")
+        hashes = main.get("source_sha256", {})
+        if not hashes or any(source_sha256.get(name) != value for name, value in hashes.items()):
+            raise ValueError("Regression gate source identity mismatch")
+        forced += validate_backend_preflights(
+            main, {key: value for key, value in modes.items() if key != "auto"}
+        )
+        auto += main["check_count"]
+    return {"auto": auto, "forced": forced, "all": auto + forced}
+
+
+PARAMETER_NAMES = (
+    "token",
+    "position",
+    "ln1_weight",
+    "ln1_bias",
+    "qkv_weight",
+    "qkv_bias",
+    "attention_weight",
+    "attention_bias",
+    "ln2_weight",
+    "ln2_bias",
+    "ff1_weight",
+    "ff1_bias",
+    "ff2_weight",
+    "ff2_bias",
+    "ln3_weight",
+    "ln3_bias",
+    "head_weight",
+    "head_bias",
+)
+TRACE_NAMES = (
+    "x",
+    "norm1",
+    "inv1",
+    "norm2",
+    "inv2",
+    "norm3",
+    "inv3",
+    "n1",
+    "qkv",
+    "attention",
+    "projected",
+    "r1",
+    "n2",
+    "ff1",
+    "relu",
+    "ff2",
+    "r2",
+    "n3",
+    "logits",
+    "probs",
+)
+
+
+def expected_legacy_names(runtime=True):
+    names = []
+    for step in (1, 2, 3):
+        names.append(f"trajectory/{step}/loss")
+        names.extend(f"trajectory/{step}/gradient/{name}" for name in PARAMETER_NAMES)
+        names.extend(f"trajectory/{step}/{name}" for name in ("parameters", "m", "v"))
+    if runtime:
+        names.extend(
+            "runtime/matched/" + name
+            for name in ("best.f32", "last.f32", "adam_m.f32", "adam_v.f32", "test_logits.f32")
+        )
+        names.extend(("runtime/history", "runtime/python/best_epoch"))
+    return names
+
+
+def required_contract_records(runtime=True):
+    """Complete owned-name/tolerance schema, independently reconstructed from gate data."""
+    required = {"audit/legacy_diagnostics_complete": None}
+    for step in (1, 2, 3):
+        for origin in ("native", "python"):
+            tag = f"common_state/{step}/{origin}"
+            required[tag + "/input_state_shape_finite"] = None
+            required[tag + "/loss"] = "forward"
+            required.update({tag + "/trace/" + name: "forward" for name in TRACE_NAMES})
+            required.update({tag + "/gradient/" + name: "gradient" for name in PARAMETER_NAMES})
+            for gradient in ("native", "python"):
+                replay = tag + "/adam/" + gradient
+                required[replay + "/step"] = None
+                required[replay + "/all_state_finite"] = None
+                required.update(
+                    {replay + "/" + name: "optimizer" for name in ("parameters", "m", "v")}
+                )
+    for name in expected_legacy_names(runtime):
+        if name != "runtime/python/best_epoch":
+            required[name + "/finite_shape"] = None
+    if runtime:
+        required["runtime/shared_checkpoints_complete"] = None
+        required["runtime/python/own_best_epoch"] = None
+        for owner in ("native", "python"):
+            for checkpoint in ("best", "last"):
+                for split in ("test", "validation"):
+                    tag = f"runtime/shared_checkpoint/{owner}/{checkpoint}/{split}"
+                    required[tag + "/native_vs_python"] = "forward"
+                    required[tag + "/all_logits_finite"] = None
+                    if checkpoint == "best" and split == "test":
+                        required[tag + "/native_vs_own_saved"] = "forward"
+                        required[tag + "/python_vs_own_saved"] = "forward"
+                        required[tag + "/own_engine_saved_logits_exact"] = None
+                    if split == "validation":
+                        required[tag + "/native_vs_own_history"] = "trajectory"
+                        required[tag + "/python_vs_own_history"] = "trajectory"
+            for name in (
+                "fixture_manifest_files",
+                "second_moment_nonnegative",
+                "history_nonnegative",
+                "timers_positive",
+                "latencies_positive",
+                "rss_monotone",
+                "native_wall_includes_training",
+                "best_validation_epoch",
+                "optimizer_step_count",
+                "training_includes_epoch_time",
+            ):
+                required[owner + "/" + name] = None
+            for filename in (
+                "config.bin",
+                "initial.f32",
+                "train.i32",
+                "validation.i32",
+                "test.i32",
+                "schedule.i32",
+            ):
+                required[owner + "/fixture_hash/" + filename] = None
+            for sequence in (0, 1):
+                required[f"{owner}/selected_checkpoint/sequence_{sequence}"] = "forward"
+            required[owner + "/selected_checkpoint_validation_nll"] = "forward"
+            replay = f"runtime/replay/{owner}"
+            for name in (
+                "batch_sizes",
+                "scheduled_rows",
+                "steps",
+                "best_epoch",
+                "state_finite",
+                "history_exact",
+            ):
+                required[replay + "/" + name] = None
+            required[replay + "/history"] = "trajectory"
+            for name in ("best.f32", "last.f32", "adam_m.f32", "adam_v.f32"):
+                required[replay + "/" + name] = "trajectory"
+                required[replay + "/" + name + "_exact"] = None
+            for step in (1, 2, 3, 4):
+                prefix = f"{replay}/step-{step}"
+                required[prefix + "/gradient_finite"] = None
+                required[prefix + "/state_finite"] = None
+                if owner == "native":
+                    required[prefix + "/adam/step"] = None
+                    required.update(
+                        {prefix + "/adam/" + name: "optimizer" for name in ("parameters", "m", "v")}
+                    )
+        required["runtime/replay/complete"] = None
+    return required
+
+
+def validate_validation_contract(gate, width):
+    if gate.get("validation_contract") != validation_contract(width):
+        raise ValueError("Missing or incompatible prospective validation contract")
+    diagnostics = gate.get("legacy_diagnostics", [])
+    failed = [record["name"] for record in diagnostics if record.get("passed") is not True]
+    if (
+        gate.get("legacy_diagnostic_count") != len(diagnostics)
+        or gate.get("legacy_failed_checks") != failed
+        or gate.get("legacy_contract_passed") is not (not failed)
+    ):
+        raise ValueError("Legacy diagnostic records/counts are incomplete or inconsistent")
+    if width >= 512:
+        runtime = gate.get("runtime_included") is True
+        if [record.get("name") for record in diagnostics] != expected_legacy_names(runtime):
+            raise ValueError("Original legacy diagnostic sequence is incomplete or reordered")
+        for record in diagnostics:
+            expected_tolerance = (
+                None if record["name"] == "runtime/python/best_epoch" else "trajectory"
+            )
+            if (
+                record.get("admission_role") != "diagnostic"
+                or type(record.get("passed")) is not bool
+                or record.get("tolerance") != expected_tolerance
+            ):
+                raise ValueError("Original legacy diagnostic semantics were altered")
+        records = gate.get("checks", [])
+        for name, tolerance in required_contract_records(runtime).items():
+            selected = [record for record in records if record.get("name") == name]
+            if (
+                len(selected) != 1
+                or selected[0].get("passed") is not True
+                or selected[0].get("tolerance") != tolerance
+            ):
+                raise ValueError(f"Missing, duplicate, failed or altered contract check: {name}")
+    elif diagnostics:
+        raise ValueError("Strict historical widths cannot demote trajectory checks")
+    return len(diagnostics), len(failed)

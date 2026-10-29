@@ -13,6 +13,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from contract_fixtures import attach_contract
 
 # The same relative location works in ignored development and after installation.
 MODULE_PATH = Path(__file__).resolve().parents[1] / "scripts/package_sweep_evidence.py"
@@ -57,6 +58,8 @@ def synthetic_backend(width, policy=0):
 
 def evidence_tree(tmp_path, protocol="v3"):
     """Build tiny fake payload bytes with real, internally consistent identity hashes."""
+    widths = packager.PROTOCOL_WIDTHS[protocol]
+    order = packager.expected_order(protocol)
     repo = tmp_path / "repository"
     repo.mkdir()
     (repo / "source.txt").write_text("measured source\n")
@@ -84,7 +87,7 @@ def evidence_tree(tmp_path, protocol="v3"):
     manifest = {
         "status": "completed",
         "protocol_version": protocol,
-        "widths": list(packager.WIDTHS),
+        "widths": list(widths),
         "revision": revision,
         "source_sha256": {"source.txt": packager.digest(repo / "source.txt")},
         "models": {},
@@ -92,9 +95,9 @@ def evidence_tree(tmp_path, protocol="v3"):
         "preflights": {},
         "backend_preflights": {},
         "runs": [],
-        "order": packager.expected_order(),
+        "order": order,
     }
-    for width in packager.WIDTHS:
+    for width in widths:
         key, tag = str(width), f"width-{width}"
         model = {
             "width": width,
@@ -128,7 +131,7 @@ def evidence_tree(tmp_path, protocol="v3"):
             path.write_text(f"{width} {filename}\n")
             preflight[stem + "_path"] = relative
             preflight[stem + "_sha256"] = packager.digest(path)
-        if protocol == "v4":
+        if protocol in ("v4", "v5"):
             preflight["backend"] = synthetic_backend(width)
             modes = {}
             for mode, number in (("neon", 1), ("sme", 2)):
@@ -150,7 +153,7 @@ def evidence_tree(tmp_path, protocol="v3"):
             fixture = {"sha256": hashes, "config": {"width": width, "seed": seed}}
             manifest["fixtures"][key][str(seed)] = fixture
             write_json(directory / "manifest.json", fixture)
-    for width, seed, repeat, impl in packager.expected_order():
+    for width, seed, repeat, impl in order:
         name = f"seed-{seed}-repeat-{repeat}-{impl}"
         manifest["runs"].append(
             {
@@ -169,7 +172,7 @@ def evidence_tree(tmp_path, protocol="v3"):
         )
         directory = results / f"width-{width}" / name
         directory.mkdir(parents=True)
-        if protocol == "v4" and impl == "arm64":
+        if protocol in ("v4", "v5") and impl == "arm64":
             backend = synthetic_backend(width)
             backend_path = directory / "backend.u64"
             backend_path.write_bytes(struct.pack("<10Q", *backend.values()))
@@ -181,25 +184,90 @@ def evidence_tree(tmp_path, protocol="v3"):
             )
         for artifact in packager.RUN_FILES:
             (directory / artifact).write_bytes(f"{width} {name} {artifact}\n".encode())
+    if protocol == "v5":
+        regression = {}
+        for width in packager.REGRESSION_WIDTHS:
+            key, tag = str(width), f"width-{width}"
+            if width in widths:
+                main = manifest["preflights"][key]
+                modes = manifest["backend_preflights"][key]
+            else:
+                main = copy.deepcopy(manifest["preflights"][str(widths[0])])
+                parameters = 8 * width**2 + 301 * width + 128
+                main.update(
+                    model_width=width,
+                    parameter_count=parameters,
+                    model_identity={
+                        "width": width,
+                        "parameter_count": parameters,
+                        "verified": True,
+                    },
+                    backend=synthetic_backend(width),
+                )
+                for stem, filename in (
+                    ("library", "libtransformer.dylib"),
+                    ("executable", "transformer-arm64"),
+                    ("generated_layout", "layout.inc"),
+                ):
+                    relative = f"native/build/{tag}/{filename}"
+                    path = repo / relative
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_text(f"{width} {filename}\n")
+                    main[stem + "_path"] = relative
+                    main[stem + "_sha256"] = packager.digest(path)
+                modes = {mode: copy.deepcopy(main) for mode in ("neon", "sme")}
+                for mode, number in (("neon", 1), ("sme", 2)):
+                    modes[mode]["backend"] = synthetic_backend(width, number)
+            for gate in (main, *modes.values()):
+                attach_contract(gate, width)
+            regression[key] = {"auto": main, **modes}
+            for mode, gate in regression[key].items():
+                suffix = "" if mode == "auto" else "-" + mode
+                name = tag + suffix + ".json"
+                write_json(preflights / name, gate)
+                write_json(reports / "regression-preflights" / name, gate)
+                if width in widths and mode != "auto":
+                    write_json(reports / tag / f"preflight-{mode}.json", gate)
+        manifest.update(
+            regression_widths=list(packager.REGRESSION_WIDTHS),
+            regression_preflights=regression,
+            regression_gate_counts={"auto": 1018, "forced": 2036, "all": 3054},
+            validation_contract="v5-common-state-replay-v1",
+        )
     write_json(results / "manifest.json", manifest)
     summary = {
         "status": "completed",
         "protocol_version": protocol,
-        "widths": list(packager.WIDTHS),
+        "widths": list(widths),
         "revision": revision,
         "source_sha256": manifest["source_sha256"],
         "models": manifest["models"],
         "raw_manifest_sha256": packager.digest(results / "manifest.json"),
-        "audit_check_count": 5,
+        "audit_check_count": 1 + len(widths),
         "sweep_audit_check_count": 1,
-        "preflight_check_count": 4,
-        "retained_test_prediction_rows": 48 * 256 * 32,
+        "preflight_check_count": sum(
+            gate["check_count"] for gate in manifest["preflights"].values()
+        ),
+        "retained_test_prediction_rows": len(order) * 256 * 32,
         "by_width": {},
         "runs": [],
     }
-    if protocol == "v4":
-        summary.update(forced_backend_preflight_check_count=8, all_backend_preflight_check_count=12)
-    for width in packager.WIDTHS:
+    if protocol in ("v4", "v5"):
+        summary.update(
+            forced_backend_preflight_check_count=2 * summary["preflight_check_count"],
+            all_backend_preflight_check_count=3 * summary["preflight_check_count"],
+        )
+    if protocol == "v5":
+        summary.update(
+            regression_widths=list(packager.REGRESSION_WIDTHS),
+            regression_preflight_check_count=1018,
+            regression_forced_backend_preflight_check_count=2036,
+            regression_all_backend_preflight_check_count=3054,
+            validation_contract="v5-common-state-replay-v1",
+            legacy_diagnostic_count=438,
+            legacy_failed_diagnostic_count=6,
+        )
+    for width in widths:
         key, tag = str(width), f"width-{width}"
         selected = {
             field: manifest[field]
@@ -213,10 +281,12 @@ def evidence_tree(tmp_path, protocol="v3"):
             fixtures=manifest["fixtures"][key],
             preflight=manifest["preflights"][key],
             runs=[row for row in manifest["runs"] if row["width"] == width],
-            order=[list(row[1:]) for row in packager.expected_order() if row[0] == width],
+            order=[list(row[1:]) for row in order if row[0] == width],
         )
-        if protocol == "v4":
+        if protocol in ("v4", "v5"):
             selected["backend_preflights"] = manifest["backend_preflights"][key]
+        if protocol == "v5":
+            selected["validation_contract"] = "v5-common-state-replay-v1"
         write_json(results / tag / "manifest.json", selected)
         child = {
             field: selected[field]
@@ -225,15 +295,18 @@ def evidence_tree(tmp_path, protocol="v3"):
         child.update(
             raw_manifest_sha256=packager.digest(results / tag / "manifest.json"),
             audit_check_count=1,
-            preflight_check_count=1,
+            preflight_check_count=selected["preflight"]["check_count"],
             retained_test_prediction_rows=12 * 256 * 32,
             aggregate={"synthetic": width},
             runs=[],
         )
-        if protocol == "v4":
+        if protocol in ("v4", "v5"):
             child.update(
-                forced_backend_preflight_check_count=2, all_backend_preflight_check_count=3
+                forced_backend_preflight_check_count=2 * child["preflight_check_count"],
+                all_backend_preflight_check_count=3 * child["preflight_check_count"],
             )
+        if protocol == "v5":
+            child["validation_contract"] = "v5-common-state-replay-v1"
         for row in selected["runs"]:
             name = row["name"]
             directory = results / tag / name
@@ -251,7 +324,7 @@ def evidence_tree(tmp_path, protocol="v3"):
                 "checkpoint_predictions_recomputed": True,
                 "quality": {"tokens": 256 * 32},
             }
-            if protocol == "v4" and row["implementation"] == "arm64":
+            if protocol in ("v4", "v5") and row["implementation"] == "arm64":
                 run["backend"] = row["backend"]
             child["runs"].append(run)
             summary["runs"].append(run | {"width": width, "relative_run": tag + "/" + name})
@@ -273,8 +346,10 @@ def evidence_tree(tmp_path, protocol="v3"):
             "report_audit_sha256": packager.digest(reports / tag / "audit.json"),
         }
     global_audit = audit()
-    global_audit["checks"] = [{"name": f"check-{index}", "passed": True} for index in range(5)]
-    global_audit["check_count"] = 5
+    global_audit["checks"] = [
+        {"name": f"check-{index}", "passed": True} for index in range(1 + len(widths))
+    ]
+    global_audit["check_count"] = 1 + len(widths)
     write_json(reports / "summary.json", summary)
     write_json(reports / "audit.json", global_audit)
     return SimpleNamespace(
@@ -472,3 +547,27 @@ def test_packaging_tool_source_identity(tmp_path, case):
     assert packager.tool_is_measured_source(tool, repo, {"package.py": expected}) == (
         case == "matching"
     )
+
+
+def test_v5_packages_24_fits_and_all_six_current_regression_binaries(tmp_path):
+    args = evidence_tree(tmp_path, protocol="v5")
+    result = packager.package(args)
+    assert result["widths"] == [512, 1024]
+    assert result["measured_fits"] == 24
+    assert result["retained_test_prediction_rows"] == 196608
+    assert result["all_backend_preflight_checks"] == 3042
+    assert result["regression_all_backend_preflight_checks"] == 3054
+    verified = packager.verify_archive(args.output)
+    assert sum(name.endswith("/test_logits.f32") for name in verified) == 24
+    assert sum(name.startswith("bin/") for name in verified) == 18
+    assert "preflights/width-32-neon.json" in verified
+    assert "preflights/width-1024-sme.json" in verified
+
+
+def test_v5_rejects_changed_untimed_regression_binary(tmp_path):
+    args = evidence_tree(tmp_path, protocol="v5")
+    (args.repo / "native/build/width-32/libtransformer.dylib").write_bytes(b"changed")
+    with pytest.raises(ValueError, match="hash|checksum|Checksum"):
+        packager.validate_evidence(
+            args.inputs, args.results, args.report, args.preflight_dir, args.repo
+        )

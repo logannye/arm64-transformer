@@ -1,0 +1,1143 @@
+{
+  "passed": true,
+  "shape_case_count": 81,
+  "seed": 20261029,
+  "source_sha256": "53b204c74aa0eba3a32c5c388d0cd68eeb81cbfc238b5bb007a3de1d35e161fd",
+  "library_sha256": "93faf21c9874a9bccc31a99d16c3d9898abc76e41e239f027e0a65c271dd9fc9",
+  "checks": [
+    {
+      "shape": [
+        32,
+        32,
+        96
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        32,
+        96
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        32,
+        96
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        32,
+        32
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        32,
+        32
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        32,
+        32
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        32,
+        64
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        32,
+        64
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        32,
+        64
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        64,
+        32
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        64,
+        32
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        64,
+        32
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        32,
+        128
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        32,
+        128
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        32,
+        128
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        64,
+        192
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        64,
+        192
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        64,
+        192
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        64,
+        64
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        64,
+        64
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        64,
+        64
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        64,
+        128
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        64,
+        128
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        64,
+        128
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        128,
+        64
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        128,
+        64
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        128,
+        64
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        128,
+        384
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        128,
+        384
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        128,
+        384
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        128,
+        128
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        128,
+        128
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        128,
+        128
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        128,
+        256
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        128,
+        256
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        128,
+        256
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        256,
+        128
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        256,
+        128
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        256,
+        128
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        256,
+        768
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        256,
+        768
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        256,
+        768
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        256,
+        256
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        256,
+        256
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        256,
+        256
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        256,
+        512
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        256,
+        512
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        256,
+        512
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        256
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        256
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        256
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        1536
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        1536
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        1536
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        512
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        512
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        512
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        1024
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        1024
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        1024
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        512
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        512
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        512
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        128
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        128
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        512,
+        128
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        3072
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        3072
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        3072
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        1024
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        1024
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        1024
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        2048
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        2048
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        2048
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        2048,
+        1024
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        2048,
+        1024
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        2048,
+        1024
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        128
+      ],
+      "case": "normal",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        128
+      ],
+      "case": "mixed_magnitude",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "shape": [
+        32,
+        1024,
+        128
+      ],
+      "case": "paired_cancellation",
+      "bitwise_equal_neon": true,
+      "guards_intact": true,
+      "finite": true,
+      "different_values": 0,
+      "max_absolute_difference": 0.0,
+      "passed": true
+    }
+  ]
+}

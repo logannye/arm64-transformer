@@ -1,4 +1,4 @@
-// Handwritten attention for model widths32/64/128/256, four heads, T in1..32.
+// Handwritten attention for widths32/64/128/256/512/1024, four heads, T in1..32.
 // Width32 retains its existing head-width-eight path. Wider heads use unrolled
 // vector-register blocks; other shapes retain the original general implementation.
 // Forward uses NEON QK/value operations and four-lane stable exponentiation.
@@ -56,6 +56,10 @@ Laf_wide_dispatch:
     b.eq Law128_start
     cmp w9,#256
     b.eq Law256_start
+    cmp w9,#512
+    b.eq Labf512_start
+    cmp w9,#1024
+    b.eq Labf1024_start
     b Laf8_fallback
 Laf8_start:
     AENTER 96
@@ -227,6 +231,10 @@ Lab_wide_dispatch:
     b.eq Labw128_start
     cmp w9,#256
     b.eq Labw256_start
+    cmp w9,#512
+    b.eq Labb512_start
+    cmp w9,#1024
+    b.eq Labb1024_start
     b Lab8_fallback
 Lab8_start:
     AENTER 224
@@ -629,12 +637,368 @@ Lab8_second:
     ALEAVE 240
 .endm
 
+// Heads larger than64 channels use bounded feature blocks. A Q or dout block
+// occupies v16-v31; its four dot accumulators stay in caller-saved v0-v3.
+// The existing small-width paths above are intentionally unchanged.
+.macro ABLOCK_SOFTMAX tag
+\tag\()_exp_start:
+    ldr s22,[sp,#96]
+    dup v22.4s,v22.s[0]
+    movi v23.4s,#0
+    mov x27,x25
+    lsr x28,x28,#2
+    cbz x28,\tag\()_exp_tail
+\tag\()_exp_vector:
+    ldr q0,[x27]
+    fsub v0.4s,v0.4s,v22.4s
+    bl _tf_exp4
+    str q0,[x27],#16
+    fadd v23.4s,v23.4s,v0.4s
+    subs x28,x28,#1
+    b.ne \tag\()_exp_vector
+\tag\()_exp_tail:
+    add x28,x24,#1
+    and x28,x28,#3
+    cbz x28,\tag\()_normalize
+    mov v0.16b,v22.16b
+    mov x9,x27
+    ld1 {v0.s}[0],[x9],#4
+    cmp x28,#1
+    b.eq \tag\()_tail_exp
+    ld1 {v0.s}[1],[x9],#4
+    cmp x28,#2
+    b.eq \tag\()_tail_exp
+    ld1 {v0.s}[2],[x9]
+\tag\()_tail_exp:
+    fsub v0.4s,v0.4s,v22.4s
+    bl _tf_exp4
+    AADDR x9,Lattention_indices
+    ldr q1,[x9]
+    dup v2.4s,w28
+    cmgt v1.4s,v2.4s,v1.4s
+    and v0.16b,v0.16b,v1.16b
+    fadd v23.4s,v23.4s,v0.4s
+    st1 {v0.s}[0],[x27],#4
+    cmp x28,#1
+    b.eq \tag\()_normalize
+    st1 {v0.s}[1],[x27],#4
+    cmp x28,#2
+    b.eq \tag\()_normalize
+    st1 {v0.s}[2],[x27]
+\tag\()_normalize:
+    faddp v23.4s,v23.4s,v23.4s
+    faddp s23,v23.2s
+    dup v24.4s,v23.s[0]
+    mov x27,x25
+    add x28,x24,#1
+    lsr x28,x28,#2
+    cbz x28,\tag\()_norm_tail_start
+\tag\()_norm_vector:
+    ldr q0,[x27]
+    fdiv v0.4s,v0.4s,v24.4s
+    str q0,[x27],#16
+    subs x28,x28,#1
+    b.ne \tag\()_norm_vector
+\tag\()_norm_tail_start:
+    add x28,x24,#1
+    and x28,x28,#3
+    cbz x28,\tag\()_value_start
+\tag\()_norm_tail:
+    ldr s0,[x27]
+    fdiv s0,s0,s24
+    str s0,[x27],#4
+    subs x28,x28,#1
+    b.ne \tag\()_norm_tail
+.endm
+
+// Stack after saved registers: maximum96, scale100, feature-byte offset104.
+.macro ABLOCK_FORWARD tag,w,h,lw,lh,scale
+\tag\()_start:
+    AENTER 128
+    mov x19,x0
+    mov x20,x1
+    mov x21,x2
+    ldr w22,[x3]
+    AADDR x9,\scale
+    ldr s0,[x9]
+    str s0,[sp,#100]
+    mov x23,#0
+\tag\()_head:
+    mov x24,#0
+\tag\()_row:
+    madd x9,x23,x22,x24
+    mul x9,x9,x22
+    add x25,x21,x9,lsl #2
+    mov x9,#0
+\tag\()_clear_scores:
+    str wzr,[x25,x9,lsl #2]
+    add x9,x9,#1
+    cmp x9,x22
+    b.lo \tag\()_clear_scores
+    str xzr,[sp,#104]
+\tag\()_query_block:
+    mov x9,#(\w*12)
+    mul x26,x24,x9
+    add x26,x19,x26
+    add x26,x26,x23,lsl #(\lh+2)
+    ldr x10,[sp,#104]
+    add x26,x26,x10
+    AHEAD AHLOAD,64
+    add x27,x19,#(\w*4)
+    add x27,x27,x23,lsl #(\lh+2)
+    add x27,x27,x10
+    mov x10,#(\w*12)
+    mov x28,#0
+\tag\()_score_block:
+    movi v0.4s,#0
+    movi v1.4s,#0
+    movi v2.4s,#0
+    movi v3.4s,#0
+    AHEAD AHDOT,64
+    fadd v0.4s,v0.4s,v1.4s
+    fadd v2.4s,v2.4s,v3.4s
+    fadd v0.4s,v0.4s,v2.4s
+    faddp v0.4s,v0.4s,v0.4s
+    faddp s0,v0.2s
+    ldr s7,[x25,x28,lsl #2]
+    fadd s0,s0,s7
+    str s0,[x25,x28,lsl #2]
+    add x27,x27,x10
+    add x28,x28,#1
+    cmp x28,x24
+    b.ls \tag\()_score_block
+    ldr x9,[sp,#104]
+    add x9,x9,#256
+    str x9,[sp,#104]
+    cmp x9,#(\h*4)
+    b.lo \tag\()_query_block
+    mov w9,#0xff800000
+    fmov s6,w9
+    ldr s7,[sp,#100]
+    mov x28,#0
+\tag\()_scale_scores:
+    ldr s0,[x25,x28,lsl #2]
+    fmul s0,s0,s7
+    str s0,[x25,x28,lsl #2]
+    fmax s6,s6,s0
+    add x28,x28,#1
+    cmp x28,x24
+    b.ls \tag\()_scale_scores
+    str s6,[sp,#96]
+    ABLOCK_SOFTMAX \tag
+\tag\()_value_start:
+    str xzr,[sp,#104]
+\tag\()_value_block:
+    AHEAD AHZERO,64
+    add x27,x19,#(\w*8)
+    add x27,x27,x23,lsl #(\lh+2)
+    ldr x9,[sp,#104]
+    add x27,x27,x9
+    mov x10,#(\w*12)
+    mov x28,#0
+\tag\()_value:
+    ldr s0,[x25,x28,lsl #2]
+    dup v0.4s,v0.s[0]
+    AHEAD AHVALUE,64
+    add x27,x27,x10
+    add x28,x28,#1
+    cmp x28,x24
+    b.ls \tag\()_value
+    add x9,x20,x24,lsl #(\lw+2)
+    add x9,x9,x23,lsl #(\lh+2)
+    ldr x11,[sp,#104]
+    add x9,x9,x11
+    AHEAD AHSTORE,64
+    add x11,x11,#256
+    str x11,[sp,#104]
+    cmp x11,#(\h*4)
+    b.lo \tag\()_value_block
+    add x24,x24,#1
+    cmp x24,x22
+    b.lo \tag\()_row
+    add x23,x23,#1
+    cmp x23,#4
+    b.lo \tag\()_head
+    ALEAVE 128
+.endm
+
+// Cache32 query channels and their32 dQ accumulators together. This keeps the
+// query block in registers while visiting every causal key for that block.
+.macro BQBLOCK32 op
+    \op 16,24,0
+    \op 17,25,16
+    \op 18,26,32
+    \op 19,27,48
+    \op 20,28,64
+    \op 21,29,80
+    \op 22,30,96
+    \op 23,31,112
+.endm
+.macro BQLOAD q,d,off
+    ldr q\q,[x27,#\off]
+    movi v\d\().4s,#0
+.endm
+.macro BQUPDATE q,d,off
+    ldr q1,[x9,#\off]
+    ldr q2,[x10,#\off]
+    fmla v\d\().4s,v1.4s,v0.4s
+    fmla v2.4s,v\q\().4s,v0.4s
+    str q2,[x10,#\off]
+.endm
+.macro BQSTORE q,d,off
+    str q\d,[x28,#\off]
+.endm
+
+// dA[32] occupies96..223 and is replaced by dScore after one row contraction.
+// Scale224, row contraction228, feature-byte offset232; frame remains bounded.
+.macro ABLOCK_BACKWARD tag,w,h,lw,lh,scale
+\tag\()_start:
+    AENTER 256
+    mov x19,x0
+    mov x20,x1
+    mov x21,x2
+    mov x22,x3
+    ldr w23,[x4]
+    mov x10,#(\w*3/4)
+    mul x10,x10,x23
+    mov x11,x22
+    movi v0.4s,#0
+\tag\()_zero:
+    str q0,[x11],#16
+    subs x10,x10,#1
+    b.ne \tag\()_zero
+    AADDR x9,\scale
+    ldr s0,[x9]
+    str s0,[sp,#224]
+    mov x24,#0
+\tag\()_head:
+    mov x25,#0
+\tag\()_row:
+    madd x9,x24,x23,x25
+    mul x9,x9,x23
+    add x26,x20,x9,lsl #2
+    movi v0.4s,#0
+    stp q0,q0,[sp,#96]
+    stp q0,q0,[sp,#128]
+    stp q0,q0,[sp,#160]
+    stp q0,q0,[sp,#192]
+    str xzr,[sp,#232]
+\tag\()_first_block:
+    ldr x14,[sp,#232]
+    add x9,x21,x25,lsl #(\lw+2)
+    add x9,x9,x24,lsl #(\lh+2)
+    add x9,x9,x14
+    AHEAD BHLOAD,64
+    add x9,x19,#(\w*8)
+    add x9,x9,x24,lsl #(\lh+2)
+    add x9,x9,x14
+    add x10,x22,#(\w*8)
+    add x10,x10,x24,lsl #(\lh+2)
+    add x10,x10,x14
+    add x11,sp,#96
+    mov x12,#0
+    mov x13,#(\w*12)
+\tag\()_first:
+    movi v0.4s,#0
+    movi v1.4s,#0
+    movi v2.4s,#0
+    movi v3.4s,#0
+    ldr s4,[x26,x12,lsl #2]
+    dup v4.4s,v4.s[0]
+    AHEAD BHDV,64
+    fadd v0.4s,v0.4s,v1.4s
+    fadd v2.4s,v2.4s,v3.4s
+    fadd v0.4s,v0.4s,v2.4s
+    faddp v0.4s,v0.4s,v0.4s
+    faddp s0,v0.2s
+    ldr s7,[x11,x12,lsl #2]
+    fadd s0,s0,s7
+    str s0,[x11,x12,lsl #2]
+    add x9,x9,x13
+    add x10,x10,x13
+    add x12,x12,#1
+    cmp x12,x25
+    b.ls \tag\()_first
+    ldr x14,[sp,#232]
+    add x14,x14,#256
+    str x14,[sp,#232]
+    cmp x14,#(\h*4)
+    b.lo \tag\()_first_block
+    mov x12,#0
+    fmov s6,wzr
+\tag\()_row_dot:
+    ldr s0,[x11,x12,lsl #2]
+    ldr s1,[x26,x12,lsl #2]
+    fmadd s6,s0,s1,s6
+    add x12,x12,#1
+    cmp x12,x25
+    b.ls \tag\()_row_dot
+    str s6,[sp,#228]
+    ldr s7,[sp,#224]
+    mov x12,#0
+\tag\()_dscore:
+    ldr s0,[x11,x12,lsl #2]
+    fsub s0,s0,s6
+    ldr s1,[x26,x12,lsl #2]
+    fmul s0,s0,s1
+    fmul s0,s0,s7
+    str s0,[x11,x12,lsl #2]
+    add x12,x12,#1
+    cmp x12,x25
+    b.ls \tag\()_dscore
+    str xzr,[sp,#232]
+\tag\()_second_block:
+    ldr x14,[sp,#232]
+    mov x9,#(\w*12)
+    mul x9,x25,x9
+    add x9,x9,x24,lsl #(\lh+2)
+    add x9,x9,x14
+    add x27,x19,x9
+    add x28,x22,x9
+    BQBLOCK32 BQLOAD
+    add x9,x19,#(\w*4)
+    add x9,x9,x24,lsl #(\lh+2)
+    add x9,x9,x14
+    add x10,x22,#(\w*4)
+    add x10,x10,x24,lsl #(\lh+2)
+    add x10,x10,x14
+    add x11,sp,#96
+    mov x12,#0
+    mov x13,#(\w*12)
+\tag\()_second:
+    ldr s0,[x11,x12,lsl #2]
+    dup v0.4s,v0.s[0]
+    BQBLOCK32 BQUPDATE
+    add x9,x9,x13
+    add x10,x10,x13
+    add x12,x12,#1
+    cmp x12,x25
+    b.ls \tag\()_second
+    BQBLOCK32 BQSTORE
+    ldr x14,[sp,#232]
+    add x14,x14,#128
+    str x14,[sp,#232]
+    cmp x14,#(\h*4)
+    b.lo \tag\()_second_block
+    add x25,x25,#1
+    cmp x25,x23
+    b.lo \tag\()_row
+    add x24,x24,#1
+    cmp x24,#4
+    b.lo \tag\()_head
+    ALEAVE 256
+.endm
+
 AWIDE_FORWARD Law64,64,16,6,4,Lattention_scale16
 AWIDE_FORWARD Law128,128,32,7,5,Lattention_scale32
 AWIDE_FORWARD Law256,256,64,8,6,Lattention_scale64
 AWIDE_BACKWARD Labw64,64,16,6,4,Lattention_scale16
 AWIDE_BACKWARD Labw128,128,32,7,5,Lattention_scale32
 AWIDE_BACKWARD Labw256,256,64,8,6,Lattention_scale64
+ABLOCK_FORWARD Labf512,512,128,9,7,Lattention_scale128
+ABLOCK_FORWARD Labf1024,1024,256,10,8,Lattention_scale256
+ABLOCK_BACKWARD Labb512,512,128,9,7,Lattention_scale128
+ABLOCK_BACKWARD Labb1024,1024,256,10,8,Lattention_scale256
 
 .section __TEXT,__const
 .p2align 4
@@ -648,3 +1012,7 @@ Lattention_scale32:
     .float 0.1767766952966368811
 Lattention_scale64:
     .float 0.125
+Lattention_scale128:
+    .float 0.08838834764831844055
+Lattention_scale256:
+    .float 0.0625

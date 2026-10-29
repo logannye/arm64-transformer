@@ -1,8 +1,14 @@
 {
   "kind": "implementation_dataflow_diagram",
-  "scope": "Publication diagram, no performance observations or numerical calculations.",
+  "scope": "Publication diagram of v5 wide-forward reduction chains and unchanged backward; no performance observations or numerical calculations.",
+  "wide_forward_compiled_widths": [
+    512,
+    1024
+  ],
+  "historical_image": "docs/sme-dataflow-v4.png",
   "sha256": {
-    "docs/sme-dataflow.png": "0bdfbdd080e5a75169b503900930006f9ab5e82371656c6ae5807512e761230b",
-    "scripts/render_sme_dataflow.py": "23f865c29ac9bd814b6b227a7babdc20cac4723c47cbf4e869eebf3521b50a86"
+    "docs/sme-dataflow.png": "5977a0af357d18cf34e81f095b9ca4f96f567220d057042f2e6b8530264f4ec7",
+    "docs/sme-dataflow-v4.png": "0bdfbdd080e5a75169b503900930006f9ab5e82371656c6ae5807512e761230b",
+    "scripts/render_sme_dataflow.py": "1771caed141aec1ca96d3d9e7e10b8f20e5bac020fd20e774ce236afa22352d5"
   }
 }

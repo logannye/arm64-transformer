@@ -26,7 +26,17 @@
  .endif
 .endm
 .macro PTR reg, base, offset
+ // Match model.S: wider parameter offsets need more than one page ADD.
+ // Existing layouts retain their original two-instruction address sequence.
+ .if (\offset >> 12) > 4095
+ add \reg,\base,#4095,lsl #12
+ .rept ((\offset >> 12) / 4095) - 1
+ add \reg,\reg,#4095,lsl #12
+ .endr
+ add \reg,\reg,#((\offset >> 12) % 4095),lsl #12
+ .else
  add \reg,\base,#(\offset >> 12),lsl #12
+ .endif
  add \reg,\reg,#(\offset & 4095)
 .endm
 .macro ENTER

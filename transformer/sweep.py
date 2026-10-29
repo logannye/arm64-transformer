@@ -1,4 +1,4 @@
-"""Coordinate the frozen 48-run width study; never build or prepare fixtures."""
+"""Coordinate a protocol-specific frozen width study; never build or prepare fixtures."""
 
 from __future__ import annotations
 
@@ -15,9 +15,17 @@ import time
 from pathlib import Path
 
 from transformer import spec
-from transformer.backend import read_backend, validate_backend_preflights, validate_runtime_backend
+from transformer.backend import (
+    WIDE_VALIDATION_CONTRACT,
+    read_backend,
+    validate_backend_preflights,
+    validate_regression_preflights,
+    validate_runtime_backend,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
+PROTOCOL_WIDTHS = {"v3": (32, 64, 128, 256), "v4": (32, 64, 128, 256), "v5": (512, 1024)}
+REGRESSION_WIDTHS = (32, 64, 128, 256, 512, 1024)
 PAUSE_SECONDS = 15
 CHILD_TIMEOUT = 1800
 THREAD_KEYS = (
@@ -60,13 +68,21 @@ def on_ac_power(state):
     return power["returncode"] == 0 and "AC Power" in power["stdout"]
 
 
-def study_order():
+def protocol_widths(protocol="v3"):
+    try:
+        return PROTOCOL_WIDTHS[protocol]
+    except KeyError as exc:
+        raise ValueError("Unsupported width-study protocol") from exc
+
+
+def study_order(protocol="v3"):
     """Adjacent implementation pairs, reversing width and pair order on repeat 2."""
+    selected_widths = protocol_widths(protocol)
     order = []
     for repeat in (1, 2):
-        widths = spec.WIDTHS if repeat == 1 else spec.WIDTHS[::-1]
+        widths = selected_widths if repeat == 1 else selected_widths[::-1]
         for width in widths:
-            width_index = spec.WIDTHS.index(width)
+            width_index = selected_widths.index(width)
             for seed_index, seed in enumerate(spec.SEEDS):
                 pair = ("python", "arm64")
                 if (width_index + seed_index) % 2:
@@ -88,13 +104,26 @@ def child_environment(width):
     return env
 
 
-def inspect_inputs(inputs):
-    """Called only in a process whose width was selected before importing spec."""
+def inspect_model():
+    """Read layout/source identity without requiring a training fixture."""
     import numpy as np
     import torch
 
-    from transformer.prepare import SOURCE_SHA256, load_fixture
     from transformer.validate import SOURCE_FILES
+
+    return {
+        "model": spec.model_metadata(),
+        "required_source_files": list(SOURCE_FILES),
+        "layout_sha256": hashlib.sha256(spec.assembly_constants().encode()).hexdigest(),
+        "python": sys.version,
+        "torch": torch.__version__,
+        "numpy": np.__version__,
+    }
+
+
+def inspect_inputs(inputs):
+    """Called only in a process whose width was selected before importing spec."""
+    from transformer.prepare import SOURCE_SHA256, load_fixture
 
     expected = {
         "version": 2,
@@ -121,21 +150,12 @@ def inspect_inputs(inputs):
         for name, expected_hash in manifest["sha256"].items():
             paths[str(directory / name)] = expected_hash
         paths[str(directory / "manifest.json")] = digest(directory / "manifest.json")
-    return {
-        "model": spec.model_metadata(),
-        "fixtures": fixtures,
-        "fixture_files": paths,
-        "required_source_files": list(SOURCE_FILES),
-        "layout_sha256": hashlib.sha256(spec.assembly_constants().encode()).hexdigest(),
-        "python": sys.version,
-        "torch": torch.__version__,
-        "numpy": np.__version__,
-    }
+    return inspect_model() | {"fixtures": fixtures, "fixture_files": paths}
 
 
 def validate_shared_data(inspections):
     """Width changes must not silently change corpus rows or per-seed schedules."""
-    first = inspections[str(spec.WIDTHS[0])]["fixtures"]
+    first = inspections[next(iter(inspections))]["fixtures"]
     base_hashes = first[str(spec.SEEDS[0])]["sha256"]
     for inspection in inspections.values():
         for seed in spec.SEEDS:
@@ -249,8 +269,8 @@ def measured_child(cmd, env, *, timeout=CHILD_TIMEOUT):
 
 
 def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
-    if protocol not in ("v3", "v4"):
-        raise ValueError("Unsupported width-study protocol")
+    widths = protocol_widths(protocol)
+    regression_widths = REGRESSION_WIDTHS if protocol == "v5" else widths
     inputs, output, preflight_directory = (
         Path(value).resolve() for value in (inputs, output, preflight_directory)
     )
@@ -262,15 +282,17 @@ def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
         "protocol_file": f"experiments/PROTOCOL-{protocol}.md",
         "inputs": str(inputs),
         "preflight_directory": str(preflight_directory),
-        "widths": list(spec.WIDTHS),
+        "widths": list(widths),
         "pause_seconds": PAUSE_SECONDS,
         "child_timeout_seconds": CHILD_TIMEOUT,
-        "order": study_order(),
+        "order": study_order(protocol),
         "runs": [],
         "inspections": {},
         "preflights": {},
         "backend_preflights": {},
     }
+    if protocol == "v5":
+        manifest["validation_contract"] = WIDE_VALIDATION_CONTRACT
     width_manifests = {}
 
     def persist():
@@ -301,14 +323,18 @@ def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
             thread_environment={key: "1" for key in THREAD_KEYS} | {"PYTHONHASHSEED": "0"},
         )
         authenticated, fixture_files = {}, {}
-        for width in spec.WIDTHS:
+        for width in regression_widths:
+            inspect_arguments = (
+                ["--inspect-inputs", str(inputs / f"width-{width}")]
+                if width in widths
+                else ["--inspect-model"]
+            )
             result = measured_child(
                 [
                     sys.executable,
                     "-m",
                     "transformer.sweep",
-                    "--inspect-inputs",
-                    str(inputs / f"width-{width}"),
+                    *inspect_arguments,
                 ],
                 env=child_environment(width),
                 timeout=180,
@@ -323,9 +349,10 @@ def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
             manifest["inspections"][str(width)]["result"] = inspection
             preflight_path = preflight_directory / f"width-{width}.json"
             preflight = json.loads(preflight_path.read_text())
-            manifest["preflights"][str(width)] = preflight
+            if width in widths:
+                manifest["preflights"][str(width)] = preflight
             authenticated.update(validate_preflight(preflight, inspection))
-            if protocol == "v4":
+            if protocol in ("v4", "v5"):
                 modes = ("neon", "sme") if preflight["backend"]["sme_supported"] else ("neon",)
                 supplements = {}
                 for mode in modes:
@@ -334,23 +361,37 @@ def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
                     authenticated.update(validate_preflight(supplements[mode], inspection))
                     authenticated[str(mode_path)] = digest(mode_path)
                 validate_backend_preflights(preflight, supplements)
-                manifest["backend_preflights"][str(width)] = supplements
+                if width in widths:
+                    manifest["backend_preflights"][str(width)] = supplements
+                if protocol == "v5":
+                    manifest.setdefault("regression_preflights", {})[str(width)] = {
+                        "auto": preflight,
+                        **supplements,
+                    }
             authenticated[str(preflight_path)] = digest(preflight_path)
-            fixture_files.update(inspection["fixture_files"])
+            fixture_files.update(inspection.get("fixture_files", {}))
         inspections = {width: entry["result"] for width, entry in manifest["inspections"].items()}
-        validate_shared_data(inspections)
+        measured_inspections = {str(width): inspections[str(width)] for width in widths}
+        validate_shared_data(measured_inspections)
+        if protocol == "v5":
+            manifest["regression_widths"] = list(REGRESSION_WIDTHS)
+            manifest["regression_gate_counts"] = validate_regression_preflights(
+                manifest["regression_preflights"], REGRESSION_WIDTHS, tracked
+            )
         versions = {(item["python"], item["torch"], item["numpy"]) for item in inspections.values()}
         if len(versions) != 1:
             raise RuntimeError("Inspector software versions differ across widths")
         _, manifest["torch"], manifest["numpy"] = versions.pop()
-        manifest["models"] = {width: item["model"] for width, item in inspections.items()}
-        manifest["fixtures"] = {width: item["fixtures"] for width, item in inspections.items()}
+        manifest["models"] = {width: item["model"] for width, item in measured_inspections.items()}
+        manifest["fixtures"] = {
+            width: item["fixtures"] for width, item in measured_inspections.items()
+        }
         manifest["authenticated_files"] = authenticated
         manifest["fixture_files"] = fixture_files
         manifest["before"] = snapshot()
         if not on_ac_power(manifest["before"]):
             raise RuntimeError("Frozen study requires AC power")
-        for width in spec.WIDTHS:
+        for width in widths:
             (output / f"width-{width}").mkdir()
             selected = inspections[str(width)]
             width_manifests[width] = {
@@ -383,7 +424,9 @@ def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
                 "order": [list(row[1:]) for row in manifest["order"] if row[0] == width],
                 "runs": [],
             }
-            if protocol == "v4":
+            if protocol == "v5":
+                width_manifests[width]["validation_contract"] = WIDE_VALIDATION_CONTRACT
+            if protocol in ("v4", "v5"):
                 width_manifests[width]["backend_preflights"] = manifest["backend_preflights"][
                     str(width)
                 ]
@@ -423,11 +466,17 @@ def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
                 entry["status"] = "rejected_before_start"
                 raise RuntimeError(f"Pre-run conditions changed; no child started: {name}")
             print(
-                json.dumps({"starting": entry["relative_run"], "index": index + 1, "total": 48}),
+                json.dumps(
+                    {
+                        "starting": entry["relative_run"],
+                        "index": index + 1,
+                        "total": len(manifest["order"]),
+                    }
+                ),
                 flush=True,
             )
             child_env = child_environment(width)
-            if protocol == "v4":
+            if protocol in ("v4", "v5"):
                 child_env["ARM64_TRANSFORMER_BACKEND"] = "auto"
                 entry["backend_environment"] = "auto"
             entry.update(measured_child(cmd, child_env))
@@ -459,7 +508,7 @@ def run_sweep(inputs, output, preflight_directory, *, protocol="v3"):
             performance = struct.unpack("<8d", raw_performance)
             if not all(math.isfinite(value) for value in performance) or performance[0] <= 0:
                 raise ValueError("Child performance file contains invalid measurements")
-            if protocol == "v4" and implementation == "arm64":
+            if protocol in ("v4", "v5") and implementation == "arm64":
                 backend_path = child / "backend.u64"
                 entry["backend"] = read_backend(backend_path, policy="auto")
                 validate_runtime_backend(
@@ -504,9 +553,13 @@ def main():
     parser.add_argument("--inputs", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--preflight-dir", type=Path)
-    parser.add_argument("--protocol", choices=("v3", "v4"), default="v3")
+    parser.add_argument("--protocol", choices=tuple(PROTOCOL_WIDTHS), default="v3")
+    parser.add_argument("--inspect-model", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--inspect-inputs", type=Path, help=argparse.SUPPRESS)
     args = parser.parse_args()
+    if args.inspect_model:
+        print(json.dumps(inspect_model(), allow_nan=False))
+        return 0
     if args.inspect_inputs is not None:
         print(json.dumps(inspect_inputs(args.inspect_inputs), allow_nan=False))
         return 0

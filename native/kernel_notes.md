@@ -41,22 +41,39 @@ before any SME instruction, then requires RDSVL to report 64 bytes. At this
 streaming vector length, each FP32 ZA tile is 16 by 16. The implementation uses
 non-widening FP32 FMOPA; it does not convert operands to lower precision.
 
-The public linear dispatchers require 32 rows, input width 64/128/256/512, and
-output width divisible by 32 between 64 and 768 for the SME path. They also
+The public linear dispatchers require 32 rows, input width
+64/128/256/512/1024/2048, and output width divisible by 32 between 64 and 3072
+for the SME path. They also
 require the current vector length to remain 64 bytes, ZA to be off, and
 TPIDR2_EL0 to be null. Under the public SM=0 precondition, live ZA or pending
 lazy-save state takes the NEON path without changing that state. Unsupported
 shapes also take NEON, whose existing generic kernels cover scalar tails.
 Width 32 therefore stays on NEON; all five linear layers at widths 64, 128,
-and 256 are eligible for SME. Selection and actual dispatch counts are recorded
+256, 512, and 1024 are eligible for SME. Selection and actual dispatch counts are recorded
 separately, so selecting SME does not imply every primitive used it.
 
-`linear_sme.S` holds a 32-by-32 result in four FP32 ZA tiles. Each reduction step
-loads two 16-lane vectors from each operand and issues four outer products.
-Forward first packs the 32 input rows into contiguous vectors along the reduction
-dimension. It then packs one 32-output weight panel at a time, reusing the packed
-input for every panel. Horizontal ZA loads followed by vertical ZA stores perform
-these transposes. Bias is added after the dot products, when storing the result.
+`linear_sme.S` first packs the 32 input rows into contiguous vectors along the
+reduction dimension. It then packs one 32-output weight panel at a time, reusing
+the packed input for every panel. Horizontal ZA loads followed by vertical ZA
+stores perform these transposes. Bias is added after the dot products, when
+storing the result.
+
+For compiled widths 32 through 256, the existing forward holds a 32-by-32 result
+in four FP32 ZA tiles. Each reduction step loads two 16-lane vectors from each
+operand and issues four outer products. Those compiled paths retain their
+previous numerical order.
+
+For compiled widths 512 and 1024, forward divides each 32-by-32 output panel into
+four 16-by-16 subtiles. Within each subtile, ZA0 through ZA3 accumulate input
+indices modulo four, giving each output four independent FP32 partial sums.
+The final combination is `(sum0 + sum1) + (sum2 + sum3)`, then bias, matching
+the NEON forward's four-lane reduction order on the validated finite inputs.
+This shortens each accumulation chain by four. The same number of FMOPA
+instructions performs the matrix products, but visiting four subtiles requires
+additional operand loads and partial-sum additions. Packing and scratch bounds
+are unchanged. This is a numerical-accuracy tradeoff, not a claimed speedup.
+Selection depends on the compiled width, never on fixture contents or parameter
+values. Backward retains its existing reduction order at every width.
 
 Backward packs dY once for dX, then streams contiguous weight-row segments while
 overwriting each dX tile. For dW it loads the caller's existing gradient tile into
@@ -65,11 +82,15 @@ are added in token-row order. dX reduction visits output channels in order; dW
 visits token rows in order. This preserves the contract of overwriting dX while
 adding to dW/db across the runtime's sequence-by-sequence batch accumulation.
 
-Forward scratch is `256 * input_width` bytes, at most **128 KiB**, plus a
+Forward scratch is `256 * input_width` bytes, at most **512 KiB**, plus a
 160-byte saved-register frame. Backward scratch is `128 * output_width` bytes,
-at most **96 KiB**, plus a 192-byte frame. The validated shapes make every
+at most **384 KiB**, plus a 192-byte frame. The validated shapes make every
 scratch allocation a positive multiple of 4 KiB. The assembly lowers the stack
 and touches memory at each 4 KiB step, then restores it exactly on return.
+The caller must supply enough thread stack for that scratch, saved registers,
+and its own active frames; a 512 KiB thread stack cannot run the largest forward
+shape. The standalone executable uses the main thread. Page touching respects
+stack guards; it does not create additional stack capacity.
 Packing is repeated inside each call; there is no persistent packed-weight cache
 to invalidate after Adam updates. Packing, page touches, and the single
 SMSTART/SMSTOP pair per call are included in measured execution time.
@@ -100,13 +121,21 @@ and [LLVM's SME ABI documentation](https://www.llvm.org/docs/AArch64SME.html).
   Forward requires row/input/output counts divisible by four; backward
   additionally requires input width divisible by sixteen. Other positive shapes
   tail-call the preserved v1 generic implementations in `kernels.S`.
-- `attention.S` specializes four-head models of width 32, 64, 128, and 256 for
-  1..32 tokens. Heads of 8, 16, 32, or 64 elements use 2, 4, 8, or 16 NEON
+- `attention.S` specializes four-head models of width 32, 64, 128, 256, 512,
+  and 1024 for 1..32 tokens. Heads of 8, 16, 32, or 64 elements retain their
+  existing paths with 2, 4, 8, or 16 NEON
   vectors. QK, weighted values, and their derivatives are vectorized. Wider
   paths retain query/output-gradient vectors in registers, use four independent
   dot-product accumulators, and unroll the feature loops. Backward caches one
   row of attention derivatives in a 32-float stack buffer instead of recomputing
-  those dot products. Other shapes use the original generic implementation.
+  those dot products. Heads of 128 or 256 elements use register blocks: forward
+  retains 64 query channels across causal keys, combines block dot totals before
+  scaling and softmax, and accumulates values in 64-channel blocks. Backward
+  computes dA/dV in 64-channel blocks, then reuses the 32-float row cache for
+  dScore after its softmax contraction. It retains 32 Q/dQ channels together
+  while accumulating dK/dQ. These larger-head paths use 128-byte forward and
+  256-byte backward frames; the paths for widths 32 through 256 are unchanged.
+  Other shapes use the original generic implementation.
 - `softmax.S` evaluates four exponentials at a time, using pairs of float64 lanes
   for range reduction and a degree-nine polynomial, then rounding to float32.
   Inputs outside the finite interval [-104,88] use the original scalar behavior.
@@ -127,7 +156,7 @@ question.
 
 ## Width specialization and identity
 
-`ARM64_TRANSFORMER_WIDTH` selects 32, 64, 128, or 256 before Python imports the
+`ARM64_TRANSFORMER_WIDTH` selects 32, 64, 128, 256, 512, or 1024 before Python imports the
 model specification. Four heads, a 32-token context, and a feed-forward width of
 twice the model width remain fixed. `make widths` builds separate native binaries
 under `native/build/width-W`; generated `layout.inc` files contain parameter and
@@ -140,13 +169,24 @@ standalone executable requires a version-2 fixture header with the matching widt
 before it allocates model state or creates an output directory. This prevents
 accidentally loading a wider fixture into a smaller compiled model.
 
+At width 1024, some parameter byte offsets exceed the 12-bit page immediate of
+one AArch64 shifted ADD. The address macros split those offsets into bounded
+page additions; offsets below that boundary retain their original two-ADD
+sequence. Parameter counts and byte sizes use two 16-bit immediate pieces and
+remain below 2^32 for every supported model. Embedding row offsets use 64-bit
+register shifts derived from `WIDTH_SHIFT`, including the 4096-byte rows at
+width 1024. Loop counters and pointer arithmetic remain 64-bit where their
+range depends on tensor size.
+
 ## Arithmetic
 
 - NEON linear forward uses four-lane fused multiply-add and horizontal reduction,
   then bias addition. Its tiled and generic paths preserve the same per-output
-  arithmetic order. SME forward accumulates one FP32 fused multiply-add per
-  reduction element into ZA, changing the grouping relative to NEON's four
-  partial sums. SME and NEON backward visit the same output-channel/token-row
+  arithmetic order. At compiled widths up to 256, SME forward accumulates one
+  FP32 fused multiply-add per reduction element into ZA, changing the grouping
+  relative to NEON's four partial sums. At compiled widths 512 and 1024, SME
+  forward uses the same four partial-sum chains and combination order as NEON.
+  SME and NEON backward visit the same output-channel/token-row
   reduction orders. Every backend overwrites input gradients and adds to the
   caller's parameter/bias gradients.
 - LayerNorm uses float32 two-pass mean and biased variance, epsilon `1e-5`, and

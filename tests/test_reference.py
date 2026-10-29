@@ -89,7 +89,17 @@ def test_flat_checkpoint_roundtrip_and_layout():
 
 
 def test_declared_model_family_parameter_counts():
-    assert PARAM_COUNT == {32: 17952, 64: 52160, 128: 169728, 256: 601472}[WIDTH]
+    assert (
+        PARAM_COUNT
+        == {
+            32: 17952,
+            64: 52160,
+            128: 169728,
+            256: 601472,
+            512: 2251392,
+            1024: 8696960,
+        }[WIDTH]
+    )
 
 
 def test_wrong_width_fixture_rejected_even_without_hash_verification(tmp_path):
