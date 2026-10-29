@@ -1,0 +1,340 @@
+{
+  "widths": {
+    "1024": {
+      "inference": {
+        "attention": null,
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": null
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 4
+        },
+        "schema": 2
+      },
+      "training": {
+        "attention": null,
+        "dense": {
+          "dw": {
+            "k": 16,
+            "m": 32,
+            "n": 32,
+            "sg": 4
+          },
+          "dx": {
+            "k": 16,
+            "m": 32,
+            "n": 32,
+            "sg": 4
+          },
+          "forward": {
+            "k": 16,
+            "m": 32,
+            "n": 32,
+            "sg": 4
+          }
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": true,
+          "epilogue": true
+        },
+        "norm": {
+          "sg": 4,
+          "vec": 1
+        },
+        "schema": 2
+      }
+    },
+    "128": {
+      "inference": {
+        "attention": {
+          "backward": "saved",
+          "rows": 2,
+          "sg": 2,
+          "stage": "register"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": null
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 4
+        },
+        "schema": 2
+      },
+      "training": {
+        "attention": {
+          "backward": "saved",
+          "rows": 1,
+          "sg": 2,
+          "stage": "register"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": {
+            "k": 32,
+            "m": 16,
+            "n": 32,
+            "sg": 4
+          }
+        },
+        "embedding": {
+          "block": 64
+        },
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 1,
+          "vec": 4
+        },
+        "schema": 2
+      }
+    },
+    "256": {
+      "inference": {
+        "attention": {
+          "backward": "saved",
+          "rows": 2,
+          "sg": 2,
+          "stage": "register"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": null
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 1
+        },
+        "schema": 2
+      },
+      "training": {
+        "attention": {
+          "backward": "saved",
+          "rows": 2,
+          "sg": 1,
+          "stage": "register"
+        },
+        "dense": {
+          "dw": {
+            "k": 32,
+            "m": 16,
+            "n": 32,
+            "sg": 4
+          },
+          "dx": {
+            "k": 32,
+            "m": 16,
+            "n": 32,
+            "sg": 4
+          },
+          "forward": {
+            "k": 16,
+            "m": 16,
+            "n": 32,
+            "sg": 4
+          }
+        },
+        "embedding": {
+          "block": 64
+        },
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 1
+        },
+        "schema": 2
+      }
+    },
+    "32": {
+      "inference": {
+        "attention": {
+          "backward": "saved",
+          "rows": 1,
+          "sg": 1,
+          "stage": "threadgroup"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": {
+            "k": 16,
+            "m": 16,
+            "n": 64,
+            "sg": 4
+          }
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 1,
+          "vec": 4
+        },
+        "schema": 2
+      },
+      "training": {
+        "attention": {
+          "backward": "saved",
+          "rows": 2,
+          "sg": 1,
+          "stage": "register"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": null
+        },
+        "embedding": {
+          "block": 64
+        },
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 1
+        },
+        "schema": 2
+      }
+    },
+    "512": {
+      "inference": {
+        "attention": {
+          "backward": "saved",
+          "rows": 2,
+          "sg": 2,
+          "stage": "threadgroup"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": null
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 4
+        },
+        "schema": 2
+      },
+      "training": {
+        "attention": null,
+        "dense": {
+          "dw": {
+            "k": 16,
+            "m": 32,
+            "n": 32,
+            "sg": 4
+          },
+          "dx": {
+            "k": 16,
+            "m": 32,
+            "n": 32,
+            "sg": 4
+          },
+          "forward": {
+            "k": 16,
+            "m": 32,
+            "n": 32,
+            "sg": 4
+          }
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": true,
+          "epilogue": true
+        },
+        "norm": {
+          "sg": 4,
+          "vec": 4
+        },
+        "schema": 2
+      }
+    },
+    "64": {
+      "inference": {
+        "attention": {
+          "backward": "saved",
+          "rows": 1,
+          "sg": 2,
+          "stage": "register"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": null
+        },
+        "embedding": null,
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 1
+        },
+        "schema": 2
+      },
+      "training": {
+        "attention": {
+          "backward": "saved",
+          "rows": 2,
+          "sg": 1,
+          "stage": "register"
+        },
+        "dense": {
+          "dw": null,
+          "dx": null,
+          "forward": null
+        },
+        "embedding": {
+          "block": 128
+        },
+        "fusion": {
+          "adam_finite": false,
+          "epilogue": false
+        },
+        "norm": {
+          "sg": 2,
+          "vec": 1
+        },
+        "schema": 2
+      }
+    }
+  }
+}
