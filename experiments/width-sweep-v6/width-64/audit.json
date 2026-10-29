@@ -1,0 +1,61 @@
+{
+  "schema_version": 2,
+  "passed": true,
+  "check_count": 9605,
+  "error": null,
+  "failed_checks": [],
+  "status": "completed",
+  "evidence_integrity_passed": true,
+  "native_fp64_accuracy_passed": true,
+  "python_fp64_accuracy_passed": true,
+  "cross_implementation_fp32_compatibility_passed": true,
+  "numerically_qualified": true,
+  "postrun_numerical_contract": "v6-fp64-centered-attention-v1",
+  "integrity_check_count": 9605,
+  "integrity_failed_checks": [],
+  "numerical_categories": {
+    "native_fp64": {
+      "passed": true,
+      "check_count": 6156,
+      "failed_checks": [],
+      "failed_coordinates": 0,
+      "failed_logit_coordinates": 0,
+      "failed_sequence_checks": 0,
+      "failed_nll_checks": 0
+    },
+    "python_fp64": {
+      "passed": true,
+      "check_count": 6156,
+      "failed_checks": [],
+      "failed_coordinates": 0,
+      "failed_logit_coordinates": 0,
+      "failed_sequence_checks": 0,
+      "failed_nll_checks": 0
+    },
+    "fp32_compatibility": {
+      "passed": true,
+      "check_count": 12288,
+      "failed_checks": [],
+      "failed_coordinates": 0,
+      "failed_logit_coordinates": 0,
+      "failed_sequence_checks": 0,
+      "failed_nll_checks": 0
+    }
+  },
+  "numerical_check_count": 24600,
+  "numerical_failed_checks": [],
+  "omitted_full_record_counts": {
+    "checks": 9605,
+    "numerical_checks": 24600
+  },
+  "publication": {
+    "artifact_type": "audit_index",
+    "complete_check_records_present": false,
+    "scope": "Compact publication view only; complete check records are omitted here and retained unchanged in the linked release archive. Counts, failures, qualification flags and metrics are copied from the full report. This projection performs no model execution.",
+    "full_source": {
+      "archive_path": "report/width-64/audit.json",
+      "sha256": "14f7fbb196b793ccf3b34233a14c61a9b13a5250862fb2b3166e4a8added0553",
+      "release_url": "https://github.com/logannye/arm64-transformer/releases/tag/transformer-attention-precision-v6"
+    }
+  }
+}

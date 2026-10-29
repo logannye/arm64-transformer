@@ -1,0 +1,84 @@
+{
+  "schema_version": 2,
+  "passed": false,
+  "check_count": 9605,
+  "error": null,
+  "failed_checks": [],
+  "status": "baseline_precision_limit",
+  "evidence_integrity_passed": true,
+  "native_fp64_accuracy_passed": true,
+  "python_fp64_accuracy_passed": false,
+  "cross_implementation_fp32_compatibility_passed": false,
+  "numerically_qualified": false,
+  "postrun_numerical_contract": "v6-fp64-centered-attention-v1",
+  "integrity_check_count": 9605,
+  "integrity_failed_checks": [],
+  "numerical_categories": {
+    "native_fp64": {
+      "passed": true,
+      "check_count": 6156,
+      "failed_checks": [],
+      "failed_coordinates": 0,
+      "failed_logit_coordinates": 0,
+      "failed_sequence_checks": 0,
+      "failed_nll_checks": 0
+    },
+    "python_fp64": {
+      "passed": false,
+      "check_count": 6156,
+      "failed_checks": [
+        "seed-43-repeat-1-arm64/v6/validation/sequence_237/python_fp64",
+        "seed-44-repeat-1-python/v6/validation/sequence_236/python_fp64",
+        "seed-43-repeat-2-arm64/v6/validation/sequence_237/python_fp64",
+        "seed-44-repeat-2-python/v6/validation/sequence_236/python_fp64"
+      ],
+      "failed_coordinates": 4,
+      "failed_logit_coordinates": 4,
+      "failed_sequence_checks": 4,
+      "failed_nll_checks": 0
+    },
+    "fp32_compatibility": {
+      "passed": false,
+      "check_count": 12288,
+      "failed_checks": [
+        "seed-42-repeat-1-arm64/v6/test/sequence_43/native_functional_python32",
+        "seed-43-repeat-1-arm64/v6/validation/sequence_237/native_production_python32",
+        "seed-43-repeat-1-arm64/v6/validation/sequence_237/native_functional_python32",
+        "seed-44-repeat-1-python/v6/test/sequence_188/native_functional_python32",
+        "seed-44-repeat-1-python/v6/validation/sequence_236/native_production_python32",
+        "seed-44-repeat-1-python/v6/validation/sequence_236/native_functional_python32",
+        "seed-42-repeat-2-arm64/v6/test/sequence_43/native_functional_python32",
+        "seed-43-repeat-2-arm64/v6/validation/sequence_237/native_production_python32",
+        "seed-43-repeat-2-arm64/v6/validation/sequence_237/native_functional_python32",
+        "seed-44-repeat-2-python/v6/test/sequence_188/native_functional_python32",
+        "seed-44-repeat-2-python/v6/validation/sequence_236/native_production_python32",
+        "seed-44-repeat-2-python/v6/validation/sequence_236/native_functional_python32"
+      ],
+      "failed_coordinates": 12,
+      "failed_logit_coordinates": 12,
+      "failed_sequence_checks": 12,
+      "failed_nll_checks": 0
+    }
+  },
+  "numerical_check_count": 24600,
+  "numerical_failed_checks": [
+    "seed-43-repeat-1-arm64/v6/validation/sequence_237/python_fp64",
+    "seed-44-repeat-1-python/v6/validation/sequence_236/python_fp64",
+    "seed-43-repeat-2-arm64/v6/validation/sequence_237/python_fp64",
+    "seed-44-repeat-2-python/v6/validation/sequence_236/python_fp64"
+  ],
+  "omitted_full_record_counts": {
+    "checks": 9605,
+    "numerical_checks": 24600
+  },
+  "publication": {
+    "artifact_type": "audit_index",
+    "complete_check_records_present": false,
+    "scope": "Compact publication view only; complete check records are omitted here and retained unchanged in the linked release archive. Counts, failures, qualification flags and metrics are copied from the full report. This projection performs no model execution.",
+    "full_source": {
+      "archive_path": "report/width-512/audit.json",
+      "sha256": "87c48c2c94780436d045e26d9e8604367d1a7ae98a747bd19c15d0c395ebd30c",
+      "release_url": "https://github.com/logannye/arm64-transformer/releases/tag/transformer-attention-precision-v6"
+    }
+  }
+}

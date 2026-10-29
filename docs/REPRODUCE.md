@@ -26,7 +26,7 @@ recorded versions are in `requirements-benchmark.txt`.
 ```sh
 git clone https://github.com/logannye/arm64-transformer.git
 cd arm64-transformer
-git checkout MEASURED_V6_REVISION_FROM_THE_REPORT
+git checkout 2c5191047068c16b12e3312652b118d48a5f3744
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install --only-binary=:all: -r requirements-benchmark.txt
