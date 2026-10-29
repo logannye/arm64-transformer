@@ -213,6 +213,20 @@ class Backend:
         self.step += 1
         return loss
 
+    def apply_gradient(self, values):
+        """Admission probe: apply supplied FP32 gradients with production Adam."""
+        values = _flat(values, "gradient")
+        self.optimizer.zero_grad(set_to_none=True)
+        for name, shape in PARAM_SHAPES.items():
+            offset, size = PARAMS[name]
+            getattr(self.model, name).grad = torch.tensor(
+                values[offset : offset + size].reshape(shape), device=self.device
+            )
+        self.optimizer.step()
+        self.step += 1
+        self._last_logits = self._last_loss = None
+        self.synchronize()
+
     def check_finite(self, value=None):
         if value is not None:
             values = [value]

@@ -306,6 +306,27 @@ class Backend:
         self._submit(loss, logits, gradients, self._state)
         return loss
 
+    def apply_gradient(self, values):
+        """Admission probe: apply supplied FP32 gradients with framework Adam."""
+        self._gpu()
+        values = _flat(values, "gradient")
+        gradients = {
+            name: mx.array(values[offset : offset + size].reshape(PARAM_SHAPES[name]))
+            for name, (offset, size) in PARAMS.items()
+        }
+        # Use the same optimizer/update expression as the compiled train graph.
+        update = mx.compile(
+            lambda supplied: self.optimizer.update(self.model, supplied),
+            inputs=self._state,
+            outputs=self._state,
+        )
+        update(gradients)
+        self.step += 1
+        self._last_logits = self._last_loss = None
+        self._last_gradients = gradients
+        self._submit(gradients, self._state)
+        self.synchronize()
+
     def check_finite(self, value=None):
         self._gpu()
         if value is not None:
