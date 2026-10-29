@@ -80,7 +80,7 @@ The six searches share that source, binary and runtime identity. The
 [protocol](../PROTOCOL-gpu-v3-qkv.md), [candidate ledger](candidates.json),
 [selected policies](policies/selected.json), [kernel design](../../native/metal/QKV-KERNELS.md),
 and [reproduction guide](REPRODUCE.md) describe the experiment. Local regression
-validation passed 705 tests with 14 device-dependent tests skipped; real Metal
+validation passed 705 tests with 14 tests skipped; real Metal
 checks run separately. The native cleanup ownership probe also passes.
 
 ## What remains blocked

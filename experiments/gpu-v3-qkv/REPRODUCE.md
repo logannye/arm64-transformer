@@ -72,18 +72,19 @@ stage profiling. Inspect final figures before publishing.
 
 ## Package and verify
 
-Run after all evidence writers have stopped. Keep the output directory and
-packaging log outside the evidence directory being archived.
+Run after all evidence writers have stopped. Keep the archive output outside
+the repository, and the packaging log outside the evidence directory being
+archived. The output directory must be new, with an existing parent.
 
 ```sh
 .venv/bin/python scripts/package_gpu_qkv.py create \
   --evidence work/gpu-v3-qkv \
   --searches work/gpu-v3-qkv/search/selection-v1 \
   --repeatability work/gpu-v3-qkv/repeatability \
-  --report results/gpu-v3-qkv --output work/release-gpu-v3-qkv
+  --report results/gpu-v3-qkv --output ../arm64-transformer-gpu-v3-evidence
 
 .venv/bin/python scripts/package_gpu_qkv.py verify \
-  --index work/release-gpu-v3-qkv/gpu-v3-qkv-archive.json
+  --index ../arm64-transformer-gpu-v3-evidence/gpu-v3-qkv-archive.json
 ```
 
 The archive is one gzip/tar stream split into parts below 1.9 GB. Its index
