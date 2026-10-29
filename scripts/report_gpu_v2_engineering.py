@@ -251,7 +251,19 @@ def paired_summary(pair):
     }
 
 
-def metal_rows(profiles, searches, receipts):
+def metal_rows(profiles, searches, receipts, *, attempt_id="selection-v2"):
+    require(
+        not (Path(searches) / "invalidated.json").exists(),
+        "This search attempt was invalidated; its timings are ineligible",
+    )
+    attempt = receipts.read(searches, "attempt.json", "searches")
+    require(
+        attempt.get("schema") == 1
+        and attempt.get("scope") == "metal_development_search_attempt"
+        and attempt.get("attempt_id") == attempt_id
+        and attempt.get("eligible_for_reporting") is True,
+        "Explicit eligible search attempt marker is required",
+    )
     rows = []
     for width in WIDTHS:
         name = f"width-{width}.json"
@@ -455,7 +467,7 @@ def render(summary, output):
     plt.close(fig)
 
 
-def report(baseline, profiles, searches, output, *, figures=True):
+def report(baseline, profiles, searches, output, *, figures=True, attempt_id="selection-v2"):
     receipts = Receipts()
     summary = {
         "schema": 1,
@@ -468,13 +480,19 @@ def report(baseline, profiles, searches, output, *, figures=True):
             "failed standard baseline gates remain binding"
         ),
         "baselines": baseline_rows(baseline, receipts),
-        "metal": metal_rows(profiles, searches, receipts),
+        "metal": metal_rows(profiles, searches, receipts, attempt_id=attempt_id),
+        "eligible_search_attempt": attempt_id,
     }
     require(
         any(not row["standard_baseline_qualified"] for row in summary["baselines"]),
         "This reporter is only for a blocked release",
     )
     summary["source_artifacts"] = receipts.sources
+    summary["input_roots"] = {
+        "baseline": str(Path(baseline).resolve()),
+        "profiles": str(Path(profiles).resolve()),
+        "searches": str(Path(searches).resolve()),
+    }
     summary["reporter_sha256"] = digest(__file__)
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
@@ -527,9 +545,15 @@ def main():
     for name in ("baseline", "profiles", "searches", "output"):
         parser.add_argument("--" + name, type=Path, required=True)
     parser.add_argument("--no-figures", action="store_true")
+    parser.add_argument("--attempt-id", default="selection-v2")
     args = parser.parse_args()
     result = report(
-        args.baseline, args.profiles, args.searches, args.output, figures=not args.no_figures
+        args.baseline,
+        args.profiles,
+        args.searches,
+        args.output,
+        figures=not args.no_figures,
+        attempt_id=args.attempt_id,
     )
     print(
         json.dumps(

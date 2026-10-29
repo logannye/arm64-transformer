@@ -142,6 +142,158 @@ def inventory(repo, evidence, inputs, binary, report=None, snapshots=None):
     return dict(sorted(payload.items())), sorted(exclusions), original_inputs
 
 
+def validate_report_inventory(summary):
+    """A blocked completed engineering report is required, never an admission pass."""
+    old.require(summary.get("scope") == SCOPE, "Expected a blocked v2 engineering report")
+    old.require(
+        summary.get("formal_admission_opened") is False
+        and summary.get("formal_fits_completed") == 0
+        and summary.get("framework_or_cpu_speedup_claimed") is False,
+        "Blocked release boundary differs",
+    )
+    widths = {32, 64, 128, 256, 512, 1024}
+    baselines, metal = summary.get("baselines", []), summary.get("metal", [])
+    old.require(
+        len(baselines) == 12
+        and {(row["engine"], row["width"]) for row in baselines}
+        == {(engine, width) for engine in ("mps", "mlx") for width in widths},
+        "Report omits a standard baseline width",
+    )
+    old.require(
+        any(row.get("standard_baseline_qualified") is False for row in baselines),
+        "No failed standard baseline gate is retained",
+    )
+    old.require(
+        len(metal) == 6
+        and {row["width"] for row in metal} == widths
+        and all(row.get("search_status") in ("completed", "failed") for row in metal),
+        "Report requires all six finalized searches, including failures or no improvement",
+    )
+    old.require(
+        set(summary.get("input_roots", {})) == {"baseline", "profiles", "searches"},
+        "Report does not identify its source roots",
+    )
+    old.require(bool(summary.get("source_artifacts")), "Report has no authenticated source files")
+    old.require(
+        isinstance(summary.get("eligible_search_attempt"), str)
+        and bool(summary["eligible_search_attempt"]),
+        "Report lacks an eligible attempt",
+    )
+
+
+def bind_report_files(evidence, summary, files):
+    evidence = Path(evidence).resolve()
+    roots = {role: old.no_symlinks(path).resolve() for role, path in summary["input_roots"].items()}
+    old.require(
+        all(root.is_relative_to(evidence) for root in roots.values()),
+        "Report source root lies outside retained evidence",
+    )
+    bound = {}
+    for key, expected in summary["source_artifacts"].items():
+        role, relative = key.split("/", 1)
+        old.require(role in roots, "Unknown report source role")
+        old.safe_name(relative)
+        path = roots[role] / relative
+        member = "evidence/" + path.relative_to(evidence).as_posix()
+        old.require(
+            files.get(member, {}).get("sha256") == expected,
+            f"Reported source bytes are absent or changed: {key}",
+        )
+        bound[key] = member
+    for engine in ("mps", "mlx"):
+        for width in (32, 64, 128, 256, 512, 1024):
+            for process in range(2):
+                key = f"baseline/{engine}-w{width}-process{process}/worker.json"
+                old.require(key in bound, "Report omits a fresh-process baseline worker")
+    for role in ("profiles", "searches"):
+        for width in (32, 64, 128, 256, 512, 1024):
+            for suffix in (".json", ".json.ledger.json"):
+                old.require(
+                    f"{role}/width-{width}{suffix}" in bound,
+                    "Report omits a profile/search or frozen ledger",
+                )
+    old.require("searches/attempt.json" in bound, "Eligible-attempt marker is not authenticated")
+    old.require(
+        not (roots["searches"] / "invalidated.json").exists(),
+        "Reported search attempt has been invalidated",
+    )
+    attempt = old.read_json(roots["searches"] / "attempt.json")
+    old.require(
+        attempt.get("attempt_id") == summary["eligible_search_attempt"]
+        and attempt.get("eligible_for_reporting") is True,
+        "Search attempt eligibility changed",
+    )
+    return roots, bound
+
+
+def validate_retained_baseline_members(evidence, baseline, files):
+    """Verify retention of complete inventory, failures, first arrays and divergences."""
+
+    def retained(path):
+        member = "evidence/" + Path(path).relative_to(evidence).as_posix()
+        old.require(member in files, f"Referenced baseline artifact missing: {member}")
+
+    for engine in ("mps", "mlx"):
+        for width in (32, 64, 128, 256, 512, 1024):
+            retained(baseline / f"{engine}-w{width}-cross-process.json")
+            for process in range(2):
+                root = baseline / f"{engine}-w{width}-process{process}"
+                worker = old.read_json(root / "worker.json")
+                old.require(
+                    worker.get("engine") == engine and worker.get("width") == width,
+                    "Wrong baseline worker identity",
+                )
+                cases, expected = worker.get("cases", []), worker.get("expected_cases", [])
+                names = [case["name"] for case in cases]
+                old.require(
+                    len(names) == len(set(names)) == len(expected) == 81
+                    and set(names) == set(expected),
+                    "Baseline case inventory is incomplete",
+                )
+                for case in cases:
+                    executions = case.get("executions", [])
+                    observed = [item["execution"] for item in executions]
+                    skipped = case.get("unexecuted_repetitions", [])
+                    old.require(
+                        observed + skipped == list(range(10)),
+                        "Missing baseline execution or explicit runtime-error skip",
+                    )
+                    if skipped:
+                        old.require(
+                            bool(executions) and "error" in executions[-1],
+                            "Skipped repetitions lack a retained runtime error",
+                        )
+                    if case.get("first_arrays"):
+                        retained(root / old.safe_name(case["first_arrays"]))
+                    else:
+                        old.require(
+                            executions and "error" in executions[0],
+                            "Successful baseline case has no first arrays",
+                        )
+                    saved = set()
+                    for execution in executions:
+                        divergent = {
+                            key
+                            for key, value in execution.get("exact", {}).items()
+                            if value.get("passed") is False
+                        } - saved
+                        if divergent:
+                            retained(
+                                root
+                                / old.safe_name(case["name"])
+                                / f"first-divergence-{execution['execution']:02}.npz"
+                            )
+                            saved.update(divergent)
+    for relative in (
+        "repeatability/full-v1/aborted-source-change.json",
+        "repeatability/full-v2/aborted-harness.json",
+    ):
+        old.require(
+            "evidence/" + relative in files,
+            "A superseded failure attempt is missing its closing receipt",
+        )
+
+
 class SplitWriter:
     """Bounded streaming sink: no complete archive or complete part in memory."""
 
@@ -377,6 +529,7 @@ def package(
         old.no_symlinks(path).resolve() for path in (repo, evidence, inputs, binary)
     ]
     report = old.no_symlinks(report).resolve() if report is not None else None
+    old.require(report is not None, "A finalized blocked engineering report is required")
     output = old.no_symlinks(output).resolve()
     old.safe_name(basename)
     old.require(Path(basename).name == basename, "Basename must be a single filename")
@@ -414,6 +567,10 @@ def package(
     for name, item in payload.items():
         value, signatures[name] = old.file_identity(item["path"])
         files[name] = {**value, "category": item["category"]}
+    report_summary = old.read_json(report / "summary.json")
+    validate_report_inventory(report_summary)
+    report_roots, report_bindings = bind_report_files(evidence, report_summary, files)
+    validate_retained_baseline_members(evidence, report_roots["baseline"], files)
     for record in original_inputs:
         if record["seed"] == 42:
             for name in ("initial.f32", "train.i32"):
@@ -445,6 +602,8 @@ def package(
         "source": source_state,
         "files": files,
         "original_cpu_inputs": original_inputs,
+        "report_source_bindings": report_bindings,
+        "report_summary_sha256": files["report/summary.json"]["sha256"],
         "excluded_paths": exclusions,
         "dependency_installed_bytes_included": False,
         "limits": [
@@ -502,7 +661,7 @@ def main():
     creation.add_argument("--evidence", type=Path)
     creation.add_argument("--inputs", type=Path)
     creation.add_argument("--metal-binary", type=Path)
-    creation.add_argument("--report", type=Path)
+    creation.add_argument("--report", type=Path, required=True)
     creation.add_argument("--revision", action="append", default=[])
     creation.add_argument("--output", type=Path, required=True)
     creation.add_argument("--max-part-bytes", type=int, default=MAX_PART_BYTES)

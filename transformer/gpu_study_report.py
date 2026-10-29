@@ -10,18 +10,90 @@ import statistics
 from pathlib import Path
 
 from transformer.gpu_study import (
+    CPU_REVISION,
     ENGINES,
     PROTOCOL,
     SEEDS,
     WIDTHS,
     digest,
+    identity,
     read_json,
     require,
+    safe_relative,
     study_order,
     validate_manifest,
     verify_files,
     write_new,
 )
+
+
+def require_qualified_manifest(manifest):
+    validate_manifest(manifest)
+    require(manifest.get("phase") == "frozen", "Planned manifests cannot qualify a report")
+    require(isinstance(manifest.get("bindings"), dict), "Missing frozen artifact bindings")
+    anchor = manifest.get("admission")
+    require(isinstance(anchor, dict) and set(anchor) == {"sha256"}, "Missing admission anchor")
+
+
+def verify_reporting_authority(manifest_path, expected_hash, receipt_path, baseline_directory):
+    """Authenticate archived authority without requiring the old runtime installed.
+
+    The externally supplied manifest digest anchors historical source/runtime
+    identities. Baseline repetition proofs and every raw admission array are
+    re-evaluated from the retained archive. Live source/runtime paths are unused.
+    """
+    from transformer.gpu_study_admission import validate_receipt, verify_baseline_repeatability
+
+    require(
+        isinstance(expected_hash, str) and len(expected_hash) == 64,
+        "An external manifest SHA-256 anchor is required for a qualified report",
+    )
+    require(digest(manifest_path) == expected_hash, "Report manifest trust anchor mismatch")
+    manifest = read_json(manifest_path)
+    require_qualified_manifest(manifest)
+    bindings = manifest["bindings"]
+    roles = {"source", "cpu", "runtime", "inputs", "policy", "baseline"}
+    require(
+        set(bindings)
+        == roles
+        | {
+            "cpu_git_revision",
+            "torch_distribution_sha256",
+            "runtime_python_paths",
+            "runtime_layout",
+        },
+        "Incomplete archived binding inventory",
+    )
+    require(bindings["cpu_git_revision"] == CPU_REVISION, "Archived CPU revision changed")
+    for role in roles:
+        require(
+            isinstance(bindings[role], dict) and bool(bindings[role]),
+            "Missing archived file identities",
+        )
+        for name, value in bindings[role].items():
+            safe_relative(name)
+            require(
+                isinstance(value, str)
+                and len(value) == 64
+                and all(character in "0123456789abcdef" for character in value),
+                "Malformed archived SHA-256 identity",
+            )
+    require(
+        bindings["torch_distribution_sha256"] == identity(bindings["runtime"]),
+        "Archived runtime identity mismatch",
+    )
+    require(
+        receipt_path is not None and baseline_directory is not None,
+        "Archived admission receipt and baseline proofs are required",
+    )
+    require(
+        digest(receipt_path) == manifest["admission"]["sha256"],
+        "Archived admission receipt hash mismatch",
+    )
+    verify_baseline_repeatability(manifest, {"baseline": str(baseline_directory)})
+    validate_receipt(manifest, read_json(receipt_path), Path(receipt_path).parent)
+    require(digest(manifest_path) == expected_hash, "Report manifest changed during verification")
+    return manifest
 
 
 def blocked_report(manifest, reasons):
@@ -166,7 +238,7 @@ def load_authenticated_reports(audit_directory, campaign_directory, manifest_sha
 
     from transformer.gpu_study_audit import compare, inspect_cell, repeat_integrity
 
-    validate_manifest(manifest)
+    require_qualified_manifest(manifest)
     root, campaign = Path(audit_directory), Path(campaign_directory)
     aggregate = read_json(root / "audit.json")
     ledger = read_json(campaign / "campaign.json")
@@ -282,7 +354,8 @@ def load_authenticated_reports(audit_directory, campaign_directory, manifest_sha
 
 
 def summarize(manifest, manifest_sha256, reports, repeats):
-    validate_manifest(manifest)
+    # Pure aggregation after verify_reporting_authority/load_authenticated_reports.
+    require_qualified_manifest(manifest)
     require(
         len(reports) == 180 and [r["cell"] for r in reports] == study_order(),
         "Complete ordered reports required",
@@ -436,6 +509,9 @@ def markdown(summary):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument("--manifest-sha256")
+    parser.add_argument("--admission", type=Path)
+    parser.add_argument("--baseline", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--blocked-reason", action="append")
     parser.add_argument("--campaign", type=Path)
@@ -455,7 +531,10 @@ def main():
             args.campaign is not None and args.audit is not None,
             "Campaign and complete audit required",
         )
-        sha = digest(args.manifest)
+        manifest = verify_reporting_authority(
+            args.manifest, args.manifest_sha256, args.admission, args.baseline
+        )
+        sha = args.manifest_sha256
         reports, repeats = load_authenticated_reports(args.audit, args.campaign, sha, manifest)
         summary = summarize(manifest, sha, reports, repeats)
     require(not args.output.exists(), "Report destination must be fresh")

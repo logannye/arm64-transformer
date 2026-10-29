@@ -165,3 +165,71 @@ def test_archive_index_cannot_reference_parent_path(tmp_path):
     index_path.write_text(json.dumps(index))
     with pytest.raises(ValueError, match="Unsafe"):
         package.verify_archive(index_path)
+
+
+def report_inventory_fixture(tmp_path):
+    widths = (32, 64, 128, 256, 512, 1024)
+    roots = {key: str(tmp_path / key) for key in ("baseline", "profiles", "searches")}
+    return {
+        "scope": package.SCOPE,
+        "formal_admission_opened": False,
+        "formal_fits_completed": 0,
+        "framework_or_cpu_speedup_claimed": False,
+        "baselines": [
+            {"engine": engine, "width": width, "standard_baseline_qualified": False}
+            for engine in ("mps", "mlx")
+            for width in widths
+        ],
+        "metal": [{"width": width, "search_status": "completed"} for width in widths],
+        "input_roots": roots,
+        "source_artifacts": {"baseline/summary.json": "0" * 64},
+        "eligible_search_attempt": "selection-v2",
+    }
+
+
+def test_finalized_blocked_report_accepts_no_improvement_and_retained_search_failure(tmp_path):
+    summary = report_inventory_fixture(tmp_path)
+    summary["metal"][0]["search_status"] = "failed"
+    package.validate_report_inventory(summary)
+    summary["metal"].pop()
+    with pytest.raises(ValueError, match="all six finalized"):
+        package.validate_report_inventory(summary)
+
+
+def test_report_binding_requires_digest_at_the_correct_archive_path(tmp_path):
+    summary = report_inventory_fixture(tmp_path)
+    files = {"evidence/unrelated.json": {"sha256": "0" * 64}}
+    with pytest.raises(ValueError, match="absent or changed"):
+        package.bind_report_files(tmp_path, summary, files)
+
+
+def test_finalization_does_not_accept_started_search_or_formal_waiver(tmp_path):
+    summary = report_inventory_fixture(tmp_path)
+    summary["metal"][0]["search_status"] = "started"
+    with pytest.raises(ValueError, match="all six finalized"):
+        package.validate_report_inventory(summary)
+    summary = report_inventory_fixture(tmp_path)
+    summary["formal_admission_opened"] = True
+    with pytest.raises(ValueError, match="Blocked release"):
+        package.validate_report_inventory(summary)
+
+
+def test_invalidated_search_attempt_is_rejected_before_any_timing_read(tmp_path):
+    (tmp_path / "invalidated.json").write_text("{}")
+    with pytest.raises(ValueError, match="invalidated"):
+        report.metal_rows(tmp_path, tmp_path, report.Receipts())
+
+
+def test_report_does_not_silently_select_another_attempt(tmp_path):
+    (tmp_path / "attempt.json").write_text(
+        json.dumps(
+            {
+                "schema": 1,
+                "scope": "metal_development_search_attempt",
+                "attempt_id": "selection-v1",
+                "eligible_for_reporting": True,
+            }
+        )
+    )
+    with pytest.raises(ValueError, match="Explicit eligible"):
+        report.metal_rows(tmp_path, tmp_path, report.Receipts())

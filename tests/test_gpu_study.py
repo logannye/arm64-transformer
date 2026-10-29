@@ -2,6 +2,7 @@
 
 import copy
 import hashlib
+import json
 from types import SimpleNamespace
 
 import numpy as np
@@ -256,15 +257,22 @@ def synthetic_reports():
     return records, repeats
 
 
+def synthetic_aggregation_manifest():
+    """Aggregation-only fixture; intentionally cannot pass archival authority checks."""
+    manifest = study.planned_manifest()
+    manifest.update(phase="frozen", bindings={"test_only": True}, admission={"sha256": "0" * 64})
+    return manifest
+
+
 def test_statistics_preserve_seed_unit_and_pairwise_qualification():
     rows, repeats = synthetic_reports()
-    summary = report.summarize(study.planned_manifest(), "frozen", rows, repeats)
+    summary = report.summarize(synthetic_aggregation_manifest(), "frozen", rows, repeats)
     width = summary["by_width"]["32"]
     assert width["engines"]["metal"]["quality_nll_seed_means"] == [2, 3, 4]
     assert width["engines"]["metal"]["quality_nll_sample_sd"] == 1
     assert width["ratios"]["mps/metal"]["training_geometric_mean"] == 2
     rows[0]["fp64"]["metal/test"]["passed"] = False
-    summary = report.summarize(study.planned_manifest(), "frozen", rows, repeats)
+    summary = report.summarize(synthetic_aggregation_manifest(), "frozen", rows, repeats)
     assert summary["status"] == "precision_limit"
     assert not summary["by_width"]["32"]["ratios"]["mps/metal"]["qualified"]
     assert summary["by_width"]["64"]["ratios"]["mps/metal"]["qualified"]
@@ -273,7 +281,7 @@ def test_statistics_preserve_seed_unit_and_pairwise_qualification():
 def test_exact_repeat_failure_survives_good_quality():
     rows, repeats = synthetic_reports()
     repeats[0]["passed"] = False
-    summary = report.summarize(study.planned_manifest(), "frozen", rows, repeats)
+    summary = report.summarize(synthetic_aggregation_manifest(), "frozen", rows, repeats)
     assert summary["status"] == "audit_failed"
     assert not summary["by_width"]["32"]["repeatability_passed"]
 
@@ -281,7 +289,113 @@ def test_exact_repeat_failure_survives_good_quality():
 def test_missing_reports_cannot_reduce_planned_denominator():
     rows, repeats = synthetic_reports()
     with pytest.raises(ValueError, match="Complete ordered"):
-        report.summarize(study.planned_manifest(), "frozen", rows[:-1], repeats)
+        report.summarize(synthetic_aggregation_manifest(), "frozen", rows[:-1], repeats)
+
+
+def test_planned_manifest_cannot_qualify_even_a_complete_synthetic_campaign(tmp_path):
+    rows, repeats = synthetic_reports()
+    with pytest.raises(ValueError, match="Planned manifests"):
+        report.summarize(study.planned_manifest(), "frozen", rows, repeats)
+    with pytest.raises(ValueError, match="Planned manifests"):
+        report.load_authenticated_reports(tmp_path, tmp_path, "frozen", study.planned_manifest())
+
+
+@pytest.fixture
+def archived_authority(tmp_path, monkeypatch):
+    # Numerical proof evaluation is covered separately by raw_receipt tests.
+    # Here spies verify that authority checks call both real verification seams
+    # and never require the historical runtime/source to remain installed.
+    receipt = tmp_path / "admission.json"
+    study.write_new(receipt, {"test_receipt": True})
+    manifest = study.planned_manifest()
+    roles = ("source", "cpu", "runtime", "inputs", "policy", "baseline")
+    bindings = {role: {"sentinel": "1" * 64} for role in roles}
+    bindings.update(
+        cpu_git_revision=study.CPU_REVISION,
+        torch_distribution_sha256=study.identity(bindings["runtime"]),
+        runtime_python_paths=[],
+        runtime_layout={"schema": 1},
+    )
+    manifest.update(phase="frozen", bindings=bindings, admission={"sha256": study.digest(receipt)})
+    path = tmp_path / "manifest.json"
+    study.write_new(path, manifest)
+    calls = []
+    monkeypatch.setattr(
+        admission,
+        "verify_baseline_repeatability",
+        lambda m, roots: calls.append(("baseline", roots)),
+    )
+    monkeypatch.setattr(
+        admission, "validate_receipt", lambda m, value, root: calls.append(("raw_admission", root))
+    )
+    monkeypatch.setattr(
+        study,
+        "verify_bindings",
+        lambda *args: pytest.fail("Archived report touched current installation"),
+    )
+    return path, receipt, tmp_path / "baseline-archive", calls
+
+
+def test_archived_report_requires_external_anchor_and_revalidates_both_proofs(archived_authority):
+    path, receipt, baseline, calls = archived_authority
+    manifest = report.verify_reporting_authority(path, study.digest(path), receipt, baseline)
+    assert manifest["phase"] == "frozen"
+    assert calls == [("baseline", {"baseline": str(baseline)}), ("raw_admission", receipt.parent)]
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    (
+        "missing_hash",
+        "wrong_hash",
+        "missing_admission",
+        "missing_baseline",
+        "changed_receipt",
+        "missing_anchor",
+        "missing_binding",
+        "bad_runtime_hash",
+    ),
+)
+def test_archived_report_authority_rejects_missing_or_changed_proofs(archived_authority, mutation):
+    path, receipt, baseline, calls = archived_authority
+    sha = study.digest(path)
+    if mutation == "missing_hash":
+        sha = None
+    elif mutation == "wrong_hash":
+        sha = "0" * 64
+    elif mutation == "missing_admission":
+        receipt = None
+    elif mutation == "missing_baseline":
+        baseline = None
+    elif mutation == "changed_receipt":
+        receipt.write_text('{"forged_pass":true}')
+    else:
+        manifest = study.read_json(path)
+        if mutation == "missing_anchor":
+            manifest["admission"] = None
+        elif mutation == "missing_binding":
+            del manifest["bindings"]["source"]
+        else:
+            manifest["bindings"]["torch_distribution_sha256"] = "0" * 64
+        path.write_text(json.dumps(manifest))
+        sha = study.digest(path)
+    with pytest.raises(ValueError):
+        report.verify_reporting_authority(path, sha, receipt, baseline)
+    assert calls == []
+
+
+@pytest.mark.parametrize("seam", ("verify_baseline_repeatability", "validate_receipt"))
+def test_archived_report_rejects_failed_baseline_or_raw_admission(
+    archived_authority, monkeypatch, seam
+):
+    path, receipt, baseline, _ = archived_authority
+
+    def reject(*args):
+        raise ValueError("Retained raw proof failed")
+
+    monkeypatch.setattr(admission, seam, reject)
+    with pytest.raises(ValueError, match="raw proof failed"):
+        report.verify_reporting_authority(path, study.digest(path), receipt, baseline)
 
 
 class FormalMockBackend:

@@ -149,7 +149,9 @@ GPU_MEASURE_HASH=$(shasum -a 256 work/gpu-v2/frozen-measurement.json | cut -d ' 
   --roots "$GPU_STUDY_ROOTS" --admission work/gpu-v2/formal-admission/admission.json \
   --campaign work/gpu-v2/formal-campaign --output work/gpu-v2/formal-audit
 .venv/bin/python -m transformer.gpu_study_report \
-  --manifest work/gpu-v2/frozen-measurement.json \
+  --manifest work/gpu-v2/frozen-measurement.json --manifest-sha256 "$GPU_MEASURE_HASH" \
+  --admission work/gpu-v2/formal-admission/admission.json \
+  --baseline work/gpu-v2/new-passing-baseline \
   --campaign work/gpu-v2/formal-campaign --audit work/gpu-v2/formal-audit \
   --output work/gpu-v2/formal-report
 ```
@@ -159,3 +161,11 @@ retain completed and failed cells without issuing qualified ratios. A complete
 campaign requires the complete audit. Reusing an existing output directory,
 editing a bound dependency, removing evidence, or presenting only a `passed`
 boolean fails closed.
+
+For a complete report, `--baseline` must name the same retained baseline suite
+bound in the manifest (replace the example path above accordingly). Reporting
+requires the external manifest digest and exact admission receipt, and
+re-evaluates all archived baseline and admission proofs. It can run without
+the original Python installation or source checkout still present; the externally
+anchored manifest preserves those historical identities. A planned manifest
+cannot qualify even a complete-looking campaign.
