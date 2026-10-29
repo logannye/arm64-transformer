@@ -1,0 +1,8 @@
+{
+  "scope": "Static development result presentation; no new model computations",
+  "summary_sha256": "5e8d7d32ec24eb3ab66bbbe30b00f93c7dc49ef39b57274f59685422946010b1",
+  "receipts_sha256": "93f0dff3ac17c259c724220a0ace7e8bdd35b89fff254d4a45e9feb2ef2d0380",
+  "renderer_sha256": "12fd016d38d1e0853fdbe13d08a8f8d0747a741da55baca3317cea73d10262f4",
+  "output_sha256": "318e02f52bb299ba6a2846d5d52e7c1dfabdce6b2134e70576c6f42999ffb43b",
+  "matplotlib": "3.11.2"
+}

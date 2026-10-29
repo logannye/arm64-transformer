@@ -1,0 +1,939 @@
+{
+  "schema": "gpu-development-v1-closure-v1",
+  "decision_date": "2026-10-29",
+  "decision_timezone": "America/Los_Angeles",
+  "decision_source": "User instruction: Keep the strict gate; finish implementation and report the limitation",
+  "status": "development_closed_at_strict_repeatability_gate",
+  "implementation_revision": "d9cf70aa42dc9eb59779a505e22af08a858d1ccb",
+  "development_implementation_complete": true,
+  "gate": {
+    "name": "exact_within_engine_training_repeatability",
+    "retained": true,
+    "waived": false,
+    "standard_baseline_development_failures": [
+      "mps",
+      "mlx"
+    ],
+    "observed_repeat_failure_widths": [
+      32,
+      1024
+    ],
+    "metal_development_repeats_at_these_widths": "exact",
+    "accuracy_tolerances_changed": false,
+    "descriptive_campaign_authorized": false
+  },
+  "formal_campaign": {
+    "planned_fits": 108,
+    "executed_fits": 0,
+    "blocked_fits": 108,
+    "planned_test_token_predictions": 884736,
+    "observed_formal_test_token_predictions": 0,
+    "admission_open": false,
+    "admission_executed": false,
+    "admission_passed": false,
+    "reserved_admission_seed": 20261104,
+    "reserved_admission_seed_opened": false,
+    "complete_formal_execution_contract_frozen": false,
+    "performance_candidate_search_performed": false,
+    "full_budget_checkpoint_audit_performed": false,
+    "gpu_speedup_claimed": false,
+    "cells_order": "Display enumeration only; no formal execution order was frozen",
+    "cells": [
+      {
+        "width": 32,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 32,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 64,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 128,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 256,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 512,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 42,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 42,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 43,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 43,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 44,
+        "repeat": 1,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "mps",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "mlx",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      },
+      {
+        "width": 1024,
+        "seed": 44,
+        "repeat": 2,
+        "engine": "metal",
+        "status": "blocked_before_execution",
+        "reason": "comparison_not_admitted"
+      }
+    ]
+  },
+  "scope_limits": [
+    "Development checks do not constitute formal admission or establish full-budget trained-model accuracy.",
+    "The exact-repeatability failure does not establish general numerical inaccuracy or unusable framework training.",
+    "MLX also rejects the retained T3/head-width256 attention-backward probe; its T32 model path passed development checks.",
+    "A future benchmark requires a new declared phase; this phase does not remain pending a user decision."
+  ],
+  "evidence": {
+    "release": "https://github.com/logannye/arm64-transformer/releases/tag/transformer-gpu-development-v1",
+    "archive_sha256": "8ae433e6540477402d7769aa1a82897462a7aca5d9ba243ec73a182f6130de6b",
+    "archive_bytes": 1334401789,
+    "archive_payloads_unchanged": true,
+    "retained_report_sha256": {
+      "summary.json": "5e8d7d32ec24eb3ab66bbbe30b00f93c7dc49ef39b57274f59685422946010b1",
+      "receipts.json": "93f0dff3ac17c259c724220a0ace7e8bdd35b89fff254d4a45e9feb2ef2d0380",
+      "integration.json": "2a699b30936e32f1602c0cf9574c0c431d4928d4763c7e07d9ec53389415a06d",
+      "baseline-context.json": "81eedfabf8d80c15e0534cc3abb9742c10383e9a078a4093436ffe5d670e8537",
+      "post-p3.json": "9022db6e6813dd97a52430a5885d7ec5ed1f7e27b4e1af072e4375f2e5fe6efe",
+      "provenance.json": "c6e1a36ea875b9695a07cd12abf9c0b7ebb487472cea0ef578c0fb2f8e4ca7dc",
+      "figure-provenance.json": "b2bbcbdd424502d6b1f70d45356596598b7453fb075f0118de5789b6e1a80868",
+      "precision-development.png": "318e02f52bb299ba6a2846d5d52e7c1dfabdce6b2134e70576c6f42999ffb43b"
+    }
+  },
+  "completed_validation": {
+    "p3_numerical_array_comparisons": 3186,
+    "gpu_full_B16_T32_test_functions": 36,
+    "tiny_training_saved_logit_oracle_comparisons": 36,
+    "local_full_suite_passed": 404,
+    "local_opt_in_gpu_tests_skipped": 14,
+    "implementation_ci": "https://github.com/logannye/arm64-transformer/actions/runs/40820878978"
+  },
+  "remaining_original_plan_stages": "Performance profiling/candidate selection, formal contract freeze/admission, full-budget fits and their checkpoint audit were not completed; they are outside this closed development outcome."
+}

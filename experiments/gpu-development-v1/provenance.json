@@ -1,0 +1,239 @@
+{
+  "scope": "Publication extraction only; no model execution, timing, tolerance changes or new assessment",
+  "collector_sha256": "df327ed1e53bca192cd64faea730bd4fdd90c5871086dcca9ff2e30fe2a032d8",
+  "source_receipts": {
+    "reference-v0/attention-width-1024.json": "042427ff8be30278f80c2d9cf44832761045b25c20703129ee44920042f50eb3",
+    "reference-v0/ln-qkv-width-1024.json": "9cd8aaa1d0a12d2a924bdd8d2fcaa6416caabf618c5bfc77f66c8158b8a24b64",
+    "reference-v0/smoke-width-32.json": "269188663d71f382ca756fac1482eebd6ebf33c7d5d1b950175f1bad8aa3ae60",
+    "p1/attention-width-32.json": "94290ae219c48592fa5410c855be5e0d1c5383dea0d5d1aa53908eb213e89d6e",
+    "p1/attention-width-64.json": "d3c0f275f24fb4c8fe16672a33c74793b4c7023ad51a598fad138e05df5d4b39",
+    "p1/attention-width-128.json": "8b1454018dd63212fa9e0e0dc2d4ff24ab6e3e6009244c8cabba43f878219dc6",
+    "p1/attention-width-256.json": "c3c5676fd48121ae14b8668ac1815839c11b5c9d926a5205f1736041ed9a0a4d",
+    "p1/attention-width-512.json": "ba74fae28d081c360c43a6e9ccb7ed3997ccd06063de049fcab7ab63aee5b46a",
+    "p1/attention-width-1024.json": "895dc4ef96a2e8823eac1b5cf66961bb38b7109b9adba35a9869e6d65b843373",
+    "p1-complete/attention-width-32.json": "c66be67ce9202174b5c1af715a0c0cde07b159d42f1176f992be90383cc15e54",
+    "p1-complete/attention-width-64.json": "bd0f80af1d822a0752b6a2613bc48c280702c866615a1ffebc3226c0f717c93a",
+    "p1-complete/attention-width-128.json": "afa80c8099843a1a60e8c600e0cdaa96d0d628ae3ecc97a62afd32f24a3ae2d1",
+    "p1-complete/attention-width-256.json": "1539c2da2e22fd9698d564e3267da91c0dfec535e6edb85deeda1a163cedaf7c",
+    "p1-complete/attention-width-512.json": "44de73ea97303f14a3f17773c458ac5beb989b070681b0e33f395738a7f2f850",
+    "p1-complete/attention-width-1024.json": "41173a4af4ed49899f27a3dac9bd3b738a96e54f56f43ba191abe803ca88e993",
+    "p2/ln-qkv-width-32.json": "691b1ccc6996d73ec2665755f05047dffd96208b2907b2a30ee1913984e58c0a",
+    "p2/ln-qkv-width-64.json": "a4376a79b5fb08e1a3d4737d4af031d73e4fe7821196c807a6f609ea2d352589",
+    "p2/ln-qkv-width-128.json": "de2d06248b23fdaaaac9e2cd0d7f75efdf15a68a4a40b147e9e124da53cc89d2",
+    "p2/ln-qkv-width-256.json": "a10f86d67c2c49a217bd9908bdee66156bd37dd5d0b7988ac1c79c212d61aea6",
+    "p2/ln-qkv-width-512.json": "a9297edb298ed5e3e207f019a4628ad3494b63c1caf78acffb5b6958f2352b24",
+    "p2/ln-qkv-width-1024.json": "45c886a01f98a9c60f5490f545d512e3693abb188fb1bd809e965823b30a49b0",
+    "p3/attention-width-32.json": "58ae342275f04088fd0d0bbe1f4d0f3c13cd6e152b5228641599943c48bf8487",
+    "p3/attention-width-64.json": "2046b81ee2f37c92b8fa1e7b4ccf019a80e5095ed84e7a8310ba73b2ae1f37b2",
+    "p3/attention-width-128.json": "1f4eded6cdca1437ea6c721c99a0e489cf5aa2d9a0ce2f03e2fc4917b6b0f0cb",
+    "p3/attention-width-256.json": "aa87184a2e0bf1a631f95001ece3bfa55a57bf4e52e9867967c0043f392ccb4a",
+    "p3/attention-width-512.json": "453c76e350ddff1ca41e73f4f3f2c857801b043e9186d62fadc69576ece80cd8",
+    "p3/attention-width-1024.json": "62a847f2c4075ded60886feeb0208ff2a71ba7230c5e485147b0b91cb6d0f99e",
+    "p3/ln-qkv-width-32.json": "399a6cc817fc734775531cd5cdf42d4026af427e408195da5f4299059160372f",
+    "p3/ln-qkv-width-64.json": "aaa627069a1ff59ffd06ea59644d93e786d67a99ccb12ba6b98dee3f1307e264",
+    "p3/ln-qkv-width-128.json": "44aff0e61159934bd2be87762e1201ecaba63fb68ff7f26ebf225d311c842bbc",
+    "p3/ln-qkv-width-256.json": "991216a3842c6304efae2c4b0bdca07503ac5b9c69b89e9d7aeb4f34ac31fd5c",
+    "p3/ln-qkv-width-512.json": "d66b6696717f57dcbcfb842d92adf5035ea0434f140e0e42b53305cda1ddc441",
+    "p3/ln-qkv-width-1024.json": "1f60cf5af922219a59bc2b33787340433a9a84cccaab9d7f3b31ec63a9fb6c87",
+    "p3/smoke-width-32.json": "0a3d691757eeeaf42a269c6865ff900356dd01b873ec3ee5a5298553f8df224b",
+    "p3/smoke-width-64.json": "82f704e8a1fb4c44ff9550c74f7c91b9feee32262e1a40ea8bbbb09acb668dfd",
+    "p3/smoke-width-128.json": "b7d9e43b008fd753413ede82ee32d2d734e964043229d79e12611889197c201e",
+    "p3/smoke-width-256.json": "042383883468a2070f909688d189f1cd404749d6bbaef9f98f5964652d8ad6cc",
+    "p3/smoke-width-512.json": "7d98d0bb41a6c4513151aa868208604d374921e110a273e409357e4c2431bba9",
+    "p3/smoke-width-1024.json": "d4c4300b7f345b24209a89d70877e9a02cc693ee8c6bb8bc8f0d51e492ee70f4"
+  },
+  "contextual_source_receipts": {
+    "work/gpu-v1/mps-repeat-diagnosis-32.json": "2d420579ed5225b81510a9733c4318c542cf68a77078bea8fc3e56fefd7e1406",
+    "work/gpu-v1/mlx-repeat-diagnosis-32.json": "46aed90f38a992d3bc8f3e16a9159d15f95a4163f0f8104b6cba890c733dc224",
+    "work/gpu-v1/integration-v2-repeat/repeatability.json": "21efa673a10f0633c29d9956278e93350dd07ae41a17c5509ae641bda779b95c",
+    "work/gpu-v1/integration-v2/fp64-width-32.json": "8ca10f21c5ffdfbd9fb960d467030f6f4a420671065be660b05ca357ade214ea",
+    "work/gpu-v1/integration-v2/mps-32/runtime.json": "20135a4595f8c05a6c42e542a604f3b6654b44d3ca89b0d768c707214276a8c2",
+    "work/gpu-v1/integration-v2/mlx-32/runtime.json": "9b216e22a652940e4433707ab3429ce6d17744c6a5fb7fd11de3869cd1aa76cd",
+    "work/gpu-v1/integration-v2/metal-32/runtime.json": "11eea52707eaeffdf7477cac6f21b762ea5e3582bb427b17ee717f36b1d0bd95",
+    "work/gpu-v1/integration-v2/fp64-width-1024.json": "52c59de46caaa751b29efb6513d73e46665e301422a7493c6b055f773f5e4f3b",
+    "work/gpu-v1/integration-v2/mps-1024/runtime.json": "719896a60633f40e1ae0cbeac108c58cfa830676e7ccff5bc848a13e635758a0",
+    "work/gpu-v1/integration-v2/mlx-1024/runtime.json": "472c24fe893020b2b2f3824c6cbc35438badf51737044fec1c2ae92639797648",
+    "work/gpu-v1/integration-v2/metal-1024/runtime.json": "04ef666576277a6b3832046839fab0c6b0e208863f516e79bcb32cc5a5922863",
+    "work/gpu-v1/integration-v2-repeat/fp64-width-32.json": "45359a7a39409c06a9845da70ae71a6512ca18407468683ee8a6dd71b8013955",
+    "work/gpu-v1/integration-v2-repeat/mps-32/runtime.json": "8cd284516893bcf18d8b4a65e6bcc51b7210c53d715304e23383cba0d849290f",
+    "work/gpu-v1/integration-v2-repeat/mlx-32/runtime.json": "c7ea5dffe7bb2263ec016d9ea98275c7799f764ef99752fb7b1e912d6cf5c8c2",
+    "work/gpu-v1/integration-v2-repeat/metal-32/runtime.json": "dcfbdfc3e293ffb125bb83c13e726d1bc73f117b3851f1414d7e020e5184dac6",
+    "work/gpu-v1/integration-v2-repeat/fp64-width-1024.json": "45fb7c62b9548568d7a013fce49692bc70625ba2a275437071d4d6d4d4e483bf",
+    "work/gpu-v1/integration-v2-repeat/mps-1024/runtime.json": "1d6db1841cce51b4526a13c676144a427c127926e80318e0fcaaa774e7b5ea2f",
+    "work/gpu-v1/integration-v2-repeat/mlx-1024/runtime.json": "597c27e9df2486e24cb74a233e0d4265683234b8059ec695374f4fa653fa1976",
+    "work/gpu-v1/integration-v2-repeat/metal-1024/runtime.json": "95923a157cf11a13d556cc2b3121442425ec1a6d6d55d286a7e43a6eec55c13c",
+    "work/gpu-v1/training-shape/summary.json": "14a1cb61654ee1ec5e55094d3e3b28012e9a91d23143ba5e68294e3bf6d093fd",
+    "work/gpu-v1/metal-development/lifecycle-repaired/smoke-width-32.json": "c199dd49d9183bf0cb7961a8f7753c2d9564ac69abc8ae8b33d8c429dc9eecbe",
+    "work/gpu-v1/metal-development/lifecycle-repaired/smoke-width-64.json": "d5c17b9c8bada8e7d243316fd0adae047db357b10716eea1bf28db49a70d9d43",
+    "work/gpu-v1/metal-development/lifecycle-repaired/smoke-width-128.json": "b671c1dbf12ac7b27240103ed3f11a2a823dd13257e4604fdab6a903bef71385",
+    "work/gpu-v1/metal-development/lifecycle-repaired/smoke-width-256.json": "12b7468a5489afc5c8cd879feda074fd2e83fccd2fcb2b6535195d4e3af22cf8",
+    "work/gpu-v1/metal-development/lifecycle-repaired/smoke-width-512.json": "c9951791fc9029784acdece77f1332d59b1d468f66652e27b98e648d17978114",
+    "work/gpu-v1/metal-development/lifecycle-repaired/smoke-width-1024.json": "76069ed7451d1c1b607c356fd0abcb463ba074d36bb1d47ea7f09253c9c915d0",
+    "work/gpu-v1/metal-lifecycle-fix-fresh-checkout/cleanup-probe.json": "ddaf6c6a67f3462348e8cb30fef9195144b661a1f2ec45828c31fc361e5bd1e5",
+    "work/gpu-v1/metal-trace-components/receipt.json": "68ed5e579dd29d652167ea5a2e70a8671683b117ae0f6a204f1b1883e04a70e9",
+    "work/gpu-v1/metal-trace-components/hardware/receipt.json": "630f9420472b7d99c54b28bf36f80b68d9477818207d47459c0528aec0428f10"
+  },
+  "derived_payloads": {
+    "receipts.json": "93f0dff3ac17c259c724220a0ace7e8bdd35b89fff254d4a45e9feb2ef2d0380",
+    "summary.json": "5e8d7d32ec24eb3ab66bbbe30b00f93c7dc49ef39b57274f59685422946010b1",
+    "baseline-context.json": "81eedfabf8d80c15e0534cc3abb9742c10383e9a078a4093436ffe5d670e8537",
+    "integration.json": "2a699b30936e32f1602c0cf9574c0c431d4928d4763c7e07d9ec53389415a06d",
+    "post-p3.json": "9022db6e6813dd97a52430a5885d7ec5ed1f7e27b4e1af072e4375f2e5fe6efe"
+  },
+  "adapter_formatting_receipt": {
+    "before_sha256": "eca76b8460a534089e8351d3a5b32a619a09ce521825d020c5e7a29d8732a4b4",
+    "after_sha256": "dfb9f798acd97001fd7ffa015a7e5f125a479e65f786cdbdeafa7c4da682278a",
+    "normalized_ast_equal": true,
+    "change": "Ruff formatting/import order/postponed annotation cleanup only"
+  },
+  "source_snapshot_manifests": {
+    "p1/artifacts/manifest.json": {
+      "native/metal/backend.mm": {
+        "file": "backend.mm",
+        "sha256": "6e2377ed901a5543fd8b92f8e7d742a7b3d0bb5d91c16f22f252dfd87317be32"
+      },
+      "native/metal/kernels.metal": {
+        "file": "kernels.metal",
+        "sha256": "e2ae5e51798a2643e40230459975e38af53a71a3943757599db86da4e34180aa"
+      },
+      "native/metal/Makefile": {
+        "file": "Makefile",
+        "sha256": "78bc53ae8fe3a5086d6e665af0874ac0ce1c32c2dbb462eb5fc0d6b969381155"
+      },
+      "native/metal/build/libtransformer_metal.dylib": {
+        "file": "libtransformer_metal.dylib",
+        "sha256": "977e61c4604fe7b7e1667cd2bcf7af047e072231befd4b7df3e536bbd5ee1983"
+      },
+      "transformer/gpu_metal.py": {
+        "file": "gpu_metal.py",
+        "sha256": "eca76b8460a534089e8351d3a5b32a619a09ce521825d020c5e7a29d8732a4b4"
+      }
+    },
+    "p1-complete/artifacts/manifest.json": {
+      "native/metal/backend.mm": {
+        "file": "backend.mm",
+        "sha256": "6e2377ed901a5543fd8b92f8e7d742a7b3d0bb5d91c16f22f252dfd87317be32"
+      },
+      "native/metal/kernels.metal": {
+        "file": "kernels.metal",
+        "sha256": "be8c7c5f289877b4ae46fa28be5633eeae6e56514ca572110737f69c72b5884b"
+      },
+      "native/metal/Makefile": {
+        "file": "Makefile",
+        "sha256": "78bc53ae8fe3a5086d6e665af0874ac0ce1c32c2dbb462eb5fc0d6b969381155"
+      },
+      "native/metal/build/libtransformer_metal.dylib": {
+        "file": "libtransformer_metal.dylib",
+        "sha256": "977e61c4604fe7b7e1667cd2bcf7af047e072231befd4b7df3e536bbd5ee1983"
+      },
+      "transformer/gpu_metal.py": {
+        "file": "gpu_metal.py",
+        "sha256": "eca76b8460a534089e8351d3a5b32a619a09ce521825d020c5e7a29d8732a4b4"
+      }
+    },
+    "p2/artifacts/manifest.json": {
+      "native/metal/backend.mm": {
+        "file": "backend.mm",
+        "sha256": "6e2377ed901a5543fd8b92f8e7d742a7b3d0bb5d91c16f22f252dfd87317be32"
+      },
+      "native/metal/kernels.metal": {
+        "file": "kernels.metal",
+        "sha256": "0fe40c6193e51a23b58032ba4050908936dc699dc17a5d2eb7f0dc7d7a19033a"
+      },
+      "native/metal/Makefile": {
+        "file": "Makefile",
+        "sha256": "78bc53ae8fe3a5086d6e665af0874ac0ce1c32c2dbb462eb5fc0d6b969381155"
+      },
+      "native/metal/build/libtransformer_metal.dylib": {
+        "file": "libtransformer_metal.dylib",
+        "sha256": "977e61c4604fe7b7e1667cd2bcf7af047e072231befd4b7df3e536bbd5ee1983"
+      },
+      "transformer/gpu_metal.py": {
+        "file": "gpu_metal.py",
+        "sha256": "eca76b8460a534089e8351d3a5b32a619a09ce521825d020c5e7a29d8732a4b4"
+      }
+    },
+    "p3/artifacts/manifest.json": {
+      "native/metal/backend.mm": {
+        "file": "backend.mm",
+        "sha256": "67ca9b824189c3c6b6060a543394442e550959ecfd9d99237e2eba3566e16318"
+      },
+      "native/metal/kernels.metal": {
+        "file": "kernels.metal",
+        "sha256": "ffaf40db62f16ea492065e9aecb4cbb9724b2c77bff349c362796a670639c0c0"
+      },
+      "native/metal/Makefile": {
+        "file": "Makefile",
+        "sha256": "78bc53ae8fe3a5086d6e665af0874ac0ce1c32c2dbb462eb5fc0d6b969381155"
+      },
+      "native/metal/build/libtransformer_metal.dylib": {
+        "file": "libtransformer_metal.dylib",
+        "sha256": "124dfe3d997ce3cedb3bb53797058840dbb81af72dc703528898197eacf12328"
+      },
+      "transformer/gpu_metal.py": {
+        "file": "gpu_metal.py",
+        "sha256": "eca76b8460a534089e8351d3a5b32a619a09ce521825d020c5e7a29d8732a4b4"
+      }
+    },
+    "reference-v0/manifest.json": {
+      "native/metal/backend.mm": {
+        "file": "backend.mm",
+        "sha256": "6b9ed6090bde3f001178b02892b2f4991649c66d2560c835af9ac7788b646597",
+        "bytes": 24315
+      },
+      "native/metal/kernels.metal": {
+        "file": "kernels.metal",
+        "sha256": "c5754e65d62dc478d5cb5fd00bd9743e8be8a9f870393476a266f711071352d2",
+        "bytes": 12816
+      },
+      "native/metal/Makefile": {
+        "file": "Makefile",
+        "sha256": "80307630a6aba695001bdd16a3ce0f75bec61a530aa9214a2fda5caf3b2e17f2",
+        "bytes": 409
+      },
+      "native/metal/build/libtransformer_metal.dylib": {
+        "file": "libtransformer_metal.dylib",
+        "sha256": "2725f924fe2544097d6e9990edb42440ab89845f9d1410a2bf82eb5d19935c0e",
+        "bytes": 133288
+      },
+      "transformer/gpu_metal.py": {
+        "file": "gpu_metal.py",
+        "sha256": "c50af5a1090251299e956a34ae54577155ad905c3aaf063f18c20ee8c1a870a0",
+        "bytes": 16647
+      },
+      "work/gpu-v1/metal-development/smoke-width-32.json": {
+        "file": "smoke-width-32.json",
+        "sha256": "269188663d71f382ca756fac1482eebd6ebf33c7d5d1b950175f1bad8aa3ae60",
+        "bytes": 24284
+      },
+      "work/gpu-v1/metal-development/smoke-width-32.log": {
+        "file": "smoke-width-32.log",
+        "sha256": "66124c28539d89f943808eaf726ca242f952988259452f4e9b54df05fdc45532",
+        "bytes": 1862
+      }
+    },
+    "reference-v0/runtime-artifacts/manifest.json": {
+      "native/metal/backend.mm": {
+        "file": "backend.mm",
+        "sha256": "e4f8f55d5c08550532fd25f724f9617b0ed36059e7a8be0a2d3cc84d1bbc7cb6"
+      },
+      "native/metal/kernels.metal": {
+        "file": "kernels.metal",
+        "sha256": "c5754e65d62dc478d5cb5fd00bd9743e8be8a9f870393476a266f711071352d2"
+      },
+      "native/metal/Makefile": {
+        "file": "Makefile",
+        "sha256": "78bc53ae8fe3a5086d6e665af0874ac0ce1c32c2dbb462eb5fc0d6b969381155"
+      },
+      "native/metal/build/libtransformer_metal.dylib": {
+        "file": "libtransformer_metal.dylib",
+        "sha256": "c1691d6ac8b00a5f089e9d7097995a6e9912fa5fbe1b4bd5109175839d2c7823"
+      },
+      "transformer/gpu_metal.py": {
+        "file": "gpu_metal.py",
+        "sha256": "d56075c7b8386615f83defdc8e25905a486d1284ed9ee7ca9429d029439a5ece"
+      }
+    }
+  },
+  "original_source_and_binary_payloads": "Retained in work/gpu-v1/metal-development; binary/state payloads are intentionally absent from Git"
+}

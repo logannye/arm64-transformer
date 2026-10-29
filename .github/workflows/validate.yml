@@ -46,6 +46,10 @@ jobs:
       - run: >-
           python -m pip install --only-binary=:all: -e '.[dev,report]'
       - run: make -C native widths PYTHON=python
+      - name: Compile Metal host bridge (device tests require explicit GPU access)
+        run: make -C native/metal
+      - name: Check Metal cleanup ownership with a mocked Context
+        run: python native/metal/check_close.py --output work/metal-close-ci
       - name: Numerical and executable checks at every width and supported backend
         run: |
           for width in 32 64 128 256 512 1024; do
