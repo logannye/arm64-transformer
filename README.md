@@ -139,6 +139,24 @@ breaks the model-level requirement. The [numerical investigation](experiments/nu
 records these diagnostic experiments, unfavorable results and provenance limits.
 No thresholds or kernels were changed after formal measurement began.
 
+## Extending the idea to the Apple GPU
+
+A development branch now implements complete handwritten **Metal** forward,
+backward and Adam kernels, alongside standard **PyTorch MPS** and compiled
+**MLX** baselines. All three retain the same model equations and FP32 stored
+state. Metal uses batch-wide matrix tiles, deterministic embedding reductions,
+and selective two-float arithmetic where ordinary FP32 accumulation loses
+important differences. This provides extra intermediate precision on a GPU
+without native FP64 arithmetic.
+
+The custom path passes its development stress inventory at all six widths,
+including attention, normalization and QKV gradients. Tiny training-only runs
+also pass independent FP64 checks. **Formal GPU benchmarks remain unopened:**
+the standard GPU baselines fail the declared exact-training-repeatability gate.
+There is no GPU speedup claim. The [development report](experiments/gpu-development-v1/README.md)
+explains the implementation, retained failures and next decision; the CPU results
+above remain unchanged.
+
 ## Reproduce and inspect
 
 See the [frozen protocol](experiments/PROTOCOL-v6.md),

@@ -5,6 +5,7 @@ __pycache__/
 *.egg-info/
 .venv
 native/build/
+native/metal/build/
 data/
 results/
 work/
