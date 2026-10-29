@@ -37,7 +37,7 @@ jobs:
           path: pytorch-source
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12.13'
+          python-version: '3.12.10'
           architecture: arm64
       - name: Provision OpenMP from a binary bottle only
         run: brew install --force-bottle libomp

@@ -1,0 +1,60 @@
+{
+  "base_commit": "a21f892a6e8e83afb117cef1d1ceae3e82f48c32",
+  "build_receipt_sha256": "0345bed11742bf051f70fe5bda63e7e3bc0043f71bcb8f6d756b626c48a16bfe",
+  "git_apply_check_passed": true,
+  "patch": "embedding-fix.patch",
+  "patch_sha256": "9aecf0c9b0131fe0673493035fd3c47fba3e4ffb1cfc04d00a506702e1d1067c",
+  "patched_files_match_authoring_checkout": true,
+  "path_count": 8,
+  "schema": 1,
+  "source_files": {
+    "benchmarks/python/gather_grad_bench.py": {
+      "base_sha256": null,
+      "bytes": 4343,
+      "matches_final_build_receipt": true,
+      "result_sha256": "dbdafb34e2bd478902a03abd0149c72c872610ec039c2424cdbee0ccb2d71f0f"
+    },
+    "mlx/backend/metal/CMakeLists.txt": {
+      "base_sha256": "d218fe31290575ada5fc73d2fb3614c695b6a70dd40bafe65ff3a31d6e54687c",
+      "bytes": 7223,
+      "matches_final_build_receipt": true,
+      "result_sha256": "0fc646e0e44867074b8dc94bbdd6d3fe963dae23583ec115939ab51c5e68796f"
+    },
+    "mlx/backend/metal/indexing.cpp": {
+      "base_sha256": "db5d2d63e533c6ce0b0cb2730b1294042ecadfe7b8353c5ae0897a13cee15ebd",
+      "bytes": 29919,
+      "matches_final_build_receipt": true,
+      "result_sha256": "4a5496bf721aaa4938c4d642f3a73ea03e28f37f06eead98fdf96a768dec1ece"
+    },
+    "mlx/backend/metal/jit/includes.h": {
+      "base_sha256": "efeea985755baffc6e1a6b310218f89e0e2b7c629bf57f125899c734dcab54a9",
+      "bytes": 1657,
+      "matches_final_build_receipt": true,
+      "result_sha256": "58827542de657ddb50f632b50fe8f27bdcdaf83628a907b65aa49891cb3b1072"
+    },
+    "mlx/backend/metal/kernels/indexing/scatter_slices.h": {
+      "base_sha256": null,
+      "bytes": 2394,
+      "matches_final_build_receipt": true,
+      "result_sha256": "5f2cb6861e0c6513715cf1323887c490151f969ebb7b57a0ce4074f49121f4ee"
+    },
+    "mlx/backend/metal/sort.cpp": {
+      "base_sha256": "2e0264044b598f55d83e47d39d8c9fd4b2602f87bf74075595626d17d9f630cb",
+      "bytes": 12496,
+      "matches_final_build_receipt": true,
+      "result_sha256": "611fde7cb6efd556bcf88fa8d9ecdeb5138e944e6faae1949f3607a48539655f"
+    },
+    "mlx/backend/metal/sort.h": {
+      "base_sha256": null,
+      "bytes": 218,
+      "matches_final_build_receipt": true,
+      "result_sha256": "03493ebcc12ba56b5cd0a591c08c0304a2c1730f90e240d0e23aa22707a2acbd"
+    },
+    "python/tests/test_gather_grad.py": {
+      "base_sha256": null,
+      "bytes": 17307,
+      "matches_final_build_receipt": true,
+      "result_sha256": "600e49f9a0feb9d5a6e649bbbc0c0efd48280969d96ba7a549efacc66ab89a2c"
+    }
+  }
+}

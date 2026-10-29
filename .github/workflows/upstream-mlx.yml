@@ -1,0 +1,55 @@
+# Review and install only in logannye/arm64-transformer, never in upstream MLX.
+# Copy the helper bundle (including inputs/) to integration/mlx/ first.
+name: Isolated MLX patch integration
+on:
+  push:
+    branches:
+      - codex/upstream-integration-v2
+    paths:
+      - integration/mlx/**
+      - .github/workflows/mlx-integration.yml
+  workflow_dispatch:
+    inputs:
+      macos_runner:
+        description: Approved Apple-silicon runner with a complete Xcode Metal toolchain
+        required: true
+        type: choice
+        default: macos-26
+        options:
+          - macos-26
+permissions:
+  contents: read
+concurrency:
+  group: isolated-mlx-patch-integration
+  cancel-in-progress: false
+jobs:
+  build-and-check:
+    if: github.repository == 'logannye/arm64-transformer'
+    runs-on: ${{ inputs.macos_runner || 'macos-26' }}
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12.10'
+          architecture: arm64
+      - name: Create isolated interpreter environment
+        shell: bash
+        run: python -m venv "$RUNNER_TEMP/mlx-integration-venv"
+      - name: Exact-base source build and serial CPU/GPU validation
+        shell: bash
+        run: |
+          "$RUNNER_TEMP/mlx-integration-venv/bin/python" \
+            integration/mlx/hosted_build.py \
+            --work-root "$RUNNER_TEMP/mlx-integration-work" --parallel 4
+      - name: Retain binaries, inputs, failures, and validation receipts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: isolated-mlx-patch-integration-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/mlx-integration-work/publish/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14
