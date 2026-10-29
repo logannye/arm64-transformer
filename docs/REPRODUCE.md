@@ -4,6 +4,12 @@ V5 times widths 512 and 1024. It requires current correctness gates at all six
 supported widths before launching its 24 matched fits. V3 and v4 retain their
 original four-width protocols and published evidence.
 
+The published v5 candidate passed synthetic admission but failed the later
+trained-checkpoint audit. Reproducing that candidate should retain the failures;
+a nonzero report exit is an experimental result. The [outcome report](../experiments/width-sweep-v5-outcome/README.md)
+separates descriptive measurements from numerical acceptance. Its reporting and
+archive tools were added after measurement and never change failed flags.
+
 Use an Apple silicon Mac with Xcode Command Line Tools that can assemble SME.
 The measured machine is an M4 Max. Runtime feature checks select SME only when
 the OS and 64-byte streaming vector length support it; older hardware uses NEON.
@@ -16,6 +22,7 @@ recorded versions are in `requirements-benchmark.txt`.
 ```sh
 git clone https://github.com/logannye/arm64-transformer.git
 cd arm64-transformer
+git checkout c12874c2fe6af3fd1612046950aa56d756f4d0a0
 python3.12 -m venv .venv
 source .venv/bin/activate
 python -m pip install --only-binary=:all: -r requirements-benchmark.txt
@@ -82,3 +89,13 @@ retains every timing observation. It never overwrites an existing destination.
 Archive packaging verifies source, inputs, binaries, raw runs and report identities
 and rehashes the streamed payload. Release checksums authenticate the downloadable
 bytes separately from the numerical correctness checks.
+
+The original successful-study reporter stops at the first failed width. To retain
+both widths' failures, the published outcome also ran the unchanged per-width
+reporter separately at width 1024. The publication revision's
+`scripts/report_failed_sweep.py` then authenticated all saved evidence and computed
+descriptive statistics without new model execution. Its separate
+`scripts/package_failed_sweep.py` archives that failed outcome and explicitly sets
+`numerical_validation_passed` to false. The successful-study packager still rejects
+failed audits. The release includes the exact post-study tools and measured source
+separately, plus instructions for reconstructing the archive if delivered in parts.

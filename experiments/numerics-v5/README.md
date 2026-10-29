@@ -122,7 +122,14 @@ is reserved for these release development extras:
 - `development/sme-striped/`, from `work/v5-sme-striped/`.
 - `development/initial-admission/`, from `work/v5/initial-admission/`.
 
-The release archive is pending at this stage. Runtime diagnostic reports did not
+The completed campaign subsequently **failed its post-training checkpoint audit**:
+2 sequence-level checks at width 512 and 48 at width 1024, including repeats.
+These are additional blocking failures, separate from the 18 trajectory diagnostics
+above. No tolerance or admission rule was changed after measurement. The
+[post-study diagnosis](post-study/README.md) investigates one width-512 discrepancy;
+the [outcome report](../width-sweep-v5-outcome/README.md) retains both widths and all
+24 fits as descriptive development results. The release preserves the raw evidence.
+ Runtime diagnostic reports did not
 independently capture import-time source hashes; the index states that limit.
 Their recorded library identity matches the original snapshot, and their native
 and Python final checkpoints each reproduce the saved original runs bit-for-bit.

@@ -1,0 +1,65 @@
+{
+  "scope": "Plot separate campaigns; a failed current audit requires explicit descriptive labeling.",
+  "sources": {
+    "v4": {
+      "path": "experiments/width-sweep-v4/summary.json",
+      "sha256": "7839b6ff0cb857d7c89bf3a5d3907557ac5a7574b7ad27e8e0876a8da32d28fa",
+      "measured_revision": "276c6d091a7ebdc5f7831be2169683db4715f748",
+      "fits": 48,
+      "numerical_audit_status": "completed"
+    },
+    "v5": {
+      "path": "experiments/width-sweep-v5-outcome/summary.json",
+      "sha256": "ce60e87350b0542469130b7d98044db8ba491b83053c2c99f4cd590df8959889",
+      "measured_revision": "c12874c2fe6af3fd1612046950aa56d756f4d0a0",
+      "fits": 24,
+      "numerical_audit_status": "audit_failed"
+    }
+  },
+  "rows": [
+    {
+      "width": 32,
+      "campaign": "v4",
+      "audit_failed": false,
+      "training_ratio": 1.8187716550973911,
+      "forward_ratio": 3.6294276094276094
+    },
+    {
+      "width": 64,
+      "campaign": "v4",
+      "audit_failed": false,
+      "training_ratio": 1.7921760478787374,
+      "forward_ratio": 3.1536034098463226
+    },
+    {
+      "width": 128,
+      "campaign": "v4",
+      "audit_failed": false,
+      "training_ratio": 1.4684531493217454,
+      "forward_ratio": 2.1227252730518353
+    },
+    {
+      "width": 256,
+      "campaign": "v4",
+      "audit_failed": false,
+      "training_ratio": 1.2906633597990933,
+      "forward_ratio": 1.433202951361196
+    },
+    {
+      "width": 512,
+      "campaign": "v5",
+      "audit_failed": true,
+      "training_ratio": 1.020465343380321,
+      "forward_ratio": 0.8229865167460093
+    },
+    {
+      "width": 1024,
+      "campaign": "v5",
+      "audit_failed": true,
+      "training_ratio": 0.7858609982446045,
+      "forward_ratio": 0.7119410759751515
+    }
+  ],
+  "image_sha256": "1757d837de9006fd6279f4aeb586cb495a2a41425db1a7d06b8dc16ec86d9bf5",
+  "renderer_sha256": "bba4e28d56243a6ac50207848cf29e68767caad7f83845e2f3a44cc01533da8b"
+}

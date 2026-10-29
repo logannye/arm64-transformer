@@ -1,0 +1,2265 @@
+{
+  "schema_version": 1,
+  "status": "audit_failed",
+  "passed": false,
+  "check_count": 6822,
+  "failed_check_count": 50,
+  "failed_checks": [
+    {
+      "name": "width-512/seed-44-repeat-1-arm64/selected_checkpoint/sequence_43",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 4.9591064453125e-05,
+      "rmse": 3.318125695660546e-06
+    },
+    {
+      "name": "width-512/seed-44-repeat-2-arm64/selected_checkpoint/sequence_43",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 4.9591064453125e-05,
+      "rmse": 3.318125695660546e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/selected_checkpoint/sequence_2",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 0.00023293495178222656,
+      "rmse": 1.557193489870196e-05
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/selected_checkpoint/sequence_22",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 0.00010061264038085938,
+      "rmse": 6.712678933643607e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/selected_checkpoint/sequence_30",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 8.726119995117188e-05,
+      "rmse": 6.055234839237892e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/selected_checkpoint/sequence_63",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 0.00014638900756835938,
+      "rmse": 8.244467710708705e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/selected_checkpoint/sequence_112",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 0.0001239776611328125,
+      "rmse": 7.187546309569947e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/selected_checkpoint/sequence_139",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 2.5391578674316406e-05,
+      "rmse": 3.9712275345940245e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/selected_checkpoint/sequence_145",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 9.202957153320312e-05,
+      "rmse": 5.777649116775114e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/selected_checkpoint/sequence_168",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 7.343292236328125e-05,
+      "rmse": 5.503522224045104e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/selected_checkpoint/sequence_182",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 6.096065044403076e-05,
+      "rmse": 5.9380360896087e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/selected_checkpoint/sequence_187",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 2.7000904083251953e-05,
+      "rmse": 3.2373950442849245e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/selected_checkpoint/sequence_211",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 4.9591064453125e-05,
+      "rmse": 4.1627748520847796e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/selected_checkpoint/sequence_219",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 6.508827209472656e-05,
+      "rmse": 3.904146373575673e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/selected_checkpoint/sequence_247",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 0.0002111196517944336,
+      "rmse": 1.25607923060416e-05
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-arm64/selected_checkpoint/sequence_9",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 3.981590270996094e-05,
+      "rmse": 3.238516454845529e-06
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-arm64/selected_checkpoint/sequence_63",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 7.772445678710938e-05,
+      "rmse": 4.420746303622761e-06
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-arm64/selected_checkpoint/sequence_86",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 0.00013703107833862305,
+      "rmse": 7.2700333904303495e-06
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-arm64/selected_checkpoint/sequence_91",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 7.665157318115234e-05,
+      "rmse": 4.733856480231484e-06
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-arm64/selected_checkpoint/sequence_159",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 4.57763671875e-05,
+      "rmse": 3.760145390134883e-06
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-arm64/selected_checkpoint/sequence_47",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 3.9577484130859375e-05,
+      "rmse": 4.119263395440347e-06
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-arm64/selected_checkpoint/sequence_51",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 4.1484832763671875e-05,
+      "rmse": 3.5835628048803256e-06
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-arm64/selected_checkpoint/sequence_68",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 6.830692291259766e-05,
+      "rmse": 3.3795537089874753e-06
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-arm64/selected_checkpoint/sequence_124",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 4.1961669921875e-05,
+      "rmse": 3.6130885977651535e-06
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-arm64/selected_checkpoint/sequence_145",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 2.496642991900444e-05,
+      "rmse": 2.9784442223375086e-06
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-arm64/selected_checkpoint/sequence_223",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 0.00014448165893554688,
+      "rmse": 9.064348870166866e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/selected_checkpoint/sequence_2",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 0.00023293495178222656,
+      "rmse": 1.557193489870196e-05
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/selected_checkpoint/sequence_22",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 0.00010061264038085938,
+      "rmse": 6.712678933643607e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/selected_checkpoint/sequence_30",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 8.726119995117188e-05,
+      "rmse": 6.055234839237892e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/selected_checkpoint/sequence_63",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 0.00014638900756835938,
+      "rmse": 8.244467710708705e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/selected_checkpoint/sequence_112",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 0.0001239776611328125,
+      "rmse": 7.187546309569947e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/selected_checkpoint/sequence_139",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 2.5391578674316406e-05,
+      "rmse": 3.9712275345940245e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/selected_checkpoint/sequence_145",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 9.202957153320312e-05,
+      "rmse": 5.777649116775114e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/selected_checkpoint/sequence_168",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 7.343292236328125e-05,
+      "rmse": 5.503522224045104e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/selected_checkpoint/sequence_182",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 6.096065044403076e-05,
+      "rmse": 5.9380360896087e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/selected_checkpoint/sequence_187",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 2.7000904083251953e-05,
+      "rmse": 3.2373950442849245e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/selected_checkpoint/sequence_211",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 4.9591064453125e-05,
+      "rmse": 4.1627748520847796e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/selected_checkpoint/sequence_219",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 6.508827209472656e-05,
+      "rmse": 3.904146373575673e-06
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/selected_checkpoint/sequence_247",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 0.0002111196517944336,
+      "rmse": 1.25607923060416e-05
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-arm64/selected_checkpoint/sequence_9",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 3.981590270996094e-05,
+      "rmse": 3.238516454845529e-06
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-arm64/selected_checkpoint/sequence_63",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 7.772445678710938e-05,
+      "rmse": 4.420746303622761e-06
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-arm64/selected_checkpoint/sequence_86",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 0.00013703107833862305,
+      "rmse": 7.2700333904303495e-06
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-arm64/selected_checkpoint/sequence_91",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 7.665157318115234e-05,
+      "rmse": 4.733856480231484e-06
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-arm64/selected_checkpoint/sequence_159",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 4.57763671875e-05,
+      "rmse": 3.760145390134883e-06
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-arm64/selected_checkpoint/sequence_47",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 3.9577484130859375e-05,
+      "rmse": 4.119263395440347e-06
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-arm64/selected_checkpoint/sequence_51",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 4.1484832763671875e-05,
+      "rmse": 3.5835628048803256e-06
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-arm64/selected_checkpoint/sequence_68",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 6.830692291259766e-05,
+      "rmse": 3.3795537089874753e-06
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-arm64/selected_checkpoint/sequence_124",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 4.1961669921875e-05,
+      "rmse": 3.6130885977651535e-06
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-arm64/selected_checkpoint/sequence_145",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 2.496642991900444e-05,
+      "rmse": 2.9784442223375086e-06
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-arm64/selected_checkpoint/sequence_223",
+      "passed": false,
+      "actual_shape": [
+        32,
+        128
+      ],
+      "expected_shape": [
+        32,
+        128
+      ],
+      "tolerance": "forward",
+      "max_absolute_error": 0.00014448165893554688,
+      "rmse": 9.064348870166866e-06
+    }
+  ],
+  "evidence_integrity_passed": true,
+  "integrity_check_count": 300,
+  "integrity_checks": [
+    {
+      "name": "manifest/completed_width_protocol",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "manifest/protocol_widths",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "manifest/source_identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "manifest/exact_run_identities",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "manifest/frozen_order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "manifest/width_reports",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "manifest/models_and_fixtures",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-1-python/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-1-python/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-1-python/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-1-python/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-1-python/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-1-arm64/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-1-arm64/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-1-arm64/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-1-arm64/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-1-arm64/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-1-arm64/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-1-arm64/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-1-arm64/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-1-arm64/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-1-arm64/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-1-python/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-1-python/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-1-python/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-1-python/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-1-python/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-1-python/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-1-python/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-1-python/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-1-python/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-1-python/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-1-arm64/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-1-arm64/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-1-arm64/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-1-arm64/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-1-arm64/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-python/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-python/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-python/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-python/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-python/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-python/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-python/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-python/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-python/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-python/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-arm64/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-arm64/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-arm64/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-arm64/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-arm64/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-arm64/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-arm64/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-arm64/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-arm64/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-arm64/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-python/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-python/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-python/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-python/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-python/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-python/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-python/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-python/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-python/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-python/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-arm64/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-arm64/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-arm64/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-arm64/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-arm64/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-python/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-python/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-python/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-python/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-python/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-python/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-python/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-python/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-python/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-python/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-arm64/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-arm64/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-arm64/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-arm64/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-arm64/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-2-arm64/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-2-arm64/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-2-arm64/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-2-arm64/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-2-arm64/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-2-python/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-2-python/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-2-python/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-2-python/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-2-python/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-2-python/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-2-python/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-2-python/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-2-python/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-2-python/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-2-arm64/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-2-arm64/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-2-arm64/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-2-arm64/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-2-arm64/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-2-arm64/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-2-arm64/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-2-arm64/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-2-arm64/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-2-arm64/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-2-python/identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-2-python/completed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-2-python/conditions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-2-python/before_after_evidence",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-2-python/process_timer",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/model",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/manifest_status",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/manifest_matches_global/model",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/manifest_matches_global/revision",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/manifest_matches_global/source_sha256",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/manifest_matches_global/preflight",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/manifest_matches_global/fixtures",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/manifest_matches_global/runs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/manifest_matches_global/order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/backend_gates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-1-arm64/backend_admitted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-1-arm64/backend_admitted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-1-arm64/backend_admitted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-42-repeat-2-arm64/backend_admitted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-43-repeat-2-arm64/backend_admitted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/seed-44-repeat-2-arm64/backend_admitted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/preflight",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/model",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/manifest_status",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/manifest_matches_global/model",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/manifest_matches_global/revision",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/manifest_matches_global/source_sha256",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/manifest_matches_global/preflight",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/manifest_matches_global/fixtures",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/manifest_matches_global/runs",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/manifest_matches_global/order",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/backend_gates",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-1-arm64/backend_admitted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-1-arm64/backend_admitted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-1-arm64/backend_admitted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-42-repeat-2-arm64/backend_admitted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-43-repeat-2-arm64/backend_admitted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/seed-44-repeat-2-arm64/backend_admitted",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/preflight",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "manifest/validation_contract",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "manifest/regression_widths",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-512/regression_gate_alignment",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "width-1024/regression_gate_alignment",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/seeds",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/42/configuration",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/42/source",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/42/partitions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/42/same_train.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/42/same_validation.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/42/same_test.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/42/same_seed_schedule",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/43/configuration",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/43/source",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/43/partitions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/43/same_train.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/43/same_validation.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/43/same_test.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/43/same_seed_schedule",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/44/configuration",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/44/source",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/44/partitions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/44/same_train.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/44/same_validation.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/44/same_test.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/512/44/same_seed_schedule",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/seeds",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/42/configuration",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/42/source",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/42/partitions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/42/same_train.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/42/same_validation.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/42/same_test.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/42/same_seed_schedule",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/43/configuration",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/43/source",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/43/partitions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/43/same_train.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/43/same_validation.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/43/same_test.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/43/same_seed_schedule",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/44/configuration",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/44/source",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/44/partitions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/44/same_train.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/44/same_validation.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/44/same_test.i32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/1024/44/same_seed_schedule",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/42/distinct_width_initializations",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/43/distinct_width_initializations",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixtures/44/distinct_width_initializations",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "outcome/frozen_git_source",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-python/seed-42-repeat-2-python/best.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-python/seed-42-repeat-2-python/last.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-python/seed-42-repeat-2-python/adam_m.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-python/seed-42-repeat-2-python/adam_v.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-python/seed-42-repeat-2-python/test_logits.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-python/seed-42-repeat-2-python/learning_history",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-python/seed-42-repeat-2-python/selection_and_steps",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-arm64/seed-42-repeat-2-arm64/best.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-arm64/seed-42-repeat-2-arm64/last.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-arm64/seed-42-repeat-2-arm64/adam_m.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-arm64/seed-42-repeat-2-arm64/adam_v.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-arm64/seed-42-repeat-2-arm64/test_logits.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-arm64/seed-42-repeat-2-arm64/learning_history",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-arm64/seed-42-repeat-2-arm64/selection_and_steps",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-python/seed-43-repeat-2-python/best.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-python/seed-43-repeat-2-python/last.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-python/seed-43-repeat-2-python/adam_m.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-python/seed-43-repeat-2-python/adam_v.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-python/seed-43-repeat-2-python/test_logits.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-python/seed-43-repeat-2-python/learning_history",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-python/seed-43-repeat-2-python/selection_and_steps",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-arm64/seed-43-repeat-2-arm64/best.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-arm64/seed-43-repeat-2-arm64/last.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-arm64/seed-43-repeat-2-arm64/adam_m.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-arm64/seed-43-repeat-2-arm64/adam_v.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-arm64/seed-43-repeat-2-arm64/test_logits.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-arm64/seed-43-repeat-2-arm64/learning_history",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-arm64/seed-43-repeat-2-arm64/selection_and_steps",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-python/seed-44-repeat-2-python/best.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-python/seed-44-repeat-2-python/last.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-python/seed-44-repeat-2-python/adam_m.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-python/seed-44-repeat-2-python/adam_v.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-python/seed-44-repeat-2-python/test_logits.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-python/seed-44-repeat-2-python/learning_history",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-python/seed-44-repeat-2-python/selection_and_steps",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-arm64/seed-44-repeat-2-arm64/best.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-arm64/seed-44-repeat-2-arm64/last.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-arm64/seed-44-repeat-2-arm64/adam_m.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-arm64/seed-44-repeat-2-arm64/adam_v.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-arm64/seed-44-repeat-2-arm64/test_logits.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-arm64/seed-44-repeat-2-arm64/learning_history",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-arm64/seed-44-repeat-2-arm64/selection_and_steps",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "outcome/width-512/original_audit_and_raw_metrics",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-python/seed-42-repeat-2-python/best.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-python/seed-42-repeat-2-python/last.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-python/seed-42-repeat-2-python/adam_m.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-python/seed-42-repeat-2-python/adam_v.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-python/seed-42-repeat-2-python/test_logits.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-python/seed-42-repeat-2-python/learning_history",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-python/seed-42-repeat-2-python/selection_and_steps",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-arm64/seed-42-repeat-2-arm64/best.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-arm64/seed-42-repeat-2-arm64/last.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-arm64/seed-42-repeat-2-arm64/adam_m.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-arm64/seed-42-repeat-2-arm64/adam_v.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-arm64/seed-42-repeat-2-arm64/test_logits.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-arm64/seed-42-repeat-2-arm64/learning_history",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-42-repeat-1-arm64/seed-42-repeat-2-arm64/selection_and_steps",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-python/seed-43-repeat-2-python/best.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-python/seed-43-repeat-2-python/last.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-python/seed-43-repeat-2-python/adam_m.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-python/seed-43-repeat-2-python/adam_v.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-python/seed-43-repeat-2-python/test_logits.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-python/seed-43-repeat-2-python/learning_history",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-python/seed-43-repeat-2-python/selection_and_steps",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-arm64/seed-43-repeat-2-arm64/best.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-arm64/seed-43-repeat-2-arm64/last.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-arm64/seed-43-repeat-2-arm64/adam_m.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-arm64/seed-43-repeat-2-arm64/adam_v.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-arm64/seed-43-repeat-2-arm64/test_logits.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-arm64/seed-43-repeat-2-arm64/learning_history",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-43-repeat-1-arm64/seed-43-repeat-2-arm64/selection_and_steps",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-python/seed-44-repeat-2-python/best.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-python/seed-44-repeat-2-python/last.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-python/seed-44-repeat-2-python/adam_m.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-python/seed-44-repeat-2-python/adam_v.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-python/seed-44-repeat-2-python/test_logits.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-python/seed-44-repeat-2-python/learning_history",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-python/seed-44-repeat-2-python/selection_and_steps",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-arm64/seed-44-repeat-2-arm64/best.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-arm64/seed-44-repeat-2-arm64/last.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-arm64/seed-44-repeat-2-arm64/adam_m.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-arm64/seed-44-repeat-2-arm64/adam_v.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-arm64/seed-44-repeat-2-arm64/test_logits.f32",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-arm64/seed-44-repeat-2-arm64/learning_history",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "repeat/seed-44-repeat-1-arm64/seed-44-repeat-2-arm64/selection_and_steps",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "outcome/width-1024/original_audit_and_raw_metrics",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "baselines/training_target_count",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "legacy_diagnostic_count": 438,
+  "legacy_failed_diagnostic_count": 18
+}

@@ -1,0 +1,19 @@
+[
+  {
+    "width": 512,
+    "command": [
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/.venv/bin/python",
+      "-m",
+      "transformer.report",
+      "--results",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/results/width-sweep-v5/width-512",
+      "--inputs",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/results/inputs-v5/width-512",
+      "--output",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/experiments/width-sweep-v5/width-512"
+    ],
+    "returncode": 1,
+    "stdout": "{\"auditing\": \"seed-42-repeat-1-python\"}\n{\"auditing\": \"seed-42-repeat-1-arm64\"}\n{\"auditing\": \"seed-43-repeat-1-arm64\"}\n{\"auditing\": \"seed-43-repeat-1-python\"}\n{\"auditing\": \"seed-44-repeat-1-python\"}\n{\"auditing\": \"seed-44-repeat-1-arm64\"}\n{\"auditing\": \"seed-42-repeat-2-arm64\"}\n{\"auditing\": \"seed-42-repeat-2-python\"}\n{\"auditing\": \"seed-43-repeat-2-python\"}\n{\"auditing\": \"seed-43-repeat-2-arm64\"}\n{\"auditing\": \"seed-44-repeat-2-arm64\"}\n{\"auditing\": \"seed-44-repeat-2-python\"}\n{\"passed\": false, \"check_count\": 3411, \"failed_checks\": [\"seed-44-repeat-1-arm64/selected_checkpoint/sequence_43\", \"seed-44-repeat-2-arm64/selected_checkpoint/sequence_43\"], \"error\": null}\n",
+    "stderr": ""
+  }
+]

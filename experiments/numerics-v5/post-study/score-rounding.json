@@ -1,0 +1,37 @@
+{
+  "same_qkv_origin": "functional32",
+  "head": 1,
+  "query": 29,
+  "score_margin_fp64": 0.19248723683760716,
+  "score_margin_torch32": 0.19257354736328125,
+  "score_margin_error": 8.63105256740937e-05,
+  "top_two": [
+    {
+      "key": 29,
+      "scalar_fsum_score": 107.19285617366322,
+      "torch_fp32_score": 107.1928939819336,
+      "score_error": 3.780827037758172e-05,
+      "dot_sum_abs": 1256.0688946437597,
+      "dot_cancellation_ratio": 1.0357206449480654,
+      "probability_fp64": 0.5479737762220799,
+      "probability_fp64_from_fp32_scores": 0.5479951551227374,
+      "probability_fp32_from_fp32_scores": 0.5479951500892639,
+      "probability_error_due_to_score_arithmetic": 2.137890065756487e-05,
+      "probability_extra_error_from_softmax_fp32": -5.033473526872001e-09
+    },
+    {
+      "key": 27,
+      "scalar_fsum_score": 107.00036893682561,
+      "torch_fp32_score": 107.00032043457031,
+      "score_error": -4.8502255296511976e-05,
+      "dot_sum_abs": 1232.92836172694,
+      "dot_cancellation_ratio": 1.0184684571147002,
+      "probability_fp64": 0.45202622377744944,
+      "probability_fp64_from_fp32_scores": 0.45200484487679177,
+      "probability_fp32_from_fp32_scores": 0.4520048201084137,
+      "probability_error_due_to_score_arithmetic": -2.1378900657675892e-05,
+      "probability_extra_error_from_softmax_fp32": -2.476837807074972e-08
+    }
+  ],
+  "score_oracle": "math.fsum of 128 binary64 products of the exact float32 inputs; divide by sqrt(128) in binary64"
+}
