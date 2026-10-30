@@ -147,7 +147,7 @@ The driver/reference paths select the already-retained immutable result helpers,
 not another framework implementation. The two external SHA256 arguments must
 come from verified publication/capture evidence.
 
-The 48 producer checks and 22 portable-archive checks pass under the retained
+The 59 producer checks and 26 portable-archive checks pass under the retained
 CPython 3.12 interpreter, including actual fresh-process launcher
 checks, source mutations, cache bounds, native-origin mutations, and unconditional
 interpreter restoration after a test-runner exception. Retained Python import maps
@@ -159,6 +159,13 @@ overlapping or escaped intervals are rejected. Ruff passes for the new
 Python files. These tests do not validate native execution or qualify a runtime.
 The original AST fingerprints bind CPython 3.12's AST
 representation; a different Python AST version does not inherit this check.
+
+File binding hashes an already-readable, unbuffered file descriptor. Its complete
+identity and timestamps must remain stable throughout hashing and match the
+final path. Initial placeholder materialization occurs before that interval;
+replacements, content changes and metadata changes during hashing are rejected.
+The explicit archive symlink format and the historical digest format are both
+authenticated, with literal link targets bound independently of target contents.
 
 Both `prepare` and `run` require the same sanitized environment constructed by
 `controls`, including its exact cache path and selected Ninja search path. The

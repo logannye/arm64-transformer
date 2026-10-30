@@ -308,6 +308,91 @@ class ControlTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             M.binding(link)
 
+    def test_binding_rejects_mutation_during_the_descriptor_hash(self):
+        path = self.root / "a"
+        path.write_bytes(b"original")
+        original_digest = M.hashlib.file_digest
+
+        def mutate(stream, algorithm):
+            result = original_digest(stream, algorithm)
+            path.write_bytes(b"changed")
+            return result
+
+        with patch.object(M.hashlib, "file_digest", side_effect=mutate):
+            with self.assertRaisesRegex(ValueError, "changed while hashing"):
+                M.binding(path)
+
+    def test_binding_rejects_replacement_with_identical_bytes_during_hash(self):
+        path = self.root / "a"
+        path.write_bytes(b"original")
+        original_digest = M.hashlib.file_digest
+
+        def replace(stream, algorithm):
+            result = original_digest(stream, algorithm)
+            replacement = self.root / "replacement"
+            replacement.write_bytes(b"original")
+            replacement.replace(path)
+            return result
+
+        with patch.object(M.hashlib, "file_digest", side_effect=replace):
+            with self.assertRaisesRegex(ValueError, "changed while hashing"):
+                M.binding(path)
+
+    def test_binding_rejects_timestamp_change_during_hash(self):
+        path = self.root / "a"
+        path.write_bytes(b"original")
+        original_digest = M.hashlib.file_digest
+
+        def touch(stream, algorithm):
+            result = original_digest(stream, algorithm)
+            current = path.stat()
+            os.utime(path, ns=(current.st_atime_ns, current.st_mtime_ns + 1000000000))
+            return result
+
+        with patch.object(M.hashlib, "file_digest", side_effect=touch):
+            with self.assertRaisesRegex(ValueError, "changed while hashing"):
+                M.binding(path)
+
+    def test_materialization_before_hash_preserves_the_expected_binding(self):
+        path = self.root / "placeholder"
+        path.write_bytes(b"materialized bytes")
+        expected = M.binding(path)
+        original_open = Path.open
+
+        class MaterializingFile:
+            def __init__(self, stream):
+                self.stream = stream
+
+            def __getattr__(self, name):
+                return getattr(self.stream, name)
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return self.stream.__exit__(*args)
+
+            def read(self, count):
+                result = self.stream.read(count)
+                current = path.stat()
+                os.utime(path, ns=(current.st_atime_ns, current.st_mtime_ns + 1000000000))
+                return result
+
+        def materialize(value, *args, **kwargs):
+            stream = original_open(value, *args, **kwargs)
+            return MaterializingFile(stream) if value == path else stream
+
+        with patch.object(Path, "open", materialize):
+            self.assertEqual(M.binding(path, expected), expected)
+
+    def test_zero_length_descriptor_needs_no_hydration_to_hash(self):
+        path = self.root / "empty-placeholder"
+        path.write_bytes(b"")
+        with patch.object(M.hashlib, "file_digest", side_effect=AssertionError("empty read")):
+            row = M.binding(path)
+        self.assertEqual(row["bytes"], 0)
+        self.assertEqual(row["sha256"], M.hashlib.sha256(b"").hexdigest())
+
     def test_duplicate_and_nonfinite_json(self):
         path = self.root / "a.json"
         for text in ('{"a":1,"a":2}', '{"a":NaN}'):

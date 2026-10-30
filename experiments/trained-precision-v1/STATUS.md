@@ -21,6 +21,7 @@ They retain the original numerical tolerances.
 | Handwritten reference Metal normalization refinement, policy 1 | 89/89 anchors pass | 20/20 batches pass |
 | Custom MPS first-LayerNorm/QKV/attention refinement, policy 7 | 89/89 anchors pass | 20/20 batches pass |
 | Custom compiled MLX first-LayerNorm/QKV/attention refinement, policy 7 | 88/89 anchors pass; one FF1 gradient failure | 20/20 batches pass |
+| Custom compiled MLX policy 15, additionally refining FF1 | 89/89 gradient-graph logits/loss/all-gradient anchors pass | Complete v3 replay pending |
 
 The Python refinement is an explicit custom model using PyTorch operations, not
 ordinary PyTorch and not yet a selected maintained-framework arm. Its CPU evidence
@@ -67,8 +68,11 @@ Every observed prefix through the second normalization retains the correct gate
 when FF1 is recomputed in FP64, isolating the residual error to that projection.
 The declared framework-v3 bit 8 applies the existing compensated linear operation
 and explicit derivatives to FF1. Its policy-15 forward and gradient screens pass
-independent raw audits, including exact repeat checks. The complete historical
-and existing-fresh replays are running under the frozen serial phase-9 plan.
+independent raw audits, including exact repeat checks. Its complete historical
+gradient replay now passes independent raw audits at both widths: all 89 anchors
+and 73 distinct batches. Separate historical inference and existing-fresh replays
+are running under the frozen serial phase-9 plan; inference cannot inherit the
+compiled gradient graph's result.
 This policy's bit mapping differs from native policy 15. The queued
 fresh-state plans stopped at their prerequisites without launching a worker.
 
@@ -173,12 +177,22 @@ links. The corrected producer verifies all 146,435 source members, including 21
 symlinks. The failed preparation is preserved. A fresh capture and preparation
 must bind the corrected verifier before device qualification. That build
 addresses retained integration failures, not the MPS trained-attention arithmetic
-failures. The portable MPS evidence producer and archive auditor now have 80
+failures. The portable MPS evidence producer and archive auditor now have 85
 CPU-only checks, plus 25 eligibility checks. They verify retained evidence after
 relocation without reading original paths. No actual runtime or full MPS suite is
 qualified by those tests. Full framework conformance against the new runtime,
 archive validation of that run, new runtime capture and a prospectively frozen
 successor comparison contract remain necessary before any formal campaign.
+
+Two later full-suite preparations stopped on file-stability checks. The retained
+diagnostic observed a zero-byte source placeholder changing flags and timestamps
+on initial access. The corrected binder hashes an already-readable unbuffered
+descriptor and still requires complete metadata stability through hashing and
+the final path check. Mutation and identical-byte replacement tests confirm that
+those checks remain enforced. Both failed preparations remain in the record.
+The corrected binder also verifies all 146,435 actual source members. Empty files
+are verified from their stable zero-length descriptor without a hydration read;
+all nonempty contents are read and hashed completely.
 
 Large raw arrays are stored losslessly in `work/trained-raw-store-v1`. Each receipt
 binds the original NPZ hash; the store preserves exact compressed members and ZIP

@@ -60,9 +60,22 @@ auditor now normalize that format alongside the earlier digest-based manifest.
 They hash each literal link target, reject lexical escapes and substituted files,
 and require live links to resolve within the authenticated source tree. Regular
 file content and modes remain checked. All 146,435 members of the actual source
-tree verify; 80 producer/archive tests pass without a framework import or build.
+tree verify; 85 producer/archive tests pass without a framework import or build.
 The original failed preparation is retained. Fresh capture must bind the corrected
 verifier; this format correction provides no numerical qualification.
+
+Two subsequent preparations stopped when initial file access changed source
+metadata. A retained diagnostic caught one zero-byte placeholder changing flags
+and timestamps on its first read. File binding now warms the opened descriptor
+before taking its initial fingerprint, hashes that same unbuffered descriptor,
+then requires its full fingerprint and the final path's fingerprint to match.
+Content, timestamp, inode, mode or path changes during hashing still fail, even
+when the resulting digest would match. This avoids mistaking initial file
+materialization for an in-flight mutation; no numerical or source-content check
+is weakened. The failed attempts remain retained.
+An empty descriptor is checked for stable zero length and assigned SHA256 of
+the empty byte sequence without a content read. This avoids waiting for cloud
+hydration of a file with no bytes; nonempty files retain the complete read/hash.
 
 ```sh
 python3 -I -B -m unittest discover \

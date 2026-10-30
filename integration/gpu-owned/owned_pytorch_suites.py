@@ -117,16 +117,43 @@ def read(path):
 def binding(path, expected=None):
     path = Path(path).absolute()
     require(path.resolve(strict=True) == path and not path.is_symlink(), "Noncanonical input")
-    before = path.stat()
-    require(stat.S_ISREG(before.st_mode), "Nonregular input")
-    row = {"path": str(path), "sha256": digest(path), "bytes": before.st_size}
-    after = path.stat()
+    initial = path.stat()
+    require(stat.S_ISREG(initial.st_mode), "Nonregular input")
+    # Opening a cloud placeholder can materialize it and update timestamps.
+    # Bind the readable file descriptor, then require complete stability for
+    # the whole hash and the final path. No content or identity change during
+    # that interval is accepted, even when its final digest would match.
+    with path.open("rb", buffering=0) as stream:
+        if initial.st_size:
+            stream.read(1)
+            stream.seek(0)
+        before = os.fstat(stream.fileno())
+        require(stat.S_ISREG(before.st_mode), "Nonregular input")
+        require(
+            all(
+                getattr(initial, k) == getattr(before, k)
+                for k in ("st_dev", "st_ino", "st_size", "st_mode")
+            ),
+            "Input identity changed while opening",
+        )
+        row = {
+            "path": str(path),
+            # A descriptor with verified zero length has no bytes to read.
+            # Reading an empty cloud placeholder can block on hydration.
+            "sha256": (
+                hashlib.file_digest(stream, "sha256") if before.st_size else hashlib.sha256(b"")
+            ).hexdigest(),
+            "bytes": before.st_size,
+        }
+        after = os.fstat(stream.fileno())
+    require(path.resolve(strict=True) == path and not path.is_symlink(), "Input path changed")
+    final = path.stat()
     require(
         all(
-            getattr(before, k) == getattr(after, k)
+            getattr(before, k) == getattr(after, k) == getattr(final, k)
             for k in ("st_dev", "st_ino", "st_size", "st_mode", "st_mtime_ns", "st_ctime_ns")
         ),
-        "Input changed while hashing",
+        "Input changed while hashing: " + str(path),
     )
     if expected is not None:
         require(row == expected, "Input binding differs")
