@@ -11,6 +11,11 @@ PATH = Path(__file__).resolve().parents[1] / "integration/trained-precision/prec
 SPEC = importlib.util.spec_from_file_location("precision_candidate", PATH)
 candidate = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(candidate)
+SPEC_V2 = importlib.util.spec_from_file_location(
+    "precision_candidate_v2", PATH.with_name("precision_reference_v2.py")
+)
+candidate_v2 = importlib.util.module_from_spec(SPEC_V2)
+SPEC_V2.loader.exec_module(candidate_v2)
 
 
 def check_operation(operation, reference, shapes):
@@ -49,6 +54,14 @@ def test_attention_forward_backward_has_fp32_saved_state():
     )
 
 
+def test_layernorm_refinement_forward_backward_has_fp32_saved_state():
+    check_operation(
+        candidate_v2.LayerNorm.apply,
+        lambda x, weight, bias: F.layer_norm(x, (513,), weight, bias, 1e-5),
+        [(2, 3, 513), (513,), (513,)],
+    )
+
+
 def test_attention_repeated_tokens_and_causal_prefix():
     generator = torch.Generator().manual_seed(20261103)
     q, k, v = [torch.randn(1, 4, 8, 16, generator=generator) for _ in range(3)]
@@ -62,8 +75,9 @@ def test_attention_repeated_tokens_and_causal_prefix():
     assert torch.equal(candidate.Attention.apply(equal, equal, equal), equal)
 
 
-def test_complete_candidate_saves_no_fp64_tensors():
-    model = candidate.PrecisionReference()
+@pytest.mark.parametrize("implementation", [candidate, candidate_v2])
+def test_complete_candidate_saves_no_fp64_tensors(implementation):
+    model = implementation.PrecisionReference()
     saved = []
 
     def retain(value):

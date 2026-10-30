@@ -20,6 +20,10 @@ from pathlib import Path
 
 SCHEMA = "trained-precision-development-v1"
 ROOT = Path(__file__).resolve().parents[1]
+PYTHON_CANDIDATES = {
+    1: "python-fp32-saved-qkv-attention-v1",
+    2: "python-fp32-saved-ln1-qkv-attention-v2",
+}
 
 
 def digest(path):
@@ -103,12 +107,24 @@ def source_inventory():
     paths = [*ROOT.glob("transformer/*.py"), *ROOT.glob("native/*.S")]
     paths += [*ROOT.glob("native/metal/*.mm"), *ROOT.glob("native/metal/*.metal")]
     paths += [ROOT / "integration/gpu-owned/runtime_probe.py", ROOT / "native/Makefile"]
-    paths += [ROOT / "integration/trained-precision/precision_reference.py"]
+    paths += [
+        ROOT / "integration/trained-precision/precision_reference.py",
+        ROOT / "integration/trained-precision/precision_reference_v2.py",
+    ]
     return {str(p.relative_to(ROOT)): digest(p) for p in sorted(paths)}
 
 
 def torch_evaluate(
-    flat, tokens, targets, *, dtype, device="cpu", gradients=False, policy=0, candidate=False
+    flat,
+    tokens,
+    targets,
+    *,
+    dtype,
+    device="cpu",
+    gradients=False,
+    policy=0,
+    candidate=False,
+    candidate_version=1,
 ):
     import numpy as np
     import torch
@@ -117,11 +133,21 @@ def torch_evaluate(
     from transformer.reference import Transformer
 
     if candidate:
-        if policy or device != "cpu" or dtype != torch.float32:
+        if (
+            policy
+            or device != "cpu"
+            or dtype != torch.float32
+            or candidate_version not in PYTHON_CANDIDATES
+        ):
             raise ValueError("The separate Python candidate requires CPU FP32 and no probe policy")
-        module = load_module(
-            "precision_reference", ROOT / "integration/trained-precision/precision_reference.py"
+        filename = (
+            "precision_reference_v2.py" if candidate_version == 2 else "precision_reference.py"
         )
+        module = load_module(
+            "precision_reference", ROOT / "integration/trained-precision" / filename
+        )
+        if module.IDENTITY != PYTHON_CANDIDATES[candidate_version]:
+            raise ValueError("Unexpected Python candidate identity")
         model = module.PrecisionReference()
     elif policy:
         from transformer.torch_precision_probe import PrecisionProbe
@@ -184,7 +210,9 @@ def worker(args):
         "batch_size": args.batch_size,
         "gradients_checked": args.gradients,
         "torch_diagnostic_policy": args.torch_policy,
-        "python_candidate": "python-fp32-saved-qkv-attention-v1" if args.python_candidate else None,
+        "python_candidate": (
+            PYTHON_CANDIDATES[args.python_candidate_version] if args.python_candidate else None
+        ),
         "formal_eligible": False,
         "complete": False,
         "passed": False,
@@ -200,6 +228,8 @@ def worker(args):
             raise ValueError("Counterfactual precision probes are CPU-only")
         if args.python_candidate and (args.engine != "cpu_torch" or args.torch_policy):
             raise ValueError("Separate Python candidate cannot change another engine/probe")
+        if not args.python_candidate and args.python_candidate_version != 1:
+            raise ValueError("A candidate version requires the separate Python candidate")
         if args.metal_shaders:
             if args.engine != "metal" or digest(args.metal_shaders) != args.metal_shaders_sha256:
                 raise ValueError("Alternate Metal source requires an explicit external binding")
@@ -350,6 +380,7 @@ def worker(args):
                         gradients=args.gradients,
                         policy=args.torch_policy,
                         candidate=args.python_candidate,
+                        candidate_version=args.python_candidate_version,
                     )
 
                 actual, repeat = evaluate(), evaluate()
@@ -490,6 +521,7 @@ def main():
     run.add_argument("--gradients", action="store_true")
     run.add_argument("--torch-policy", type=int, choices=range(8), default=0)
     run.add_argument("--python-candidate", action="store_true")
+    run.add_argument("--python-candidate-version", type=int, choices=(1, 2), default=1)
     run.add_argument("--metal-shaders")
     run.add_argument("--metal-shaders-sha256")
     run.add_argument("--case-limit", type=int)

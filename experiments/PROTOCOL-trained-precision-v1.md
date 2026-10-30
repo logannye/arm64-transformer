@@ -149,3 +149,14 @@ with a fixed development-only upstream derivative from `[20261103, width, 91]`.
 Both forward and ordinary framework autograd are compared with independent
 NumPy/PyTorch FP64 equations and repeated exactly. A passing diagnostic does not
 qualify a full-source framework repair or establish its performance.
+
+The complete v1 Python gradient replay, unlike its initial two-case screen,
+exposed two failing position-embedding gradient coordinates in
+`w1024-37621e9d745f8bd4-test-221`. Retain that candidate and its failure. Before
+further execution, declare `python-fp32-saved-ln1-qkv-attention-v2`, which adds
+first-LayerNorm FP64 intermediate arithmetic in both directions. It saves only
+FP32 normalized values, inverse standard deviations and weights. All other v1
+operations and every tolerance remain fixed. Screen primitive saved-state and
+gradient behavior, then the entire original regression inventory and the same
+fresh training/synthetic development inventory. Neither candidate is ordinary
+PyTorch or an automatically admitted replacement for a historical study arm.
