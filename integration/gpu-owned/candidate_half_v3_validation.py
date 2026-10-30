@@ -133,9 +133,33 @@ def binding(path):
     path = no_symlink(path)
     require(path.is_absolute() and path.is_file(), "Require an absolute regular input")
     require(path.resolve(strict=True) == path, "Noncanonical input path")
-    before = path.stat()
-    result = {"path": str(path), "sha256": digest(path), "bytes": before.st_size}
-    require(stable_stat(before) == stable_stat(path.stat()), "Input changed while hashing")
+    initial = path.stat()
+    require(stat.S_ISREG(initial.st_mode), "Nonregular input")
+    with path.open("rb", buffering=0) as stream:
+        if initial.st_size:
+            stream.read(1)
+            stream.seek(0)
+        before = os.fstat(stream.fileno())
+        require(
+            all(
+                getattr(initial, key) == getattr(before, key)
+                for key in ("st_dev", "st_ino", "st_size", "st_mode", "st_nlink")
+            ),
+            "Input identity changed while opening",
+        )
+        result = {
+            "path": str(path),
+            "sha256": (
+                hashlib.file_digest(stream, "sha256") if before.st_size else hashlib.sha256(b"")
+            ).hexdigest(),
+            "bytes": before.st_size,
+        }
+        after = os.fstat(stream.fileno())
+    no_symlink(path)
+    require(
+        stable_stat(before) == stable_stat(after) == stable_stat(path.stat()),
+        "Input changed while hashing: " + str(path),
+    )
     return result
 
 
@@ -1016,6 +1040,41 @@ def authenticate_plan(path, external_sha):
     return plan, reference
 
 
+def rebind_plan(path, external_sha, output):
+    """Reuse prepared bytes under this verifier, with complete fresh authentication.
+
+    The old plan and driver remain bound inputs, but their former qualification
+    is not reused. The complete artifact, dependencies, source/runtime trees,
+    inventory and execution controls must pass this verifier before publication.
+    """
+    original = pinned(path, external_sha)
+    previous = json_read(path)
+    require(
+        previous.get("schema") == SCHEMA and previous.get("protocol") == PROTOCOL,
+        "Wrong candidate plan for rebinding",
+    )
+    check_binding(previous["driver"])
+    output_path(Path(previous["workspace"]), output)
+    plan = dict(previous)
+    plan["driver"] = binding(Path(__file__).resolve())
+    plan["inputs"] = [*previous["inputs"], original, previous["driver"]]
+    plan["verifier_rebinding"] = {
+        "original_plan": original,
+        "original_driver": previous["driver"],
+        "new_driver": plan["driver"],
+        "qualification_transferred": False,
+    }
+    output.mkdir(parents=True, exist_ok=False)
+    pending = output / "plan.pending.json"
+    write(pending, plan, new=True)
+    authenticated, _ = authenticate_plan(pending, digest(pending))
+    require(authenticated == plan, "Rebound plan changed during authentication")
+    check_binding(original)
+    final = output / "plan.json"
+    pending.rename(final)
+    return binding(final)
+
+
 def controlled_environment(environment):
     require(
         "PYTORCH_OPINFO_SAMPLE_INPUT_INDEX" not in environment,
@@ -1407,6 +1466,10 @@ def main():
     prepare_parser.add_argument("--receipt-sha256", required=True)
     prepare_parser.add_argument("--hosted-head", required=True)
     prepare_parser.add_argument("--expansion-reserve-gib", type=int, choices=(10, 16), default=16)
+    rebound = sub.add_parser("rebind-plan")
+    rebound.add_argument("--plan", type=Path, required=True)
+    rebound.add_argument("--plan-sha256", required=True)
+    rebound.add_argument("--output", type=Path, required=True)
     for name in ("run", "worker"):
         command = sub.add_parser(name)
         command.add_argument("--plan", type=Path, required=True)
@@ -1417,6 +1480,10 @@ def main():
         else:
             command.add_argument("--timeout-seconds", type=int, default=1800)
     args = parser.parse_args()
+    if args.command == "rebind-plan":
+        result = rebind_plan(args.plan.absolute(), args.plan_sha256, args.output.absolute())
+        print(json.dumps(result, indent=2))
+        return 0
     if args.command == "prepare":
         result = prepare(
             args.workspace.resolve(strict=True),

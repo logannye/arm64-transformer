@@ -41,7 +41,7 @@ runtime capture with `capture_runtime.py --half-v3-plan ...
 archive audit remain mandatory. These adapters are implemented; no full-suite
 execution is asserted. The old 10,353-method owned-suite contract is unchanged.
 
-The 36 standard-library checks exercise stale selection, missing/changed native
+The 42 standard-library checks exercise stale selection, missing/changed native
 evidence, both compile databases, Half coverage and payload corruption, exact
 dependency payloads, source/archive traversal and retained failure handling. They
 do not import a numerical framework or execute a compiler.
@@ -76,6 +76,15 @@ is weakened. The failed attempts remain retained.
 An empty descriptor is checked for stable zero length and assigned SHA256 of
 the empty byte sequence without a content read. This avoids waiting for cloud
 hydration of a file with no bytes; nonempty files retain the complete read/hash.
+
+The candidate artifact verifier uses the same descriptor-stability approach.
+Its explicit `rebind-plan --plan OLD_PLAN --plan-sha256 OLD_SHA --output NEW_DIR`
+route reuses an expanded pair under a new verifier snapshot. It retains the old
+plan and driver as bound inputs and changes no runtime, source tree, test
+inventory or execution controls. The entire artifact, dependency installation,
+source/runtime trees and plan must authenticate again before `plan.json` is
+published. A failed attempt retains only its pending plan. No previous device
+qualification transfers, and neither source tree is duplicated or rebuilt.
 
 ```sh
 python3 -I -B -m unittest discover \

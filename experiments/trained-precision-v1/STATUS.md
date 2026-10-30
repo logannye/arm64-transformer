@@ -221,7 +221,7 @@ its width-1024 audit confirms one numerical failure. All six collection audits
 are complete and evidence-valid; numerical success remains separate.
 
 The separate [v3 framework artifact adapter](../../integration/gpu-owned/CANDIDATE-HALF-V3-VALIDATION.md)
-has 36 standard-library checks. It verifies the new build's actual early/final
+has 42 standard-library checks. It verifies the new build's actual early/final
 compiler commands and retained Half differential bytes before preparing the
 34-method focused device replay. This adapter does not promote the old runtime's
 evidence or qualify the new runtime's device behavior. Explicit candidate runtime capture
@@ -232,6 +232,12 @@ metadata allowance, with checks during and after expansion; the default remains
 16 GiB. Full-suite output (2 GiB), fixture cache (1 GiB) and the 5 GiB operating
 floor remain unchanged. Their new runtime
 and actual suite execution remain pending.
+
+The candidate verifier now also hashes stable readable descriptors. Its explicit
+plan-rebinding command preserves the original plan and verifier, reauthenticates
+every source/runtime/dependency and artifact input, and publishes a final plan
+only after all checks pass. This lets the corrected verifier reuse the existing
+expanded pair without another build, duplicate expansion or qualification transfer.
 
 The policy-15 development trajectory and saved-Adam continuation route has 16
 focused checks. The updated inventory reader also reconstructs the retained v1

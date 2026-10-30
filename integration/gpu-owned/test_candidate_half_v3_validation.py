@@ -76,6 +76,97 @@ class TransportTests(unittest.TestCase):
                 )
                 self.assertEqual(proof["files"], 1)
 
+    def test_empty_placeholder_binding_requires_no_content_read(self):
+        path = self.root / "empty"
+        path.write_bytes(b"")
+        with mock.patch.object(candidate.hashlib, "file_digest", side_effect=AssertionError):
+            self.assertEqual(candidate.binding(path)["sha256"], sha(b""))
+
+    def test_binding_rejects_same_bytes_replacement_during_hash(self):
+        path = self.root / "input"
+        path.write_bytes(b"same")
+        original = candidate.hashlib.file_digest
+
+        def replace(stream, algorithm):
+            result = original(stream, algorithm)
+            other = self.root / "other"
+            other.write_bytes(b"same")
+            other.replace(path)
+            return result
+
+        with mock.patch.object(candidate.hashlib, "file_digest", side_effect=replace):
+            with self.assertRaisesRegex(ValueError, "changed while hashing"):
+                candidate.binding(path)
+
+    def test_binding_rejects_metadata_change_during_hash(self):
+        path = self.root / "input"
+        path.write_bytes(b"same")
+        original = candidate.hashlib.file_digest
+
+        def touch(stream, algorithm):
+            result = original(stream, algorithm)
+            info = path.stat()
+            candidate.os.utime(path, ns=(info.st_atime_ns, info.st_mtime_ns + 1000000000))
+            return result
+
+        with mock.patch.object(candidate.hashlib, "file_digest", side_effect=touch):
+            with self.assertRaisesRegex(ValueError, "changed while hashing"):
+                candidate.binding(path)
+
+    def previous_plan(self):
+        driver = self.root / "old-verifier.py"
+        driver.write_text("retained verifier")
+        plan = self.root / "previous.json"
+        value = dict(
+            schema=candidate.SCHEMA,
+            protocol=candidate.PROTOCOL,
+            workspace=str(self.root),
+            driver=candidate.binding(driver),
+            inputs=[],
+            source="unchanged source",
+            runtime="unchanged runtime",
+            formal_eligible=False,
+        )
+        candidate.write(plan, value)
+        return plan, value, self.root / "work/gpu-v4-owned/rebound"
+
+    def test_rebinding_preserves_original_plan_and_reauthenticates_everything(self):
+        path, previous, output = self.previous_plan()
+        original_bytes = path.read_bytes()
+
+        def authenticate(pending, expected):
+            candidate.pinned(pending, expected)
+            value = candidate.json_read(pending)
+            self.assertEqual(value["source"], previous["source"])
+            self.assertEqual(value["runtime"], previous["runtime"])
+            self.assertIn(candidate.binding(path), value["inputs"])
+            self.assertIn(previous["driver"], value["inputs"])
+            self.assertFalse(value["verifier_rebinding"]["qualification_transferred"])
+            return value, None
+
+        with mock.patch.object(candidate, "authenticate_plan", side_effect=authenticate) as check:
+            result = candidate.rebind_plan(path, sha(original_bytes), output)
+        check.assert_called_once()
+        self.assertEqual(path.read_bytes(), original_bytes)
+        self.assertEqual(result, candidate.binding(output / "plan.json"))
+        self.assertFalse((output / "plan.pending.json").exists())
+
+    def test_failed_rebinding_never_publishes_a_final_plan(self):
+        path, _, output = self.previous_plan()
+        with mock.patch.object(candidate, "authenticate_plan", side_effect=ValueError("stale")):
+            with self.assertRaisesRegex(ValueError, "stale"):
+                candidate.rebind_plan(path, candidate.digest(path), output)
+        self.assertFalse((output / "plan.json").exists())
+        self.assertTrue((output / "plan.pending.json").is_file())
+
+    def test_rebinding_rejects_changed_original_before_claiming_output(self):
+        path, _, output = self.previous_plan()
+        expected = candidate.digest(path)
+        path.write_text(path.read_text() + " ")
+        with self.assertRaises(ValueError):
+            candidate.rebind_plan(path, expected, output)
+        self.assertFalse(output.exists())
+
     def test_duplicate_missing_extra_and_changed_members_rejected(self):
         changes = [
             dict(extra=[("source/test.py", b"original source\n")]),
