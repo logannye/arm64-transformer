@@ -168,12 +168,15 @@ The comparison will name the patched baselines explicitly. Accuracy, exact
 training repeatability, the matched workload and the full checkpoint audit
 remain required.
 
-The first combined-runtime model check passes at all six widths: 36 fresh
-processes reproduce initial logits, loss and every gradient within the frozen
-FP64 limits, and replay six training updates and checkpoint reloads exactly.
-An independent audit verifies all 216 saved array archives. These are short
-**B3/T3 development checks**, not timing results or full-workload qualification.
-See the [model report](experiments/gpu-v4-owned/model-report-v2/README.md).
+The maintained frameworks now pass synthetic checks at the intended **B1/T32
+and B16/T32 shapes**, across all six widths. Seventy-two workers pass initial
+logit, loss and every-gradient FP64 checks; 36 fresh-process pairs reproduce
+six training updates and checkpoint reloads exactly. An independent audit
+verifies all **504 saved array archives**. These checks establish initial-state
+accuracy and short-run replay, with no timing or trained-state FP64 claim.
+See the [full-context report](experiments/gpu-v4-owned/full-shape-report-v1/README.md).
+
+![Initial numerical accuracy at both study shapes](experiments/gpu-v4-owned/full-shape-report-v1/initial-fp64-errors.png)
 
 We also isolated two broader MPS problems. Strided matrix outputs can overwrite
 guards; a contiguous GPU temporary restores correct values and intact guards.

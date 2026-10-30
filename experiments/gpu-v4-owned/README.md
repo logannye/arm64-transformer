@@ -32,6 +32,16 @@ old receipts cannot be reused as admission passes.
 
 ## What the independent development checks found
 
+The [full-context development check](full-shape-report-v1/README.md) passes for
+maintained PyTorch CPU, PyTorch MPS and compiled MLX at B1/T32 and B16/T32 across
+all six widths. All 72 workers pass; all 36 fresh-process pairs reproduce
+initial outputs and six-update trajectories exactly. The independent audit
+checks all 504 saved array archives, including raw checkpoint states and logits
+at steps 3 and 6. Initial logits, loss and every parameter gradient satisfy the
+frozen FP64 tolerances. These synthetic checks cover the study's tensor shapes,
+but do not evaluate corpus fits, timing, trained-state FP64 accuracy, native CPU
+or custom Metal. The broader integration and admission gates remain required.
+
 The [model-v2 development check](model-report-v2/README.md) now passes for
 maintained PyTorch CPU, PyTorch MPS and compiled MLX at all six widths. Its 36
 workers cover two fresh processes per path/width, ten initial evaluations and
@@ -117,7 +127,7 @@ for this new route. This contract does not remove tests or reclassify those
 failures to permit measurement. We can investigate and repair them ourselves.
 
 An independently executable study still needs full-workload baseline and CPU
-checks beyond the completed B3/T3 development probe, dedicated admission
+checks beyond the completed short synthetic development probes, dedicated admission
 identities, the complete passing
 admission inventory, and finally all 180 fits and checkpoint audits. Existing
 planning or preflight output is not an executable manifest or a passing admission
