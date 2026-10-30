@@ -261,6 +261,11 @@ def audit_worker(output, receipt_sha, plan_path, plan_sha, evidence_root, raw_st
                 and proof["python_trace_count"] == 1,
                 "Wrong compilation trace",
             )
+            if "executions" in proof:
+                require(
+                    proof["executions"] == 2 * len(result["cases"]),
+                    "Compiled execution count differs",
+                )
             require(
                 set(proof["graphs"])
                 == ({"logits", "gradient"} if result["gradients_checked"] else {"logits"}),

@@ -17,7 +17,7 @@ They retain the original numerical tolerances.
 |---|---|---|
 | Native first-LayerNorm FP64 arithmetic, policy 1 | 89/89 anchors pass | Width 512: 9/10 pass; width 1024: 10/10 pass |
 | Python FP32-saved first-LayerNorm/QKV/attention refinement, v2 | 89/89 anchors pass | 20/20 batches pass |
-| Handwritten reference Metal normalization refinement, policy 1 | 89/89 anchors pass | Width 512: 10/10 pass; width 1024 follow-up pending independent audit |
+| Handwritten reference Metal normalization refinement, policy 1 | 89/89 anchors pass | 20/20 batches pass |
 
 The Python refinement is an explicit custom model using PyTorch operations, not
 ordinary PyTorch and not yet a selected maintained-framework arm. Its CPU evidence
@@ -38,9 +38,14 @@ Ordinary maintained MPS and MLX still fail the historical width-1024 forward
 inventory: 60/71 and 56/71 distinct batches, respectively. Passing short runtime
 replays or fresh development states does not erase those failures. Same-QKV
 compensated FP32 attention diagnostics pass forward and backward on their three
-localized MPS/MLX cases. The complete-model four-policy factorial, including both
-compiled and uncompiled MLX execution, is the next diagnostic, not a framework
-source repair or a performance claim.
+localized MPS/MLX cases. Full-model compensated-attention policies 2 and 3 pass
+both operations on those three cases, including compiled MLX with graph/trace
+proof. Ordinary MLX width-1024 inference fails while its gradient graph passes;
+operation-matched ordinary controls reproduce exactly. The 28 operation-specific
+factorial receipts and four new native screens have independent raw audits in
+`work/trained-followup-audit-v3`. Full-inventory candidate replay is in progress;
+these localized passes do not qualify a framework source repair or performance
+comparison.
 
 The first Python candidate (v1) passed historical logits but failed two gradient
 coordinates on one width-1024 batch. V2 adds first-LayerNorm precision and passes
@@ -54,8 +59,12 @@ accumulation, retains the 469-coordinate failure. The branch-localization
 diagnostic identifies one ReLU sign disagreement: FP64 -1.65e-8 versus native
 policy 3 +7.15e-8. Holding the FP64 forward fixed and substituting only the native
 backward gate removes every gradient mismatch. The policy-3 prefix first changes
-that gate at the second LayerNorm. A new, prospectively declared policy bit 4
-refines the second normalization; policies 4–7 await hosted build and validation.
+that gate at the second LayerNorm. The prospectively declared bit 4
+refines the second normalization; policies 4–7 build successfully but all retain
+the same gradient failure. Policy 7 improves the preactivation to +1.19e-8.
+Its input through the second LayerNorm now gives the correct gate when the first
+feed-forward dot product is recomputed in FP64. This isolates the remaining sign
+error to that projection; it does not justify changing ReLU or its tolerance.
 
 The fresh states come from the declared 64-update training-only trajectory at
 steps 0, 1, 8, 32 and 64, with one training-derived and one synthetic B16 probe per
@@ -67,11 +76,17 @@ or a replacement for the formal training budget.
 
 All native and framework compilation is hosted. Native candidate builds pass their
 primitive checks. Policy 1 has passed complete hosted model and executable checks;
-new hosted checks cover both policies 1 and 3, with explicit four-versus-five
-ordinary dense-kernel accounting and a development-only validation contract.
+hosted policies 1, 3 and 7 have passed full checks at both widths. Policy 7
+passes 1,153 tests plus 190 subtests (14 skips), with 1,979 runtime checks each
+under auto and forced NEON. Explicit policy-dependent dense-kernel accounting
+uses a development-only validation contract.
 Historical validators keep their original contract.
 
-The full-source PyTorch FP16/layout repair build is still in progress. That build
+The full-source PyTorch FP16/layout v2 build completed compilation, but failed
+its check because four Objective-C++ commands omit explicit `-g0` despite the
+CMake cache containing it. The failure is retained in run 41110294834. Recipe v3
+passes CMake flag variables explicitly and checks generated commands early;
+its hosted validation remains pending. That build
 addresses retained integration failures, not the MPS trained-attention arithmetic
 failures. Full framework conformance, archive-safe MPS evidence validation, new
 runtime capture and a prospectively frozen successor comparison contract remain

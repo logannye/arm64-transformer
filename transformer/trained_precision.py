@@ -113,6 +113,9 @@ def source_inventory():
         ROOT / "integration/trained-precision/precision_reference.py",
         ROOT / "integration/trained-precision/precision_reference_v2.py",
         ROOT / "integration/trained-precision/zip_evidence.py",
+        ROOT / "integration/trained-precision/framework_candidate.py",
+        ROOT / "integration/trained-precision/framework_reference.py",
+        ROOT / "integration/trained-precision/compensated_attention.py",
     ]
     return {str(p.relative_to(ROOT)): digest(p) for p in sorted(paths)}
 
@@ -260,6 +263,19 @@ def worker(args):
             raise ValueError("Separate Python candidate cannot change another engine/probe")
         if not args.python_candidate and args.python_candidate_version != 1:
             raise ValueError("A candidate version requires the separate Python candidate")
+        if args.framework_policy is not None:
+            if args.engine not in ("mps", "mlx") or args.python_candidate or args.torch_policy:
+                raise ValueError("Framework diagnostic requires an explicit GPU candidate arm")
+            if args.framework_compiled and args.engine != "mlx":
+                raise ValueError("Only MLX compilation is supported")
+            receipt.update(
+                framework_candidate="compensated-framework-model-diagnostic-v1",
+                framework_candidate_policy=args.framework_policy,
+                framework_compiled=args.framework_compiled,
+                framework_operation="gradient" if args.gradients else "forward",
+            )
+        elif args.framework_compiled:
+            raise ValueError("Compilation requires the explicit framework candidate")
         if args.metal_shaders:
             if args.engine != "metal" or digest(args.metal_shaders) != args.metal_shaders_sha256:
                 raise ValueError("Alternate Metal source requires an explicit external binding")
@@ -341,6 +357,17 @@ def worker(args):
         receipt["inventory_sha256"] = args.inventory_sha256
         receipt["expected_cases"] = [c["id"] for c in cases]
         receipt["full_width_inventory"] = args.case_limit is None and args.case_offset == 0
+        evaluator = None
+        if args.framework_policy is not None:
+            module = load_module(
+                "framework_candidate", ROOT / "integration/trained-precision/framework_candidate.py"
+            )
+            evaluator = module.Evaluator(
+                args.engine,
+                args.framework_policy,
+                gradients=args.gradients,
+                compiled=args.framework_compiled,
+            )
         raw_total = 0
         for case in cases:
             checkpoint = checked_file(root, case["checkpoint"], case["checkpoint_sha256"])
@@ -363,7 +390,7 @@ def worker(args):
             )
             backend = None
             try:
-                if args.engine in ("metal", "mlx"):
+                if evaluator is None and args.engine in ("metal", "mlx"):
                     import importlib
 
                     module = importlib.import_module("transformer.gpu_" + args.engine)
@@ -389,6 +416,8 @@ def worker(args):
                     device_batch = backend.upload_inputs(tokens, targets)
 
                 def evaluate():
+                    if evaluator is not None:
+                        return evaluator.evaluate(flat, tokens, targets)
                     if native is not None:
                         return native_evaluate(native, flat, tokens, targets, args.gradients)
                     if backend is not None:
@@ -478,6 +507,29 @@ def worker(args):
                 ),
                 flush=True,
             )
+        if evaluator is not None and args.framework_compiled:
+            proof = evaluator.proof
+            receipt["compilation_configuration"] = proof["compilation_configuration"]
+            graphs = {}
+            for name, data in proof["graphs"].items():
+                path = output / (name + ".dot")
+                if len(data.encode()) > 8 * 1024**2:
+                    raise ValueError("Model graph exceeds 8 MiB")
+                with path.open("x") as stream:
+                    stream.write(data)
+                graphs[name] = dict(
+                    path=path.name,
+                    sha256=digest(path),
+                    bytes=path.stat().st_size,
+                    compiled_primitive_present="Compiled" in data,
+                )
+            receipt["model_compilation"] = dict(
+                graphs=graphs,
+                python_trace_count=proof["python_trace_count"],
+                executions=proof["executions"],
+            )
+            if proof["executions"] != 2 * len(cases):
+                raise ValueError("Compiled execution count differs")
         if before != source_inventory():
             raise ValueError("Source changed during execution")
         if digest(args.inventory) != args.inventory_sha256:
@@ -550,6 +602,8 @@ def main():
     run.add_argument("--torch-policy", type=int, choices=range(8), default=0)
     run.add_argument("--python-candidate", action="store_true")
     run.add_argument("--python-candidate-version", type=int, choices=(1, 2), default=1)
+    run.add_argument("--framework-policy", type=int, choices=(2, 3))
+    run.add_argument("--framework-compiled", action="store_true")
     run.add_argument("--metal-shaders")
     run.add_argument("--metal-shaders-sha256")
     run.add_argument("--case-limit", type=int)

@@ -37,6 +37,10 @@ optimized shaders. `localize_gpu.py` separates same-input local operation errors
 from propagated prefix errors. `compensated_probe.py` tests attention in isolation;
 `framework_probe.py` tests the complete model under a four-way normalization and
 attention factorial, including separate compiled and uncompiled MLX controls.
+`--framework-policy 2|3` extends these candidates to whole replay inventories;
+`--framework-compiled` explicitly selects compiled MLX. The reusable evaluator
+takes new parameters and batches on every call and retains its graph/trace and
+execution-count proof. Forward and gradient receipts remain separate.
 These probes are diagnostic Python model expressions, not full-source framework
 repairs or admitted comparison arms.
 

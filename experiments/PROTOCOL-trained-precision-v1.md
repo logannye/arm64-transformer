@@ -205,3 +205,15 @@ compiled-graph proof and one-Python-trace replay check. Policy 0 additionally
 records raw ordinary-backend outputs for the matching operation, using the
 gradient graph's own logits for the gradient control. The independent auditor
 recomputes control equality. Passing one operation never qualifies the other.
+
+After the operation-specific four-policy controls, extend the compensated
+framework candidates (policies 2 and 3) to the complete exposed 89-case inventory
+and the existing 20-case fresh inventory. Keep inference and gradient executions
+separate. Use a reusable fixed-width evaluator with parameters, tokens and targets
+passed explicitly on every execution; no captured checkpoint is allowed. MLX
+uses the already verified compiled mode and must retain one Python trace across
+all changed inputs and exact repeats, with an execution count and graph proof.
+This remains a named diagnostic model candidate using ordinary FP32 framework
+operations, not an ordinary-framework or full-source repair claim. Begin with
+complete forward replay before allocating the larger gradient evidence; retain
+all failures and do not promote a candidate based only on the localized cases.
