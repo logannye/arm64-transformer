@@ -1,6 +1,6 @@
 {
   "schema": "trained-precision-development-evidence-index-v1",
-  "created_utc": "2026-10-30T21:47:23.695701+00:00",
+  "created_utc": "2026-10-30T22:05:08.369475+00:00",
   "scope": "Development regression/fresh-state evidence; no formal qualification or timing",
   "local_hardware": "Apple M4 Max, native automatic dispatch selected SME with 64-byte streaming vectors",
   "formal_eligible": false,
@@ -705,6 +705,122 @@
         {
           "path": "work/precision-phase4/mlx-1024-policy7-screen-forward/result.json",
           "sha256": "7e1c8e6ad1511e452a501b88316d771bfd1cf9ee776ceba3b1f1889e96bcc00d"
+        }
+      ]
+    },
+    {
+      "name": "mps-512-policy7-historical-gradient",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 2,
+      "unique_batches": 2,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase6/mps-512-policy7-historical-gradient-audit.json",
+        "sha256": "bf2ac638f31d6f8115816df45cf42f2456f1731acdbe5d945405572f291faefe",
+        "bytes": 32291
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mps",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "implementation": {
+        "engine": "mps",
+        "width": 512,
+        "batch_size": 16,
+        "gradients_checked": true,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v2",
+        "framework_candidate_policy": 7,
+        "framework_compiled": false,
+        "framework_operation": "gradient"
+      },
+      "source_inventory_sha256": "5c4524d8656c0dbc3cd6d4e47f28511b0621ab1ead9118251374314d5a5fd7eb",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase6/mps-512-policy7-historical-gradient-000/result.json",
+          "sha256": "ef4b19b8d0d992953ddb768c4ae53c90d9dbaaf887e800e7eee0f39af3b1042b"
+        }
+      ]
+    },
+    {
+      "name": "native-1024-policy15-historical-gradient",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 87,
+      "unique_batches": 71,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase6/native-1024-policy15-historical-gradient-audit.json",
+        "sha256": "fb40add286b836887b3edfc6b70a6c3fcb879c0087cb82dcfb07817ac2396b3f",
+        "bytes": 597306
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "native",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "implementation": {
+        "engine": "native",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": true,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": "90bc2f74fdaddd5e19a1185b57b10c39810f7bac6b2c636fa0ef31e29ada9eff",
+        "native_policy": 15,
+        "native_selected_kind": 1,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null
+      },
+      "source_inventory_sha256": "5c4524d8656c0dbc3cd6d4e47f28511b0621ab1ead9118251374314d5a5fd7eb",
+      "runtime": {
+        "numpy": "2.5.2",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.14.1"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase6/native-1024-policy15-historical-gradient-000/result.json",
+          "sha256": "bfb845c28718f74f0b7d4ea35804ecef9f0186bb691403969745e41a4702e9a6"
+        },
+        {
+          "path": "work/precision-phase6/native-1024-policy15-historical-gradient-016/result.json",
+          "sha256": "4bbc4d431c9c2bfb66f20c4dc586bcd4b7463ac682400e4864ea16d0b72c19b0"
+        },
+        {
+          "path": "work/precision-phase6/native-1024-policy15-historical-gradient-032/result.json",
+          "sha256": "676b8b1849928c4f8a3d7bab3d3a664ca5544c8bd3a4bebce652f4b5edf37b17"
+        },
+        {
+          "path": "work/precision-phase6/native-1024-policy15-historical-gradient-048/result.json",
+          "sha256": "077c038c2ba21b29a487bb96a4e54a8a4e9a326367248d58ccd71a45ffa7f170"
+        },
+        {
+          "path": "work/precision-phase6/native-1024-policy15-historical-gradient-064/result.json",
+          "sha256": "b60f313704f489f8892ca0d96d414d3b75624e88b50580226075e259cc1224b1"
+        },
+        {
+          "path": "work/precision-phase6/native-1024-policy15-historical-gradient-080/result.json",
+          "sha256": "54f76ede9a9415ea2932114d722ff61541b4a1045749c12a556b4f5011179417"
         }
       ]
     },
@@ -1512,7 +1628,8 @@
   ],
   "resource_stops": [],
   "remaining": [
-    "Complete historical gradients for native policy 15 on M4/SME and the MPS/MLX custom policy-7 models",
+    "Complete historical gradients for the MPS/MLX custom policy-7 models",
+    "Policy-15 training, saved-Adam continuation and all-five common-state replay",
     "Successful complete maintained-framework build, new runtime capture and full conformance suites",
     "Prospective successor suite/model/comparison contracts; no historical result relabeling",
     "All-engine checkpoint admission and formal performance study after correctness/eligibility gates pass"

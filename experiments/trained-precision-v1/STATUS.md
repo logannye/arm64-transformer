@@ -15,6 +15,7 @@ They retain the original numerical tolerances.
 
 | Development implementation | Historical B16 logits/loss/all gradients | Fresh development B16 checks |
 |---|---|---|
+| Native policy 15, both normalizations and QKV/FF1 FP64 arithmetic, M4/SME | 89/89 anchors pass | 20/20 batches pass |
 | Native first-LayerNorm FP64 arithmetic, policy 1 | 89/89 anchors pass | Width 512: 9/10 pass; width 1024: 10/10 pass |
 | Python FP32-saved first-LayerNorm/QKV/attention refinement, v2 | 89/89 anchors pass | 20/20 batches pass |
 | Handwritten reference Metal normalization refinement, policy 1 | 89/89 anchors pass | 20/20 batches pass |
@@ -33,12 +34,14 @@ the source repository; the source includes the inventory, producers, independent
 raw auditor and collection auditor needed to reproduce their checks.
 
 Native policy 15 additionally refines QKV, second LayerNorm and the first
-feed-forward projection. On the M4, it passes all 89 historical B16 forward
-anchors and all 20 fresh logits/loss/gradient batches. The MPS and compiled-MLX
+feed-forward projection. On the M4, it passes all 89 historical B16 logits/loss/
+gradient anchors and all 20 fresh logits/loss/gradient batches. The complete
+historical raw audits are in `work/precision-phase6`; automatic dispatch selected
+SME with 64-byte streaming vectors. The MPS and compiled-MLX
 custom policy-7 models, which refine first LayerNorm, QKV and attention, each pass
 all 89 historical forward anchors and all 20 fresh forward batches. These complete
 collections have independent raw audits in `work/precision-phase5/prior-*-audit.json`.
-Full historical gradients on the M4 are still required for the new candidates.
+Full historical gradients are still required for the two GPU candidates.
 MPS and compiled MLX each also pass all seven gradient-screen anchors and all 20
 fresh logits/loss/gradient batches, with independent raw audits. The screen is
 the two width-512 anchors plus the five remaining width-1024 QKV-localization
@@ -112,6 +115,13 @@ replays the complete historical native gradients from existing public tensors;
 both widths passed their complete independent raw audits (89 anchors, 73 distinct
 batches, including every gradient). Its M1/NEON platform
 cannot qualify the M4/SME path or support new performance claims.
+The separate M4/SME replay now passes the same complete denominator. Its width-512
+and width-1024 audit hashes are respectively
+`f64a61b29e5b8ffea2e970017063a48776eb56a4743278f83e98efc7dd37e5a7` and
+`fb40add286b836887b3edfc6b70a6c3fcb879c0087cb82dcfb07817ac2396b3f`.
+Hosted raw artifacts expire November 6; local M4 raw evidence remains in the
+lossless store. The hosted raw payload has not been independently downloaded
+and re-audited locally.
 
 The full-source PyTorch FP16/layout v2 build completed compilation, but failed
 its check because four Objective-C++ commands omit explicit `-g0` despite the
@@ -147,7 +157,8 @@ policy 7 resumed in a frozen serial plan in `work/precision-phase6`. Each engine
 has one two-case width-512 worker and six width-1024 shards covering all 87
 anchors. A collection audit follows each complete engine/width group. The plan
 requires 25 GiB initially and stops at a 5 GiB operating reserve. Results remain
-pending until the complete collections have been independently audited.
+pending until each complete collection has been independently audited. Both
+native width collections are complete and pass; the GPU collections are running.
 
 The separate [v3 framework artifact adapter](../../integration/gpu-owned/CANDIDATE-HALF-V3-VALIDATION.md)
 has 30 standard-library checks. It verifies the new build's actual early/final
@@ -157,3 +168,11 @@ build nor promotes the old runtime's evidence. Explicit candidate runtime captur
 and the separately pinned 10,357-test full-suite route are implemented with the
 same conformance-fixture and portable-evidence requirements. Their new runtime
 and actual suite execution remain pending.
+
+The policy-15 development trajectory and saved-Adam continuation route has 16
+focused checks. The updated inventory reader also reconstructs the retained v1
+20-case inventory exactly from its original receipts and files. A separate frozen
+plan in `work/precision-phase7` waits for all six phase-6 collection audits to pass
+before starting two 64-update policy-15 processes per width, a third-process
+step-32 continuation, and all-five-engine replay of the resulting 20 common-state
+probes. Actual trajectory, continuation and replay results remain pending.

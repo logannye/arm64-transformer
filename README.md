@@ -156,8 +156,11 @@ Widths 512 and 1024 favor PyTorch on time and are not fully numerically qualifie
 the retained audit finds native failures at width 1024 and PyTorch failures at
 both widths. Those historical runs remain unqualified. The current
 [trained-state repair work](experiments/trained-precision-v1/STATUS.md) has passing
-development candidates for the complete exposed regression inventory, while a
-fresh native gradient failure and framework qualification remain blocking. The
+development candidates for all 89 exposed forward anchors and all 20 fresh
+logit/loss/gradient batches. The stronger native candidate also passes all 89
+historical gradient anchors on both M4/SME and hosted M1/NEON, with independent
+raw-array audits. Complete GPU historical gradient replay and framework
+qualification remain in progress. The
 [CPU report](experiments/width-sweep-v6/README.md) retains learning curves,
 quality, memory and prediction-level errors. Historical CPU measurements are
 separate from the new GPU development experiments.
