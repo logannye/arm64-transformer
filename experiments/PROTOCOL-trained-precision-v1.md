@@ -290,3 +290,22 @@ policy 15 at the two larger widths, with auto/forced-NEON and supported-SME
 dispatch checks. This prepares explicit candidate artifacts; it does not change
 default arithmetic, select a formal arm, open admission or transfer evidence
 between binaries unless their bytes and relevant source inputs are identical.
+
+The complete compiled-MLX policy-7 gradient replay exposes a failure at
+`w1024-37621e9d745f8bd4-validation-39`: 12 FF1 weight-gradient coordinates fail
+while logits and loss pass. Finish and audit the declared historical inventory.
+Before another arithmetic candidate, run `framework_relu_localize.py` on retained
+failures. Reproduce the original compiled logits, loss and complete gradient
+bytes, then obtain a separately compiled auxiliary trace. Use that trace to
+explain the original failure only if it preserves all three original outputs
+exactly and repeats exactly. Extra graph outputs can change compiler behavior;
+an instrumentation-induced change is evidence, not permission to infer the
+original branch from a different execution.
+
+For an unchanged trace, compare ReLU signs and successive FP64 suffixes from the
+observed prefixes. Keep the FP64 forward fixed and substitute only the observed
+MLX gate in its explicit backward counterfactual, retaining every gradient.
+Check the actual MLX maximum derivative at negative, zero and positive inputs.
+This diagnostic does not change ReLU, widen tolerances, select a new policy or
+qualify an implementation. The queued fresh-state plans must retain their
+declared prerequisites and stop if any required collection fails.

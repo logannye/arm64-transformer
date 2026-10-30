@@ -19,6 +19,7 @@ They retain the original numerical tolerances.
 | Native first-LayerNorm FP64 arithmetic, policy 1 | 89/89 anchors pass | Width 512: 9/10 pass; width 1024: 10/10 pass |
 | Python FP32-saved first-LayerNorm/QKV/attention refinement, v2 | 89/89 anchors pass | 20/20 batches pass |
 | Handwritten reference Metal normalization refinement, policy 1 | 89/89 anchors pass | 20/20 batches pass |
+| Custom MPS first-LayerNorm/QKV/attention refinement, policy 7 | 89/89 anchors pass | 20/20 batches pass |
 
 The Python refinement is an explicit custom model using PyTorch operations, not
 ordinary PyTorch and not yet a selected maintained-framework arm. Its CPU evidence
@@ -41,7 +42,10 @@ SME with 64-byte streaming vectors. The MPS and compiled-MLX
 custom policy-7 models, which refine first LayerNorm, QKV and attention, each pass
 all 89 historical forward anchors and all 20 fresh forward batches. These complete
 collections have independent raw audits in `work/precision-phase5/prior-*-audit.json`.
-Full historical gradients are still required for the two GPU candidates.
+MPS policy 7 now also passes the complete historical gradient inventory, with
+independent raw audits for both widths. Compiled MLX passes the two width-512
+gradient anchors; its width-1024 collection is still running and has exposed a
+failure, so it is not qualified by its earlier forward pass.
 MPS and compiled MLX each also pass all seven gradient-screen anchors and all 20
 fresh logits/loss/gradient batches, with independent raw audits. The screen is
 the two width-512 anchors plus the five remaining width-1024 QKV-localization
@@ -50,6 +54,14 @@ cases, not the full historical gradient denominator. The machine-readable
 framework candidates. Referenced `work/` raw artifacts remain local.
 
 ## Failures retained and next decisions
+
+The ongoing complete MLX policy-7 gradient replay fails 12 FF1 weight-gradient
+coordinates at `w1024-37621e9d745f8bd4-validation-39`, while that batch's logits
+and loss pass. This is a worker observation pending the complete collection's
+independent audit. A new branch-localization diagnostic will reproduce the
+retained compiled execution and require an auxiliary trace to preserve its
+logits, loss and every gradient byte before interpreting ReLU gates or prefixes.
+The queued fresh-state plans retain their passing-collection prerequisites.
 
 Ordinary maintained MPS and MLX still fail the historical width-1024 forward
 inventory: 60/71 and 56/71 distinct batches, respectively. Passing short runtime
@@ -98,7 +110,8 @@ or a replacement for the formal training budget.
 
 ## Build, storage and remaining gates
 
-All native and framework compilation is hosted. Native candidate builds pass their
+Assembly and framework builds are hosted. GPU execution retains runtime shader
+compilation. Native candidate builds pass their
 primitive checks. Policy 1 has passed complete hosted model and executable checks;
 hosted policies 1, 3 and 7 have passed full checks at both widths. Policy 7
 passes 1,153 tests plus 190 subtests (14 skips), with 1,979 runtime checks each
@@ -126,8 +139,11 @@ and re-audited locally.
 The full-source PyTorch FP16/layout v2 build completed compilation, but failed
 its check because four Objective-C++ commands omit explicit `-g0` despite the
 CMake cache containing it. The failure is retained in run 41110294834. Recipe v3
-passes CMake flag variables explicitly and checks generated commands early;
-its hosted validation remains pending. That build
+passes CMake flag variables explicitly and checks generated commands early.
+Its complete build, import and lint checks passed in
+[run 41125186309](https://github.com/logannye/arm64-transformer/actions/runs/41125186309)
+at `11fd196ed3665178f389e9c25256c3561b14fe5f`. Artifact transport authentication
+and device qualification are separate and remain pending. That build
 addresses retained integration failures, not the MPS trained-attention arithmetic
 failures. The portable MPS evidence producer and archive auditor now have 70
 CPU-only checks, plus 25 eligibility checks. They verify retained evidence after
@@ -158,13 +174,14 @@ has one two-case width-512 worker and six width-1024 shards covering all 87
 anchors. A collection audit follows each complete engine/width group. The plan
 requires 25 GiB initially and stops at a 5 GiB operating reserve. Results remain
 pending until each complete collection has been independently audited. Both
-native width collections are complete and pass; the GPU collections are running.
+native and MPS width collections are complete and pass. MLX width 512 passes;
+its width-1024 collection is running with at least one numerical failure.
 
 The separate [v3 framework artifact adapter](../../integration/gpu-owned/CANDIDATE-HALF-V3-VALIDATION.md)
 has 30 standard-library checks. It verifies the new build's actual early/final
 compiler commands and retained Half differential bytes before preparing the
-34-method focused device replay. This adapter neither qualifies the pending
-build nor promotes the old runtime's evidence. Explicit candidate runtime capture
+34-method focused device replay. This adapter does not promote the old runtime's
+evidence or qualify the new runtime's device behavior. Explicit candidate runtime capture
 and the separately pinned 10,357-test full-suite route are implemented with the
 same conformance-fixture and portable-evidence requirements. Their new runtime
 and actual suite execution remain pending.
@@ -176,3 +193,6 @@ plan in `work/precision-phase7` waits for all six phase-6 collection audits to p
 before starting two 64-update policy-15 processes per width, a third-process
 step-32 continuation, and all-five-engine replay of the resulting 20 common-state
 probes. Actual trajectory, continuation and replay results remain pending.
+The separate phase-8 inference plan waits for phase 7 and its complete audits;
+inference cannot inherit compiled-gradient graph results. Neither queued plan
+can start its workers if the preceding required collection fails.

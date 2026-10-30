@@ -1,6 +1,6 @@
 {
   "schema": "trained-precision-development-evidence-index-v1",
-  "created_utc": "2026-10-30T22:05:08.369475+00:00",
+  "created_utc": "2026-10-30T22:31:40.174348+00:00",
   "scope": "Development regression/fresh-state evidence; no formal qualification or timing",
   "local_hardware": "Apple M4 Max, native automatic dispatch selected SME with 64-byte streaming vectors",
   "formal_eligible": false,
@@ -705,6 +705,126 @@
         {
           "path": "work/precision-phase4/mlx-1024-policy7-screen-forward/result.json",
           "sha256": "7e1c8e6ad1511e452a501b88316d771bfd1cf9ee776ceba3b1f1889e96bcc00d"
+        }
+      ]
+    },
+    {
+      "name": "mlx-512-policy7-historical-gradient",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 2,
+      "unique_batches": 2,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase6/mlx-512-policy7-historical-gradient-audit.json",
+        "sha256": "6e07dd969ba4a402d234eb741e4b999a19be0e4906b78c207cf66bce5d601031",
+        "bytes": 32283
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mlx",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "implementation": {
+        "engine": "mlx",
+        "width": 512,
+        "batch_size": 16,
+        "gradients_checked": true,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v2",
+        "framework_candidate_policy": 7,
+        "framework_compiled": true,
+        "framework_operation": "gradient"
+      },
+      "source_inventory_sha256": "5c4524d8656c0dbc3cd6d4e47f28511b0621ab1ead9118251374314d5a5fd7eb",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase6/mlx-512-policy7-historical-gradient-000/result.json",
+          "sha256": "78eee4cfc3936c78bc1271096faf8886eccd6e354d71027aeed14453ae783391"
+        }
+      ]
+    },
+    {
+      "name": "mps-1024-policy7-historical-gradient",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 87,
+      "unique_batches": 71,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase6/mps-1024-policy7-historical-gradient-audit.json",
+        "sha256": "8a2c7b77d1476e8b522b1716cd5efd2ba4d74a8f144302d3eec69855e72764b7",
+        "bytes": 605476
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mps",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "implementation": {
+        "engine": "mps",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": true,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v2",
+        "framework_candidate_policy": 7,
+        "framework_compiled": false,
+        "framework_operation": "gradient"
+      },
+      "source_inventory_sha256": "5c4524d8656c0dbc3cd6d4e47f28511b0621ab1ead9118251374314d5a5fd7eb",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase6/mps-1024-policy7-historical-gradient-000/result.json",
+          "sha256": "716ce20b769359ab6b4dadf04cd3efed559e41855a3254786200966b47a95413"
+        },
+        {
+          "path": "work/precision-phase6/mps-1024-policy7-historical-gradient-016/result.json",
+          "sha256": "c4b04603bd681709464b91e0d2abe15f431ad0f4b9fd6006ffc0a75de2dbce25"
+        },
+        {
+          "path": "work/precision-phase6/mps-1024-policy7-historical-gradient-032/result.json",
+          "sha256": "db9935af82a2c4667cc2c3d7c599469e519adfd9ea0fba96682e3e9491c985c4"
+        },
+        {
+          "path": "work/precision-phase6/mps-1024-policy7-historical-gradient-048/result.json",
+          "sha256": "607ed1c4b476e1454d0d1e1d23880592b299a5179d8f79a4e2f72a7e5dc96dc5"
+        },
+        {
+          "path": "work/precision-phase6/mps-1024-policy7-historical-gradient-064/result.json",
+          "sha256": "77d17bcce5b80943e81431ca1a24834948f5b374e1cfd7635a33b0442259366e"
+        },
+        {
+          "path": "work/precision-phase6/mps-1024-policy7-historical-gradient-080/result.json",
+          "sha256": "3c69348f432642b0699448668ab5949a9e4f7fa11e96b60fb7c245a3f585753e"
         }
       ]
     },
@@ -1628,9 +1748,9 @@
   ],
   "resource_stops": [],
   "remaining": [
-    "Complete historical gradients for the MPS/MLX custom policy-7 models",
+    "Finish and audit compiled-MLX historical gradients, then localize and repair retained failures",
     "Policy-15 training, saved-Adam continuation and all-five common-state replay",
-    "Successful complete maintained-framework build, new runtime capture and full conformance suites",
+    "Authenticate the successful maintained-framework build, capture its runtime and run full conformance suites",
     "Prospective successor suite/model/comparison contracts; no historical result relabeling",
     "All-engine checkpoint admission and formal performance study after correctness/eligibility gates pass"
   ]
