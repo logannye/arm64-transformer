@@ -57,6 +57,7 @@ jobs:
             integration-result/*.log
             integration-result/CMakeCache.txt
             integration-result/pytorch-integrated-runtime.tar.gz
+            integration-result/pytorch-integrated-runtime.tar.gz.partial
             integration-result/wheels/
           if-no-files-found: error
           retention-days: 14

@@ -7,6 +7,7 @@ real MPS numerical integration tests remain a separate required stage.
 import argparse
 import ctypes
 import hashlib
+import importlib
 import importlib.metadata
 import json
 import os
@@ -22,6 +23,95 @@ def sha256(path):
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def verify_module_origins(runtime, expected_files, modules, torch_module):
+    """Authenticate real files and the two exact registered PyTorch namespaces.
+
+    _Ops/_Classes inherit ModuleType but advertise synthetic relative filenames.
+    Do not resolve those labels against the working directory or blanket-exempt
+    relative paths: bind their singleton, exact class and constructor to the
+    real, manifest-authenticated backing module instead.
+    """
+    runtime = Path(runtime).resolve(strict=True)
+    origins, synthetic = {}, {}
+
+    def real_origin(name, module):
+        attributes = vars(module)
+        source = attributes.get("__file__", getattr(type(module), "__file__", None))
+        spec = attributes.get("__spec__")
+        spec_origin = getattr(spec, "origin", None)
+        if not source:
+            if spec_origin and spec_origin not in {"built-in", "frozen"}:
+                source = spec_origin
+            else:
+                return None
+        path = Path(source).resolve(strict=True)
+        if not path.is_relative_to(runtime):
+            raise RuntimeError(f"Framework module imported outside archive: {name}: {path}")
+        relative = path.relative_to(runtime).as_posix()
+        expected = expected_files.get(relative)
+        if not expected or not path.is_file():
+            raise RuntimeError(f"Framework module is absent from runtime manifest: {name}: {path}")
+        if path.stat().st_size != expected["bytes"] or sha256(path) != expected["sha256"]:
+            raise RuntimeError(f"Framework module bytes differ from manifest: {name}: {path}")
+        if spec_origin and spec_origin not in {"built-in", "frozen"}:
+            if Path(spec_origin).resolve(strict=True) != path:
+                raise RuntimeError(f"Framework module spec/file origins disagree: {name}")
+        origins[name] = relative
+        return path
+
+    definitions = {
+        "torch.ops": ("torch._ops", "_Ops", "ops", "_ops.py"),
+        "torch.classes": ("torch._classes", "_Classes", "classes", "_classes.py"),
+    }
+    if modules.get("torch") is not torch_module:
+        raise RuntimeError("Torch module identity changed")
+    for name, (backing_name, class_name, singleton_name, label) in definitions.items():
+        module = modules.get(name)
+        backing = modules.get(backing_name)
+        if module is None or backing is None:
+            raise RuntimeError(f"Missing registered PyTorch namespace or backing module: {name}")
+        cls = vars(backing).get(class_name)
+        if (
+            type(module) is not cls
+            or vars(torch_module).get(singleton_name) is not module
+            or vars(backing).get(singleton_name) is not module
+            or cls.__module__ != backing_name
+            or vars(cls).get("__file__") != label
+            or vars(module).get("__file__", label) != label
+            or vars(module).get("__name__") != name
+            or vars(module).get("__spec__") is not None
+            or vars(module).get("__loader__") is not None
+        ):
+            raise RuntimeError(f"Unrecognized synthetic PyTorch namespace: {name}")
+        path = real_origin(backing_name, backing)
+        expected_path = runtime / "torch" / label
+        constructor = vars(cls).get("__init__")
+        code = getattr(constructor, "__code__", None)
+        if (
+            path != expected_path
+            or code is None
+            or Path(code.co_filename).resolve(strict=True) != path
+        ):
+            raise RuntimeError(
+                f"Synthetic namespace implementation is not its authenticated backing file: {name}"
+            )
+        synthetic[name] = {
+            "synthetic_file_label": label,
+            "backing_module": backing_name,
+            "backing_file": origins[backing_name],
+            "backing_sha256": expected_files[origins[backing_name]]["sha256"],
+            "exact_class": f"{backing_name}.{class_name}",
+            "singleton_identity_verified": True,
+        }
+
+    for name, module in tuple(modules.items()):
+        if name.split(".", 1)[0] not in {"torch", "torchgen", "functorch"}:
+            continue
+        if name not in definitions and module is not None:
+            real_origin(name, module)
+    return origins, synthetic
 
 
 def main():
@@ -68,6 +158,8 @@ def main():
         os.environ["SKBUILD_EDITABLE_REBUILD"] = "false"
         import torch
 
+        importlib.import_module("functorch")
+        importlib.import_module("torchgen")
         if torch.version.git_version != args.expected_base:
             raise RuntimeError("Unexpected framework source revision")
         if not torch.backends.mps.is_built():
@@ -78,16 +170,9 @@ def main():
             "aten::embedding_dense_backward", "MPS"
         ):
             raise RuntimeError("The integrated MPS embedding kernel is absent")
-        origins = {}
-        for name, module in tuple(sys.modules.items()):
-            if name.split(".", 1)[0] not in {"torch", "torchgen", "functorch"}:
-                continue
-            source = getattr(module, "__file__", None)
-            if source:
-                path = Path(source).resolve()
-                if not path.is_relative_to(runtime):
-                    raise RuntimeError(f"Framework module imported outside archive: {name}: {path}")
-                origins[name] = str(path.relative_to(runtime))
+        origins, synthetic_origins = verify_module_origins(
+            runtime, expected_files, sys.modules, torch
+        )
         loaded = sorted(str(path) for path in torch.ops.loaded_libraries)
         if loaded:
             raise RuntimeError(f"Unexpected process-local operator libraries: {loaded}")
@@ -122,6 +207,7 @@ def main():
             extension_file=str(Path(torch._C.__file__).resolve()),
             extension_sha256=sha256(Path(torch._C.__file__)),
             module_origins=origins,
+            synthetic_module_origins=synthetic_origins,
             native_library_origins=sorted(native_origins),
             loaded_operator_libraries=loaded,
             mps_built=torch.backends.mps.is_built(),

@@ -211,6 +211,31 @@ class Run:
             if sha256(self.source / name) != expected:
                 raise RuntimeError(f"Source hash mismatch: {name}")
 
+    def retain_runtime(self, runtime):
+        """Retain unqualified build bytes before any import or lint can fail."""
+        archive = self.output / "pytorch-integrated-runtime.tar.gz"
+        partial = archive.with_suffix(archive.suffix + ".partial")
+        if archive.exists() or partial.exists():
+            raise RuntimeError("Refusing to replace an existing runtime archive")
+        size = sum(path.stat().st_size for path in runtime.rglob("*") if path.is_file())
+        # Allow an uncompressed-sized archive plus tar headers and the same
+        # reserve used during compilation. Compression is not assumed.
+        if shutil.disk_usage(self.output).free < size + 9 * GIB:
+            raise RuntimeError("Insufficient disk reserve to retain the runtime archive")
+        with tarfile.open(partial, "w:gz") as target:
+            target.add(runtime, arcname="runtime")
+        partial.rename(archive)
+        self.record["runtime_archive"] = {
+            "file": archive.name,
+            "sha256": sha256(archive),
+            "bytes": archive.stat().st_size,
+            "manifest_sha256": sha256(runtime / "runtime-manifest.json"),
+            "qualification": "unvalidated",
+            "retained_before_validation": True,
+        }
+        self.save()
+        return archive
+
     def run(self, patch):
         if (
             os.environ.get("GITHUB_ACTIONS") != "true"
@@ -406,6 +431,7 @@ class Run:
         )
         self.record["editable_install_root"] = str(install_root)
         self.record["runtime_bytes"] = sum(item["bytes"] for item in files.values())
+        archive = self.retain_runtime(runtime)
         self.command(
             "normal-editable-import",
             [
@@ -479,14 +505,6 @@ class Run:
                     }
                 )
         self.record["native_libraries"] = macho
-        archive = self.output / "pytorch-integrated-runtime.tar.gz"
-        with tarfile.open(archive, "w:gz") as target:
-            target.add(runtime, arcname="runtime")
-        self.record["runtime_archive"] = {
-            "file": archive.name,
-            "sha256": sha256(archive),
-            "bytes": archive.stat().st_size,
-        }
         # Verify the bytes actually transported, not only the staging directory.
         extracted = self.output / "archive-check"
         extracted.mkdir()
@@ -511,6 +529,10 @@ class Run:
             cwd=self.output,
         )
         shutil.rmtree(extracted)
+        self.record["runtime_archive"]["qualification"] = (
+            "import-and-portability-validated; device-numerics-unvalidated"
+        )
+        self.save()
         # Keep all lint evidence, including base findings. No rule exclusions.
         self.record["lint_scope"] = (
             "Unmodified upstream spin lint: all fast checks on all files; "
