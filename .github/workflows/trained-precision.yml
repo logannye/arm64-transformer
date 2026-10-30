@@ -1,0 +1,46 @@
+name: Trained precision candidates
+on:
+  push:
+    branches: [codex/trained-state-precision]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: macos-26
+    timeout-minutes: 30
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      VECLIB_MAXIMUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --only-binary=:all: -e '.[dev]'
+      - name: Build and check each candidate in one reusable build tree
+        run: |
+          mkdir -p results/precision-build
+          for width in 512 1024; do
+            for policy in 0 1 2 3; do
+              make -C native WIDTH=$width PRECISION=$policy PYTHON=python
+              ARM64_TRANSFORMER_WIDTH=$width python -m pytest tests/test_native_precision.py -q
+              dest=results/precision-build/width-$width/policy-$policy
+              mkdir -p "$dest"
+              cp native/build/width-$width/libtransformer.dylib "$dest/"
+              cp native/build/width-$width/transformer-arm64 "$dest/"
+              cp native/build/width-$width/layout.inc "$dest/"
+              cp native/build/width-$width/precision.h "$dest/"
+              shasum -a 256 "$dest/"* > "$dest/SHA256SUMS"
+            done
+          done
+          git rev-parse HEAD > results/precision-build/source-revision.txt
+          sw_vers > results/precision-build/platform.txt
+          sysctl -n machdep.cpu.brand_string >> results/precision-build/platform.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: precision-native-candidates
+          path: results/precision-build/
+          retention-days: 30

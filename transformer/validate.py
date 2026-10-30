@@ -46,6 +46,7 @@ SOURCE_FILES = (
     "native/attention.S",
     "native/softmax.S",
     "native/normalization.S",
+    "native/precision.S",
     "native/model.S",
     "native/runtime.S",
     "native/Makefile",
