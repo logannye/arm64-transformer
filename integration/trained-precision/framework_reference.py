@@ -1,6 +1,7 @@
 """Separate same-model GPU diagnostics using ordinary framework operations.
 
-Policy bits: 1 = compensated first normalization, 2 = compensated attention.
+Policy bits: 1 = compensated first normalization, 2 = compensated attention,
+4 = compensated QKV projection with explicit first derivatives.
 These are candidate model equations, not operator overrides or admitted arms.
 They enable testing complete forward/backward propagation before source builds.
 """
@@ -15,6 +16,11 @@ SPEC = importlib.util.spec_from_file_location(
 )
 FF = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(FF)
+LINEAR_SPEC = importlib.util.spec_from_file_location(
+    "gpu_compensated_linear", Path(__file__).with_name("compensated_linear.py")
+)
+LINEAR = importlib.util.module_from_spec(LINEAR_SPEC)
+LINEAR_SPEC.loader.exec_module(LINEAR)
 
 
 def split_constant(value, like, ops):
@@ -48,7 +54,7 @@ def normalization(x, weight, bias, ops):
 
 
 def forward(parameters, tokens, ops, policy):
-    if policy not in range(4):
+    if policy not in range(8):
         raise ValueError("Unexpected framework diagnostic policy")
     p = parameters
     batch, length = tokens.shape
@@ -59,7 +65,8 @@ def forward(parameters, tokens, ops, policy):
         if policy & 1
         else ops.norm(x, p["ln1_weight"], p["ln1_bias"])
     )
-    qkv = ops.linear(n1, p["qkv_weight"], p["qkv_bias"])
+    projection = ops.precise_linear if policy & 4 else ops.linear
+    qkv = projection(n1, p["qkv_weight"], p["qkv_bias"])
     q, k, v = [
         ops.swapaxes(part.reshape(batch, length, 4, width // 4), 1, 2)
         for part in ops.split_qkv(qkv)
@@ -78,7 +85,7 @@ def torch_ops(torch, device):
     import types
 
     f = torch.nn.functional
-    return types.SimpleNamespace(
+    ops = types.SimpleNamespace(
         concatenate=lambda values, axis: torch.cat(values, dim=axis),
         zeros_like=torch.zeros_like,
         arange=lambda n: torch.arange(n, device=device),
@@ -95,11 +102,14 @@ def torch_ops(torch, device):
         relu=f.relu,
     )
 
+    ops.precise_linear = LINEAR.torch_function(torch, ops)
+    return ops
+
 
 def mlx_ops(mx):
     import types
 
-    return types.SimpleNamespace(
+    ops = types.SimpleNamespace(
         concatenate=mx.concatenate,
         zeros_like=mx.zeros_like,
         arange=mx.arange,
@@ -117,3 +127,6 @@ def mlx_ops(mx):
         ),
         relu=lambda x: mx.maximum(x, 0),
     )
+
+    ops.precise_linear = LINEAR.mlx_function(mx, ops)
+    return ops

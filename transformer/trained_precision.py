@@ -116,6 +116,7 @@ def source_inventory():
         ROOT / "integration/trained-precision/framework_candidate.py",
         ROOT / "integration/trained-precision/framework_reference.py",
         ROOT / "integration/trained-precision/compensated_attention.py",
+        ROOT / "integration/trained-precision/compensated_linear.py",
     ]
     return {str(p.relative_to(ROOT)): digest(p) for p in sorted(paths)}
 
@@ -269,7 +270,7 @@ def worker(args):
             if args.framework_compiled and args.engine != "mlx":
                 raise ValueError("Only MLX compilation is supported")
             receipt.update(
-                framework_candidate="compensated-framework-model-diagnostic-v1",
+                framework_candidate="compensated-framework-model-diagnostic-v2",
                 framework_candidate_policy=args.framework_policy,
                 framework_compiled=args.framework_compiled,
                 framework_operation="gradient" if args.gradients else "forward",
@@ -603,7 +604,7 @@ def main():
     run.add_argument("--torch-policy", type=int, choices=range(8), default=0)
     run.add_argument("--python-candidate", action="store_true")
     run.add_argument("--python-candidate-version", type=int, choices=(1, 2), default=1)
-    run.add_argument("--framework-policy", type=int, choices=(2, 3))
+    run.add_argument("--framework-policy", type=int, choices=(2, 3, 6, 7))
     run.add_argument("--framework-compiled", action="store_true")
     run.add_argument("--metal-shaders")
     run.add_argument("--metal-shaders-sha256")

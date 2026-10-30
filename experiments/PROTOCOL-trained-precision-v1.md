@@ -230,3 +230,25 @@ qualification. Default policy 0 and ReLU's equation remain unchanged. Dedicated
 QKV and FF1 precise calls are separately excluded from ordinary dense-kernel
 counters. A passing screen must still pass all 89 historical anchors and 20 fresh
 batches with original tolerances and independent raw evidence checks.
+
+
+The complete 89-anchor forward inventory leaves five width-1024 failures in both
+MPS and compiled MLX policy 3. MPS's five IDs exactly match the earlier CPU
+LN1-plus-attention FP64 counterfactual's residual failures, which QKV refinement
+removed. Before execution, declare framework diagnostic v2 with policy bit 4:
+tiled two-float QKV projection, using the existing Dekker products and pairwise
+two-float sums, adding bias before final FP32 rounding. Tiles are fixed at 32
+rows and 64 outputs; they change memory use, not the dot-product equation.
+Explicit first derivatives compute dx, dw and db with the same arithmetic and
+save only FP32 inputs/weights, avoiding retention of all product intermediates.
+The mathematical linear derivative is unchanged. No native extension, operator
+registration, CPU tensor fallback or runtime replacement is introduced.
+
+Screen bounded moderate operands and all derivatives against FP64 first, then
+run policies 6 and 7 on the five residual width-1024 anchors and the existing
+width-512 anchors, keeping forward and gradient modes distinct. MLX must retain
+actual compilation/trace proof and unchanged-input replay; compiler changes may
+invalidate arithmetic decompositions and must be detected by numerical checks.
+These are explicit custom model equations with first-order derivatives, not
+ordinary framework baselines or evidence of general library correctness. Full
+historical and fresh inventories remain necessary after the screen.
