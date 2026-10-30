@@ -1,0 +1,55 @@
+{
+  "after": {
+    "content_type": "application/json",
+    "created_at": "2026-10-30T00:14:44Z",
+    "digest": "sha256:b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a",
+    "id": 690349676,
+    "label": "",
+    "name": "input-selection.json",
+    "node_id": "RA_kwDOVbC4ds4pJeZs",
+    "size": 5302169,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T00:14:47Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349676"
+  },
+  "before": {
+    "content_type": "application/json",
+    "created_at": "2026-10-30T00:14:44Z",
+    "digest": "sha256:b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a",
+    "id": 690349676,
+    "label": "",
+    "name": "input-selection.json",
+    "node_id": "RA_kwDOVbC4ds4pJeZs",
+    "size": 5302169,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T00:14:47Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349676"
+  },
+  "expected": {
+    "asset_id": 690349676,
+    "bytes": 5302169,
+    "local_path": "outputs/upstream-integration-v2/evidence-major-v1/input-selection.json",
+    "name": "input-selection.json",
+    "sha256": "b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a"
+  },
+  "finished_utc": "2026-10-30T00:24:23.173475+00:00",
+  "ordinal": 10,
+  "started_utc": "2026-10-30T00:24:21.519265+00:00",
+  "status": "passed",
+  "stream": {
+    "accept": "application/octet-stream",
+    "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690349676",
+    "argument_count": 6,
+    "executable": "gh",
+    "payload_copied_to_disk": false,
+    "problem": null,
+    "raw_stderr_retained": false,
+    "returncode": 0,
+    "seconds": 0.8149318331852555,
+    "stderr_bytes": 0,
+    "stderr_markers": [],
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 5302169,
+    "stdout_sha256": "b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a"
+  }
+}

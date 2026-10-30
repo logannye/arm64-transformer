@@ -1,0 +1,18 @@
+{
+  "files": {
+    "README.md": {
+      "bytes": 2387,
+      "sha256": "98cd11c70b93bddf16437a43450ca561fc06733ae9b2ead26bd42e7b45f9b461"
+    },
+    "test_upload.py": {
+      "bytes": 12240,
+      "sha256": "fee26afaf35e568eaac5cf810a24850212535edbb348aee4e78a06652772bd01"
+    },
+    "upload.py": {
+      "bytes": 11914,
+      "sha256": "4d8d80f04fb24bd47b096954f13354ee7a6845eacccb8e363283c1f4d86adca8"
+    }
+  },
+  "schema": "publication-metadata-pre-repair-preservation-v1",
+  "scope": "Exact prior source bytes; original scientific/package/upload receipts are unchanged."
+}

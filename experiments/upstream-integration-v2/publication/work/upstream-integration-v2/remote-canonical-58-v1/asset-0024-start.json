@@ -1,0 +1,25 @@
+{
+  "before": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T05:35:48Z",
+    "digest": "sha256:a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c",
+    "id": 691063220,
+    "label": "",
+    "name": "dependency-a0b2b9fe80bbcd81-x000-mpmath-1.3.0-py3-none-any.whl",
+    "node_id": "RA_kwDOVbC4ds4pMMm0",
+    "size": 536198,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T05:35:49Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063220"
+  },
+  "expected": {
+    "asset_id": 691063220,
+    "bytes": 536198,
+    "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/mpmath-1.3.0-py3-none-any.whl",
+    "name": "dependency-a0b2b9fe80bbcd81-x000-mpmath-1.3.0-py3-none-any.whl",
+    "sha256": "a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c"
+  },
+  "ordinal": 24,
+  "started_utc": "2026-10-30T05:41:54.557292+00:00",
+  "status": "running"
+}

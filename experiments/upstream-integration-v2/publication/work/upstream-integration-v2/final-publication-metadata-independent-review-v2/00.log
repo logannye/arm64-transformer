@@ -1,0 +1,14 @@
+test_contract_ctime_refresh_requires_original_bytes_and_all_other_stats (test_upload.MetadataTests.test_contract_ctime_refresh_requires_original_bytes_and_all_other_stats) ... ok
+test_failed_or_interrupted_upload_retains_all_slots (test_upload.MetadataTests.test_failed_or_interrupted_upload_retains_all_slots) ... ok
+test_input_hashes_and_output_boundaries_reject (test_upload.MetadataTests.test_input_hashes_and_output_boundaries_reject) ... ok
+test_inputs_records_ctime_revalidation_without_modifying_original_receipt (test_upload.MetadataTests.test_inputs_records_ctime_revalidation_without_modifying_original_receipt) ... ok
+test_payload_mutation_before_or_during_upload_rejects (test_upload.MetadataTests.test_payload_mutation_before_or_during_upload_rejects) ... ok
+test_remote_account_release_and_full_identity_fail_before_upload (test_upload.MetadataTests.test_remote_account_release_and_full_identity_fail_before_upload) ... ok
+test_scope_and_inventory_mutations_reject (test_upload.MetadataTests.test_scope_and_inventory_mutations_reject) ... ok
+test_semantic_binding_rejects_even_self_consistent_new_hash (test_upload.MetadataTests.test_semantic_binding_rejects_even_self_consistent_new_hash) ... ok
+test_success_preserves_90_and_builds_two_and_92_contracts (test_upload.MetadataTests.test_success_preserves_90_and_builds_two_and_92_contracts) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.092s
+
+OK

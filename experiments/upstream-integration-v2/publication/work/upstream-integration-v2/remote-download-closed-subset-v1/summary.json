@@ -1,0 +1,1617 @@
+{
+  "assets": [
+    {
+      "after": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:5a96cfdba13a99e602ab21a003f830d5315604552d5a97a717a52dfc9d6b7f35",
+        "id": 690318222,
+        "label": "",
+        "name": "evidence-0001.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuO",
+        "size": 912814484,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:18Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318222"
+      },
+      "before": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:5a96cfdba13a99e602ab21a003f830d5315604552d5a97a717a52dfc9d6b7f35",
+        "id": 690318222,
+        "label": "",
+        "name": "evidence-0001.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuO",
+        "size": 912814484,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:18Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318222"
+      },
+      "expected": {
+        "asset_id": 690318222,
+        "bytes": 912814484,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0001.tar.gz",
+        "name": "evidence-0001.tar.gz",
+        "sha256": "5a96cfdba13a99e602ab21a003f830d5315604552d5a97a717a52dfc9d6b7f35"
+      },
+      "finished_utc": "2026-10-30T00:17:08.982834+00:00",
+      "ordinal": 0,
+      "started_utc": "2026-10-30T00:16:14.032808+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690318222",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 54.085938167292625,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 912814484,
+        "stdout_sha256": "5a96cfdba13a99e602ab21a003f830d5315604552d5a97a717a52dfc9d6b7f35"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:0f7b234da90e8bdd968a2629acd17cfbee660ff9b1822361a59ba06bc13bef0a",
+        "id": 690318216,
+        "label": "",
+        "name": "evidence-0002.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuI",
+        "size": 907724645,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318216"
+      },
+      "before": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:0f7b234da90e8bdd968a2629acd17cfbee660ff9b1822361a59ba06bc13bef0a",
+        "id": 690318216,
+        "label": "",
+        "name": "evidence-0002.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuI",
+        "size": 907724645,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318216"
+      },
+      "expected": {
+        "asset_id": 690318216,
+        "bytes": 907724645,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0002.tar.gz",
+        "name": "evidence-0002.tar.gz",
+        "sha256": "0f7b234da90e8bdd968a2629acd17cfbee660ff9b1822361a59ba06bc13bef0a"
+      },
+      "finished_utc": "2026-10-30T00:17:58.035740+00:00",
+      "ordinal": 1,
+      "started_utc": "2026-10-30T00:17:08.985524+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690318216",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 48.19956324994564,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 907724645,
+        "stdout_sha256": "0f7b234da90e8bdd968a2629acd17cfbee660ff9b1822361a59ba06bc13bef0a"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:91abdbb71bcb01cd677545c74bd4cbf984d4b1a9ca560f56d42f899573c26b9e",
+        "id": 690318218,
+        "label": "",
+        "name": "evidence-0003.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuK",
+        "size": 854485997,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:01Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318218"
+      },
+      "before": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:91abdbb71bcb01cd677545c74bd4cbf984d4b1a9ca560f56d42f899573c26b9e",
+        "id": 690318218,
+        "label": "",
+        "name": "evidence-0003.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuK",
+        "size": 854485997,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:01Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318218"
+      },
+      "expected": {
+        "asset_id": 690318218,
+        "bytes": 854485997,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0003.tar.gz",
+        "name": "evidence-0003.tar.gz",
+        "sha256": "91abdbb71bcb01cd677545c74bd4cbf984d4b1a9ca560f56d42f899573c26b9e"
+      },
+      "finished_utc": "2026-10-30T00:18:38.128656+00:00",
+      "ordinal": 2,
+      "started_utc": "2026-10-30T00:17:58.038626+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690318218",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 39.27154379198328,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 854485997,
+        "stdout_sha256": "91abdbb71bcb01cd677545c74bd4cbf984d4b1a9ca560f56d42f899573c26b9e"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce",
+        "id": 690318215,
+        "label": "",
+        "name": "evidence-0004.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuH",
+        "size": 1037007516,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:09:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318215"
+      },
+      "before": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce",
+        "id": 690318215,
+        "label": "",
+        "name": "evidence-0004.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuH",
+        "size": 1037007516,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:09:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318215"
+      },
+      "expected": {
+        "asset_id": 690318215,
+        "bytes": 1037007516,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0004.tar.gz",
+        "name": "evidence-0004.tar.gz",
+        "sha256": "c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce"
+      },
+      "finished_utc": "2026-10-30T00:19:31.366126+00:00",
+      "ordinal": 3,
+      "started_utc": "2026-10-30T00:18:38.130684+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690318215",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 52.421250332612544,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1037007516,
+        "stdout_sha256": "c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:24d4b2840e3eec5dd52b203dc29a6908e76c4429d14c198d3f002522717f0e0e",
+        "id": 690318220,
+        "label": "",
+        "name": "evidence-0005.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuM",
+        "size": 986742002,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:08:15Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318220"
+      },
+      "before": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:24d4b2840e3eec5dd52b203dc29a6908e76c4429d14c198d3f002522717f0e0e",
+        "id": 690318220,
+        "label": "",
+        "name": "evidence-0005.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuM",
+        "size": 986742002,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:08:15Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318220"
+      },
+      "expected": {
+        "asset_id": 690318220,
+        "bytes": 986742002,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0005.tar.gz",
+        "name": "evidence-0005.tar.gz",
+        "sha256": "24d4b2840e3eec5dd52b203dc29a6908e76c4429d14c198d3f002522717f0e0e"
+      },
+      "finished_utc": "2026-10-30T00:20:24.129524+00:00",
+      "ordinal": 4,
+      "started_utc": "2026-10-30T00:19:31.369601+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690318220",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 51.97309975000098,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 986742002,
+        "stdout_sha256": "24d4b2840e3eec5dd52b203dc29a6908e76c4429d14c198d3f002522717f0e0e"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:01Z",
+        "digest": "sha256:34e783d7d215032161bd6849ef42deb227a284c4423559dce6393ed10a452801",
+        "id": 690334780,
+        "label": "",
+        "name": "evidence-0006.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJaw8",
+        "size": 1030845920,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:13:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690334780"
+      },
+      "before": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:01Z",
+        "digest": "sha256:34e783d7d215032161bd6849ef42deb227a284c4423559dce6393ed10a452801",
+        "id": 690334780,
+        "label": "",
+        "name": "evidence-0006.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJaw8",
+        "size": 1030845920,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:13:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690334780"
+      },
+      "expected": {
+        "asset_id": 690334780,
+        "bytes": 1030845920,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0006.tar.gz",
+        "name": "evidence-0006.tar.gz",
+        "sha256": "34e783d7d215032161bd6849ef42deb227a284c4423559dce6393ed10a452801"
+      },
+      "finished_utc": "2026-10-30T00:21:14.543427+00:00",
+      "ordinal": 5,
+      "started_utc": "2026-10-30T00:20:24.132669+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690334780",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 49.67071700002998,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1030845920,
+        "stdout_sha256": "34e783d7d215032161bd6849ef42deb227a284c4423559dce6393ed10a452801"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:19Z",
+        "digest": "sha256:5dda7c7029477dae5d71c0d2fbe60d2f651cef052a433f8e20de3f28907e1c8c",
+        "id": 690335485,
+        "label": "",
+        "name": "evidence-0007.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa79",
+        "size": 996936043,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:15Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335485"
+      },
+      "before": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:19Z",
+        "digest": "sha256:5dda7c7029477dae5d71c0d2fbe60d2f651cef052a433f8e20de3f28907e1c8c",
+        "id": 690335485,
+        "label": "",
+        "name": "evidence-0007.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa79",
+        "size": 996936043,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:15Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335485"
+      },
+      "expected": {
+        "asset_id": 690335485,
+        "bytes": 996936043,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0007.tar.gz",
+        "name": "evidence-0007.tar.gz",
+        "sha256": "5dda7c7029477dae5d71c0d2fbe60d2f651cef052a433f8e20de3f28907e1c8c"
+      },
+      "finished_utc": "2026-10-30T00:22:08.919025+00:00",
+      "ordinal": 6,
+      "started_utc": "2026-10-30T00:21:14.547464+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690335485",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 53.381230582948774,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 996936043,
+        "stdout_sha256": "5dda7c7029477dae5d71c0d2fbe60d2f651cef052a433f8e20de3f28907e1c8c"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:20Z",
+        "digest": "sha256:4f56c1faa8d33151a5d78329d264e870b717054035227355d6668861179b0d48",
+        "id": 690335531,
+        "label": "",
+        "name": "evidence-0008.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa8r",
+        "size": 1050480864,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:33Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335531"
+      },
+      "before": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:20Z",
+        "digest": "sha256:4f56c1faa8d33151a5d78329d264e870b717054035227355d6668861179b0d48",
+        "id": 690335531,
+        "label": "",
+        "name": "evidence-0008.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa8r",
+        "size": 1050480864,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:33Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335531"
+      },
+      "expected": {
+        "asset_id": 690335531,
+        "bytes": 1050480864,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0008.tar.gz",
+        "name": "evidence-0008.tar.gz",
+        "sha256": "4f56c1faa8d33151a5d78329d264e870b717054035227355d6668861179b0d48"
+      },
+      "finished_utc": "2026-10-30T00:23:13.178545+00:00",
+      "ordinal": 7,
+      "started_utc": "2026-10-30T00:22:08.921666+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690335531",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 63.496439499780536,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1050480864,
+        "stdout_sha256": "4f56c1faa8d33151a5d78329d264e870b717054035227355d6668861179b0d48"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:08:15Z",
+        "digest": "sha256:7dcbbf33bec39e01897e52d3254f88d40cadf98f4c3635a1516172405ea17e70",
+        "id": 690337323,
+        "label": "",
+        "name": "evidence-0009.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJbYr",
+        "size": 1015685054,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:15:28Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690337323"
+      },
+      "before": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:08:15Z",
+        "digest": "sha256:7dcbbf33bec39e01897e52d3254f88d40cadf98f4c3635a1516172405ea17e70",
+        "id": 690337323,
+        "label": "",
+        "name": "evidence-0009.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJbYr",
+        "size": 1015685054,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:15:28Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690337323"
+      },
+      "expected": {
+        "asset_id": 690337323,
+        "bytes": 1015685054,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0009.tar.gz",
+        "name": "evidence-0009.tar.gz",
+        "sha256": "7dcbbf33bec39e01897e52d3254f88d40cadf98f4c3635a1516172405ea17e70"
+      },
+      "finished_utc": "2026-10-30T00:24:08.587568+00:00",
+      "ordinal": 8,
+      "started_utc": "2026-10-30T00:23:13.181959+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690337323",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 54.58750291680917,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1015685054,
+        "stdout_sha256": "7dcbbf33bec39e01897e52d3254f88d40cadf98f4c3635a1516172405ea17e70"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:14:16Z",
+        "digest": "sha256:f5c9516abc602fd473576ab5c9edd7f429463b169bcc6a4c8bab875dcca06c3b",
+        "id": 690348860,
+        "label": "",
+        "name": "evidence-0012.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJeM8",
+        "size": 223417130,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:15:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690348860"
+      },
+      "before": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:14:16Z",
+        "digest": "sha256:f5c9516abc602fd473576ab5c9edd7f429463b169bcc6a4c8bab875dcca06c3b",
+        "id": 690348860,
+        "label": "",
+        "name": "evidence-0012.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJeM8",
+        "size": 223417130,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:15:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690348860"
+      },
+      "expected": {
+        "asset_id": 690348860,
+        "bytes": 223417130,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0012.tar.gz",
+        "name": "evidence-0012.tar.gz",
+        "sha256": "f5c9516abc602fd473576ab5c9edd7f429463b169bcc6a4c8bab875dcca06c3b"
+      },
+      "finished_utc": "2026-10-30T00:24:21.516202+00:00",
+      "ordinal": 9,
+      "started_utc": "2026-10-30T00:24:08.591702+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690348860",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 12.152397790923715,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 223417130,
+        "stdout_sha256": "f5c9516abc602fd473576ab5c9edd7f429463b169bcc6a4c8bab875dcca06c3b"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:14:44Z",
+        "digest": "sha256:b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a",
+        "id": 690349676,
+        "label": "",
+        "name": "input-selection.json",
+        "node_id": "RA_kwDOVbC4ds4pJeZs",
+        "size": 5302169,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:47Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349676"
+      },
+      "before": {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:14:44Z",
+        "digest": "sha256:b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a",
+        "id": 690349676,
+        "label": "",
+        "name": "input-selection.json",
+        "node_id": "RA_kwDOVbC4ds4pJeZs",
+        "size": 5302169,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:47Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349676"
+      },
+      "expected": {
+        "asset_id": 690349676,
+        "bytes": 5302169,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/input-selection.json",
+        "name": "input-selection.json",
+        "sha256": "b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a"
+      },
+      "finished_utc": "2026-10-30T00:24:23.173475+00:00",
+      "ordinal": 10,
+      "started_utc": "2026-10-30T00:24:21.519265+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690349676",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 0.8149318331852555,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 5302169,
+        "stdout_sha256": "b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:6ab9e2d8f995a96b4944280256e90892d521bf39338299621c4eec56b1124007",
+        "id": 690335386,
+        "label": "",
+        "name": "mlx-remainder-asset-aliases.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6a",
+        "size": 882,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:16Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335386"
+      },
+      "before": {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:6ab9e2d8f995a96b4944280256e90892d521bf39338299621c4eec56b1124007",
+        "id": 690335386,
+        "label": "",
+        "name": "mlx-remainder-asset-aliases.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6a",
+        "size": 882,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:16Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335386"
+      },
+      "expected": {
+        "asset_id": 690335386,
+        "bytes": 882,
+        "local_path": "outputs/upstream-integration-v2/release-assets/mlx-remainder-asset-aliases.json",
+        "name": "mlx-remainder-asset-aliases.json",
+        "sha256": "6ab9e2d8f995a96b4944280256e90892d521bf39338299621c4eec56b1124007"
+      },
+      "finished_utc": "2026-10-30T00:24:24.517373+00:00",
+      "ordinal": 11,
+      "started_utc": "2026-10-30T00:24:23.176340+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690335386",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 0.5429858341813087,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 882,
+        "stdout_sha256": "6ab9e2d8f995a96b4944280256e90892d521bf39338299621c4eec56b1124007"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:c05834ec7e26cb1617191dfedd8676f461a381f7e2862ad3c1ff721fbb57a0bb",
+        "id": 690335390,
+        "label": "",
+        "name": "mlx-remainder-evidence.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa6e",
+        "size": 15421247,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:19Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335390"
+      },
+      "before": {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:c05834ec7e26cb1617191dfedd8676f461a381f7e2862ad3c1ff721fbb57a0bb",
+        "id": 690335390,
+        "label": "",
+        "name": "mlx-remainder-evidence.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa6e",
+        "size": 15421247,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:19Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335390"
+      },
+      "expected": {
+        "asset_id": 690335390,
+        "bytes": 15421247,
+        "local_path": "outputs/upstream-integration-v2/release-assets/mlx-remainder-evidence.tar.gz",
+        "name": "mlx-remainder-evidence.tar.gz",
+        "sha256": "c05834ec7e26cb1617191dfedd8676f461a381f7e2862ad3c1ff721fbb57a0bb"
+      },
+      "finished_utc": "2026-10-30T00:24:26.667030+00:00",
+      "ordinal": 12,
+      "started_utc": "2026-10-30T00:24:24.520542+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690335390",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 1.4165574172511697,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 15421247,
+        "stdout_sha256": "c05834ec7e26cb1617191dfedd8676f461a381f7e2862ad3c1ff721fbb57a0bb"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:77e8501e76e7d7fd1b55d1d2a64275b0b400051a9cd13599baa23edf10b98ad6",
+        "id": 690335388,
+        "label": "",
+        "name": "mlx-remainder-package.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6c",
+        "size": 1717805,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:17Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335388"
+      },
+      "before": {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:77e8501e76e7d7fd1b55d1d2a64275b0b400051a9cd13599baa23edf10b98ad6",
+        "id": 690335388,
+        "label": "",
+        "name": "mlx-remainder-package.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6c",
+        "size": 1717805,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:17Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335388"
+      },
+      "expected": {
+        "asset_id": 690335388,
+        "bytes": 1717805,
+        "local_path": "outputs/upstream-integration-v2/release-assets/mlx-remainder-package.json",
+        "name": "mlx-remainder-package.json",
+        "sha256": "77e8501e76e7d7fd1b55d1d2a64275b0b400051a9cd13599baa23edf10b98ad6"
+      },
+      "finished_utc": "2026-10-30T00:24:28.213122+00:00",
+      "ordinal": 13,
+      "started_utc": "2026-10-30T00:24:26.669533+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690335388",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 0.7021008748561144,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1717805,
+        "stdout_sha256": "77e8501e76e7d7fd1b55d1d2a64275b0b400051a9cd13599baa23edf10b98ad6"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:51130156f54360009bfe1c62f725af319b85c598c2b18e7437f7f90f415879e6",
+        "id": 690335389,
+        "label": "",
+        "name": "mlx-remainder-selection.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6d",
+        "size": 435239,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:16Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335389"
+      },
+      "before": {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:51130156f54360009bfe1c62f725af319b85c598c2b18e7437f7f90f415879e6",
+        "id": 690335389,
+        "label": "",
+        "name": "mlx-remainder-selection.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6d",
+        "size": 435239,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:16Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335389"
+      },
+      "expected": {
+        "asset_id": 690335389,
+        "bytes": 435239,
+        "local_path": "outputs/upstream-integration-v2/release-assets/mlx-remainder-selection.json",
+        "name": "mlx-remainder-selection.json",
+        "sha256": "51130156f54360009bfe1c62f725af319b85c598c2b18e7437f7f90f415879e6"
+      },
+      "finished_utc": "2026-10-30T00:24:29.627031+00:00",
+      "ordinal": 14,
+      "started_utc": "2026-10-30T00:24:28.216512+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690335389",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 0.6280842912383378,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 435239,
+        "stdout_sha256": "51130156f54360009bfe1c62f725af319b85c598c2b18e7437f7f90f415879e6"
+      }
+    },
+    {
+      "after": {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:14:34Z",
+        "digest": "sha256:3c239abfeaeb15f0e9b7719f2d3bf66b767d3406e21f9b6166d1a9c95459f024",
+        "id": 690349378,
+        "label": "",
+        "name": "package.json",
+        "node_id": "RA_kwDOVbC4ds4pJeVC",
+        "size": 19875100,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:43Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349378"
+      },
+      "before": {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:14:34Z",
+        "digest": "sha256:3c239abfeaeb15f0e9b7719f2d3bf66b767d3406e21f9b6166d1a9c95459f024",
+        "id": 690349378,
+        "label": "",
+        "name": "package.json",
+        "node_id": "RA_kwDOVbC4ds4pJeVC",
+        "size": 19875100,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:43Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349378"
+      },
+      "expected": {
+        "asset_id": 690349378,
+        "bytes": 19875100,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/package.json",
+        "name": "package.json",
+        "sha256": "3c239abfeaeb15f0e9b7719f2d3bf66b767d3406e21f9b6166d1a9c95459f024"
+      },
+      "finished_utc": "2026-10-30T00:24:32.339697+00:00",
+      "ordinal": 15,
+      "started_utc": "2026-10-30T00:24:29.630392+00:00",
+      "status": "passed",
+      "stream": {
+        "accept": "application/octet-stream",
+        "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690349378",
+        "argument_count": 6,
+        "executable": "gh",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 1.9041486252099276,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 19875100,
+        "stdout_sha256": "3c239abfeaeb15f0e9b7719f2d3bf66b767d3406e21f9b6166d1a9c95459f024"
+      }
+    }
+  ],
+  "authenticated_after": {
+    "id": 87274608,
+    "login": "logannye",
+    "type": "User"
+  },
+  "authenticated_before": {
+    "id": 87274608,
+    "login": "logannye",
+    "type": "User"
+  },
+  "complete": true,
+  "contract_sha256": "2e741289bb3cf2c7063eccae942722efc3d93b246fbbf9b971636ceedaef28fc",
+  "created_utc": "2026-10-30T00:16:09.191966+00:00",
+  "credentials_recorded": false,
+  "final_selected_inventory": {
+    "selected": [
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:5a96cfdba13a99e602ab21a003f830d5315604552d5a97a717a52dfc9d6b7f35",
+        "id": 690318222,
+        "label": "",
+        "name": "evidence-0001.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuO",
+        "size": 912814484,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:18Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318222"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:0f7b234da90e8bdd968a2629acd17cfbee660ff9b1822361a59ba06bc13bef0a",
+        "id": 690318216,
+        "label": "",
+        "name": "evidence-0002.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuI",
+        "size": 907724645,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318216"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:91abdbb71bcb01cd677545c74bd4cbf984d4b1a9ca560f56d42f899573c26b9e",
+        "id": 690318218,
+        "label": "",
+        "name": "evidence-0003.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuK",
+        "size": 854485997,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:01Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318218"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce",
+        "id": 690318215,
+        "label": "",
+        "name": "evidence-0004.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuH",
+        "size": 1037007516,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:09:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318215"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:24d4b2840e3eec5dd52b203dc29a6908e76c4429d14c198d3f002522717f0e0e",
+        "id": 690318220,
+        "label": "",
+        "name": "evidence-0005.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuM",
+        "size": 986742002,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:08:15Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318220"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:01Z",
+        "digest": "sha256:34e783d7d215032161bd6849ef42deb227a284c4423559dce6393ed10a452801",
+        "id": 690334780,
+        "label": "",
+        "name": "evidence-0006.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJaw8",
+        "size": 1030845920,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:13:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690334780"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:19Z",
+        "digest": "sha256:5dda7c7029477dae5d71c0d2fbe60d2f651cef052a433f8e20de3f28907e1c8c",
+        "id": 690335485,
+        "label": "",
+        "name": "evidence-0007.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa79",
+        "size": 996936043,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:15Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335485"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:20Z",
+        "digest": "sha256:4f56c1faa8d33151a5d78329d264e870b717054035227355d6668861179b0d48",
+        "id": 690335531,
+        "label": "",
+        "name": "evidence-0008.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa8r",
+        "size": 1050480864,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:33Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335531"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:08:15Z",
+        "digest": "sha256:7dcbbf33bec39e01897e52d3254f88d40cadf98f4c3635a1516172405ea17e70",
+        "id": 690337323,
+        "label": "",
+        "name": "evidence-0009.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJbYr",
+        "size": 1015685054,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:15:28Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690337323"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:14:16Z",
+        "digest": "sha256:f5c9516abc602fd473576ab5c9edd7f429463b169bcc6a4c8bab875dcca06c3b",
+        "id": 690348860,
+        "label": "",
+        "name": "evidence-0012.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJeM8",
+        "size": 223417130,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:15:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690348860"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:14:44Z",
+        "digest": "sha256:b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a",
+        "id": 690349676,
+        "label": "",
+        "name": "input-selection.json",
+        "node_id": "RA_kwDOVbC4ds4pJeZs",
+        "size": 5302169,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:47Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349676"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:6ab9e2d8f995a96b4944280256e90892d521bf39338299621c4eec56b1124007",
+        "id": 690335386,
+        "label": "",
+        "name": "mlx-remainder-asset-aliases.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6a",
+        "size": 882,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:16Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335386"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:c05834ec7e26cb1617191dfedd8676f461a381f7e2862ad3c1ff721fbb57a0bb",
+        "id": 690335390,
+        "label": "",
+        "name": "mlx-remainder-evidence.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa6e",
+        "size": 15421247,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:19Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335390"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:77e8501e76e7d7fd1b55d1d2a64275b0b400051a9cd13599baa23edf10b98ad6",
+        "id": 690335388,
+        "label": "",
+        "name": "mlx-remainder-package.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6c",
+        "size": 1717805,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:17Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335388"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:51130156f54360009bfe1c62f725af319b85c598c2b18e7437f7f90f415879e6",
+        "id": 690335389,
+        "label": "",
+        "name": "mlx-remainder-selection.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6d",
+        "size": 435239,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:16Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335389"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:14:34Z",
+        "digest": "sha256:3c239abfeaeb15f0e9b7719f2d3bf66b767d3406e21f9b6166d1a9c95459f024",
+        "id": 690349378,
+        "label": "",
+        "name": "package.json",
+        "node_id": "RA_kwDOVbC4ds4pJeVC",
+        "size": 19875100,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:43Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349378"
+      }
+    ],
+    "unselected": [
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:09:20Z",
+        "digest": "sha256:98f503b5d90db916ef54b3aeef3cf70c835e0c56dfa794f33c41cc22ebf5a237",
+        "id": 690339398,
+        "label": "",
+        "name": "evidence-0010.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJb5G",
+        "size": 1008190101,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:16:02Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690339398"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:13:32Z",
+        "digest": "sha256:989576cdd9153ae8d4e8834b985ce3ef0f8766d92324fd96f38b44a446e5da35",
+        "id": 690347645,
+        "label": "",
+        "name": "evidence-0011.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJd59",
+        "size": 1027363723,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:17:09Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690347645"
+      }
+    ]
+  },
+  "finished_utc": "2026-10-30T00:24:33.575972+00:00",
+  "initial_inventory": {
+    "selected": [
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:5a96cfdba13a99e602ab21a003f830d5315604552d5a97a717a52dfc9d6b7f35",
+        "id": 690318222,
+        "label": "",
+        "name": "evidence-0001.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuO",
+        "size": 912814484,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:18Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318222"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:0f7b234da90e8bdd968a2629acd17cfbee660ff9b1822361a59ba06bc13bef0a",
+        "id": 690318216,
+        "label": "",
+        "name": "evidence-0002.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuI",
+        "size": 907724645,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318216"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:91abdbb71bcb01cd677545c74bd4cbf984d4b1a9ca560f56d42f899573c26b9e",
+        "id": 690318218,
+        "label": "",
+        "name": "evidence-0003.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuK",
+        "size": 854485997,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:01Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318218"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce",
+        "id": 690318215,
+        "label": "",
+        "name": "evidence-0004.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuH",
+        "size": 1037007516,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:09:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318215"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:24d4b2840e3eec5dd52b203dc29a6908e76c4429d14c198d3f002522717f0e0e",
+        "id": 690318220,
+        "label": "",
+        "name": "evidence-0005.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuM",
+        "size": 986742002,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:08:15Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318220"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:01Z",
+        "digest": "sha256:34e783d7d215032161bd6849ef42deb227a284c4423559dce6393ed10a452801",
+        "id": 690334780,
+        "label": "",
+        "name": "evidence-0006.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJaw8",
+        "size": 1030845920,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:13:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690334780"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:19Z",
+        "digest": "sha256:5dda7c7029477dae5d71c0d2fbe60d2f651cef052a433f8e20de3f28907e1c8c",
+        "id": 690335485,
+        "label": "",
+        "name": "evidence-0007.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa79",
+        "size": 996936043,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:15Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335485"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:20Z",
+        "digest": "sha256:4f56c1faa8d33151a5d78329d264e870b717054035227355d6668861179b0d48",
+        "id": 690335531,
+        "label": "",
+        "name": "evidence-0008.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa8r",
+        "size": 1050480864,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:33Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335531"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:08:15Z",
+        "digest": "sha256:7dcbbf33bec39e01897e52d3254f88d40cadf98f4c3635a1516172405ea17e70",
+        "id": 690337323,
+        "label": "",
+        "name": "evidence-0009.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJbYr",
+        "size": 1015685054,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:15:28Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690337323"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:14:16Z",
+        "digest": "sha256:f5c9516abc602fd473576ab5c9edd7f429463b169bcc6a4c8bab875dcca06c3b",
+        "id": 690348860,
+        "label": "",
+        "name": "evidence-0012.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJeM8",
+        "size": 223417130,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:15:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690348860"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:14:44Z",
+        "digest": "sha256:b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a",
+        "id": 690349676,
+        "label": "",
+        "name": "input-selection.json",
+        "node_id": "RA_kwDOVbC4ds4pJeZs",
+        "size": 5302169,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:47Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349676"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:6ab9e2d8f995a96b4944280256e90892d521bf39338299621c4eec56b1124007",
+        "id": 690335386,
+        "label": "",
+        "name": "mlx-remainder-asset-aliases.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6a",
+        "size": 882,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:16Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335386"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:c05834ec7e26cb1617191dfedd8676f461a381f7e2862ad3c1ff721fbb57a0bb",
+        "id": 690335390,
+        "label": "",
+        "name": "mlx-remainder-evidence.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa6e",
+        "size": 15421247,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:19Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335390"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:77e8501e76e7d7fd1b55d1d2a64275b0b400051a9cd13599baa23edf10b98ad6",
+        "id": 690335388,
+        "label": "",
+        "name": "mlx-remainder-package.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6c",
+        "size": 1717805,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:17Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335388"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:51130156f54360009bfe1c62f725af319b85c598c2b18e7437f7f90f415879e6",
+        "id": 690335389,
+        "label": "",
+        "name": "mlx-remainder-selection.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6d",
+        "size": 435239,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:16Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335389"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:14:34Z",
+        "digest": "sha256:3c239abfeaeb15f0e9b7719f2d3bf66b767d3406e21f9b6166d1a9c95459f024",
+        "id": 690349378,
+        "label": "",
+        "name": "package.json",
+        "node_id": "RA_kwDOVbC4ds4pJeVC",
+        "size": 19875100,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:43Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349378"
+      }
+    ],
+    "unselected": [
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:09:20Z",
+        "digest": "sha256:98f503b5d90db916ef54b3aeef3cf70c835e0c56dfa794f33c41cc22ebf5a237",
+        "id": 690339398,
+        "label": "",
+        "name": "evidence-0010.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJb5G",
+        "size": 1008190101,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:16:02Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690339398"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:13:32Z",
+        "digest": null,
+        "id": 690347645,
+        "label": "",
+        "name": "evidence-0011.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJd59",
+        "size": 1027363723,
+        "state": "starter",
+        "updated_at": "2026-10-30T00:13:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690347645"
+      }
+    ]
+  },
+  "local_preflight": {
+    "evidence-0001.tar.gz": {
+      "bytes": 912814484,
+      "sha256": "5a96cfdba13a99e602ab21a003f830d5315604552d5a97a717a52dfc9d6b7f35",
+      "stat": {
+        "st_ctime_ns": 1793317889940497017,
+        "st_dev": 16777234,
+        "st_ino": 297291919,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793317887164882490,
+        "st_nlink": 1,
+        "st_size": 912814484
+      }
+    },
+    "evidence-0002.tar.gz": {
+      "bytes": 907724645,
+      "sha256": "0f7b234da90e8bdd968a2629acd17cfbee660ff9b1822361a59ba06bc13bef0a",
+      "stat": {
+        "st_ctime_ns": 1793317912848466974,
+        "st_dev": 16777234,
+        "st_ino": 297291970,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793317909955994028,
+        "st_nlink": 1,
+        "st_size": 907724645
+      }
+    },
+    "evidence-0003.tar.gz": {
+      "bytes": 854485997,
+      "sha256": "91abdbb71bcb01cd677545c74bd4cbf984d4b1a9ca560f56d42f899573c26b9e",
+      "stat": {
+        "st_ctime_ns": 1793317934700556739,
+        "st_dev": 16777234,
+        "st_ino": 297292012,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793317932059878159,
+        "st_nlink": 1,
+        "st_size": 854485997
+      }
+    },
+    "evidence-0004.tar.gz": {
+      "bytes": 1037007516,
+      "sha256": "c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce",
+      "stat": {
+        "st_ctime_ns": 1793317951573809463,
+        "st_dev": 16777234,
+        "st_ino": 297292062,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793317950480856284,
+        "st_nlink": 1,
+        "st_size": 1037007516
+      }
+    },
+    "evidence-0005.tar.gz": {
+      "bytes": 986742002,
+      "sha256": "24d4b2840e3eec5dd52b203dc29a6908e76c4429d14c198d3f002522717f0e0e",
+      "stat": {
+        "st_ctime_ns": 1793317968506922269,
+        "st_dev": 16777234,
+        "st_ino": 297292123,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793317967325475174,
+        "st_nlink": 1,
+        "st_size": 986742002
+      }
+    },
+    "evidence-0006.tar.gz": {
+      "bytes": 1030845920,
+      "sha256": "34e783d7d215032161bd6849ef42deb227a284c4423559dce6393ed10a452801",
+      "stat": {
+        "st_ctime_ns": 1793317985325093828,
+        "st_dev": 16777234,
+        "st_ino": 297292164,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793317984325923840,
+        "st_nlink": 1,
+        "st_size": 1030845920
+      }
+    },
+    "evidence-0007.tar.gz": {
+      "bytes": 996936043,
+      "sha256": "5dda7c7029477dae5d71c0d2fbe60d2f651cef052a433f8e20de3f28907e1c8c",
+      "stat": {
+        "st_ctime_ns": 1793318001581152894,
+        "st_dev": 16777234,
+        "st_ino": 297292212,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318000555068593,
+        "st_nlink": 1,
+        "st_size": 996936043
+      }
+    },
+    "evidence-0008.tar.gz": {
+      "bytes": 1050480864,
+      "sha256": "4f56c1faa8d33151a5d78329d264e870b717054035227355d6668861179b0d48",
+      "stat": {
+        "st_ctime_ns": 1793318019311752372,
+        "st_dev": 16777234,
+        "st_ino": 297292253,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318018167543246,
+        "st_nlink": 1,
+        "st_size": 1050480864
+      }
+    },
+    "evidence-0009.tar.gz": {
+      "bytes": 1015685054,
+      "sha256": "7dcbbf33bec39e01897e52d3254f88d40cadf98f4c3635a1516172405ea17e70",
+      "stat": {
+        "st_ctime_ns": 1793318036634682700,
+        "st_dev": 16777234,
+        "st_ino": 297292314,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318035473644991,
+        "st_nlink": 1,
+        "st_size": 1015685054
+      }
+    },
+    "evidence-0012.tar.gz": {
+      "bytes": 223417130,
+      "sha256": "f5c9516abc602fd473576ab5c9edd7f429463b169bcc6a4c8bab875dcca06c3b",
+      "stat": {
+        "st_ctime_ns": 1793318076460603623,
+        "st_dev": 16777234,
+        "st_ino": 297292628,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318076194292233,
+        "st_nlink": 1,
+        "st_size": 223417130
+      }
+    },
+    "input-selection.json": {
+      "bytes": 5302169,
+      "sha256": "b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a",
+      "stat": {
+        "st_ctime_ns": 1793317867988760901,
+        "st_dev": 16777234,
+        "st_ino": 297291916,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793317867774012154,
+        "st_nlink": 1,
+        "st_size": 5302169
+      }
+    },
+    "mlx-remainder-asset-aliases.json": {
+      "bytes": 882,
+      "sha256": "6ab9e2d8f995a96b4944280256e90892d521bf39338299621c4eec56b1124007",
+      "stat": {
+        "st_ctime_ns": 1793318832067721165,
+        "st_dev": 16777234,
+        "st_ino": 297349772,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318831861143377,
+        "st_nlink": 1,
+        "st_size": 882
+      }
+    },
+    "mlx-remainder-evidence.tar.gz": {
+      "bytes": 15421247,
+      "sha256": "c05834ec7e26cb1617191dfedd8676f461a381f7e2862ad3c1ff721fbb57a0bb",
+      "stat": {
+        "st_ctime_ns": 1793318831839661867,
+        "st_dev": 16777234,
+        "st_ino": 297349769,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318530660590182,
+        "st_nlink": 1,
+        "st_size": 15421247
+      }
+    },
+    "mlx-remainder-package.json": {
+      "bytes": 1717805,
+      "sha256": "77e8501e76e7d7fd1b55d1d2a64275b0b400051a9cd13599baa23edf10b98ad6",
+      "stat": {
+        "st_ctime_ns": 1793318831858435162,
+        "st_dev": 16777234,
+        "st_ino": 297349770,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318531035909210,
+        "st_nlink": 1,
+        "st_size": 1717805
+      }
+    },
+    "mlx-remainder-selection.json": {
+      "bytes": 435239,
+      "sha256": "51130156f54360009bfe1c62f725af319b85c598c2b18e7437f7f90f415879e6",
+      "stat": {
+        "st_ctime_ns": 1793318831860491083,
+        "st_dev": 16777234,
+        "st_ino": 297349771,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318529918700314,
+        "st_nlink": 1,
+        "st_size": 435239
+      }
+    },
+    "package.json": {
+      "bytes": 19875100,
+      "sha256": "3c239abfeaeb15f0e9b7719f2d3bf66b767d3406e21f9b6166d1a9c95459f024",
+      "stat": {
+        "st_ctime_ns": 1793318078785485591,
+        "st_dev": 16777234,
+        "st_ino": 297292665,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318078784624838,
+        "st_nlink": 1,
+        "st_size": 19875100
+      }
+    }
+  },
+  "operation": "download",
+  "passed": true,
+  "payload_copied_to_disk": false,
+  "release_after": {
+    "created_at": "2026-10-29T23:59:53Z",
+    "draft": true,
+    "id": 428513598,
+    "prerelease": false,
+    "published_at": null,
+    "tag_name": "transformer-upstream-integration-v2"
+  },
+  "release_before": {
+    "created_at": "2026-10-29T23:59:53Z",
+    "draft": true,
+    "id": 428513598,
+    "prerelease": false,
+    "published_at": null,
+    "tag_name": "transformer-upstream-integration-v2"
+  },
+  "release_id": 428513598,
+  "repository": "logannye/arm64-transformer",
+  "schema": "release-asset-verification-result-v1",
+  "scope": "explicit_selection_only",
+  "separate_final_inventory_required": true,
+  "status": "passed",
+  "tag_name": "transformer-upstream-integration-v2",
+  "verifier_sha256": "9f529d2aade99c073bc504b7e2cc186901fa816dd4f71e1a65ced2104f7c440c",
+  "whole_release_inventory_claimed": false
+}

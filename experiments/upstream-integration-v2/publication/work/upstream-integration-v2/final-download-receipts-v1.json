@@ -1,0 +1,25 @@
+{
+  "schema": "release-download-receipts-v1",
+  "receipts": [
+    {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/remote-download-closed-subset-v1/summary.json",
+      "sha256": "6bbde5620a6c6f973082b5f92c0521f5aa1685f33f22fe122a12cb01e6f813b2"
+    },
+    {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/remote-download-closed-tail-v1/summary.json",
+      "sha256": "2d8a479797074c900efdb10f8f3ed63d28966915f61a468d522263af70cc4a5e"
+    },
+    {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/remote-canonical-58-v1/summary.json",
+      "sha256": "1a2d3b1e1dc119d43222a877e7daa717662d774f1551fd85dbb6e15e835354a7"
+    },
+    {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/remote-final-delta-v1/summary.json",
+      "sha256": "6c7bd81331e87a14cb8aff22f5fc1ee9281d0978b1dacca64b425e77361ba611"
+    },
+    {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/remote-final-metadata-v1/summary.json",
+      "sha256": "ad469956666bcc45f328453df445e3487c6401e2fc8987136e21915b29114832"
+    }
+  ]
+}

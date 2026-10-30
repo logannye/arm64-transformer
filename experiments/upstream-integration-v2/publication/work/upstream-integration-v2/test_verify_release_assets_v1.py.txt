@@ -1,0 +1,129 @@
+"""Synthetic stdlib verifier tests: no GitHub calls, downloads, or frameworks."""
+import contextlib
+import copy
+import hashlib
+import importlib.util
+import io
+import json
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import unittest
+
+SOURCE=Path(__file__).with_name('verify_release_assets_v1.py')
+spec=importlib.util.spec_from_file_location('release_verifier',SOURCE);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
+
+class FakeClient:
+    def __init__(self,contract,**changes):
+        self.c=contract;self.changes=changes;self.asset_reads={};self.downloads=[]
+        self.data={r['asset_id']:b'a' if r['name']=='a.bin' else b'bb' for r in contract['assets']}
+    def user(self):
+        if self.changes.get('auth_failure'):raise m.CommandFailure('Read-only gh command failed',{'returncode':1,'stderr_markers':['authentication_or_permission'],'raw_stderr_retained':False})
+        return {'login':'wrong' if self.changes.get('wrong_login') else 'logannye','id':87274608,'type':'User'}
+    def release(self):return {'id':m.RELEASE_ID,'tag_name':m.TAG,'draft':not self.changes.get('published',False),'prerelease':False,'created_at':'fixed','published_at':'now' if self.changes.get('published') else None}
+    def row(self,r):
+        x={'id':r['asset_id'],'node_id':'node'+str(r['asset_id']),'name':r['name'],'label':'','state':'uploaded','size':r['bytes'],'digest':'sha256:'+r['sha256'],'content_type':'application/octet-stream','url':f'https://api.github.com/repos/{m.REPOSITORY}/releases/assets/{r["asset_id"]}','created_at':'fixed','updated_at':'fixed'}
+        x.update(self.changes.get('row_change',{}));return x
+    def assets(self):
+        rows=[self.row(r) for r in self.c['assets']]
+        if self.changes.get('missing'):rows=rows[:-1]
+        if self.changes.get('duplicate'):rows.append(copy.deepcopy(rows[0]))
+        if self.changes.get('extra'):
+            r=copy.deepcopy(rows[0]);r.update({'id':999,'name':'extra.bin','url':f'https://api.github.com/repos/{m.REPOSITORY}/releases/assets/999'});rows.append(r)
+        return list(reversed(rows))
+    def asset(self,asset_id):
+        self.asset_reads[asset_id]=self.asset_reads.get(asset_id,0)+1
+        r=self.row(next(r for r in self.c['assets'] if r['asset_id']==asset_id))
+        if self.changes.get('mutation') and self.asset_reads[asset_id]>1:r['updated_at']='changed'
+        return r
+    def download(self,asset_id,expected_bytes):
+        self.downloads.append(asset_id);data=self.data[asset_id]
+        if self.changes.get('corrupt_download'):data=b'corrupt'
+        return {'stdout_bytes':len(data),'stdout_sha256':hashlib.sha256(data).hexdigest(),'returncode':0,'payload_copied_to_disk':False}
+
+class Tests(unittest.TestCase):
+    def setUp(self):
+        self.tmp=tempfile.TemporaryDirectory();self.root=Path(self.tmp.name).resolve();(self.root/'outputs').mkdir()
+        assets=[]
+        for i,(name,data) in enumerate([('a.bin',b'a'),('b.bin',b'bb')],start=1):
+            (self.root/'outputs'/name).write_bytes(data)
+            assets.append({'name':name,'asset_id':i,'local_path':'outputs/'+name,'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()})
+        self.c={'schema':'release-asset-download-contract-v1','repository':m.REPOSITORY,'release_id':m.RELEASE_ID,'tag_name':m.TAG,'draft':True,'prerelease':False,'expected_login':'logannye','workspace_root':str(self.root),'assets':assets}
+        self.cp=self.root/'contract.json';self.cp.write_text(json.dumps(self.c));self.output=self.root/'result'
+    def tearDown(self):self.tmp.cleanup()
+    def run_fake(self,**changes):
+        client=FakeClient(self.c,**changes)
+        with contextlib.redirect_stdout(io.StringIO()):r=m.download_verify(self.cp,self.output,lambda _:client)
+        return r,client
+    def test_sorted_contract_and_remote_reordering(self):
+        r,client=self.run_fake();self.assertTrue(r['passed']);self.assertEqual(client.downloads,[1,2]);self.assertFalse(r['whole_release_inventory_claimed'])
+    def test_contract_negative_controls(self):
+        cases=[]
+        c=copy.deepcopy(self.c);c['assets'].reverse();cases.append(c)
+        c=copy.deepcopy(self.c);c['assets'].append(c['assets'][0]);cases.append(c)
+        c=copy.deepcopy(self.c);c['assets'][1]['asset_id']=1;cases.append(c)
+        c=copy.deepcopy(self.c);c['assets'][0]['local_path']='../private';cases.append(c)
+        c=copy.deepcopy(self.c);c['release_id']+=1;cases.append(c)
+        c=copy.deepcopy(self.c);c['assets'][0]['sha256']=None;cases.append(c)
+        for c in cases:
+            with self.subTest(c=c),self.assertRaises(ValueError):m.validate_contract(c)
+    def test_duplicate_json_keys_rejected(self):
+        with self.assertRaises(ValueError):m.parse('{"a":1,"a":2}')
+    def test_remote_inventory_negative(self):
+        for change in [{'missing':True},{'duplicate':True},{'row_change':{'state':'starter'}},{'row_change':{'digest':None}},{'row_change':{'size':9}},{'row_change':{'id':100}},{'row_change':{'url':'https://elsewhere.invalid'}}]:
+            with self.subTest(change=change),self.assertRaises(ValueError):m.inventory_check(FakeClient(self.c,**change).assets(),self.c)
+    def test_extras_allowed_only_in_selected_download(self):
+        r,_=self.run_fake(extra=True);self.assertEqual(len(r['initial_inventory']['unselected']),1)
+        with self.assertRaises(ValueError):m.inventory_check(FakeClient(self.c,extra=True).assets(),self.c,exact=True)
+    def test_local_mismatch_before_network(self):
+        (self.root/'outputs/a.bin').write_bytes(b'wrong')
+        def forbidden(_):raise AssertionError('network must not start')
+        with self.assertRaises(ValueError):m.download_verify(self.cp,self.output,forbidden)
+        self.assertEqual(json.loads((self.output/'summary.json').read_text())['status'],'failed')
+    def test_failed_authentication_retained(self):
+        with self.assertRaises(m.CommandFailure):self.run_fake(auth_failure=True)
+        r=json.loads((self.output/'summary.json').read_text());self.assertEqual(r['failed_command']['stderr_markers'],['authentication_or_permission']);self.assertFalse(r['passed'])
+    def test_download_and_identity_failures_retained(self):
+        for i,change in enumerate([{'mutation':True},{'corrupt_download':True},{'published':True},{'wrong_login':True}]):
+            self.output=self.root/f'negative-{i}'
+            with self.subTest(change=change),self.assertRaises(ValueError):self.run_fake(**change)
+            r=json.loads((self.output/'summary.json').read_text());self.assertFalse(r['passed']);self.assertFalse(r['complete'])
+    def test_partial_second_asset_failure_keeps_first_success(self):
+        client=FakeClient(self.c);original=client.download
+        def second_failure(asset_id,expected_bytes):
+            if asset_id==2:raise m.CommandFailure('Read-only gh command failed',{'returncode':1,'stdout_bytes':1,'stdout_sha256':'0'*64,'raw_stderr_retained':False})
+            return original(asset_id,expected_bytes)
+        client.download=second_failure
+        with contextlib.redirect_stdout(io.StringIO()),self.assertRaises(m.CommandFailure):m.download_verify(self.cp,self.output,lambda _:client)
+        r=json.loads((self.output/'summary.json').read_text());self.assertEqual(r['assets'][0]['status'],'passed');self.assertEqual(r['assets'][1]['status'],'failed');self.assertIn('failed_command',r)
+    def make_index(self):
+        self.run_fake();p=self.output/'summary.json';index=self.root/'receipts.json';index.write_text(json.dumps({'schema':'release-download-receipts-v1','receipts':[{'path':str(p),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()}]}));return index,p
+    def test_final_inventory_requires_downloads(self):
+        index,_=self.make_index();out=self.root/'final';client=FakeClient(self.c)
+        r=m.final_inventory(self.cp,index,out,lambda _:client);self.assertTrue(r['whole_release_inventory_claimed']);self.assertEqual(client.downloads,[])
+    def test_modified_receipt_rejected(self):
+        index,p=self.make_index();p.write_bytes(p.read_bytes()+b' ')
+        with self.assertRaises(ValueError):m.load_download_coverage(index,self.c)
+    def test_reordered_receipt_rejected_even_with_new_digest(self):
+        index,p=self.make_index();r=json.loads(p.read_text());r['assets'].reverse();p.write_text(json.dumps(r));d=json.loads(index.read_text());d['receipts'][0]['sha256']=hashlib.sha256(p.read_bytes()).hexdigest();index.write_text(json.dumps(d))
+        with self.assertRaises(ValueError):m.load_download_coverage(index,self.c)
+    def test_missing_successful_download_coverage(self):
+        index,p=self.make_index();r=json.loads(p.read_text());r['assets']=r['assets'][:1];p.write_text(json.dumps(r));d=json.loads(index.read_text());d['receipts'][0]['sha256']=hashlib.sha256(p.read_bytes()).hexdigest();index.write_text(json.dumps(d))
+        with self.assertRaises(ValueError):m.load_download_coverage(index,self.c)
+    def test_existing_namespace_rejected(self):
+        self.output.mkdir()
+        with self.assertRaises(ValueError):self.run_fake()
+    def test_real_stream_hash_without_copy(self):
+        _,r=m.run_stream([sys.executable,'-I','-S','-c','import sys;sys.stdout.buffer.write(b"x"*8388608)'],max_stdout_bytes=8388608)
+        self.assertEqual(r['stdout_bytes'],8388608);self.assertEqual(r['stdout_sha256'],hashlib.sha256(b'x'*8388608).hexdigest());self.assertFalse(r['payload_copied_to_disk'])
+    def test_stream_limits_timeouts_and_sensitive_stderr(self):
+        cases=[(['-c','import sys;sys.stdout.buffer.write(b"x"*8192)'],{'max_stdout_bytes':1}),
+               (['-c','import time;time.sleep(1)'],{'total_timeout':0.01,'idle_timeout':0.01}),
+               (['-c','import sys;sys.stderr.write("Authorization: Bearer SECRET-VALUE HTTP 403\\n");sys.exit(1)'],{})]
+        for command,kwargs in cases:
+            with self.subTest(command=command),self.assertRaises(m.CommandFailure) as caught:
+                m.run_stream([sys.executable,'-I','-S',*command],**kwargs)
+            self.assertNotIn('SECRET-VALUE',json.dumps(caught.exception.receipt))
+
+if __name__=='__main__':unittest.main(verbosity=2)

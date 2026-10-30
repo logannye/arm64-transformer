@@ -1,0 +1,1788 @@
+{
+  "assets": [
+    {
+      "aliases": [
+        "work/upstream-integration-v2/mlx/hosted-40964965287/mlx-jit-on-macos14-arm64-cp312.tar.gz"
+      ],
+      "asset_name": "hosted-40964965287-mlx-jit-on-macos14-arm64-cp312.tar.gz",
+      "canonical": {
+        "bytes": 15526304,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/mlx/hosted-40964965287/mlx-jit-on-macos14-arm64-cp312.tar.gz",
+        "sha256": "907ae13629a4eebf60edcc915ffa74ecc0c4d6466e5725305e3dfaa4db2dc0d2"
+      },
+      "id": "mlx-normal-jit-on",
+      "kind": "original_mlx_native",
+      "reconstruction": "Extract verified original mode root. Reconstruct recorded header derivative with reconstruct_header_bundles_v1.py and original transport metadata; never regenerate timestamps.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793313170380923158,
+        "st_dev": 16777234,
+        "st_ino": 296991052,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793313170119513782,
+        "st_nlink": 1,
+        "st_size": 15526304
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/mlx/hosted-40964965287/mlx-jit-off-macos14-arm64-cp312.tar.gz"
+      ],
+      "asset_name": "hosted-40964965287-mlx-jit-off-macos14-arm64-cp312.tar.gz",
+      "canonical": {
+        "bytes": 53413515,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/mlx/hosted-40964965287/mlx-jit-off-macos14-arm64-cp312.tar.gz",
+        "sha256": "ddb48d8f415c2fd42379c1cc73ae8bbefa592d357f2fb9025a82f65c6e2f0e2d"
+      },
+      "id": "mlx-normal-jit-off",
+      "kind": "original_mlx_native",
+      "reconstruction": "Extract verified original mode root. Reconstruct recorded header derivative with reconstruct_header_bundles_v1.py and original transport metadata; never regenerate timestamps.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793313170378427946,
+        "st_dev": 16777234,
+        "st_ino": 296991049,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793313170103478509,
+        "st_nlink": 1,
+        "st_size": 53413515
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/mlx/official-40966219164/mlx-cpu-only-macos14-arm64-cp312.tar.gz"
+      ],
+      "asset_name": "official-40966219164-mlx-cpu-only-macos14-arm64-cp312.tar.gz",
+      "canonical": {
+        "bytes": 14008100,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/mlx/official-40966219164/mlx-cpu-only-macos14-arm64-cp312.tar.gz",
+        "sha256": "03ad69fe76ef29bebcb6ce2364ddc847e4f810aa147c8ca7cfe65442f45acd1f"
+      },
+      "id": "mlx-official-cpu-only",
+      "kind": "original_mlx_native",
+      "reconstruction": "Extract verified original mode root. Reconstruct recorded header derivative with reconstruct_header_bundles_v1.py and original transport metadata; never regenerate timestamps.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793314116314856409,
+        "st_dev": 16777234,
+        "st_ino": 297110230,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793314116196966328,
+        "st_nlink": 1,
+        "st_size": 14008100
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/mlx/official-40966219164/mlx-jit-on-macos14-arm64-cp312.tar.gz"
+      ],
+      "asset_name": "official-40966219164-mlx-jit-on-macos14-arm64-cp312.tar.gz",
+      "canonical": {
+        "bytes": 15527616,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/mlx/official-40966219164/mlx-jit-on-macos14-arm64-cp312.tar.gz",
+        "sha256": "5edb6e3f6a98c428f66e6850e30cb164f46238e293c3b88703dfc008e829508e"
+      },
+      "id": "mlx-official-jit-on",
+      "kind": "original_mlx_native",
+      "reconstruction": "Extract verified original mode root. Reconstruct recorded header derivative with reconstruct_header_bundles_v1.py and original transport metadata; never regenerate timestamps.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793314116313396654,
+        "st_dev": 16777234,
+        "st_ino": 297110232,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793314116251837521,
+        "st_nlink": 1,
+        "st_size": 15527616
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/mlx/official-40966219164/mlx-jit-off-macos14-arm64-cp312.tar.gz"
+      ],
+      "asset_name": "official-40966219164-mlx-jit-off-macos14-arm64-cp312.tar.gz",
+      "canonical": {
+        "bytes": 53395010,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/mlx/official-40966219164/mlx-jit-off-macos14-arm64-cp312.tar.gz",
+        "sha256": "8164a7865c3e59723161aa17809d02a452ea09a81912e6ba686bc05afca40e7c"
+      },
+      "id": "mlx-official-jit-off",
+      "kind": "original_mlx_native",
+      "reconstruction": "Extract verified original mode root. Reconstruct recorded header derivative with reconstruct_header_bundles_v1.py and original transport metadata; never regenerate timestamps.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793314116313067819,
+        "st_dev": 16777234,
+        "st_ino": 297110231,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793314116237276886,
+        "st_nlink": 1,
+        "st_size": 53395010
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/mlx/release-40978071574/mlx-release-main-jit-on-macos14-arm64-cp312.tar.gz"
+      ],
+      "asset_name": "mlx-release-main-jit-on-macos14-arm64-cp312.tar.gz",
+      "canonical": {
+        "bytes": 15370241,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/mlx/release-40978071574/mlx-release-main-jit-on-macos14-arm64-cp312.tar.gz",
+        "sha256": "de461e6cee187cc0f8b3cf7278beeca24cde76bdf71b1941e6149c98f5b584a0"
+      },
+      "id": "mlx-release-main-jit-on",
+      "kind": "release_mlx_native",
+      "reconstruction": "Use retained strict extract_release_artifact_v1.py and original summary/MANIFEST bytes; preserve exact source, Release flags and dependencies.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793320102973517980,
+        "st_dev": 16777234,
+        "st_ino": 297356993,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793320102568509257,
+        "st_nlink": 1,
+        "st_size": 15370241
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/mlx/release-40978071574/mlx-release-main-jit-off-macos14-arm64-cp312.tar.gz"
+      ],
+      "asset_name": "mlx-release-main-jit-off-macos14-arm64-cp312.tar.gz",
+      "canonical": {
+        "bytes": 59883749,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/mlx/release-40978071574/mlx-release-main-jit-off-macos14-arm64-cp312.tar.gz",
+        "sha256": "d370e452b2ea485108721088838446f0c0a29ffd1cd7fcd46a66857a7bfb96eb"
+      },
+      "id": "mlx-release-main-jit-off",
+      "kind": "release_mlx_native",
+      "reconstruction": "Use retained strict extract_release_artifact_v1.py and original summary/MANIFEST bytes; preserve exact source, Release flags and dependencies.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793320102967499924,
+        "st_dev": 16777234,
+        "st_ino": 297356992,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793320102562364785,
+        "st_nlink": 1,
+        "st_size": 59883749
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/mlx/release-40978071574/mlx-release-patched-jit-on-macos14-arm64-cp312.tar.gz"
+      ],
+      "asset_name": "mlx-release-patched-jit-on-macos14-arm64-cp312.tar.gz",
+      "canonical": {
+        "bytes": 15390369,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/mlx/release-40978071574/mlx-release-patched-jit-on-macos14-arm64-cp312.tar.gz",
+        "sha256": "f2045a87c87963a82ff95884e27b73e100c5defee37c7289efa9feaaa242003d"
+      },
+      "id": "mlx-release-patched-jit-on",
+      "kind": "release_mlx_native",
+      "reconstruction": "Use retained strict extract_release_artifact_v1.py and original summary/MANIFEST bytes; preserve exact source, Release flags and dependencies.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793320102979111493,
+        "st_dev": 16777234,
+        "st_ino": 297356995,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793320102622025880,
+        "st_nlink": 1,
+        "st_size": 15390369
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/mlx/release-40978071574/mlx-release-patched-jit-off-macos14-arm64-cp312.tar.gz"
+      ],
+      "asset_name": "mlx-release-patched-jit-off-macos14-arm64-cp312.tar.gz",
+      "canonical": {
+        "bytes": 59919589,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/mlx/release-40978071574/mlx-release-patched-jit-off-macos14-arm64-cp312.tar.gz",
+        "sha256": "39cc7f4e72619e3a6a97c4c57cafc91e97c541c7c6047a81e6067431b280ddf7"
+      },
+      "id": "mlx-release-patched-jit-off",
+      "kind": "release_mlx_native",
+      "reconstruction": "Use retained strict extract_release_artifact_v1.py and original summary/MANIFEST bytes; preserve exact source, Release flags and dependencies.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793320102977844406,
+        "st_dev": 16777234,
+        "st_ino": 297356994,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793320102615900116,
+        "st_nlink": 1,
+        "st_size": 59919589
+      }
+    },
+    {
+      "aliases": [
+        "outputs/upstream-integration-v2/mlx/fp64-full-model-v1.tar.gz"
+      ],
+      "asset_name": "mlx-eager-fp64-full-model-v1.tar.gz",
+      "canonical": {
+        "bytes": 744438215,
+        "executable_bits": 0,
+        "path": "outputs/upstream-integration-v2/mlx/fp64-full-model-v1.tar.gz",
+        "sha256": "cc658bcfea16a2126a92dc756f98cb8ec5ddef891cd65e82841a8a6c7f9b5661"
+      },
+      "id": "mlx-eager-fp64-historical",
+      "kind": "historical_eager_model_raw",
+      "reconstruction": "Use original member/verification sidecars. Historical graph-disabled run is retained as historical evidence, never substituted for compiled Release validation.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793312495072561860,
+        "st_dev": 16777234,
+        "st_ino": 296982305,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793312495072561860,
+        "st_nlink": 1,
+        "st_size": 744438215
+      }
+    },
+    {
+      "aliases": [
+        "outputs/upstream-framework-fixes/shared-mlx/evidence.tar.gz"
+      ],
+      "asset_name": "mlx-original-shared-evidence.tar.gz",
+      "canonical": {
+        "bytes": 373740535,
+        "executable_bits": 0,
+        "path": "outputs/upstream-framework-fixes/shared-mlx/evidence.tar.gz",
+        "sha256": "bc9348c172250d83cdfc009b4dd6f8b4d6c5c7c8ea2559b76101ff55e630be1f"
+      },
+      "id": "mlx-original-shared-evidence",
+      "kind": "historical_shared_evidence",
+      "reconstruction": "Use original archive-verification.json and evidence-files.json. Preserve original hybrid/eager labels and failure evidence.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793301013805615654,
+        "st_dev": 16777234,
+        "st_ino": 296842320,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793301013805615654,
+        "st_nlink": 1,
+        "st_size": 373740535
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/pytorch-integrated-runtime.tar.gz"
+      ],
+      "asset_name": "pytorch-integrated-runtime-40976850708.tar.gz",
+      "canonical": {
+        "bytes": 116652205,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/pytorch-integrated-runtime.tar.gz",
+        "sha256": "74d7d171dfc9127d0c0477d5921782d92c72615a2b21962f0a1004d9f5e43f94"
+      },
+      "id": "pytorch-full-source-native",
+      "kind": "pytorch_native",
+      "reconstruction": "Restore this exact original tar.gz once; run the retained strict runtime extractor against its original runtime manifest. Recreate the complete upstream test checkout separately from pinned base, patch, recursive submodule commits and raw/canonical source-auth receipt. A passed build/import/transport does not change failed lint or imply device numerical success.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793332971701074418,
+        "st_dev": 16777234,
+        "st_ino": 297660103,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793332971587700611,
+        "st_nlink": 1,
+        "st_size": 116652205
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/pytorch-integrated-runtime.tar.gz"
+      ],
+      "asset_name": "pytorch-integrated-runtime-40989036595.tar.gz",
+      "canonical": {
+        "bytes": 116647267,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/pytorch-integrated-runtime.tar.gz",
+        "sha256": "e0d82f7dfa61da87ef59abceaf5a7fa2030f20178f08f4ae1b456249930620de"
+      },
+      "id": "pytorch-formatted-full-source-native",
+      "kind": "pytorch_native",
+      "reconstruction": "Restore this exact original tar.gz once; run the retained strict runtime extractor against its original runtime manifest. Recreate the complete upstream test checkout separately from pinned base, patch, recursive submodule commits and raw/canonical source-auth receipt. A passed build/import/transport does not change failed lint or imply device numerical success.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793332898810700379,
+        "st_dev": 16777234,
+        "st_ino": 297616915,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793332898654437679,
+        "st_nlink": 1,
+        "st_size": 116647267
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/supplement-v2/original-wrapper-bytecode-v1/lint-v3-original-host-bytecode.bin",
+        "work/upstream-integration-v2/pytorch/lint-full-artifacts-v1/downloads-v1/v3-40997253502/extracted/study/validation/upstream-pytorch-lint-control-v3/__pycache__/tree_inventory.cpython-312.pyc"
+      ],
+      "asset_name": "lint-v3-original-host-bytecode.bin",
+      "canonical": {
+        "bytes": 22022,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/supplement-v2/original-wrapper-bytecode-v1/lint-v3-original-host-bytecode.bin",
+        "sha256": "3750033702c4a05fecc7a4df2d681331dc2e8e597b25530e38dbb537841466ab"
+      },
+      "id": "lint-v3-original-generated-bytecode",
+      "kind": "original_generated_bytecode_evidence",
+      "reconstruction": "Restore exact bytes/mode only to the single original member alias. Retained because it came from the hosted artifact; do not import, execute or regenerate this .bin evidence. Generic cache exclusions remain unchanged.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793334496988891013,
+        "st_dev": 16777234,
+        "st_ino": 297913888,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793334496827638309,
+        "st_nlink": 1,
+        "st_size": 22022
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/supplement-v2/original-wrapper-bytecode-v1/lint-v4-original-host-bytecode.bin",
+        "work/upstream-integration-v2/pytorch/lint-full-artifacts-v1/v4-closed-v1/extracted/study/validation/upstream-pytorch-lint-control-v4/__pycache__/tree_inventory.cpython-312.pyc"
+      ],
+      "asset_name": "lint-v4-original-host-bytecode.bin",
+      "canonical": {
+        "bytes": 22022,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/supplement-v2/original-wrapper-bytecode-v1/lint-v4-original-host-bytecode.bin",
+        "sha256": "2e9f6ea6c34c499cfa09261d1a2e8ef6415e9daba77d937a3b39d7c03c4c561b"
+      },
+      "id": "lint-v4-original-generated-bytecode",
+      "kind": "original_generated_bytecode_evidence",
+      "reconstruction": "Restore exact bytes/mode only to the single original member alias. Retained because it came from the hosted artifact; do not import, execute or regenerate this .bin evidence. Generic cache exclusions remain unchanged.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793334496990548475,
+        "st_dev": 16777234,
+        "st_ino": 297913889,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793334496828426644,
+        "st_nlink": 1,
+        "st_size": 22022
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/pristine/pytorch-integrated-runtime.tar.gz"
+      ],
+      "asset_name": "pytorch-paired-pristine-runtime-41008996057.tar.gz",
+      "canonical": {
+        "bytes": 116623257,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/pristine/pytorch-integrated-runtime.tar.gz",
+        "sha256": "28ee4c66080572e53a43fec11da1d6fefde2055e7325fee1549c1b0adc012ae2"
+      },
+      "id": "pytorch-paired-pristine-runtime-41008996057",
+      "kind": "pytorch_native",
+      "reconstruction": "Retain the exact pristine same-host runtime archive. Use the frozen paired transport verifier for reconstruction; never substitute this retrospective-control runtime for the selected model runtime or stable admission.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793344839427212361,
+        "st_dev": 16777234,
+        "st_ino": 298050471,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793344839194334240,
+        "st_nlink": 1,
+        "st_size": 116623257
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/pristine/pytorch-paired-pristine-test-source.tar.gz"
+      ],
+      "asset_name": "pytorch-paired-pristine-test-source-41008996057.tar.gz",
+      "canonical": {
+        "bytes": 237611,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/pristine/pytorch-paired-pristine-test-source.tar.gz",
+        "sha256": "204ff3be72b443afec9ac84f2281234884c9f21c04b609f6f032530724a8a716"
+      },
+      "id": "pytorch-paired-pristine-test-source-41008996057",
+      "kind": "pytorch_compact_test_source",
+      "reconstruction": "Retain the exact pristine same-host test-source archive. Use the frozen paired transport verifier for reconstruction; never substitute this retrospective-control runtime for the selected model runtime or stable admission.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793344839548497361,
+        "st_dev": 16777234,
+        "st_ino": 298050474,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793344839195031907,
+        "st_nlink": 1,
+        "st_size": 237611
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/formatted/pytorch-integrated-runtime.tar.gz"
+      ],
+      "asset_name": "pytorch-paired-formatted-runtime-41008996057.tar.gz",
+      "canonical": {
+        "bytes": 116651557,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/formatted/pytorch-integrated-runtime.tar.gz",
+        "sha256": "febbdf27c26f07f7dc505f645855dbe09a2bfad3d128b461c2759d8627d3539d"
+      },
+      "id": "pytorch-paired-formatted-runtime-41008996057",
+      "kind": "pytorch_native",
+      "reconstruction": "Retain the exact formatted same-host runtime archive. Use the frozen paired transport verifier for reconstruction; never substitute this retrospective-control runtime for the selected model runtime or stable admission.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793344839206864702,
+        "st_dev": 16777234,
+        "st_ino": 298050419,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793344839061019861,
+        "st_nlink": 1,
+        "st_size": 116651557
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/formatted/pytorch-paired-formatted-test-source.tar.gz"
+      ],
+      "asset_name": "pytorch-paired-formatted-test-source-41008996057.tar.gz",
+      "canonical": {
+        "bytes": 239588,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/formatted/pytorch-paired-formatted-test-source.tar.gz",
+        "sha256": "fc6d5ef18b638ca461df40a73378f83a8554675f2c4777596b2fc0657b4f921e"
+      },
+      "id": "pytorch-paired-formatted-test-source-41008996057",
+      "kind": "pytorch_compact_test_source",
+      "reconstruction": "Retain the exact formatted same-host test-source archive. Use the frozen paired transport verifier for reconstruction; never substitute this retrospective-control runtime for the selected model runtime or stable admission.",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793344839208472703,
+        "st_dev": 16777234,
+        "st_ino": 298050420,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793344839071085573,
+        "st_nlink": 1,
+        "st_size": 239588
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/attrs-26.1.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/attrs-26.1.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/attrs-26.1.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/attrs-26.1.0-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-c647aa4a12dfbad9-x000-attrs-26.1.0-py3-none-any.whl",
+      "canonical": {
+        "bytes": 67548,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/attrs-26.1.0-py3-none-any.whl",
+        "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309"
+      },
+      "id": "wheel-c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333613801693,
+        "st_dev": 16777234,
+        "st_ino": 297299095,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333509237858,
+        "st_nlink": 1,
+        "st_size": 67548
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/build-1.6.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/build-1.6.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/build-1.6.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/build-1.6.1-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-ecd351a4be9d35a9-x000-build-1.6.1-py3-none-any.whl",
+      "canonical": {
+        "bytes": 31179,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/build-1.6.1-py3-none-any.whl",
+        "sha256": "ecd351a4be9d35a9eaaba244a7687143c9c7d4aea6ac964e7e7ddab20cbcf4e7"
+      },
+      "id": "wheel-ecd351a4be9d35a9eaaba244a7687143c9c7d4aea6ac964e7e7ddab20cbcf4e7-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333619742374,
+        "st_dev": 16777234,
+        "st_ino": 297299096,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333509378192,
+        "st_nlink": 1,
+        "st_size": 31179
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/certifi-2026.10.23-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/certifi-2026.10.23-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/certifi-2026.10.23-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/certifi-2026.10.23-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-e9b54de76e530bb6-x000-certifi-2026.10.23-py3-none-any.whl",
+      "canonical": {
+        "bytes": 135082,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/certifi-2026.10.23-py3-none-any.whl",
+        "sha256": "e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1"
+      },
+      "id": "wheel-e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333631541194,
+        "st_dev": 16777234,
+        "st_ino": 297299097,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333509512942,
+        "st_nlink": 1,
+        "st_size": 135082
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl"
+      ],
+      "asset_name": "dependency-ed2a239c0ea213ac-x000-charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl",
+      "canonical": {
+        "bytes": 367780,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl",
+        "sha256": "ed2a239c0ea213acc1908150a3037257083c7c083128f1a4cec2ec4b97dca491"
+      },
+      "id": "wheel-ed2a239c0ea213acc1908150a3037257083c7c083128f1a4cec2ec4b97dca491-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333673249878,
+        "st_dev": 16777234,
+        "st_ino": 297299098,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333510060360,
+        "st_nlink": 1,
+        "st_size": 367780
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/click-8.3.3-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/click-8.3.3-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/click-8.3.3-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/click-8.3.3-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-a2bf429bb3033c89-x000-click-8.3.3-py3-none-any.whl",
+      "canonical": {
+        "bytes": 110502,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/click-8.3.3-py3-none-any.whl",
+        "sha256": "a2bf429bb3033c89fa4936ffb35d5cb471e3719e1f3c8a7c3fff0b8314305613"
+      },
+      "id": "wheel-a2bf429bb3033c89fa4936ffb35d5cb471e3719e1f3c8a7c3fff0b8314305613-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333680951146,
+        "st_dev": 16777234,
+        "st_ino": 297299102,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333548632286,
+        "st_nlink": 1,
+        "st_size": 110502
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/cmake-3.31.6-py3-none-macosx_10_10_universal2.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/cmake-3.31.6-py3-none-macosx_10_10_universal2.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/cmake-3.31.6-py3-none-macosx_10_10_universal2.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/cmake-3.31.6-py3-none-macosx_10_10_universal2.whl"
+      ],
+      "asset_name": "dependency-da9d4fd9abd571fd-x000-cmake-3.31.6-py3-none-macosx_10_10_universal2.whl",
+      "canonical": {
+        "bytes": 47224338,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/cmake-3.31.6-py3-none-macosx_10_10_universal2.whl",
+        "sha256": "da9d4fd9abd571fd016ddb27da0428b10277010b23bb21e3678f8b9e96e1686e"
+      },
+      "id": "wheel-da9d4fd9abd571fd016ddb27da0428b10277010b23bb21e3678f8b9e96e1686e-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333676099551,
+        "st_dev": 16777234,
+        "st_ino": 297299099,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333543853441,
+        "st_nlink": 1,
+        "st_size": 47224338
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/execnet-2.1.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/execnet-2.1.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/execnet-2.1.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/execnet-2.1.2-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-67fba928dd5a544b-x000-execnet-2.1.2-py3-none-any.whl",
+      "canonical": {
+        "bytes": 40708,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/execnet-2.1.2-py3-none-any.whl",
+        "sha256": "67fba928dd5a544b783f6056f449e5e3931a5c378b128bc18501f7ea79e296ec"
+      },
+      "id": "wheel-67fba928dd5a544b783f6056f449e5e3931a5c378b128bc18501f7ea79e296ec-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333677625972,
+        "st_dev": 16777234,
+        "st_ino": 297299100,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333545417945,
+        "st_nlink": 1,
+        "st_size": 40708
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/expecttest-0.3.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/expecttest-0.3.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/expecttest-0.3.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/expecttest-0.3.0-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-60f88103086e1754-x000-expecttest-0.3.0-py3-none-any.whl",
+      "canonical": {
+        "bytes": 8238,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/expecttest-0.3.0-py3-none-any.whl",
+        "sha256": "60f88103086e1754240b42175f622be83b6ffeac419434691ee5a5be819d0544"
+      },
+      "id": "wheel-60f88103086e1754240b42175f622be83b6ffeac419434691ee5a5be819d0544-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333678852808,
+        "st_dev": 16777234,
+        "st_ino": 297299101,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333546889324,
+        "st_nlink": 1,
+        "st_size": 8238
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/filelock-3.20.3-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/filelock-3.20.3-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/filelock-3.20.3-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/filelock-3.20.3-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-4b0dda527ee31078-x000-filelock-3.20.3-py3-none-any.whl",
+      "canonical": {
+        "bytes": 16701,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/filelock-3.20.3-py3-none-any.whl",
+        "sha256": "4b0dda527ee31078689fc205ec4f1c1bf7d56cf88b6dc9426c4f230e46c2dce1"
+      },
+      "id": "wheel-4b0dda527ee31078689fc205ec4f1c1bf7d56cf88b6dc9426c4f230e46c2dce1-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333682312650,
+        "st_dev": 16777234,
+        "st_ino": 297299103,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333548764828,
+        "st_nlink": 1,
+        "st_size": 16701
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/fsspec-2026.9.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/fsspec-2026.9.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/fsspec-2026.9.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/fsspec-2026.9.0-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-8dd6e646e99ea382-x000-fsspec-2026.9.0-py3-none-any.whl",
+      "canonical": {
+        "bytes": 221738,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/fsspec-2026.9.0-py3-none-any.whl",
+        "sha256": "8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f"
+      },
+      "id": "wheel-8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333683471444,
+        "st_dev": 16777234,
+        "st_ino": 297299104,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333548882662,
+        "st_nlink": 1,
+        "st_size": 221738
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/hypothesis-6.56.4-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/hypothesis-6.56.4-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/hypothesis-6.56.4-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/hypothesis-6.56.4-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-67950103ee930c66-x000-hypothesis-6.56.4-py3-none-any.whl",
+      "canonical": {
+        "bytes": 395269,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/hypothesis-6.56.4-py3-none-any.whl",
+        "sha256": "67950103ee930c66673494b3671474a083ea71f1ebe8f0ff849ba8ad5317772d"
+      },
+      "id": "wheel-67950103ee930c66673494b3671474a083ea71f1ebe8f0ff849ba8ad5317772d-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333684587030,
+        "st_dev": 16777234,
+        "st_ino": 297299105,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333550778875,
+        "st_nlink": 1,
+        "st_size": 395269
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/idna-3.20-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/idna-3.20-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/idna-3.20-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/idna-3.20-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-ab7ae71229745533-x000-idna-3.20-py3-none-any.whl",
+      "canonical": {
+        "bytes": 69583,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/idna-3.20-py3-none-any.whl",
+        "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c"
+      },
+      "id": "wheel-ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333685790533,
+        "st_dev": 16777234,
+        "st_ino": 297299106,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333551249501,
+        "st_nlink": 1,
+        "st_size": 69583
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/importlib_metadata-10.1.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/importlib_metadata-10.1.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/importlib_metadata-10.1.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/importlib_metadata-10.1.0-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-cf45ce66a929c64e-x000-importlib_metadata-10.1.0-py3-none-any.whl",
+      "canonical": {
+        "bytes": 32221,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/importlib_metadata-10.1.0-py3-none-any.whl",
+        "sha256": "cf45ce66a929c64e994185a809c04840d0501db17e663810d993d0f4829265c7"
+      },
+      "id": "wheel-cf45ce66a929c64e994185a809c04840d0501db17e663810d993d0f4829265c7-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333687001536,
+        "st_dev": 16777234,
+        "st_ino": 297299107,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333551425085,
+        "st_nlink": 1,
+        "st_size": 32221
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/iniconfig-2.3.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/iniconfig-2.3.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/iniconfig-2.3.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/iniconfig-2.3.1-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-9121e2c1fdb35523-x000-iniconfig-2.3.1-py3-none-any.whl",
+      "canonical": {
+        "bytes": 7552,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/iniconfig-2.3.1-py3-none-any.whl",
+        "sha256": "9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7"
+      },
+      "id": "wheel-9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333688394456,
+        "st_dev": 16777234,
+        "st_ino": 297299108,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333551833669,
+        "st_nlink": 1,
+        "st_size": 7552
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/jinja2-3.1.6-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/jinja2-3.1.6-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/jinja2-3.1.6-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/jinja2-3.1.6-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-85ece4451f492d0c-x000-jinja2-3.1.6-py3-none-any.whl",
+      "canonical": {
+        "bytes": 134899,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/jinja2-3.1.6-py3-none-any.whl",
+        "sha256": "85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67"
+      },
+      "id": "wheel-85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333689751042,
+        "st_dev": 16777234,
+        "st_ino": 297299109,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333551919044,
+        "st_nlink": 1,
+        "st_size": 134899
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/lintrunner-0.13.0-py3-none-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/lintrunner-0.13.0-py3-none-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/lintrunner-0.13.0-py3-none-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/lintrunner-0.13.0-py3-none-macosx_11_0_arm64.whl"
+      ],
+      "asset_name": "dependency-8df172135368d89e-x000-lintrunner-0.13.0-py3-none-macosx_11_0_arm64.whl",
+      "canonical": {
+        "bytes": 1888534,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/lintrunner-0.13.0-py3-none-macosx_11_0_arm64.whl",
+        "sha256": "8df172135368d89ed3b60ceaa81838111b98b6a84517afa698472671d8d3d2ba"
+      },
+      "id": "wheel-8df172135368d89ed3b60ceaa81838111b98b6a84517afa698472671d8d3d2ba-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333691001004,
+        "st_dev": 16777234,
+        "st_ino": 297299110,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333552676588,
+        "st_nlink": 1,
+        "st_size": 1888534
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl"
+      ],
+      "asset_name": "dependency-0930db9bdc62d229-x000-markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl",
+      "canonical": {
+        "bytes": 12050,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "sha256": "0930db9bdc62d22944e10b066448bb65dc9abe9112880c7cab8da54db4284d5f"
+      },
+      "id": "wheel-0930db9bdc62d22944e10b066448bb65dc9abe9112880c7cab8da54db4284d5f-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333692994175,
+        "st_dev": 16777234,
+        "st_ino": 297299111,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333552841046,
+        "st_nlink": 1,
+        "st_size": 12050
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/mpmath-1.3.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/mpmath-1.3.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/mpmath-1.3.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/mpmath-1.3.0-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-a0b2b9fe80bbcd81-x000-mpmath-1.3.0-py3-none-any.whl",
+      "canonical": {
+        "bytes": 536198,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/mpmath-1.3.0-py3-none-any.whl",
+        "sha256": "a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c"
+      },
+      "id": "wheel-a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333694299678,
+        "st_dev": 16777234,
+        "st_ino": 297299112,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333552994464,
+        "st_nlink": 1,
+        "st_size": 536198
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/networkx-3.7-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/networkx-3.7-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/networkx-3.7-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/networkx-3.7-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-e3fd2c13a7814cee-x000-networkx-3.7-py3-none-any.whl",
+      "canonical": {
+        "bytes": 2142205,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/networkx-3.7-py3-none-any.whl",
+        "sha256": "e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0"
+      },
+      "id": "wheel-e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333695551181,
+        "st_dev": 16777234,
+        "st_ino": 297299113,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333553525340,
+        "st_nlink": 1,
+        "st_size": 2142205
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/ninja-1.13.0-py3-none-macosx_10_9_universal2.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/ninja-1.13.0-py3-none-macosx_10_9_universal2.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/ninja-1.13.0-py3-none-macosx_10_9_universal2.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/ninja-1.13.0-py3-none-macosx_10_9_universal2.whl"
+      ],
+      "asset_name": "dependency-fa2a8bfc62e31b08-x000-ninja-1.13.0-py3-none-macosx_10_9_universal2.whl",
+      "canonical": {
+        "bytes": 310125,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/ninja-1.13.0-py3-none-macosx_10_9_universal2.whl",
+        "sha256": "fa2a8bfc62e31b08f83127d1613d10821775a0eb334197154c4d6067b7068ff1"
+      },
+      "id": "wheel-fa2a8bfc62e31b08f83127d1613d10821775a0eb334197154c4d6067b7068ff1-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333697045060,
+        "st_dev": 16777234,
+        "st_ino": 297299114,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333555314094,
+        "st_nlink": 1,
+        "st_size": 310125
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl"
+      ],
+      "asset_name": "dependency-03a8c78d01d9781b-x000-numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl",
+      "canonical": {
+        "bytes": 13685868,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "sha256": "03a8c78d01d9781b28a6989f6fa1bb2c4f2d51201cf99d3dd875df6fbd96b23b"
+      },
+      "id": "wheel-03a8c78d01d9781b28a6989f6fa1bb2c4f2d51201cf99d3dd875df6fbd96b23b-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333698631147,
+        "st_dev": 16777234,
+        "st_ino": 297299115,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333560376023,
+        "st_nlink": 1,
+        "st_size": 13685868
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/optree-0.20.0-cp312-cp312-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/optree-0.20.0-cp312-cp312-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/optree-0.20.0-cp312-cp312-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/optree-0.20.0-cp312-cp312-macosx_11_0_arm64.whl"
+      ],
+      "asset_name": "dependency-05596b84c1d5b43d-x000-optree-0.20.0-cp312-cp312-macosx_11_0_arm64.whl",
+      "canonical": {
+        "bytes": 417675,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/optree-0.20.0-cp312-cp312-macosx_11_0_arm64.whl",
+        "sha256": "05596b84c1d5b43d9f45ca0bfee528e3e96f0d547522b074cf20bfe8ffea8938"
+      },
+      "id": "wheel-05596b84c1d5b43d9f45ca0bfee528e3e96f0d547522b074cf20bfe8ffea8938-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333700274026,
+        "st_dev": 16777234,
+        "st_ino": 297299116,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333563380780,
+        "st_nlink": 1,
+        "st_size": 417675
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/packaging-24.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/packaging-24.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/packaging-24.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/packaging-24.2-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-09abb1bccd265c01-x000-packaging-24.2-py3-none-any.whl",
+      "canonical": {
+        "bytes": 65451,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/packaging-24.2-py3-none-any.whl",
+        "sha256": "09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759"
+      },
+      "id": "wheel-09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333701481112,
+        "st_dev": 16777234,
+        "st_ino": 297299117,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333567720165,
+        "st_nlink": 1,
+        "st_size": 65451
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pathspec-1.1.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/pathspec-1.1.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/pathspec-1.1.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/pathspec-1.1.1-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-a00ce642f577bf7f-x000-pathspec-1.1.1-py3-none-any.whl",
+      "canonical": {
+        "bytes": 57328,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pathspec-1.1.1-py3-none-any.whl",
+        "sha256": "a00ce642f577bf7f473932318056212bc4f8bfdf53128c78bbd5af0b9b20b189"
+      },
+      "id": "wheel-a00ce642f577bf7f473932318056212bc4f8bfdf53128c78bbd5af0b9b20b189-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333702968657,
+        "st_dev": 16777234,
+        "st_ino": 297299118,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333569747712,
+        "st_nlink": 1,
+        "st_size": 57328
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pip-26.2.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/pip-26.2.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/pip-26.2.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/pip-26.2.2-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-fd7f4dfa8190e014-x000-pip-26.2.2-py3-none-any.whl",
+      "canonical": {
+        "bytes": 1819850,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pip-26.2.2-py3-none-any.whl",
+        "sha256": "fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70"
+      },
+      "id": "wheel-fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333716623274,
+        "st_dev": 16777234,
+        "st_ino": 297299122,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333570617089,
+        "st_nlink": 1,
+        "st_size": 1819850
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pluggy-1.7.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/pluggy-1.7.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/pluggy-1.7.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/pluggy-1.7.0-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-7dd7b0d8832ba3cb-x000-pluggy-1.7.0-py3-none-any.whl",
+      "canonical": {
+        "bytes": 27082,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pluggy-1.7.0-py3-none-any.whl",
+        "sha256": "7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec"
+      },
+      "id": "wheel-7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333704782662,
+        "st_dev": 16777234,
+        "st_ino": 297299119,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333569924296,
+        "st_nlink": 1,
+        "st_size": 27082
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl"
+      ],
+      "asset_name": "dependency-1a7b04c10f32cc88-x000-psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl",
+      "canonical": {
+        "bytes": 129859,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl",
+        "sha256": "1a7b04c10f32cc88ab39cbf606e117fd74721c831c98a27dc04578deb0c16979"
+      },
+      "id": "wheel-1a7b04c10f32cc88ab39cbf606e117fd74721c831c98a27dc04578deb0c16979-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333707025584,
+        "st_dev": 16777234,
+        "st_ino": 297299120,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333570063463,
+        "st_nlink": 1,
+        "st_size": 129859
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pyproject_hooks-1.3.3-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/pyproject_hooks-1.3.3-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/pyproject_hooks-1.3.3-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/pyproject_hooks-1.3.3-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-5fc53fdac9f7bd63-x000-pyproject_hooks-1.3.3-py3-none-any.whl",
+      "canonical": {
+        "bytes": 10724,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pyproject_hooks-1.3.3-py3-none-any.whl",
+        "sha256": "5fc53fdac9f7bd63fbcdc868fb5f90b4784d78a53a3d3388cd738b807441a20b"
+      },
+      "id": "wheel-5fc53fdac9f7bd63fbcdc868fb5f90b4784d78a53a3d3388cd738b807441a20b-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333714546269,
+        "st_dev": 16777234,
+        "st_ino": 297299121,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333570231963,
+        "st_nlink": 1,
+        "st_size": 10724
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pytest-7.3.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/pytest-7.3.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/pytest-7.3.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/pytest-7.3.2-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-cdcbd012c9312258-x000-pytest-7.3.2-py3-none-any.whl",
+      "canonical": {
+        "bytes": 320900,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pytest-7.3.2-py3-none-any.whl",
+        "sha256": "cdcbd012c9312258922f8cd3f1b62a6580fdced17db6014896053d47cddf9295"
+      },
+      "id": "wheel-cdcbd012c9312258922f8cd3f1b62a6580fdced17db6014896053d47cddf9295-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333718087694,
+        "st_dev": 16777234,
+        "st_ino": 297299123,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333571207549,
+        "st_nlink": 1,
+        "st_size": 320900
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pytest_rerunfailures-14.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/pytest_rerunfailures-14.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/pytest_rerunfailures-14.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/pytest_rerunfailures-14.0-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-4197bdd2eaeffdbf-x000-pytest_rerunfailures-14.0-py3-none-any.whl",
+      "canonical": {
+        "bytes": 12709,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pytest_rerunfailures-14.0-py3-none-any.whl",
+        "sha256": "4197bdd2eaeffdbf50b5ea6e7236f47ff0e44d1def8dae08e409f536d84e7b32"
+      },
+      "id": "wheel-4197bdd2eaeffdbf50b5ea6e7236f47ff0e44d1def8dae08e409f536d84e7b32-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333720614533,
+        "st_dev": 16777234,
+        "st_ino": 297299124,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333571623592,
+        "st_nlink": 1,
+        "st_size": 12709
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pytest_subtests-0.13.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/pytest_subtests-0.13.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/pytest_subtests-0.13.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/pytest_subtests-0.13.1-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-ab616a22f64cd17c-x000-pytest_subtests-0.13.1-py3-none-any.whl",
+      "canonical": {
+        "bytes": 8038,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pytest_subtests-0.13.1-py3-none-any.whl",
+        "sha256": "ab616a22f64cd17c1aee65f18af94dbc30c444f8683de2b30895c3778265e3bd"
+      },
+      "id": "wheel-ab616a22f64cd17c1aee65f18af94dbc30c444f8683de2b30895c3778265e3bd-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333723733166,
+        "st_dev": 16777234,
+        "st_ino": 297299125,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333571880175,
+        "st_nlink": 1,
+        "st_size": 8038
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pytest_xdist-3.3.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/pytest_xdist-3.3.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/pytest_xdist-3.3.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/pytest_xdist-3.3.1-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-ff9daa7793569e6a-x000-pytest_xdist-3.3.1-py3-none-any.whl",
+      "canonical": {
+        "bytes": 41752,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pytest_xdist-3.3.1-py3-none-any.whl",
+        "sha256": "ff9daa7793569e6a68544850fd3927cd257cc03a7ef76c95e86915355e82b5f2"
+      },
+      "id": "wheel-ff9daa7793569e6a68544850fd3927cd257cc03a7ef76c95e86915355e82b5f2-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333730032889,
+        "st_dev": 16777234,
+        "st_ino": 297299126,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333571964717,
+        "st_nlink": 1,
+        "st_size": 41752
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl"
+      ],
+      "asset_name": "dependency-fc09d0aa354569bc-x000-pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl",
+      "canonical": {
+        "bytes": 173973,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl",
+        "sha256": "fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0"
+      },
+      "id": "wheel-fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333731957352,
+        "st_dev": 16777234,
+        "st_ino": 297299127,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333572068051,
+        "st_nlink": 1,
+        "st_size": 173973
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/requests-2.34.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/requests-2.34.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/requests-2.34.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/requests-2.34.2-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-2a0d60c172f83ac6-x000-requests-2.34.2-py3-none-any.whl",
+      "canonical": {
+        "bytes": 73075,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/requests-2.34.2-py3-none-any.whl",
+        "sha256": "2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0"
+      },
+      "id": "wheel-2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333733609065,
+        "st_dev": 16777234,
+        "st_ino": 297299128,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333572702844,
+        "st_nlink": 1,
+        "st_size": 73075
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/scikit_build_core-1.1.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/scikit_build_core-1.1.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/scikit_build_core-1.1.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/scikit_build_core-1.1.1-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-6f6d6cf600e2e963-x000-scikit_build_core-1.1.1-py3-none-any.whl",
+      "canonical": {
+        "bytes": 293450,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/scikit_build_core-1.1.1-py3-none-any.whl",
+        "sha256": "6f6d6cf600e2e9639fd258ecd11cfc19bd189354b968916a519c6793e7e26237"
+      },
+      "id": "wheel-6f6d6cf600e2e9639fd258ecd11cfc19bd189354b968916a519c6793e7e26237-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333735085027,
+        "st_dev": 16777234,
+        "st_ino": 297299129,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333572815344,
+        "st_nlink": 1,
+        "st_size": 293450
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/setuptools-78.1.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/setuptools-78.1.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/setuptools-78.1.1-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/setuptools-78.1.1-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-c3a9c4211ff4c309-x000-setuptools-78.1.1-py3-none-any.whl",
+      "canonical": {
+        "bytes": 1256462,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/setuptools-78.1.1-py3-none-any.whl",
+        "sha256": "c3a9c4211ff4c309edb8b8c4f1cbfa7ae324c4ba9f91ff254e3d305b9fd54561"
+      },
+      "id": "wheel-c3a9c4211ff4c309edb8b8c4f1cbfa7ae324c4ba9f91ff254e3d305b9fd54561-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333736447238,
+        "st_dev": 16777234,
+        "st_ino": 297299130,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333573269179,
+        "st_nlink": 1,
+        "st_size": 1256462
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/six-1.17.0-py2.py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/six-1.17.0-py2.py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/six-1.17.0-py2.py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/six-1.17.0-py2.py3-none-any.whl"
+      ],
+      "asset_name": "dependency-4721f391ed90541f-x000-six-1.17.0-py2.py3-none-any.whl",
+      "canonical": {
+        "bytes": 11050,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/six-1.17.0-py2.py3-none-any.whl",
+        "sha256": "4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274"
+      },
+      "id": "wheel-4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333738197576,
+        "st_dev": 16777234,
+        "st_ino": 297299131,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333573424888,
+        "st_nlink": 1,
+        "st_size": 11050
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/sortedcontainers-2.4.0-py2.py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/sortedcontainers-2.4.0-py2.py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/sortedcontainers-2.4.0-py2.py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/sortedcontainers-2.4.0-py2.py3-none-any.whl"
+      ],
+      "asset_name": "dependency-a163dcaede0f1c02-x000-sortedcontainers-2.4.0-py2.py3-none-any.whl",
+      "canonical": {
+        "bytes": 29575,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/sortedcontainers-2.4.0-py2.py3-none-any.whl",
+        "sha256": "a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0"
+      },
+      "id": "wheel-a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333739206203,
+        "st_dev": 16777234,
+        "st_ino": 297299132,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333573500555,
+        "st_nlink": 1,
+        "st_size": 29575
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/spin-0.17-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/spin-0.17-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/spin-0.17-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/spin-0.17-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-6d69a2c6c7c6fe37-x000-spin-0.17-py3-none-any.whl",
+      "canonical": {
+        "bytes": 31980,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/spin-0.17-py3-none-any.whl",
+        "sha256": "6d69a2c6c7c6fe373c67dedacbe11552ec906c03d34cd1d6ca026289f74d01e8"
+      },
+      "id": "wheel-6d69a2c6c7c6fe373c67dedacbe11552ec906c03d34cd1d6ca026289f74d01e8-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333740914915,
+        "st_dev": 16777234,
+        "st_ino": 297299133,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333576746396,
+        "st_nlink": 1,
+        "st_size": 31980
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/sympy-1.14.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/sympy-1.14.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/sympy-1.14.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/sympy-1.14.0-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-e091cc3e99d2141a-x000-sympy-1.14.0-py3-none-any.whl",
+      "canonical": {
+        "bytes": 6299353,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/sympy-1.14.0-py3-none-any.whl",
+        "sha256": "e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5"
+      },
+      "id": "wheel-e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333745456385,
+        "st_dev": 16777234,
+        "st_ino": 297299134,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333577882523,
+        "st_nlink": 1,
+        "st_size": 6299353
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/typing_extensions-4.15.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/typing_extensions-4.15.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/typing_extensions-4.15.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/typing_extensions-4.15.0-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-f0fa19c6845758ab-x000-typing_extensions-4.15.0-py3-none-any.whl",
+      "canonical": {
+        "bytes": 44614,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/typing_extensions-4.15.0-py3-none-any.whl",
+        "sha256": "f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548"
+      },
+      "id": "wheel-f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333747274139,
+        "st_dev": 16777234,
+        "st_ino": 297299135,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333578519650,
+        "st_nlink": 1,
+        "st_size": 44614
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/urllib3-2.8.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/urllib3-2.8.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/urllib3-2.8.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/urllib3-2.8.0-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-0cf3cae568d36aa9-x000-urllib3-2.8.0-py3-none-any.whl",
+      "canonical": {
+        "bytes": 135717,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/urllib3-2.8.0-py3-none-any.whl",
+        "sha256": "0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3"
+      },
+      "id": "wheel-0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333749093602,
+        "st_dev": 16777234,
+        "st_ino": 297299136,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333578621025,
+        "st_nlink": 1,
+        "st_size": 135717
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/uv-0.13.6-py3-none-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/uv-0.13.6-py3-none-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/uv-0.13.6-py3-none-macosx_11_0_arm64.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/uv-0.13.6-py3-none-macosx_11_0_arm64.whl"
+      ],
+      "asset_name": "dependency-51361029b7cf9118-x000-uv-0.13.6-py3-none-macosx_11_0_arm64.whl",
+      "canonical": {
+        "bytes": 14344205,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/uv-0.13.6-py3-none-macosx_11_0_arm64.whl",
+        "sha256": "51361029b7cf91185d0092c4b356d110b4ad629e9cb11593f1e006ac72a72ca9"
+      },
+      "id": "wheel-51361029b7cf91185d0092c4b356d110b4ad629e9cb11593f1e006ac72a72ca9-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333751482608,
+        "st_dev": 16777234,
+        "st_ino": 297299137,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333589785010,
+        "st_nlink": 1,
+        "st_size": 14344205
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/wheel-0.48.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/wheel-0.48.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/wheel-0.48.0-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/wheel-0.48.0-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-3217dcc807155e45-x000-wheel-0.48.0-py3-none-any.whl",
+      "canonical": {
+        "bytes": 33320,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/wheel-0.48.0-py3-none-any.whl",
+        "sha256": "3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab"
+      },
+      "id": "wheel-3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333794148252,
+        "st_dev": 16777234,
+        "st_ino": 297299138,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333590936846,
+        "st_nlink": 1,
+        "st_size": 33320
+      }
+    },
+    {
+      "aliases": [
+        "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/zipp-4.1.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels/zipp-4.1.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/zipp-4.1.2-py3-none-any.whl",
+        "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels/zipp-4.1.2-py3-none-any.whl"
+      ],
+      "asset_name": "dependency-b30cb6cd25312216-x000-zipp-4.1.2-py3-none-any.whl",
+      "canonical": {
+        "bytes": 10581,
+        "executable_bits": 0,
+        "path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/zipp-4.1.2-py3-none-any.whl",
+        "sha256": "b30cb6cd253122169c47de245ca24a86bac2a5d3802ba15bf7ba6414eb9e144d"
+      },
+      "id": "wheel-b30cb6cd253122169c47de245ca24a86bac2a5d3802ba15bf7ba6414eb9e144d-x000",
+      "kind": "dependency_wheel",
+      "reconstruction": "Copy verified bytes to every original alias; install only through the retained exact offline recipe",
+      "remote_verified": false,
+      "source_stat": {
+        "st_ctime_ns": 1793318333795561630,
+        "st_dev": 16777234,
+        "st_ino": 297299139,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793318333591115972,
+        "st_nlink": 1,
+        "st_size": 10581
+      }
+    }
+  ],
+  "local_byte_verification_passed": true,
+  "remote_verification_passed": false,
+  "schema": "supplement-canonical-assets-v1",
+  "scope": "Archive/wheel integrity and lossless alias reconstruction only; no numerical or formal-study qualification",
+  "wheel_sets": [
+    {
+      "count": 45,
+      "directory": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels",
+      "expected_count": 45,
+      "receipt": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/receipt.json",
+      "receipt_identity": {
+        "bytes": 76736,
+        "sha256": "92c56400ff9aa31fc62d6c496a9f42260ef27990c35c257e2b5f489944a9f822"
+      }
+    },
+    {
+      "count": 45,
+      "directory": "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/wheels",
+      "expected_count": 45,
+      "receipt": "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/receipt.json",
+      "receipt_identity": {
+        "bytes": 167870,
+        "sha256": "f93e7db6307ff02d699003fae735c18ed4d810129d6cca6142021d6ae5c0f568"
+      }
+    },
+    {
+      "count": 45,
+      "directory": "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels",
+      "expected_count": 45,
+      "receipt": "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/receipt.json",
+      "receipt_identity": {
+        "bytes": 168452,
+        "sha256": "6e47533073c68ba5cd54a0e8de14d06d616b8e495281403deb3eba09711fa338"
+      }
+    },
+    {
+      "count": 45,
+      "directory": "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/wheels",
+      "expected_count": 45,
+      "receipt": "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/setup.json",
+      "receipt_identity": {
+        "bytes": 26055,
+        "sha256": "87dee0c11037b47c923f433ef2029822468ce483def08ad12a36ecd773a7230e"
+      }
+    }
+  ],
+  "workspace_root": "/Users/logannye/Documents/Codex/2026-10-28/we-x20"
+}

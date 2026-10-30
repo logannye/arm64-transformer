@@ -1,0 +1,358 @@
+"""Read-only GitHub release verification, with streamed payload hashing.
+
+No asset is uploaded, changed, or copied to disk. Network execution requires an
+explicit command. Tests use synthetic data and a fake client.
+"""
+import argparse
+from datetime import datetime, timezone
+import hashlib
+import json
+import os
+from pathlib import Path, PurePosixPath
+import re
+import selectors
+import shutil
+import signal
+import stat
+import subprocess
+import time
+
+REPOSITORY='logannye/arm64-transformer'
+RELEASE_ID=428513598
+TAG='transformer-upstream-integration-v2'
+CHUNK=1024*1024
+JSON_LIMIT=4*1024*1024
+IDENTITY_FIELDS=('id','node_id','name','label','state','size','digest','content_type','url','created_at','updated_at')
+CORE_FIELDS=('id','name','state','size','digest','url')
+
+
+def require(value,message):
+    if not value: raise ValueError(message)
+
+def utc(): return datetime.now(timezone.utc).isoformat()
+
+def object_pairs(pairs):
+    d={}
+    for key,value in pairs:
+        require(key not in d,'Duplicate JSON object key');d[key]=value
+    return d
+
+def parse(data):
+    return json.loads(data,object_pairs_hook=object_pairs,
+        parse_constant=lambda _:(_ for _ in ()).throw(ValueError('Nonfinite JSON value')))
+
+def hexsha(value): return isinstance(value,str) and re.fullmatch('[0-9a-f]{64}',value) is not None
+
+def safe_relative(value):
+    require(isinstance(value,str) and value,'Missing relative path')
+    p=PurePosixPath(value)
+    require(not p.is_absolute() and '..' not in p.parts and p.as_posix()==value and
+            p.parts[0] in ('work','outputs'),'Unsafe local path')
+    return p
+
+def validate_contract(c):
+    require(isinstance(c,dict) and set(c)=={'schema','repository','release_id','tag_name','draft','prerelease','expected_login','workspace_root','assets'},'Unexpected contract fields')
+    require(c['schema']=='release-asset-download-contract-v1','Wrong contract schema')
+    require(c['repository']==REPOSITORY and type(c['release_id']) is int and c['release_id']==RELEASE_ID and c['tag_name']==TAG,'Unexpected repository/release/tag')
+    require(type(c['draft']) is bool and type(c['prerelease']) is bool,'Invalid release flags')
+    require(c['expected_login']=='logannye','Unexpected authenticated account')
+    require(isinstance(c['workspace_root'],str) and Path(c['workspace_root']).is_absolute() and '..' not in Path(c['workspace_root']).parts,'Invalid workspace root')
+    require(isinstance(c['assets'],list) and c['assets'],'No expected assets')
+    names=[];ids=set();paths=set()
+    for row in c['assets']:
+        require(isinstance(row,dict) and set(row)=={'name','asset_id','local_path','bytes','sha256'},'Unexpected asset contract fields')
+        require(isinstance(row['name'],str) and re.fullmatch('[A-Za-z0-9][A-Za-z0-9._-]*',row['name']),'Invalid asset name')
+        require(type(row['asset_id']) is int and row['asset_id']>0 and row['asset_id'] not in ids,'Duplicate/invalid expected asset ID')
+        require(type(row['bytes']) is int and row['bytes']>=0 and hexsha(row['sha256']),'Invalid expected byte identity')
+        safe_relative(row['local_path']);require(row['local_path'] not in paths,'Duplicate expected local path')
+        names.append(row['name']);ids.add(row['asset_id']);paths.add(row['local_path'])
+    require(names==sorted(set(names)),'Expected assets must be unique and canonically name-sorted')
+    return c
+
+def ordinary(path):
+    require(path.is_file() and not path.is_symlink(),f'Expected ordinary file: {path.name}')
+    require(all(not p.is_symlink() for p in path.parents),'Symlink parent forbidden')
+    return path
+
+def stat_key(p):
+    s=ordinary(p).stat()
+    return {k:getattr(s,k) for k in ('st_dev','st_ino','st_size','st_mode','st_mtime_ns','st_ctime_ns','st_nlink')}
+
+def file_identity(p):
+    before=stat_key(p)
+    with p.open('rb') as f:value=hashlib.file_digest(f,'sha256').hexdigest()
+    require(stat_key(p)==before,'Local file changed during hashing')
+    return {'bytes':before['st_size'],'sha256':value,'stat':before}
+
+def write_new(p,value):
+    with p.open('x') as f:json.dump(value,f,indent=2,sort_keys=True,allow_nan=False);f.write('\n')
+
+def write_summary(p,value):
+    tmp=p.with_suffix('.writing')
+    with tmp.open('w') as f:json.dump(value,f,indent=2,sort_keys=True,allow_nan=False);f.write('\n')
+    os.replace(tmp,p)
+
+class CommandFailure(RuntimeError):
+    def __init__(self,message,receipt):super().__init__(message);self.receipt=receipt
+
+
+def run_stream(command,*,capture=False,total_timeout=3600,idle_timeout=120,max_stdout_bytes=None):
+    """Bounded stdout/stderr reads; payload goes only to SHA256, never disk."""
+    env=os.environ.copy()
+    for key in ('GH_DEBUG','GH_LOG','GH_FORCE_TTY'):env.pop(key,None)
+    env.update({'GH_PROMPT_DISABLED':'1','GH_PAGER':'cat','PAGER':'cat','NO_COLOR':'1'})
+    start=last=time.monotonic();stdout_hash=hashlib.sha256();stderr_hash=hashlib.sha256()
+    stdout_bytes=stderr_bytes=0;data=bytearray();stderr_prefix=bytearray();problem=None
+    process=subprocess.Popen(command,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+        env=env,start_new_session=True)
+    selector=selectors.DefaultSelector()
+    for name,pipe in [('stdout',process.stdout),('stderr',process.stderr)]:
+        os.set_blocking(pipe.fileno(),False);selector.register(pipe,selectors.EVENT_READ,name)
+    try:
+        while selector.get_map():
+            now=time.monotonic()
+            if now-start>total_timeout or now-last>idle_timeout:
+                problem='command_timeout';break
+            for key,_ in selector.select(timeout=min(1.0,idle_timeout)):
+                block=os.read(key.fileobj.fileno(),CHUNK)
+                if not block:
+                    selector.unregister(key.fileobj);continue
+                last=time.monotonic()
+                if key.data=='stdout':
+                    stdout_hash.update(block);stdout_bytes+=len(block)
+                    if max_stdout_bytes is not None and stdout_bytes>max_stdout_bytes:
+                        problem='payload_byte_limit';break
+                    if capture:
+                        if stdout_bytes>JSON_LIMIT:problem='metadata_output_limit';break
+                        data.extend(block)
+                else:
+                    stderr_hash.update(block);stderr_bytes+=len(block)
+                    if len(stderr_prefix)<16384:stderr_prefix.extend(block[:16384-len(stderr_prefix)])
+            if problem:break
+        if problem:
+            try:os.killpg(process.pid,signal.SIGTERM)
+            except ProcessLookupError:pass
+            try:process.wait(timeout=5)
+            except subprocess.TimeoutExpired:os.killpg(process.pid,signal.SIGKILL);process.wait(timeout=5)
+        else:
+            try:process.wait(timeout=max(0.1,min(10.0,total_timeout-(time.monotonic()-start))))
+            except subprocess.TimeoutExpired:
+                problem='command_exit_timeout';os.killpg(process.pid,signal.SIGKILL);process.wait(timeout=5)
+    except BaseException:
+        if process.poll() is None:os.killpg(process.pid,signal.SIGKILL)
+        process.wait(timeout=5);raise
+    finally:
+        selector.close();process.stdout.close();process.stderr.close()
+    # Raw stderr is intentionally never stored or emitted: it can contain URLs
+    # or authentication details. Keep only non-sensitive classifications/digests.
+    lower=bytes(stderr_prefix).lower();markers=[]
+    for name,patterns in [('authentication_or_permission',[b'http 401',b'http 403',b'authentication',b'gh auth login']),
+                          ('not_found',[b'http 404']),('rate_limited',[b'rate limit']),
+                          ('network',[b'timeout',b'connection',b'no such host'])]:
+        if any(p in lower for p in patterns):markers.append(name)
+    receipt={'executable':Path(command[0]).name,'argument_count':len(command)-1,'returncode':process.returncode,'seconds':time.monotonic()-start,
+        'stdout_bytes':stdout_bytes,'stdout_sha256':stdout_hash.hexdigest(),
+        'stderr_bytes':stderr_bytes,'stderr_sha256':stderr_hash.hexdigest(),'stderr_markers':markers,
+        'raw_stderr_retained':False,'payload_copied_to_disk':False,'problem':problem}
+    if problem or process.returncode!=0:raise CommandFailure('Read-only gh command failed',receipt)
+    return (bytes(data) if capture else None),receipt
+
+class GitHubClient:
+    def __init__(self,output):
+        self.gh=shutil.which('gh');require(self.gh,'gh executable not available')
+        self.calls=[];self.output=output
+    def call(self,endpoint,*,binary=False,expected_bytes=None):
+        command=[self.gh,'api','--hostname','github.com','-H',
+            'Accept:application/octet-stream' if binary else 'Accept:application/vnd.github+json',endpoint]
+        try:
+            data,receipt=run_stream(command,capture=not binary,total_timeout=3600 if binary else 90,max_stdout_bytes=expected_bytes)
+        except CommandFailure as e:
+            e.receipt.update({'api_endpoint':endpoint,'accept':'application/octet-stream' if binary else 'application/vnd.github+json'})
+            self.calls.append(e.receipt);write_new(self.output/f'api-{len(self.calls):04d}.json',e.receipt);raise
+        receipt.update({'api_endpoint':endpoint,'accept':'application/octet-stream' if binary else 'application/vnd.github+json'})
+        self.calls.append(receipt);write_new(self.output/f'api-{len(self.calls):04d}.json',receipt)
+        return receipt if binary else parse(data)
+    def user(self):return self.call('user')
+    def release(self):return self.call(f'repos/{REPOSITORY}/releases/{RELEASE_ID}')
+    def assets(self):
+        result=[]
+        for page in range(1,101):
+            rows=self.call(f'repos/{REPOSITORY}/releases/{RELEASE_ID}/assets?per_page=100&page={page}')
+            require(isinstance(rows,list) and len(rows)<=100,'Invalid paginated assets response');result.extend(rows)
+            if len(rows)<100:return result
+        raise ValueError('Asset inventory exceeds explicit pagination bound')
+    def asset(self,asset_id):return self.call(f'repos/{REPOSITORY}/releases/assets/{asset_id}')
+    def download(self,asset_id,expected_bytes):return self.call(f'repos/{REPOSITORY}/releases/assets/{asset_id}',binary=True,expected_bytes=expected_bytes)
+
+
+def user_identity(user,contract):
+    require(isinstance(user,dict) and user.get('login')==contract['expected_login'] and
+            type(user.get('id')) is int,'Authenticated account mismatch')
+    return {key:user.get(key) for key in ('login','id','type')}
+
+def release_identity(release,c):
+    require(isinstance(release,dict) and release.get('id')==c['release_id'] and
+            release.get('tag_name')==c['tag_name'] and release.get('draft') is c['draft'] and
+            release.get('prerelease') is c['prerelease'],'Release identity/state differs')
+    require((release.get('published_at') is None)==c['draft'],'Release publication status differs')
+    return {key:release.get(key) for key in ('id','tag_name','draft','prerelease','created_at','published_at')}
+
+def asset_identity(asset,expected=None):
+    require(isinstance(asset,dict) and all(k in asset for k in IDENTITY_FIELDS),'Incomplete asset metadata')
+    require(type(asset['id']) is int and asset['id']>0 and type(asset['size']) is int and asset['size']>=0,'Invalid asset metadata identity')
+    require(asset['url']==f'https://api.github.com/repos/{REPOSITORY}/releases/assets/{asset["id"]}','Unexpected API asset URL')
+    if expected is not None:
+        require(asset['id']==expected['asset_id'] and asset['name']==expected['name'],'Asset name/ID differs')
+        require(asset['state']=='uploaded','Asset is not fully uploaded')
+        require(asset['size']==expected['bytes'] and asset['digest']=='sha256:'+expected['sha256'],'Asset size/server digest differs')
+    return {key:asset[key] for key in IDENTITY_FIELDS}
+
+def inventory_check(assets,c,exact=False):
+    names={};ids=set()
+    for asset in assets:
+        identity=asset_identity(asset)
+        require(identity['name'] not in names and identity['id'] not in ids,'Duplicate remote name or asset ID')
+        names[identity['name']]=identity;ids.add(identity['id'])
+    wanted={row['name'] for row in c['assets']}
+    require(wanted<=set(names),'Expected release assets are missing')
+    if exact:require(wanted==set(names),'Final release inventory has missing or extra assets')
+    for row in c['assets']:asset_identity(names[row['name']],row)
+    return {'selected':[names[row['name']] for row in c['assets']],
+            'unselected':[names[name] for name in sorted(set(names)-wanted)]}
+
+def prepare(contract_path,output,operation):
+    data=ordinary(contract_path).read_bytes();c=validate_contract(parse(data))
+    require(not output.exists() and not output.is_symlink(),'Use a fresh output namespace')
+    require(output.parent.is_dir() and all(not p.is_symlink() for p in [output.parent,*output.parent.parents]),'Unsafe output parent')
+    output.mkdir();(output/'contract.json').write_bytes(data)
+    summary={'schema':'release-asset-verification-result-v1','operation':operation,'created_utc':utc(),
+        'contract_sha256':hashlib.sha256(data).hexdigest(),'verifier_sha256':file_identity(Path(__file__))['sha256'],
+        'repository':c['repository'],'release_id':c['release_id'],'tag_name':c['tag_name'],
+        'scope':'explicit_selection_only' if operation=='download' else 'exact_final_inventory_with_bound_download_receipts',
+        'status':'running','passed':False,'complete':False,
+        'assets':[{'ordinal':i,'expected':row,'status':'not_started'} for i,row in enumerate(c['assets'])],
+        'payload_copied_to_disk':False,'credentials_recorded':False}
+    write_summary(output/'summary.json',summary)
+    return c,summary
+
+def fail(output,summary,error):
+    summary['status']='failed';summary['error_type']=type(error).__name__
+    summary['error']=str(error) if isinstance(error,(ValueError,CommandFailure)) else 'Unexpected execution failure; see error type'
+    if isinstance(error,CommandFailure):summary['failed_command']=error.receipt
+    for item in summary['assets']:
+        if item['status']=='running':
+            item['status']='failed';item['failure_type']=type(error).__name__
+            if isinstance(error,CommandFailure):item['partial_stream']=error.receipt
+    summary['finished_utc']=utc();write_summary(output/'summary.json',summary)
+
+def download_verify(contract_path,output,client_factory=GitHubClient):
+    c,s=prepare(Path(contract_path),Path(output),'download');output=Path(output)
+    try:
+        root=Path(c['workspace_root']);locals_before={}
+        for row in c['assets']:
+            p=root/row['local_path'];actual=file_identity(p)
+            require(actual['bytes']==row['bytes'] and actual['sha256']==row['sha256'],'Local asset differs from explicit contract')
+            locals_before[row['name']]=actual
+        s['local_preflight']=locals_before
+        client=client_factory(output);auth=user_identity(client.user(),c);s['authenticated_before']=auth
+        release=release_identity(client.release(),c);s['release_before']=release
+        initial=inventory_check(client.assets(),c);s['initial_inventory']=initial
+        write_summary(output/'summary.json',s)
+        for ordinal,row in enumerate(c['assets']):
+            item=s['assets'][ordinal];item['status']='running';item['started_utc']=utc()
+            before=asset_identity(client.asset(row['asset_id']),row)
+            require(before==initial['selected'][ordinal],'Asset changed after initial inventory')
+            item['before']=before;write_new(output/f'asset-{ordinal:04d}-start.json',item)
+            write_summary(output/'summary.json',s)
+            streamed=client.download(row['asset_id'],row['bytes']);item['stream']=streamed
+            require(streamed['stdout_bytes']==row['bytes'] and streamed['stdout_sha256']==row['sha256'],'Downloaded byte count/hash differs')
+            after=asset_identity(client.asset(row['asset_id']),row);item['after']=after
+            require(after==before,'Asset metadata identity changed during download')
+            require(stat_key(root/row['local_path'])==locals_before[row['name']]['stat'],'Local asset changed during remote verification')
+            item['status']='passed';item['finished_utc']=utc();write_new(output/f'asset-{ordinal:04d}-result.json',item)
+            write_summary(output/'summary.json',s)
+            print(json.dumps({'ordinal':ordinal,'name':row['name'],'status':'passed','bytes':row['bytes']}),flush=True)
+        final=inventory_check(client.assets(),c);s['final_selected_inventory']=final
+        require(final['selected']==initial['selected'],'Selected inventory changed across verification')
+        s['release_after']=release_identity(client.release(),c);require(s['release_after']==release,'Release identity/state changed')
+        s['authenticated_after']=user_identity(client.user(),c);require(s['authenticated_after']==auth,'Authenticated account changed')
+        for row in c['assets']:require(stat_key(root/row['local_path'])==locals_before[row['name']]['stat'],'Local asset changed')
+        s.update({'status':'passed','passed':True,'complete':True,'finished_utc':utc(),
+                  'whole_release_inventory_claimed':False,'separate_final_inventory_required':True})
+        write_summary(output/'summary.json',s)
+    except BaseException as e:
+        fail(output,s,e);raise
+    return s
+
+def load_download_coverage(path,c):
+    index=parse(ordinary(path).read_bytes())
+    require(isinstance(index,dict) and set(index)=={'schema','receipts'} and
+            index['schema']=='release-download-receipts-v1','Invalid download receipt index')
+    require(isinstance(index['receipts'],list) and index['receipts'],'No download receipts')
+    coverage={};identities=[];seen=set()
+    for ref in index['receipts']:
+        require(set(ref)=={'path','sha256'} and hexsha(ref['sha256']),'Invalid receipt reference')
+        p=Path(ref['path']);require(p.is_absolute() and str(p) not in seen,'Invalid/duplicate receipt path');seen.add(str(p))
+        identity=file_identity(p);require(identity['sha256']==ref['sha256'],'Download receipt hash differs')
+        r=parse(p.read_bytes());require(r.get('schema')=='release-asset-verification-result-v1' and r.get('operation')=='download' and
+            r.get('passed') is True and r.get('complete') is True and r.get('status')=='passed','Incomplete/failed download receipt')
+        require(r.get('repository')==c['repository'] and r.get('release_id')==c['release_id'] and r.get('tag_name')==c['tag_name'],'Download receipt release mismatch')
+        original_bytes=ordinary(p.parent/'contract.json').read_bytes()
+        require(hashlib.sha256(original_bytes).hexdigest()==r.get('contract_sha256'),'Original download contract hash differs')
+        original=validate_contract(parse(original_bytes))
+        require(len(r['assets'])==len(original['assets']),'Download receipt inventory is incomplete')
+        require(user_identity(r.get('authenticated_before'),original)==user_identity(r.get('authenticated_after'),original),'Download authentication identity changed')
+        require(release_identity(r.get('release_before'),original)==release_identity(r.get('release_after'),original),'Download release identity changed')
+        names=[]
+        for i,item in enumerate(r['assets']):
+            require(item.get('ordinal')==i and item.get('status')=='passed','Reordered/incomplete receipt assets')
+            row=item['expected'];require(row==original['assets'][i],'Download expected order/content differs from frozen contract')
+            names.append(row['name']);require(item['before']==item['after'],'Unstable download identity')
+            require(item['stream'].get('returncode')==0 and item['stream'].get('problem') is None,'Failed stream in passing receipt')
+            after=asset_identity(item['after'],row)
+            require(item['stream']['stdout_bytes']==row['bytes'] and item['stream']['stdout_sha256']==row['sha256'],'Download receipt hash/count mismatch')
+            core={k:after[k] for k in CORE_FIELDS}
+            if row['name'] in coverage:require(coverage[row['name']]==core,'Conflicting download receipt coverage')
+            coverage[row['name']]=core
+        require(names==sorted(set(names)),'Reordered/duplicate receipt names')
+        identities.append({'path':str(p),'sha256':identity['sha256']})
+    for row in c['assets']:
+        require(row['name'] in coverage,'Expected asset lacks successful download proof')
+        wanted={'id':row['asset_id'],'name':row['name'],'state':'uploaded','size':row['bytes'],
+                'digest':'sha256:'+row['sha256'],'url':f'https://api.github.com/repos/{REPOSITORY}/releases/assets/{row["asset_id"]}'}
+        require(coverage[row['name']]==wanted,'Expected asset differs from downloaded identity')
+    return identities
+
+def final_inventory(contract_path,receipt_index,output,client_factory=GitHubClient):
+    c,s=prepare(Path(contract_path),Path(output),'inventory');output=Path(output)
+    try:
+        s['download_receipts']=load_download_coverage(Path(receipt_index),c)
+        s['download_receipt_index_sha256']=file_identity(Path(receipt_index))['sha256']
+        client=client_factory(output);auth=user_identity(client.user(),c);release=release_identity(client.release(),c)
+        before=inventory_check(client.assets(),c,exact=True);s['inventory_before']=before
+        after=inventory_check(client.assets(),c,exact=True);require(after==before,'Final inventory changed during verification')
+        require(release_identity(client.release(),c)==release,'Release status changed during final inventory')
+        require(user_identity(client.user(),c)==auth,'Authenticated account changed')
+        s.update({'status':'passed','passed':True,'complete':True,'finished_utc':utc(),
+            'authenticated_identity':auth,'release_identity':release,'inventory_after':after,
+            'whole_release_inventory_claimed':True,'all_assets_covered_by_bound_streamed_downloads':True})
+        for item in s['assets']:item['status']='passed'
+        write_summary(output/'summary.json',s)
+    except BaseException as e:fail(output,s,e);raise
+    return s
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__);sub=p.add_subparsers(dest='operation',required=True)
+    for name in ['download','inventory']:
+        q=sub.add_parser(name);q.add_argument('--contract',type=Path,required=True);q.add_argument('--output',type=Path,required=True)
+        if name=='inventory':q.add_argument('--download-receipts',type=Path,required=True)
+    a=p.parse_args()
+    try:
+        if a.operation=='download':r=download_verify(a.contract,a.output)
+        else:r=final_inventory(a.contract,a.download_receipts,a.output)
+    except BaseException as e:
+        print(json.dumps({'status':'failed','error_type':type(e).__name__,'output':str(a.output)}));raise SystemExit(1)
+    print(json.dumps({'status':r['status'],'summary':str(a.output/'summary.json'),
+        'summary_sha256':file_identity(a.output/'summary.json')['sha256']}))
+
+if __name__=='__main__':main()

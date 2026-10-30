@@ -1,0 +1,3530 @@
+{
+  "commit": "695afbfebcae976e315125f9cbddbf4186dd2fe2",
+  "complete": true,
+  "file_count": 586,
+  "files": [
+    {
+      "bytes": 1949,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/.github/workflows/upstream-mlx-official.yml",
+      "sha256": "352f6eb85f2620388eadfc654966351ee2079cb362ae181b773d9f923aaa1b19"
+    },
+    {
+      "bytes": 1425,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/.github/workflows/upstream-mlx-release-bench.yml",
+      "sha256": "b66ea4a383137b143617f33da7008ec1bd44c62765eb03b8509a4da803e429ec"
+    },
+    {
+      "bytes": 1893,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/.github/workflows/upstream-mlx.yml",
+      "sha256": "e0502c213c93ac43337a8cb9bd866fc6c3098b3cb34c3d8cb87e8293e0e58435"
+    },
+    {
+      "bytes": 2424,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/.github/workflows/upstream-pytorch-format-v2.yml",
+      "sha256": "e57bdd70bd4fa5be6fa8548f284238e6cd7b0b195eceb2db04be0fcb73d9d82e"
+    },
+    {
+      "bytes": 1963,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/.github/workflows/upstream-pytorch-lint-control-v2.yml",
+      "sha256": "49b8275c447f8a654e73dc6b94e237b1f66ac9b99fc188525f6e2e5054a04f80"
+    },
+    {
+      "bytes": 2171,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/.github/workflows/upstream-pytorch-lint-control-v3.yml",
+      "sha256": "601dc3b4d3839086277a93cb1985b91a67ebff097b2167ac0f5458329f4d6a58"
+    },
+    {
+      "bytes": 2171,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/.github/workflows/upstream-pytorch-lint-control-v4.yml",
+      "sha256": "521fbae5ee4ef285eafb237269149076c11faa2695105c4c015b8f24c2a7eb51"
+    },
+    {
+      "bytes": 1936,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/.github/workflows/upstream-pytorch-lint-control.yml",
+      "sha256": "378460bede285294f5f718753d73820763b3a3710502ae9501a6037e4030349d"
+    },
+    {
+      "bytes": 2742,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/.github/workflows/upstream-pytorch-paired-v1.yml",
+      "sha256": "46d148a9169e9a525eaea64fe0451f76e8cc3d0b27cdcc6045b2745d122e6f68"
+    },
+    {
+      "bytes": 2443,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/.github/workflows/upstream-pytorch-pristine-v1.yml",
+      "sha256": "102793edc9c733ded234c41b701ba86500fcac0afb6f349ce249ca73076b5d8d"
+    },
+    {
+      "bytes": 2300,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/.github/workflows/upstream-pytorch.yml",
+      "sha256": "119b6b46f4aa035d371e60c598fe26e56c09c6d4f778dd85876257a986e795d7"
+    },
+    {
+      "bytes": 3213,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/.github/workflows/validate.yml",
+      "sha256": "c173fe438dcb48e09708c04d9031264419e4f38a82aa9c115b6d2a0ad5a734fd"
+    },
+    {
+      "bytes": 134,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/.gitignore",
+      "sha256": "992bff02059b509f8ec22c3b9ba64678303ea17a3de61dac7a3e2a713273b9c2"
+    },
+    {
+      "bytes": 10761,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/README.md",
+      "sha256": "3a1c3db82db3794696e0bffbca25f3b8464f8a83bb4dea53b535a0c342180783"
+    },
+    {
+      "bytes": 5588,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/docs/REPRODUCE-v5.md",
+      "sha256": "c0c6db784256666b7e3928780009da1c9f65d6baf5204e8ca63434483eade0d4"
+    },
+    {
+      "bytes": 5573,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/docs/REPRODUCE.md",
+      "sha256": "f9d3b8059bfe26d2ca7803baa9314a0c86834f5a8d3f71aee70237a8cf7595b8"
+    },
+    {
+      "bytes": 96575,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/docs/architecture.png",
+      "sha256": "f9b143cb622cea85bd845330aad5489698fe67e189d1af2ec6173be8c6943c21"
+    },
+    {
+      "bytes": 128995,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/docs/kernel-tiling.png",
+      "sha256": "9715686976208e106a8ca92266a369540c01b5152fa43d2f510e466c2be929c7"
+    },
+    {
+      "bytes": 288631,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/docs/precision-dataflow.png",
+      "sha256": "2422df28f69939d68747172aecc6c5bdb802f6826d42dba72e9de5383cbffac8"
+    },
+    {
+      "bytes": 349609,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/docs/sme-dataflow-v4.png",
+      "sha256": "0bdfbdd080e5a75169b503900930006f9ab5e82371656c6ae5807512e761230b"
+    },
+    {
+      "bytes": 627,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/docs/sme-dataflow.json",
+      "sha256": "6313334132ce67a0eb0762f5ddfb289c8b6499d8a40ef7caff2f596a1af75092"
+    },
+    {
+      "bytes": 435534,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/docs/sme-dataflow.png",
+      "sha256": "5977a0af357d18cf34e81f095b9ca4f96f567220d057042f2e6b8530264f4ec7"
+    },
+    {
+      "bytes": 1939,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/docs/width-overview.json",
+      "sha256": "ccdc26e8a98676db2656f2fc28067dec651b6d237cfdbb3bdb6ee6ffbc5fde53"
+    },
+    {
+      "bytes": 109674,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/docs/width-overview.png",
+      "sha256": "1757d837de9006fd6279f4aeb586cb495a2a41425db1a7d06b8dc16ec86d9bf5"
+    },
+    {
+      "bytes": 14096,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/GPU-PLAN-v1.md",
+      "sha256": "03453af530198b35a7e2c389bb659f4551af17f82537e50c97354a42f8f20b92"
+    },
+    {
+      "bytes": 2818,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/GPU-PRECISION-CANDIDATES-v1.md",
+      "sha256": "8afaee38f5155fa83b5f41762cf83300bb0711c1bc0f1c920b8ee15c1d15248e"
+    },
+    {
+      "bytes": 17410,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/PROTOCOL-gpu-v1.md",
+      "sha256": "2c23fc9603452a7e10e68c72db885a608691498a5d0814dded2a1e47e73e4c32"
+    },
+    {
+      "bytes": 8614,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/PROTOCOL-gpu-v2.md",
+      "sha256": "729419946ae993f3494c419f4815234e5b3b5f1a829a67ef5f4baaed494e0411"
+    },
+    {
+      "bytes": 5988,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/PROTOCOL-gpu-v3-qkv.md",
+      "sha256": "bc8ae7f29b349f35800d99924a01bdc7a4380882a98f6be38301180e66228061"
+    },
+    {
+      "bytes": 7375,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/PROTOCOL-v2.md",
+      "sha256": "b64218dad37d7bcdb149c65a48580e30a91d43bee52e1d72e441512a0eed26df"
+    },
+    {
+      "bytes": 10639,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/PROTOCOL-v3.md",
+      "sha256": "8fd2650bec384d7ecfe9164e051ac12c13bb2a2caa978880b303c491462ff023"
+    },
+    {
+      "bytes": 15923,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/PROTOCOL-v4.md",
+      "sha256": "0297204bab4baef2afb54c8089043100a64ddae9d92a154d935a2ec3e193c9c5"
+    },
+    {
+      "bytes": 16182,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/PROTOCOL-v5.md",
+      "sha256": "b374facc9af8b84db149fbadbd4a7cd986ce311a2e0fbb27ba438bb8122d11ba"
+    },
+    {
+      "bytes": 8647,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/PROTOCOL-v6.md",
+      "sha256": "5bf5e1758174c7bf6ce9f70866a9cbe8e8e708b2f2e59440d2a5b0adcab87df6"
+    },
+    {
+      "bytes": 7009,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/PROTOCOL.md",
+      "sha256": "4953a3d2658f7a955be151e0ed259d39f0d3315dc293c6dbacdc74d72dda8bea"
+    },
+    {
+      "bytes": 6778,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-compile-control-v1/CORRECTION.md",
+      "sha256": "6ddaa3b2cf4140c22295f7e94e132c1141e41216b44c9ed60765bf66f24a2455"
+    },
+    {
+      "bytes": 1587,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-compile-control-v1/integration-preflight.json",
+      "sha256": "9136740d7d816ed12149707dcbc56b6dce7d6b4e14526b3ed67d45434e1fe2a8"
+    },
+    {
+      "bytes": 3833,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-compile-control-v1/orchestration-checks.json",
+      "sha256": "b46617e75b48f71224cbba5a6e421e4650977d6cffbe87dd8283ec147b5bfc54"
+    },
+    {
+      "bytes": 8508,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-development-v1/README.md",
+      "sha256": "b206866d86acb753c9249ed573cdd3cb03fa94a9262388d89e07513cef6eecd1"
+    },
+    {
+      "bytes": 1698,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-development-v1/baseline-context.json",
+      "sha256": "81eedfabf8d80c15e0534cc3abb9742c10383e9a078a4093436ffe5d670e8537"
+    },
+    {
+      "bytes": 24783,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-development-v1/closure.json",
+      "sha256": "90419e9b0f4b7cdf0068bdda6e6c70cb73895e6a257e73ad0398cb760049be69"
+    },
+    {
+      "bytes": 16916,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-development-v1/collect.py",
+      "sha256": "df327ed1e53bca192cd64faea730bd4fdd90c5871086dcca9ff2e30fe2a032d8"
+    },
+    {
+      "bytes": 462,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-development-v1/figure-provenance.json",
+      "sha256": "b2bbcbdd424502d6b1f70d45356596598b7453fb075f0118de5789b6e1a80868"
+    },
+    {
+      "bytes": 81065,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-development-v1/integration.json",
+      "sha256": "2a699b30936e32f1602c0cf9574c0c431d4928d4763c7e07d9ec53389415a06d"
+    },
+    {
+      "bytes": 95431,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-development-v1/post-p3.json",
+      "sha256": "9022db6e6813dd97a52430a5885d7ec5ed1f7e27b4e1af072e4375f2e5fe6efe"
+    },
+    {
+      "bytes": 256963,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-development-v1/precision-development.png",
+      "sha256": "318e02f52bb299ba6a2846d5d52e7c1dfabdce6b2134e70576c6f42999ffb43b"
+    },
+    {
+      "bytes": 14912,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-development-v1/provenance.json",
+      "sha256": "c6e1a36ea875b9695a07cd12abf9c0b7ebb487472cea0ef578c0fb2f8e4ca7dc"
+    },
+    {
+      "bytes": 3241078,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-development-v1/receipts.json",
+      "sha256": "93f0dff3ac17c259c724220a0ace7e8bdd35b89fff254d4a45e9feb2ef2d0380"
+    },
+    {
+      "bytes": 13259,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-development-v1/summary.json",
+      "sha256": "5e8d7d32ec24eb3ab66bbbe30b00f93c7dc49ef39b57274f59685422946010b1"
+    },
+    {
+      "bytes": 7635,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/BASELINE-INVESTIGATION.md",
+      "sha256": "d6cc052844968a10eda51ad604a894960ccb7ff035968a922f5f37e1c67097ec"
+    },
+    {
+      "bytes": 9891,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/FORMAL-STUDY.md",
+      "sha256": "175896798fb5ac1aaf86136d8830590469e752cb914037e5f125e213697c8546"
+    },
+    {
+      "bytes": 20533,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/README.md",
+      "sha256": "f76607b13f1f141970a1999bc46bd8ab6cb831620cbd75423a3a11a21a57dccf"
+    },
+    {
+      "bytes": 7017,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/RELEASE-TOOLS.md",
+      "sha256": "6c03b11b7410b7e7a366a67172ed9c11a8b0222b557d4365d8eb2b81908a110b"
+    },
+    {
+      "bytes": 35668,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/blocked-study.json",
+      "sha256": "b4a898a2299ce93b5a2222ef1539acad5245e0a3d2263dc7d310a662dea92cd2"
+    },
+    {
+      "bytes": 13372,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/candidate-grid.json",
+      "sha256": "1ab5635903f32d14652bf70916fdcfd76e1ee75966673bea40ba542ddb9bbcc0"
+    },
+    {
+      "bytes": 659432,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/planned-study.json",
+      "sha256": "dbd8f651f1fd9599ae58dbedcb03135493ee370f4a9dee030934fc4dbaeff5e9"
+    },
+    {
+      "bytes": 6575,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/policies/selected.json",
+      "sha256": "6f93b680d1e9eae91ab47015d027f9d783df3d3777b8ffc33a40b3c734c15d11"
+    },
+    {
+      "bytes": 716,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/results/SHA256SUMS",
+      "sha256": "a029462b25b5cc3552fde8fdf896f68eda5dc05340ee4572d87f5fa46c1cd0a9"
+    },
+    {
+      "bytes": 120405,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/results/baseline-qualification.png",
+      "sha256": "41b46cc973b17ac73c679dd16b2466eba61412de9782d68e0dca0d377f0bedb1"
+    },
+    {
+      "bytes": 31348,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/results/kernel-category-costs.csv",
+      "sha256": "091573345f48b18e99ab4e8794b3445d45c9b828d4af0f8cb6c84cca2eb31548"
+    },
+    {
+      "bytes": 349070,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/results/kernel-stage-costs.csv",
+      "sha256": "293d8d833e3676469ae6a1dbf7579becee0f29727caae1a73377f37d0972d619"
+    },
+    {
+      "bytes": 146441,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/results/metal-engineering.png",
+      "sha256": "7165ef98b148ea7dce79219a1884a11e09d17f1ab2e44c4d6d9f4bfe8baa2938"
+    },
+    {
+      "bytes": 301516,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/results/metal-kernel-ablation.png",
+      "sha256": "9fa1c6a246aa75c3cc74354b670ee27e09989837ccc351e9d19a3a2dd80c68e8"
+    },
+    {
+      "bytes": 229105,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/results/metal-kernel-ablation.svg",
+      "sha256": "f98c29755619a4c581e931628846c9d494b8dc18888633d84642dad0c675aa19"
+    },
+    {
+      "bytes": 2870,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/results/metal-paired-latency.csv",
+      "sha256": "2dc30aadb7ef69b8958779350769718b4a00134051a3997931db9f51ea2e2edd"
+    },
+    {
+      "bytes": 784999,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v2/results/summary.json",
+      "sha256": "42744fa7b654db4e21fbfc41edee9503c8c00d2679f6dbb767bb01bcbc671d75"
+    },
+    {
+      "bytes": 6018,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v3-qkv/README.md",
+      "sha256": "c3f35fe5cd1caa47a826784f3b75bbffefde04f040c6b3e88df53c6d59c056ab"
+    },
+    {
+      "bytes": 4829,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v3-qkv/REPRODUCE.md",
+      "sha256": "c5d0e97a108af8a68bb1ea84189dfaf3e6eac63a53902783bca9b36d1aa90e69"
+    },
+    {
+      "bytes": 3981,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v3-qkv/baseline-feasibility.json",
+      "sha256": "6e64a6157fb1a5908acee4825b2d88e7273d280acb3945f39b925229489ec190"
+    },
+    {
+      "bytes": 2051,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v3-qkv/candidates.json",
+      "sha256": "fee73c07ce7964dc70faf3b85bedca163a5964fcb66b8753247ad8ba1046d321"
+    },
+    {
+      "bytes": 8104,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v3-qkv/policies/selected.json",
+      "sha256": "cc5d6a9cbc033d2c37041855303c6331b5678486a7f851e71e2a353c804bb1a0"
+    },
+    {
+      "bytes": 3481,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v3-qkv/results/README.md",
+      "sha256": "cd7285447b2864186901f58a2ac05e75e591ab394767120603ff7bffc78d4259"
+    },
+    {
+      "bytes": 15232,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v3-qkv/results/candidate-search.csv",
+      "sha256": "a8f8a787ef6c8eee7fdbfa0d9da0f8a2be685b749b4735423265f050f2cbfc3d"
+    },
+    {
+      "bytes": 280438,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v3-qkv/results/qkv-candidate-grid.png",
+      "sha256": "75f4e62ee5403e5a8888d20cda54583d465d886bee438639b8c08f5a59e56ffa"
+    },
+    {
+      "bytes": 131951,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v3-qkv/results/qkv-development.png",
+      "sha256": "f17b1c5d6b3f070d45152490a81e4025259d295f6e20151b2f78f4b90979b00e"
+    },
+    {
+      "bytes": 104386,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v3-qkv/results/qkv-stage-costs.png",
+      "sha256": "8498b61612b14bc1f976a5201fac5e218f822ac57b1fc78061efe1a642bfe2bc"
+    },
+    {
+      "bytes": 787835,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v3-qkv/results/results.json",
+      "sha256": "578a0babc6b035c6bf975e129eb962f522ff75af134a901eb5a3eb2ed39683ef"
+    },
+    {
+      "bytes": 98307,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v3-qkv/results/stage-profiles.csv",
+      "sha256": "9ba7468d657068272c8b3da9ac40903d73aaefb0c4a03bc10132215d49af9eb6"
+    },
+    {
+      "bytes": 6602,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/gpu-v3-qkv/results/timing.csv",
+      "sha256": "d493120d4012b6948415ed42e5561c10aacbb8b51cc156013d1b1c9f9e7f4a8b"
+    },
+    {
+      "bytes": 3225,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/kernel-profiles-v4/README.md",
+      "sha256": "dd5f1e36b6c0414136a8e234104d1168d3ceb9634e77ea3fe605a0cf1f43dc16"
+    },
+    {
+      "bytes": 171,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/kernel-profiles-v4/figure.json",
+      "sha256": "8717e992f98445d0104afc92f90ec5b0cb2342059ecb6207b5c478d440f1d8a5"
+    },
+    {
+      "bytes": 210050,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/kernel-profiles-v4/kernel-diagnostics.png",
+      "sha256": "d7a6d7cb9ecd916466eb4b1d3b0d9c0f91acc90c041543ec3734aaf789b3ba02"
+    },
+    {
+      "bytes": 30929,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/kernel-profiles-v4/summary.json",
+      "sha256": "e8f923fee5a5a20095322e2e8296dfb1903e9379f51bc7735034e4f2bd108376"
+    },
+    {
+      "bytes": 6408,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v1/README.md",
+      "sha256": "8dae6d2a863d83da99759da10abeaa914cb8b9f56aca180f0495efa366ee8892"
+    },
+    {
+      "bytes": 1087724,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v1/audit.json",
+      "sha256": "f73e1abd41b1f5174f94b0744c6d4f2d212760d2a393b1cc03134913dc1bf357"
+    },
+    {
+      "bytes": 458,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v1/hardware-verification.json",
+      "sha256": "0a524808905b31e85b702c18f59f0c3aa7c9b2b00758f1ac19fcd6ba67eee665"
+    },
+    {
+      "bytes": 112151,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v1/latency.png",
+      "sha256": "c232abc876f1262df58220b038fd7042fffc719f7b4f07c15835c904801172f5"
+    },
+    {
+      "bytes": 137724,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v1/learning.png",
+      "sha256": "901e29045a802902795225000a6c7b52094a6aa622fd434eedcbc5cf0e6c7860"
+    },
+    {
+      "bytes": 52729,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v1/memory.png",
+      "sha256": "5b3ac4418ac16438a9f5eb3a11b3b2e19f32342154206d483034302aef90b0f7"
+    },
+    {
+      "bytes": 66215,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v1/preflight.json",
+      "sha256": "437609f6ce23bd0ad46d8de10e8238b8daccfd6043808b6d4b323b07ed5c076b"
+    },
+    {
+      "bytes": 58502,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v1/summary.json",
+      "sha256": "f421e076e901b19a965d283cd224ef5428445ad5c82951d0754068c1734f5a89"
+    },
+    {
+      "bytes": 59666,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v1/training.png",
+      "sha256": "6546505d9806e8e13309f6076ffcf077d2909585b5c2cd44b279bbfb0be1ef3d"
+    },
+    {
+      "bytes": 6612,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v2/README.md",
+      "sha256": "68c3594bde1f41511408486d22900889acc9f3953aa553a5d32151cdbc7eef17"
+    },
+    {
+      "bytes": 1088245,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v2/audit.json",
+      "sha256": "2ebb171890552c8b86fc3f0767dc6bb0108574128a983428d3bf845eedbbfa4f"
+    },
+    {
+      "bytes": 52028,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v2/kernel-diagnostics.json",
+      "sha256": "aa2e78ffd3d3a2318765e90b397c63813344366221d5a9ef5904dc23189d36c1"
+    },
+    {
+      "bytes": 104758,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v2/latency.png",
+      "sha256": "9b3bdf3910f3d5ac885958f0e58c2c4a338c1e9a3489acb721d525e88e18b981"
+    },
+    {
+      "bytes": 137612,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v2/learning.png",
+      "sha256": "10a0504f3153dca288f4af595b58166e28ffe43b5c9f28b16898d2fee7ae95f3"
+    },
+    {
+      "bytes": 52650,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v2/memory.png",
+      "sha256": "ce06877c2114eeafa9a372a03dc45bf96ba5fe56efb721b5842366ef9d73e86c"
+    },
+    {
+      "bytes": 145324,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v2/preflight.json",
+      "sha256": "ac89c7055051b398093c9703d27ec47d1ec7b601f4309dd9c76b1d1a86696606"
+    },
+    {
+      "bytes": 59967,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v2/summary.json",
+      "sha256": "098fc8af36a1f97596780fefcf1f952d5493b11d1a5ea22e525eed71231c1564"
+    },
+    {
+      "bytes": 57643,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/matched-v2/training.png",
+      "sha256": "f926860385efff2221f161f34faff2be8afbb773e40b58b7420dd1a601f2f46d"
+    },
+    {
+      "bytes": 8746,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/README.md",
+      "sha256": "d114930a7abfbc5896bcdba92efd2e428827f9cdfe5746e1e7688a2fe2c5de4c"
+    },
+    {
+      "bytes": 9117,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/final-admission.json",
+      "sha256": "7c7f919eb29f386214d04cc89fa3050af342199c43352faafbeb589085eda4bb"
+    },
+    {
+      "bytes": 3648,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/initial/identity.json",
+      "sha256": "369ab154bb94f835be7ac5cf174ee024d8e826b416a5c189283306723d4b8157"
+    },
+    {
+      "bytes": 242876,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/initial/width-1024-neon.json",
+      "sha256": "cf53b2d6cf520cc3a81c7937c0f9a22b20b29281278951de2c0136a8a24a18cc"
+    },
+    {
+      "bytes": 243463,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/initial/width-1024.json",
+      "sha256": "86b885d3b3cb8cf124a281db1628685ffbe91b260f5f7c7f1557fd8d27214b52"
+    },
+    {
+      "bytes": 242332,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/initial/width-512-neon.json",
+      "sha256": "eac92ef2b02476cea59f189d8a7951fbfacc2870cc03fb3f7fe762ddd7f294b7"
+    },
+    {
+      "bytes": 242606,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/initial/width-512.json",
+      "sha256": "ca81e4a51c475ccb11d394f0834a345a16e381516b3131e9262da56d39c6f962"
+    },
+    {
+      "bytes": 5643,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/post-study/README.md",
+      "sha256": "bb9f955e110cb9c42d28605e2520e7377de54c6cc2733eb26c1766087c2615b8"
+    },
+    {
+      "bytes": 21521,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/post-study/attention-isolation.json",
+      "sha256": "eb3ba6e12b0ad82e3d13398d47fb55dd558ce7b6424d05d78d8d69b16e60b993"
+    },
+    {
+      "bytes": 12212,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/post-study/provenance.json",
+      "sha256": "2727ab286b32a2574c701a6e9fdaa2d7540055a03bbb5cbaa6618ccd471ed186"
+    },
+    {
+      "bytes": 1504,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/post-study/score-rounding.json",
+      "sha256": "89ad507ac4cfb381d7898d4562f53ef7045a584aeb72edabc4f08e1382645bc6"
+    },
+    {
+      "bytes": 81625,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/post-study/sequence43-diagnosis.json",
+      "sha256": "f1be5d26618aea95fa4146e4b4899d179a9a4afe5573385b1d5dcb68fc3eb584"
+    },
+    {
+      "bytes": 7746,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/provenance.json",
+      "sha256": "be1587242196806966aa94a24d1715c4987dec981be06426578ca1b877ef6c3f"
+    },
+    {
+      "bytes": 31562,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/striped/fp64-accuracy.json",
+      "sha256": "18e149f941c54808c15fab67465368c85b6a91f42cf9e38c11b35993ee870736"
+    },
+    {
+      "bytes": 22961,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/striped/primitive-parity.json",
+      "sha256": "0e25fe27befdde077cb4433b581df8943a7ffcfed6f2bddf360ba41340b51184"
+    },
+    {
+      "bytes": 4088,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/striped/summary.json",
+      "sha256": "1707863afcf09bd266e5cd3c39819b9fd2cea77a2f30dc0274883297741ded01"
+    },
+    {
+      "bytes": 41324,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/width-1024-summary.json",
+      "sha256": "848d4103adf8a321211a3711ca76fb6bccf34cad2fa672f618921ac4fbdc5761"
+    },
+    {
+      "bytes": 11510,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v5/width-512-summary.json",
+      "sha256": "6f512dbf0fa3ae70e792242ebe4e568bc8f52dbf2b7436debc06843eacbce01c"
+    },
+    {
+      "bytes": 9064,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v6/README.md",
+      "sha256": "48c4d06eea78053b55c514650dfb1edd61559c038303ed808a2a32c917199713"
+    },
+    {
+      "bytes": 9101,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v6/regression-diagnosis-summary.json",
+      "sha256": "2c0942ea035fd4c85a039a8d1600eb43522df4b5ec413a4d73f05f7c682709f9"
+    },
+    {
+      "bytes": 72336,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/numerics-v6/residual-diagnosis-summary.json",
+      "sha256": "a063e924655612d9e804260578e4625bb3a2be07e860eff821ef9db1723c1514"
+    },
+    {
+      "bytes": 8688,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/HUMAN-REVIEW.md",
+      "sha256": "f6667e3495a7464599c4059f47d87a11674aafa88c5a754d2d0659dba0a63d0f"
+    },
+    {
+      "bytes": 4258,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/OPERATORS.md",
+      "sha256": "1e97f3971a92d10fdf1506b3def2788064378ea7dd6d5fa6715f25de42f74f37"
+    },
+    {
+      "bytes": 23865,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/PROVENANCE.json",
+      "sha256": "a8c095e387db507d5eec382447c6db7fd8cff366339561466a23ed769c598ee1"
+    },
+    {
+      "bytes": 18102,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/README.md",
+      "sha256": "bc1925853665373bae18a12424aa29e0785451ee0a03736eed072cc353045f62"
+    },
+    {
+      "bytes": 21154,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/REPRODUCTION.md",
+      "sha256": "e4df951486645069c2c0c63b4ed6f8a7bcbd9c0e9c8faa61c67126cd4558e75c"
+    },
+    {
+      "bytes": 318755,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/data/operator-comparisons.csv",
+      "sha256": "93f6e63670063b06042962c69a3cb1bb3adae2d2c11275314504c9c6790afcaa"
+    },
+    {
+      "bytes": 1860,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/data/pytorch-initial-state.csv",
+      "sha256": "1ccd0d9df18eb059ba7c2a5e7295133280cf7c9a2dc035448e11192af997dd0c"
+    },
+    {
+      "bytes": 1041,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/data/release-numerical-margins.csv",
+      "sha256": "ac4d14313463b1c0f96bf4d4c8af44f317c9cb72fc3d6604ef2b89f8976f4419"
+    },
+    {
+      "bytes": 52165,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/figures/attention-costs-jit-off.svg",
+      "sha256": "08c221d5e03d2f91d31384893a812b486b00f0601de36c5edfc861d0ab3fc264"
+    },
+    {
+      "bytes": 52163,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/figures/attention-costs-jit-on.svg",
+      "sha256": "dd6721fbfe42415d9e17921ea5d4e960bc1cdc764550ead490a9ee56c2cdbeea"
+    },
+    {
+      "bytes": 52827,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/figures/attention-qualification-jit-off.svg",
+      "sha256": "6ce1f60fdfcdb35dfe031fa968b8a0866b802c9e0b7230011691ee96a958a273"
+    },
+    {
+      "bytes": 52825,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/figures/attention-qualification-jit-on.svg",
+      "sha256": "9eb193c11971ae34005b1db812dacb94e20511e3e68f2fb597498a1e5b137df8"
+    },
+    {
+      "bytes": 20894,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/figures/embedding-embedding_value_and_grad-jit-off.svg",
+      "sha256": "0ed7ae9de53155614cf05dea0eed6eb5e43662e09374040b824e09df6063fc1f"
+    },
+    {
+      "bytes": 20893,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/figures/embedding-embedding_value_and_grad-jit-on.svg",
+      "sha256": "cbabc5dffa270381a6c57a40811eec3873f2f18c067f6e69874a8af078da05c3"
+    },
+    {
+      "bytes": 20868,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/figures/embedding-scatter_add-jit-off.svg",
+      "sha256": "18c03523765d156f45e7aecf17f19b9cfe0d15f486c5598355686d764fddd3f3"
+    },
+    {
+      "bytes": 20866,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/figures/embedding-scatter_add-jit-on.svg",
+      "sha256": "27b2e551332cd6cb178e771c0d11ed0adb368e9a4ab28ebf126b8fe9a92c9155"
+    },
+    {
+      "bytes": 203975,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/figures/mlx-release-numerical-margins.png",
+      "sha256": "bb26f705138d4cd5285d9e27f7545da9b13ddc0f13a642118b511df0db670e60"
+    },
+    {
+      "bytes": 24361,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/figures/mlx-release-numerical-margins.svg",
+      "sha256": "53c7c1b41ed3a99ddbbbe147755ad27794f1b224c904bfc40e1e38a42d1b1ee0"
+    },
+    {
+      "bytes": 213230,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/figures/pytorch-initial-state-numerical-margins.png",
+      "sha256": "0fdfc92f71259bdb4e72e53d8ba11a041bb9b2c69a9858898a516fc4b91c2222"
+    },
+    {
+      "bytes": 37427,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/figures/pytorch-initial-state-numerical-margins.svg",
+      "sha256": "69ee4a4fdd06fc4016ef26ec5d4e0b993d3e183c4417c04776473e550e114508"
+    },
+    {
+      "bytes": 34029,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/summary.json",
+      "sha256": "4916f7fa6d968b3ca7911f9e911ac53db44b1d9ef934effd15162f5d786e4c81"
+    },
+    {
+      "bytes": 2931,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/v1-v2.json",
+      "sha256": "b51a0d780d549e5c0efa631b5a545bfbd23dab1b2fea62e01c2bbea237045ddc"
+    },
+    {
+      "bytes": 136689,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/v1-v2.png",
+      "sha256": "eca2827bae47ac1ecfa1ed4dd294e67fed5e17838d69f8be60dcbe129f218eb5"
+    },
+    {
+      "bytes": 6534,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/README.md",
+      "sha256": "9ae07110e943ec263c5dac59ad11963969ebf2492dce5e0c460e098d11c44a39"
+    },
+    {
+      "bytes": 4539212,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/audit.json",
+      "sha256": "7cdf68291e34703ce3ef32dccf0d999dad23a1873827069c57d32e8b8cd3e9fc"
+    },
+    {
+      "bytes": 767,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/figure-publication.json",
+      "sha256": "4201fb9b20881114576c75c8d2830e80e09f885f2a43765ea7f5714affb1bb51"
+    },
+    {
+      "bytes": 4039,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/figure-publication.py",
+      "sha256": "72d43a3b8f6272e5abd489ccbcc0cf0d3a5dfdeebc3db7bbbebc6e57ad72aacf"
+    },
+    {
+      "bytes": 179108,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/memory-quality.png",
+      "sha256": "2e9dd4978258b73eab9cb1c268a2ac140cd068ecf869f9d04d2bb9db9791cdc0"
+    },
+    {
+      "bytes": 5087,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/report-processes.json",
+      "sha256": "eb32bcb9d2e97404853549521825ae17ff525b57268bf8721c41f7fd573040c0"
+    },
+    {
+      "bytes": 127080,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/scaling.png",
+      "sha256": "f5b07a6b19c7be0e96aa91793d9d725032c0f560e3181daec00ae027ed4d3645"
+    },
+    {
+      "bytes": 82104,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/speedup-publication.png",
+      "sha256": "5f05afe856b9b94b28d4a7fe0059cf1bfc21546e2c12c4c8c87f45f4e8fc9227"
+    },
+    {
+      "bytes": 113478,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/speedup.png",
+      "sha256": "8bfdd0951a1c8e2ccd04a4cde56550d43568a4a7b9beb79b2aff78e64b522cdc"
+    },
+    {
+      "bytes": 238368,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/summary.json",
+      "sha256": "4e933b9d24cdec271d14fd8e6b4642c9dc4213427024da079df7f2271d416817"
+    },
+    {
+      "bytes": 6619,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-128/README.md",
+      "sha256": "694c9bdc4a1f95b5c7a97b5ce9665185f06907f8a26a55d31fd7a697048e8153"
+    },
+    {
+      "bytes": 1086791,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-128/audit.json",
+      "sha256": "e5187b338637fe7d0516b13bdb2c2dfa6c7f9a7507bccec41055faa32c84f2f1"
+    },
+    {
+      "bytes": 107485,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-128/latency.png",
+      "sha256": "ab89d8e2c574f140d64d4ddfbd6ba91afbe8d17a1b65634ef27617856128370a"
+    },
+    {
+      "bytes": 151209,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-128/learning.png",
+      "sha256": "c369eb75adef3f7d18c40678bfc86ad0a17b5b33cdb11896dec59253cced4ad7"
+    },
+    {
+      "bytes": 55575,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-128/memory.png",
+      "sha256": "bf806d2fd3ee6ebf9ad7ef3c8b185fada7cef05d543e597361716e68494ad4fd"
+    },
+    {
+      "bytes": 197779,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-128/preflight.json",
+      "sha256": "5a044a84a1e78fd671b78c7d926608c365be7bd4b1f3821880e2a3d080bb13ff"
+    },
+    {
+      "bytes": 61927,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-128/summary.json",
+      "sha256": "bddd0e141e059323321bfa16a6c34754003bdc4513f7110afa68cc34a74ab0a4"
+    },
+    {
+      "bytes": 50548,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-128/training.png",
+      "sha256": "d39ab033cf78f1e36c5c6e555c7afb78f8359c71d3b4468340b46874c7436a04"
+    },
+    {
+      "bytes": 6629,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-256/README.md",
+      "sha256": "53ddb7b68f34891386d73ebbc220c1c116b231fc02eaac65ed43057050969b63"
+    },
+    {
+      "bytes": 1088009,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-256/audit.json",
+      "sha256": "e7426a244d543e3ca751189571dab566c0fbac4701fed966ab344dc49bb6e67c"
+    },
+    {
+      "bytes": 115338,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-256/latency.png",
+      "sha256": "2a0eade421aca6f5311950b5b6cbf1a1c797f155662b808d6904a49a29ed1d9f"
+    },
+    {
+      "bytes": 158148,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-256/learning.png",
+      "sha256": "fb2a51e477783d893fb7ac1e5ba91e310cf46fcbcdabf4d6ad33ec1da5758453"
+    },
+    {
+      "bytes": 55899,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-256/memory.png",
+      "sha256": "61ed1029b1ead469282f3ca2fee041981c6425de017ac62d28f962a197eb3888"
+    },
+    {
+      "bytes": 197903,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-256/preflight.json",
+      "sha256": "42bf9fc00786b1f44b38b7693e6657cb92972fbe1c4b756b01c4558d18c7ac5e"
+    },
+    {
+      "bytes": 62052,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-256/summary.json",
+      "sha256": "71a3294a0e986a2ca2127a775738c91110456ba69d1f729c3516100b77c1c522"
+    },
+    {
+      "bytes": 64150,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-256/training.png",
+      "sha256": "979392dc0209b9c5fc909b65d2e4a14d49f4166f836e51bf385231c3f6e4fbee"
+    },
+    {
+      "bytes": 6616,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-32/README.md",
+      "sha256": "57dd99cb8964ce5c1d5afb0aa93f980176b44ae48bc3a579d01e9dc879065145"
+    },
+    {
+      "bytes": 1088243,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-32/audit.json",
+      "sha256": "75ed25dfd5297d9950898b94458184b020ae11cdc569be81f569f63f68c3359e"
+    },
+    {
+      "bytes": 105522,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-32/latency.png",
+      "sha256": "19f26738cc2f650e50e3adf3ffd425708188343cc0f4000dc30e1015d5280e71"
+    },
+    {
+      "bytes": 137612,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-32/learning.png",
+      "sha256": "10a0504f3153dca288f4af595b58166e28ffe43b5c9f28b16898d2fee7ae95f3"
+    },
+    {
+      "bytes": 52661,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-32/memory.png",
+      "sha256": "9511182602d5212db733c4ea26f8b81e7723bd6816e0eb385b68c2e94d6957b8"
+    },
+    {
+      "bytes": 197068,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-32/preflight.json",
+      "sha256": "35c137ab35826da9f9e2ca89af66aadb42854d6a231d97b74d6f0beb2c062815"
+    },
+    {
+      "bytes": 62029,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-32/summary.json",
+      "sha256": "92b97fd81d572deef0364e0fb737d61ff93c5356c39879d6ef444c4add59c89b"
+    },
+    {
+      "bytes": 58529,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-32/training.png",
+      "sha256": "fed683c9a2056663e66e7f310d996faf5d19c26944ed4a7e883c38663bc95bea"
+    },
+    {
+      "bytes": 6617,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-64/README.md",
+      "sha256": "f741b40d9e646410d766c3d0ed3928c768c8d04c13e6483293fe10744e5aba84"
+    },
+    {
+      "bytes": 1087647,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-64/audit.json",
+      "sha256": "56bc80cb0a201120834a33364cd77ca3ad23ffd9941892802a3c32de62bb9148"
+    },
+    {
+      "bytes": 109115,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-64/latency.png",
+      "sha256": "2e22c7f62c8de145c2a1efc29fba5f876890aa3f4d86620a0da7ebb8cc51a422"
+    },
+    {
+      "bytes": 150691,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-64/learning.png",
+      "sha256": "729dedd748c80dc2bce971e7de6bc4b502997ba5fcd80d5a9b5abe645e804cd0"
+    },
+    {
+      "bytes": 52821,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-64/memory.png",
+      "sha256": "9c6d3e89406b659777aa4f8fa3bdd2ef70ab55f944e44bcc8ce4cb8254735dbd"
+    },
+    {
+      "bytes": 197192,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-64/preflight.json",
+      "sha256": "8e7f04ecc29836328b392f21f5777ed555a28d868c32967b4586652a7d62226c"
+    },
+    {
+      "bytes": 62012,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-64/summary.json",
+      "sha256": "8511134c47c85b3c861c15daab16b74c01f687499610fa48164a7ee1f974dd97"
+    },
+    {
+      "bytes": 62696,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v3/width-64/training.png",
+      "sha256": "6b4ebf96a42ae5e68464016aa1e374e3169a52115b5cb38b64a6a76c22a0b230"
+    },
+    {
+      "bytes": 6921,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/README.md",
+      "sha256": "1d1fcff4f826c047bd07d7027d5db09488412cfacccb0f4f105bb58f93451b13"
+    },
+    {
+      "bytes": 4546500,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/audit.json",
+      "sha256": "518b82a45f08c730a68161c77196fc2751bbdfe82ad22e41869281a4e49c1c6f"
+    },
+    {
+      "bytes": 179532,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/memory-quality.png",
+      "sha256": "7b97ca1b85e56534d17b94edff5da3829376f32d8035e4b3c85b932dc6f1ee98"
+    },
+    {
+      "bytes": 5087,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/report-processes.json",
+      "sha256": "c3f8507acadc1e6a613a38818a19213a0cf2a20681660e24d647661d257b2611"
+    },
+    {
+      "bytes": 129808,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/scaling.png",
+      "sha256": "f741870db24407412f961fc20ea6f1e8bb21a311513e1997f70e14961c2492dc"
+    },
+    {
+      "bytes": 80414,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/speedup.png",
+      "sha256": "c2f6e27c8065d1376189b1dd0956ecd094cb01022d3f202ab44f1da3c7bec73a"
+    },
+    {
+      "bytes": 257095,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/summary.json",
+      "sha256": "7839b6ff0cb857d7c89bf3a5d3907557ac5a7574b7ad27e8e0876a8da32d28fa"
+    },
+    {
+      "bytes": 7045,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-128/README.md",
+      "sha256": "2255c3129c9eb335881f77b02f3f6a28172fa2526282e675f13b228bcd02f524"
+    },
+    {
+      "bytes": 1088008,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-128/audit.json",
+      "sha256": "b9eb2a9b3eb19f6e57588fa4a4251ff0f1b7e1f635089a7454a2261807489a20"
+    },
+    {
+      "bytes": 113307,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-128/latency.png",
+      "sha256": "255d7e529adfa1cff21476e76cded62e8be746cc22905c05bdfe64da547971c2"
+    },
+    {
+      "bytes": 153639,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-128/learning.png",
+      "sha256": "9779d6526ba3f80149c021845df417b1bbf991c64cbb57c797998e8b253098c5"
+    },
+    {
+      "bytes": 55370,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-128/memory.png",
+      "sha256": "36e0f48796efe03e929b395c1c0430ed589c0cd38846835ac43d6303ab1be337"
+    },
+    {
+      "bytes": 226162,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-128/preflight-neon.json",
+      "sha256": "b608b980c45bbf26018da4919e79eedca64d9128a5360857fd801c91204c5c82"
+    },
+    {
+      "bytes": 226335,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-128/preflight-sme.json",
+      "sha256": "ca46bff0a3611c568d70e840090166249ca16d083ee49a08dd3f0b9826964f09"
+    },
+    {
+      "bytes": 226345,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-128/preflight.json",
+      "sha256": "3d466e28ac53f9373dc1075bd9ed13ea5077134d1cd2d21cda4ebd7eb7630b99"
+    },
+    {
+      "bytes": 71775,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-128/summary.json",
+      "sha256": "8bb14ea357cb786ec06377de5820b0faee20dfb7ec63c164fbbfdc00421b85e8"
+    },
+    {
+      "bytes": 59440,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-128/training.png",
+      "sha256": "b1fad12209c2e6af4b9aea97b1ae7b079e7defcac05f81f426ea3b04258927d0"
+    },
+    {
+      "bytes": 7046,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-256/README.md",
+      "sha256": "ccba839f692ed179cdb391eb485c2201ca5ba1dff65ee80de733843e8c36d042"
+    },
+    {
+      "bytes": 1087806,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-256/audit.json",
+      "sha256": "b8ba4de74d0ca8dea6d7d8232f5993863c2c383ea458980a46af2d259b87d0a7"
+    },
+    {
+      "bytes": 106693,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-256/latency.png",
+      "sha256": "c91bfd4c6e530a38368be991c76493a63c646db8f8dfb9a1789a351c8a775c67"
+    },
+    {
+      "bytes": 161799,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-256/learning.png",
+      "sha256": "af501aa8d3fc4f4bd8f03452b5ade43fd01a3408521977b30181073f1e9f6b63"
+    },
+    {
+      "bytes": 56063,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-256/memory.png",
+      "sha256": "a4b6c1fd18a67259142175968d7b22a2d5baab9d4c02fb773a67a4347e60e29e"
+    },
+    {
+      "bytes": 226286,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-256/preflight-neon.json",
+      "sha256": "4485fe876a9b324f5f560284807777c299550e16ed9e14f63d678112708a1a09"
+    },
+    {
+      "bytes": 226458,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-256/preflight-sme.json",
+      "sha256": "689fd618c0c8462732da90ebc9504a8f74631ef1faa6c96ff33b83d818951e85"
+    },
+    {
+      "bytes": 226466,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-256/preflight.json",
+      "sha256": "47d68ffe465affee8f13b4f4a076079ce90f659bd2a6f66bd8b0e5d001593ebd"
+    },
+    {
+      "bytes": 71646,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-256/summary.json",
+      "sha256": "59fe9bb676add21555627cbedf814626e01ff27771d867c1087c1289c0175662"
+    },
+    {
+      "bytes": 51679,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-256/training.png",
+      "sha256": "08af8819ae1c566dcaff60e436847d730f4632c9df729050054143950da85134"
+    },
+    {
+      "bytes": 7042,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-32/README.md",
+      "sha256": "cb84a5afb320e10d0d3a8bfe278305fdb4feba7d38de8a2f33f51b5dd7820b03"
+    },
+    {
+      "bytes": 1089354,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-32/audit.json",
+      "sha256": "dc7585af88f1c293143793c764b651a3a21e1f07eae19ffe8d042d65748a7287"
+    },
+    {
+      "bytes": 104857,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-32/latency.png",
+      "sha256": "861985894e459b71c657c1fd518cbe561d7ec672fd621ec79b892b86894e647b"
+    },
+    {
+      "bytes": 137612,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-32/learning.png",
+      "sha256": "10a0504f3153dca288f4af595b58166e28ffe43b5c9f28b16898d2fee7ae95f3"
+    },
+    {
+      "bytes": 52545,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-32/memory.png",
+      "sha256": "e302531bbe1081c54d1247529f9978be83ddc76f71168a36534b18f44abba456"
+    },
+    {
+      "bytes": 225404,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-32/preflight-neon.json",
+      "sha256": "a198f8f3af4921559d10665b5032743ba4ec1d7c57e9837683163f95f20f31ad"
+    },
+    {
+      "bytes": 225394,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-32/preflight-sme.json",
+      "sha256": "33a691ee612307949556bd07e5ae7d1b7fcd217937cf842bd09b49c688fcf9f6"
+    },
+    {
+      "bytes": 225406,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-32/preflight.json",
+      "sha256": "2e9cfc2b55a7820c79916f37049634d8a2ef46dc5e57416c85d8212eb3608216"
+    },
+    {
+      "bytes": 71701,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-32/summary.json",
+      "sha256": "bf8443184f0c291550440cf4c33ddcecba11d3911e538e3b7a82951189ef968a"
+    },
+    {
+      "bytes": 58893,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-32/training.png",
+      "sha256": "18b70c552cfdf9fa1291c60cba18688059ff286a97454fc5eba635464e2684be"
+    },
+    {
+      "bytes": 7043,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-64/README.md",
+      "sha256": "99f591d32dde40d121552a285d9b111c093867d92873920ea774331233555a7c"
+    },
+    {
+      "bytes": 1088646,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-64/audit.json",
+      "sha256": "851438dc4579f7dc8defa17612461362d115edad3067152a01687a135670bd49"
+    },
+    {
+      "bytes": 108307,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-64/latency.png",
+      "sha256": "390d5535920b688dac7610bfa7073cc2db0d8db75f04df905046632a460beccd"
+    },
+    {
+      "bytes": 152768,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-64/learning.png",
+      "sha256": "8d5f82a8cddf8adce8f66c92e48502b08d4d0a86def5e14c610cb20279902e39"
+    },
+    {
+      "bytes": 52792,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-64/memory.png",
+      "sha256": "34acbe69ab62d5cc164958acdabb525f2c232d1d990af152950348b61e1ca4b0"
+    },
+    {
+      "bytes": 225554,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-64/preflight-neon.json",
+      "sha256": "d602339aae04b753b9b21ee5d363a8c9a129ac2f6fe1ea0c60ec21a3506aafcd"
+    },
+    {
+      "bytes": 225666,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-64/preflight-sme.json",
+      "sha256": "42a45f80d2c1fd4f89520e84bda7772084ee0eb82336ea255342c83d57281a4a"
+    },
+    {
+      "bytes": 225673,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-64/preflight.json",
+      "sha256": "2bdef63229acc4ea15a2175104e375059b01bfb1a2f8597d4badda106fec0ff7"
+    },
+    {
+      "bytes": 71778,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-64/summary.json",
+      "sha256": "216e16c283fda158aa0525540cc255a2a6df4c276d82d1b9841fc848869b3be4"
+    },
+    {
+      "bytes": 60840,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v4/width-64/training.png",
+      "sha256": "03f8241ce112ebde61b006983c68511671683250d60c3b0812784a0b04b03421"
+    },
+    {
+      "bytes": 5756,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/README.md",
+      "sha256": "ff20f85963d02a279fd91e88cc74128b3aa77e161d87f5b406cc9f8d34c9c6fd"
+    },
+    {
+      "bytes": 54482,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/audit.json",
+      "sha256": "e42b6da505a9dd12dd9bc89546b2f9df2ce88ac38257e4a45a43757bb1ec7cda"
+    },
+    {
+      "bytes": 78866,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/memory-quality.png",
+      "sha256": "a8dbe38359bde307c7328c3084ad73b7365215e426c32f0e2b73c9efe1e734fb"
+    },
+    {
+      "bytes": 222,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/original-reports/parent/README.md",
+      "sha256": "8bfc600a05198eed6d56a3e344cbab638707a35300b1eeae00f6429f79a93ae8"
+    },
+    {
+      "bytes": 25233,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/original-reports/parent/audit.json",
+      "sha256": "a65853529e552a1b0bce88520c730f7525d6918ef6267ca593da455167ea648e"
+    },
+    {
+      "bytes": 1395,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/original-reports/parent/report-processes.json",
+      "sha256": "99193e366d20c57fca5257121811a476e77be35fec04ed2014b24154b7153288"
+    },
+    {
+      "bytes": 82,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/original-reports/parent/summary.json",
+      "sha256": "150e9909497ec5b858e5a1b032cd7ea5660a0415b090e8864824d7d4244b3ddb"
+    },
+    {
+      "bytes": 284,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/original-reports/width-1024/README.md",
+      "sha256": "638388d21462a361d8dab37fa40765c3418f03fb5b8accb70822774e7b3ee08d"
+    },
+    {
+      "bytes": 1094016,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/original-reports/width-1024/audit.json",
+      "sha256": "85ac3c88edcbbfe992c316d18330f123ff11bd3653225db3da775afddebf1d2e"
+    },
+    {
+      "bytes": 40959,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/original-reports/width-1024/summary.json",
+      "sha256": "df48ea943e525bb1b962f6509ec038c8362e6c573f798cd0ce02656a81a2c337"
+    },
+    {
+      "bytes": 284,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/original-reports/width-512/README.md",
+      "sha256": "638388d21462a361d8dab37fa40765c3418f03fb5b8accb70822774e7b3ee08d"
+    },
+    {
+      "bytes": 1089466,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/original-reports/width-512/audit.json",
+      "sha256": "97e2e4b808ff91d34c3931f722b84a51a61893366f69e538a808967a9140293b"
+    },
+    {
+      "bytes": 41062,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/original-reports/width-512/summary.json",
+      "sha256": "68bcd9349ea852ec16bc41dc64d620c95655bff3f350696982731b2bccf100c2"
+    },
+    {
+      "bytes": 374646,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-1024-neon.json",
+      "sha256": "4e4f51c5e25dddc33be5c7793677c35d5c16e8ed279431a676c88181830b4c6d"
+    },
+    {
+      "bytes": 374843,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-1024-sme.json",
+      "sha256": "1ac83921ee2f44963d51b754a3422b96bebe9e1aa70ee231ad1a1b35654bb5ab"
+    },
+    {
+      "bytes": 374813,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-1024.json",
+      "sha256": "53f512c9e1a731cee157fd409af76838f07ad441f048291a951117231cd87556"
+    },
+    {
+      "bytes": 226735,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-128-neon.json",
+      "sha256": "429fc3cb72c92a9652168828a63d40e495e7d0be310b618da917d8b19e90b800"
+    },
+    {
+      "bytes": 226909,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-128-sme.json",
+      "sha256": "5d90fca690ef8580989cc89c9b227fa1176a17ad3160f48be238a62e17207896"
+    },
+    {
+      "bytes": 226878,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-128.json",
+      "sha256": "ca656f48d1a394b165c655b8f4ad7cd1d5a83cdd2117d1f3a9228c75117365a7"
+    },
+    {
+      "bytes": 226858,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-256-neon.json",
+      "sha256": "46a0aefe63fc6401a6a1421f9369114051b22470fd65c6e597a88f2efb972b92"
+    },
+    {
+      "bytes": 227031,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-256-sme.json",
+      "sha256": "01cc55c9c0cd5d0ad8732a48f25fb65c7a5f99045d3add5d9468c2af37f5aa78"
+    },
+    {
+      "bytes": 226998,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-256.json",
+      "sha256": "aeee6854e58dae2ec8c01fe3063f70bafb949390d67d71cfa061b174b7dad3d0"
+    },
+    {
+      "bytes": 225978,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-32-neon.json",
+      "sha256": "713ae87e069a00712ebeea941f55f30f15f041555fcdcd2fae8bf9c1ab6e4e32"
+    },
+    {
+      "bytes": 225969,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-32-sme.json",
+      "sha256": "b56e95b1d720796256cd09e7300c59e0697b78ee2c9b88ea4450a4dea7ee9b20"
+    },
+    {
+      "bytes": 225938,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-32.json",
+      "sha256": "6f0db4e52187b64929644d47ab3be0dceee8274b761ee5f8a49ba67b711b5c0f"
+    },
+    {
+      "bytes": 373653,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-512-neon.json",
+      "sha256": "91e53dffac53040fb8fd09b5cb4582784abbb01807d90e738deca7528b3f8cbf"
+    },
+    {
+      "bytes": 373851,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-512-sme.json",
+      "sha256": "f14d7ac49f9bb4d885e96072f8cf425f36269b0a3a906f53231982e529b8ce2a"
+    },
+    {
+      "bytes": 373818,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-512.json",
+      "sha256": "df0fc98bb6313209e4876818967ca803cd7a1bc65dcf5736b43856ccf551745c"
+    },
+    {
+      "bytes": 226126,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-64-neon.json",
+      "sha256": "c9d6af8125538dd883c1dc56ff2af4950422a0019ad5131d580d7e884d7ae8db"
+    },
+    {
+      "bytes": 226238,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-64-sme.json",
+      "sha256": "e8ab7bc30509040218df3a732a508aab57d8e858da46cc4f30841488d46a09bb"
+    },
+    {
+      "bytes": 226206,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/regression-preflights/width-64.json",
+      "sha256": "801ad4c7cf3983b54b0f7be3c1310d93e4bdcf0ad36db1d2271188a30d67dd19"
+    },
+    {
+      "bytes": 212242,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/summary.json",
+      "sha256": "ce60e87350b0542469130b7d98044db8ba491b83053c2c99f4cd590df8959889"
+    },
+    {
+      "bytes": 79400,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5-outcome/timing.png",
+      "sha256": "ec06a7045a7a7ee618f656e65e947198d43f2bf59cc3e4f06a477dc667c1dde9"
+    },
+    {
+      "bytes": 222,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5/README.md",
+      "sha256": "8bfc600a05198eed6d56a3e344cbab638707a35300b1eeae00f6429f79a93ae8"
+    },
+    {
+      "bytes": 25233,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5/audit.json",
+      "sha256": "a65853529e552a1b0bce88520c730f7525d6918ef6267ca593da455167ea648e"
+    },
+    {
+      "bytes": 1395,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5/report-processes.json",
+      "sha256": "99193e366d20c57fca5257121811a476e77be35fec04ed2014b24154b7153288"
+    },
+    {
+      "bytes": 82,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5/summary.json",
+      "sha256": "150e9909497ec5b858e5a1b032cd7ea5660a0415b090e8864824d7d4244b3ddb"
+    },
+    {
+      "bytes": 284,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5/width-512/README.md",
+      "sha256": "638388d21462a361d8dab37fa40765c3418f03fb5b8accb70822774e7b3ee08d"
+    },
+    {
+      "bytes": 1089466,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5/width-512/audit.json",
+      "sha256": "97e2e4b808ff91d34c3931f722b84a51a61893366f69e538a808967a9140293b"
+    },
+    {
+      "bytes": 41062,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v5/width-512/summary.json",
+      "sha256": "68bcd9349ea852ec16bc41dc64d620c95655bff3f350696982731b2bccf100c2"
+    },
+    {
+      "bytes": 10323,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/README.md",
+      "sha256": "6921ca45210ddfd6d8cbf616676e0934eb5697b707414bd324a21220c84914ae"
+    },
+    {
+      "bytes": 67480,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/audit.json",
+      "sha256": "99e29df9434bb640c16fbb6c4a7199fc5306e510205e8e5efa91aae6acf8b1ac"
+    },
+    {
+      "bytes": 191870,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/memory-quality.png",
+      "sha256": "010f0dc4d42f3233bc36123029ce9a7ff29244223755f800a5d9611ff205092a"
+    },
+    {
+      "bytes": 77975,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/numerical-accuracy.png",
+      "sha256": "baf62a253ba59d52e152993ff0de3f2faea124648c0b237670609cfde08002cc"
+    },
+    {
+      "bytes": 26698,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/publication.json",
+      "sha256": "095aa9b73e1155f38031c931a513220d0b777468a3b379bf8dd16d950d4039d7"
+    },
+    {
+      "bytes": 9980,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-1024-neon.json",
+      "sha256": "646db409476aea9077fc6bb2bede1a8ff0752606a45f9b65459319f075466a76"
+    },
+    {
+      "bytes": 9978,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-1024-sme.json",
+      "sha256": "b3dffd99ba9f2d57ac6fb45a4051064cddb8bebf575315d1b3925febddabe9d1"
+    },
+    {
+      "bytes": 9975,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-1024.json",
+      "sha256": "2a8cc84dc911baa74f12cdf9f9fa3ded390d82df34c482a8b28ebff040cb931b"
+    },
+    {
+      "bytes": 4911,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-128-neon.json",
+      "sha256": "8ccf154284ada4ebd5f177e23354e4a5bfa61f5dfbab2881f5b4403acaebcfc0"
+    },
+    {
+      "bytes": 4911,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-128-sme.json",
+      "sha256": "64275f08c483d8f61fb90edb6a5a29b7371231f2003754cd567a6c3859c04a0d"
+    },
+    {
+      "bytes": 4908,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-128.json",
+      "sha256": "e87543a4b92fda0f52fb416b31a7dc73a8d820729ed869878733b1599479743f"
+    },
+    {
+      "bytes": 4911,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-256-neon.json",
+      "sha256": "1992e7363bfc7332306849e3974ad20092b65b33942629dbf54494129271df0b"
+    },
+    {
+      "bytes": 4911,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-256-sme.json",
+      "sha256": "383d4fba416696769d36fe8ce00d672387307e74aeccc446643e750d66b7dbfe"
+    },
+    {
+      "bytes": 4908,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-256.json",
+      "sha256": "0066014121232d8173d6f8d82d2a4d1b668ab5e588fb4fdb6c953068de76b4a5"
+    },
+    {
+      "bytes": 4903,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-32-neon.json",
+      "sha256": "6ad902890a3154b09d0d0438caeb25dab9f1617dcae88bac685f89786cf7566e"
+    },
+    {
+      "bytes": 4901,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-32-sme.json",
+      "sha256": "dae47d491651a9488aa9c4f6c3b0eef7f61452e106c3489df3f44bdeaf8f654d"
+    },
+    {
+      "bytes": 4898,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-32.json",
+      "sha256": "b2cc90e77ebd4c648344d9921771458d965a3616797e4d9d6ed274b7d9399dbe"
+    },
+    {
+      "bytes": 9273,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-512-neon.json",
+      "sha256": "8f5d0bb1df186cd6940a58cf66a4be4bf9e5cf6a8fb69883de840974608d7293"
+    },
+    {
+      "bytes": 9271,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-512-sme.json",
+      "sha256": "29d708259964a368e7b0ab03974db4d3c7b23e1cd62232b9bb3f277895b2c460"
+    },
+    {
+      "bytes": 9268,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-512.json",
+      "sha256": "14ebb630793118b0a757e77f774312c03117235a494b777c67535b3aca8b9c0a"
+    },
+    {
+      "bytes": 4903,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-64-neon.json",
+      "sha256": "2d192938ff86cdf54cc9db34bb20792fd3af700fec26e57fe0a1d7ff84fa6e39"
+    },
+    {
+      "bytes": 4903,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-64-sme.json",
+      "sha256": "24362c7c79b2bf889834ee20bd8d7d8511a859dee3476a79dfa114d6f54dff38"
+    },
+    {
+      "bytes": 4900,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/regression-preflights/width-64.json",
+      "sha256": "97c978b7901d280e364f4c594f717b4e1f2b2b4303d01b1671eb5926aebcc386"
+    },
+    {
+      "bytes": 7585,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/report-processes.json",
+      "sha256": "210d30778e1394159eb15ae0bdb9042cf2286a941c4a813e290a4590a8be4ac0"
+    },
+    {
+      "bytes": 138803,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/scaling.png",
+      "sha256": "4d469544bf5e39d5aa7a31a259d1941aea728f91a2868db1180ce8f9af217488"
+    },
+    {
+      "bytes": 99796,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/speedup.png",
+      "sha256": "f0094a49b97724aaddc74436a6ff6de17ea90293be2f9e99e6e7b0f06a981858"
+    },
+    {
+      "bytes": 996597,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/summary.json",
+      "sha256": "68f39030fcd0b57514fe4d1df3b48ea904ed979121396b73f83e79716e2b862c"
+    },
+    {
+      "bytes": 5936,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-1024/README.md",
+      "sha256": "5918497b685372d072069807911a36cb0fdf9682ee1817baf880825b54ce062d"
+    },
+    {
+      "bytes": 57597,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-1024/audit.json",
+      "sha256": "b4853a997ba7d83ce390b79763fc771c0c507a19dcf32c5a987d6e3b66a92247"
+    },
+    {
+      "bytes": 110221,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-1024/latency.png",
+      "sha256": "93af2e2726e30a7e683d7559ce418885c3b361c57a0502d3191d934cfcf5c4c7"
+    },
+    {
+      "bytes": 178619,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-1024/learning.png",
+      "sha256": "b0ddeb9eb3bd477fa60562ea4d5aca56e82d2cc3f68acea718853d3f680423d0"
+    },
+    {
+      "bytes": 54673,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-1024/memory.png",
+      "sha256": "dba6691155fdf4b04c8ad8b6be0c9905ef8d686ef4363d1815a8a2e2332b4275"
+    },
+    {
+      "bytes": 9968,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-1024/preflight-neon.json",
+      "sha256": "320682fde10ffba7f5b23d70c96355e0b9958be662e7981383020e56a71d9e1f"
+    },
+    {
+      "bytes": 9966,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-1024/preflight-sme.json",
+      "sha256": "f1a8aa33c7c4c5c41a30a66a978e36312ff960554a51d6e931bf345bb74b5451"
+    },
+    {
+      "bytes": 9963,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-1024/preflight.json",
+      "sha256": "8957a8ceadbb76bc9ff4aadc26596ba95be0e5e000bdad541a51b8d5fe3431c2"
+    },
+    {
+      "bytes": 255180,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-1024/summary.json",
+      "sha256": "e675b7915feaad41656bc4e1abbd4e9d180d88b31d4f50761c187b5ec4c415e1"
+    },
+    {
+      "bytes": 63764,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-1024/training.png",
+      "sha256": "b286a54fc52fc4854f0e4c981f91cb5b35227538853193efa4f2b849139daab5"
+    },
+    {
+      "bytes": 5801,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-128/README.md",
+      "sha256": "a136d544398684a8eca2cb1055783bc0d254c35b41cc50a23fa8ea9c27d264fb"
+    },
+    {
+      "bytes": 2028,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-128/audit.json",
+      "sha256": "978cd67ae3199c8e1ef855a2b2ce9989fc565ee6616d11f507ce4c0230783e99"
+    },
+    {
+      "bytes": 112866,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-128/latency.png",
+      "sha256": "1aa3ef14f537a2921c40b388fede8e91f58e61eecfcfc519b70e6162956fb550"
+    },
+    {
+      "bytes": 153639,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-128/learning.png",
+      "sha256": "9779d6526ba3f80149c021845df417b1bbf991c64cbb57c797998e8b253098c5"
+    },
+    {
+      "bytes": 55301,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-128/memory.png",
+      "sha256": "aa548c3f94dde87d936d9dbaaabb6a3501cb57b6c4549e3ad691371b7eae8e75"
+    },
+    {
+      "bytes": 4899,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-128/preflight-neon.json",
+      "sha256": "ee1fdf10d4d36af5dfbef5f3897ee5c37778d8a3fe829e1ef508d0720f4ac26f"
+    },
+    {
+      "bytes": 4899,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-128/preflight-sme.json",
+      "sha256": "24d1796f8cc8af53790b49e16014ce8c435736ad4433e79ab429bb4241c08f65"
+    },
+    {
+      "bytes": 4896,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-128/preflight.json",
+      "sha256": "a027d9601079a895676b38979975df71dc2e81373e87d2e9fb479230071fc6bf"
+    },
+    {
+      "bytes": 164282,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-128/summary.json",
+      "sha256": "c0a039469e0c2279b1fd75c81ee9c56015667f5e377505e38d2dd324634b0a36"
+    },
+    {
+      "bytes": 59130,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-128/training.png",
+      "sha256": "ecf31a8d972b505f6fbf9af2b51a297bbeb16af262942fb3125cce4c9b1ab5d9"
+    },
+    {
+      "bytes": 5802,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-256/README.md",
+      "sha256": "ac551dabcb566457bff54c1553bf4d026701a8b524687b178210e24e904207ea"
+    },
+    {
+      "bytes": 2028,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-256/audit.json",
+      "sha256": "a5e78d05a3210ab3e1984c5496a1b3ec98c65a9a1eda3b8ca2cff314c140fd5f"
+    },
+    {
+      "bytes": 107052,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-256/latency.png",
+      "sha256": "880cbcefa7ac10c870bbede03027d8d8bd829e39bf3e8839d0bf68a641cf3f40"
+    },
+    {
+      "bytes": 161799,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-256/learning.png",
+      "sha256": "af501aa8d3fc4f4bd8f03452b5ade43fd01a3408521977b30181073f1e9f6b63"
+    },
+    {
+      "bytes": 55851,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-256/memory.png",
+      "sha256": "c733dac8d0129538608045e0b2346a932948e5e1cb66521223d5e441abdccc1b"
+    },
+    {
+      "bytes": 4899,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-256/preflight-neon.json",
+      "sha256": "6a44133e9d699a6704cf04841f9f78f6188b731e3e0b2364d34e3ea8aac796ba"
+    },
+    {
+      "bytes": 4899,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-256/preflight-sme.json",
+      "sha256": "c0def8a3d1a9548993cee4002826a1f131a89fdf278b3e01c60c79655139b2a4"
+    },
+    {
+      "bytes": 4896,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-256/preflight.json",
+      "sha256": "046cacbfb4e3769b388e4dbba4b70e0e0ec15d9cb5f60cf20017cdbaea3b45ec"
+    },
+    {
+      "bytes": 164124,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-256/summary.json",
+      "sha256": "50f2f111e059bd391bccd1e962951869c53a9990bf525728a2584766c9691b7b"
+    },
+    {
+      "bytes": 52659,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-256/training.png",
+      "sha256": "e81a8b9fa991ff6bc123dc57e88010e7aeb45d0635a351abe3a2510612cacd34"
+    },
+    {
+      "bytes": 5798,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-32/README.md",
+      "sha256": "f77087e5df673dcef0f98f60aec9576c9c0f8db24d53d98909f3af910bb47316"
+    },
+    {
+      "bytes": 2027,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-32/audit.json",
+      "sha256": "065be36a2220a5efa8cb6e043b5c9615203cfed7502660cb2023cc5d1dcc27d6"
+    },
+    {
+      "bytes": 105013,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-32/latency.png",
+      "sha256": "563775f13d3fc689156739ae6193a6fdfcf1a143ff393e9c79128be25d4451ba"
+    },
+    {
+      "bytes": 137612,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-32/learning.png",
+      "sha256": "10a0504f3153dca288f4af595b58166e28ffe43b5c9f28b16898d2fee7ae95f3"
+    },
+    {
+      "bytes": 53067,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-32/memory.png",
+      "sha256": "1905ed4d50a77248df135d477bc27e51f70dae0bfc9a181d1bcc7a53b70fb95f"
+    },
+    {
+      "bytes": 4891,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-32/preflight-neon.json",
+      "sha256": "7f6edb94da80f6a6169ee40e42fb2b667e8aa4340537adbf07cb5f3547adbaa1"
+    },
+    {
+      "bytes": 4889,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-32/preflight-sme.json",
+      "sha256": "242bb13642028ced7a355574d9dd5ebe342335cc65c65f35bbe462faf92ba25f"
+    },
+    {
+      "bytes": 4886,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-32/preflight.json",
+      "sha256": "0bff34550b95c49864c9bc279507a52048aff86113ad52cf6aa893aa0e42bf63"
+    },
+    {
+      "bytes": 164396,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-32/summary.json",
+      "sha256": "5aee9276f526081a9899ed72ce1fbae18d2b98f8c88701d74834d0e2dcf88fc8"
+    },
+    {
+      "bytes": 57078,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-32/training.png",
+      "sha256": "1de4c514e2ee5535c57581c02232c9248622b266073071bba22d2bfef53fc0ad"
+    },
+    {
+      "bytes": 5927,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-512/README.md",
+      "sha256": "17e5fbaee9fac68fa8003553132e2a2650013449ddfd3f656e5499ac84faf218"
+    },
+    {
+      "bytes": 3674,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-512/audit.json",
+      "sha256": "70cb895e6748be831309ed53cd3476f5aa84a3b3ee819aafc0129c8e68e63a79"
+    },
+    {
+      "bytes": 115897,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-512/latency.png",
+      "sha256": "319e0c0c598623b5e5b3bfe1970e95593019a6f76999be961bcb819c11c89b1e"
+    },
+    {
+      "bytes": 182840,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-512/learning.png",
+      "sha256": "fa3f069fb835146454e179d6ef3543a3dd8164c7f01d3d79875a431a51bc9310"
+    },
+    {
+      "bytes": 60053,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-512/memory.png",
+      "sha256": "9e92588acf4ae14e601f9e621aace89c67e114c73bc37759b6b472281ba0375a"
+    },
+    {
+      "bytes": 9261,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-512/preflight-neon.json",
+      "sha256": "9a8fd0d6686d2979c797d2c2724b1f21b18025167208ba7557a96f4de01e7da5"
+    },
+    {
+      "bytes": 9259,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-512/preflight-sme.json",
+      "sha256": "b32828738c64e9f7461b8ce1d9bf4c19e9b1b6c6edaf43c4c2d5cb97bb369e00"
+    },
+    {
+      "bytes": 9256,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-512/preflight.json",
+      "sha256": "50fe93ebe3fc82c36dc075525109c5259b65306d0f40488d01cf1221cca912e4"
+    },
+    {
+      "bytes": 167174,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-512/summary.json",
+      "sha256": "58d78fa38b7915f357aa2e59ab8b0f39e0ba2368894fb46bd42accbea78d67b2"
+    },
+    {
+      "bytes": 61571,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-512/training.png",
+      "sha256": "3695db4e7e071c9ab3447e5fe86217aefd8b991aa8544151ce3bc58ecb23aa65"
+    },
+    {
+      "bytes": 5798,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-64/README.md",
+      "sha256": "fa0940dbe782bbdbef764966ca3bd054c78a62dea65b4df3d609f1afe809aece"
+    },
+    {
+      "bytes": 2027,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-64/audit.json",
+      "sha256": "4d286b2fb55567cd2706bbdb1debebef517d43867a444e3e53831313e19404c5"
+    },
+    {
+      "bytes": 108566,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-64/latency.png",
+      "sha256": "006c278d04771eba4f669d818816094655ae332aced91c5a8036c09fe1343948"
+    },
+    {
+      "bytes": 152768,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-64/learning.png",
+      "sha256": "8d5f82a8cddf8adce8f66c92e48502b08d4d0a86def5e14c610cb20279902e39"
+    },
+    {
+      "bytes": 52618,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-64/memory.png",
+      "sha256": "07d6fd1f7068f9f5534b8c4fc75bf394a787747d99fce665c7df91c254fb8c14"
+    },
+    {
+      "bytes": 4891,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-64/preflight-neon.json",
+      "sha256": "4508400a5b0376761448865f47ac88215fc18feba0d3be7a79017e5709849798"
+    },
+    {
+      "bytes": 4891,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-64/preflight-sme.json",
+      "sha256": "476ecc7b54d31caf9614e16fe7f056d0769ac2b1ff9641d0dcb179d85961ab70"
+    },
+    {
+      "bytes": 4888,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-64/preflight.json",
+      "sha256": "68ef66af6c1f194380ac839575ced9bfc7b8ae827b522ecb0d361e9679165345"
+    },
+    {
+      "bytes": 164294,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-64/summary.json",
+      "sha256": "5749b163fafefa809d9bc0e65e0c2842dfdf3f849d156ff06df2e44642311b07"
+    },
+    {
+      "bytes": 60142,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/experiments/width-sweep-v6/width-64/training.png",
+      "sha256": "b97ef2d6f9d1e82126ebc08fa139e8357f625494651d15eada7bd57615273582"
+    },
+    {
+      "bytes": 4370,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-official/CONTRACT.md",
+      "sha256": "e15d859a17bba3c0190021dda020a4254c4d748596a16831dc6f91f4f12f690a"
+    },
+    {
+      "bytes": 255,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-official/hosted-requirements.txt",
+      "sha256": "266aaed6ebd3bc3068225fb1ddb1bdcab72909eb5d9179c79ea35a37aa8377e0"
+    },
+    {
+      "bytes": 21266,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-official/hosted_build.py",
+      "sha256": "a9a511731f41db590c5a1208116d4abdcb76b2a5351cbc9a8d8fa17f934bba1d"
+    },
+    {
+      "bytes": 16882,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-official/inputs/attention-fix.patch",
+      "sha256": "b9787a423920641034f42e611f0d8529f6dd49022d094e280fa5ce52a38b7cc3"
+    },
+    {
+      "bytes": 1884,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-official/inputs/attention-patch-check.json",
+      "sha256": "7eca4cd292e3e12ed63c0d92e093483f56665e31aa324e5151cab49491678675"
+    },
+    {
+      "bytes": 33093,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-official/inputs/embedding-fix.patch",
+      "sha256": "9aecf0c9b0131fe0673493035fd3c47fba3e4ffb1cfc04d00a506702e1d1067c"
+    },
+    {
+      "bytes": 2519,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-official/inputs/embedding-patch-check.json",
+      "sha256": "50ae64b59675054f10a97c5ba4afe8685afeaab950d7b87365302cd0fd847d04"
+    },
+    {
+      "bytes": 2341,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-official/integration_common.py",
+      "sha256": "25a22b530f9610b072fc3735519d64b3813ad412b3435cb01dae91b3713a3e3b"
+    },
+    {
+      "bytes": 3281,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-official/runtime_probe.py",
+      "sha256": "58a1a17eb2c94f5a0b9b5d6be657a3bb6e11dd0890f190e6f6369c21abc28681"
+    },
+    {
+      "bytes": 8216,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-official/validate_bundle.py",
+      "sha256": "d51c0828665479080a7c8ea90068b38cdca98ad7d2d701b909a4a48987c4e138"
+    },
+    {
+      "bytes": 8457,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-release-bench/CONTRACT.md",
+      "sha256": "1a1f31112f9203d66b575f64c7c08a2526134102c5ef5551829d1cc3a7e8f107"
+    },
+    {
+      "bytes": 1012,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-release-bench/dependencies-exact.txt",
+      "sha256": "2e0126378496b93bd034b5cdc7cda4eaf95ffa262f8c84225f870c9789a0d333"
+    },
+    {
+      "bytes": 31237,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-release-bench/hosted_build.py",
+      "sha256": "f0f39b517fa8f21eb403d5e06eadfe69339eda2159df7b980c111f40071239a4"
+    },
+    {
+      "bytes": 16882,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-release-bench/inputs/attention-fix.patch",
+      "sha256": "b9787a423920641034f42e611f0d8529f6dd49022d094e280fa5ce52a38b7cc3"
+    },
+    {
+      "bytes": 1884,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-release-bench/inputs/attention-patch-check.json",
+      "sha256": "7eca4cd292e3e12ed63c0d92e093483f56665e31aa324e5151cab49491678675"
+    },
+    {
+      "bytes": 33093,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-release-bench/inputs/embedding-fix.patch",
+      "sha256": "9aecf0c9b0131fe0673493035fd3c47fba3e4ffb1cfc04d00a506702e1d1067c"
+    },
+    {
+      "bytes": 2519,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-release-bench/inputs/embedding-patch-check.json",
+      "sha256": "50ae64b59675054f10a97c5ba4afe8685afeaab950d7b87365302cd0fd847d04"
+    },
+    {
+      "bytes": 2341,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-release-bench/integration_common.py",
+      "sha256": "25a22b530f9610b072fc3735519d64b3813ad412b3435cb01dae91b3713a3e3b"
+    },
+    {
+      "bytes": 10712,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-release-bench/test_preflight.py",
+      "sha256": "47d0ff3d52605da9a911bc1a0a096e6a3b606c9b7aa8ab39e5e1ac846e7f3d1f"
+    },
+    {
+      "bytes": 4965,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-release-bench/transport_probe.py",
+      "sha256": "878f2a1391552392d72b41bbe2930e637c602b1461f95390fbe2e88ec3d97af9"
+    },
+    {
+      "bytes": 1425,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx-release-bench/workflow.yml",
+      "sha256": "b66ea4a383137b143617f33da7008ec1bd44c62765eb03b8509a4da803e429ec"
+    },
+    {
+      "bytes": 5883,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx/HOSTED-VALIDATION.md",
+      "sha256": "5be94f6c17e4a7dd9cb94e1dd1e6fab8790373f90732e38aa321cc46325a8001"
+    },
+    {
+      "bytes": 255,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx/hosted-requirements.txt",
+      "sha256": "266aaed6ebd3bc3068225fb1ddb1bdcab72909eb5d9179c79ea35a37aa8377e0"
+    },
+    {
+      "bytes": 20628,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx/hosted_build.py",
+      "sha256": "fa2d6bc0398c5d0a77117bef6a34bea8f1d5e8ca9a95390fc6f4f4c30a3fa3a6"
+    },
+    {
+      "bytes": 16882,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx/inputs/attention-fix.patch",
+      "sha256": "b9787a423920641034f42e611f0d8529f6dd49022d094e280fa5ce52a38b7cc3"
+    },
+    {
+      "bytes": 1884,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx/inputs/attention-patch-check.json",
+      "sha256": "7eca4cd292e3e12ed63c0d92e093483f56665e31aa324e5151cab49491678675"
+    },
+    {
+      "bytes": 33093,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx/inputs/embedding-fix.patch",
+      "sha256": "9aecf0c9b0131fe0673493035fd3c47fba3e4ffb1cfc04d00a506702e1d1067c"
+    },
+    {
+      "bytes": 2519,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx/inputs/embedding-patch-check.json",
+      "sha256": "50ae64b59675054f10a97c5ba4afe8685afeaab950d7b87365302cd0fd847d04"
+    },
+    {
+      "bytes": 2341,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx/integration_common.py",
+      "sha256": "25a22b530f9610b072fc3735519d64b3813ad412b3435cb01dae91b3713a3e3b"
+    },
+    {
+      "bytes": 2487,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx/runtime_probe.py",
+      "sha256": "d4285b813f24ee0eca672c43bd55fbbbd57c47d79e55121f2ef43f2b8bef5941"
+    },
+    {
+      "bytes": 9449,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/integration/mlx/validate_bundle.py",
+      "sha256": "0213f615d8e5eca61b453d20adee1a55e1776e88b5ded81399b16db5f299218f"
+    },
+    {
+      "bytes": 10998,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/ABI.md",
+      "sha256": "4611572456e6d1b423dbcd364b749b516742d24317213ef58662e38230ee9743"
+    },
+    {
+      "bytes": 1322,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/Makefile",
+      "sha256": "90ac1a0c088d60ee59dd94bfd9950eedd9f2094e32016bc806b996d5b6304ff2"
+    },
+    {
+      "bytes": 25001,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/attention.S",
+      "sha256": "454dc3366f4ee6408e3199fda7797923f2202b65210de7f137541d832001bd26"
+    },
+    {
+      "bytes": 8646,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/backend.S",
+      "sha256": "314fbcc72ced7dd907461d37d3b92a01dd9592668687d21ccacad70a75cc8616"
+    },
+    {
+      "bytes": 16529,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/kernel_notes.md",
+      "sha256": "7fc9dbcd3309ad30a55b560dc277ac52ba09b20a8d4c842a2ed6f7a376f2511e"
+    },
+    {
+      "bytes": 19420,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/kernels.S",
+      "sha256": "5120dc3b4553a40f1e35cd09206bee61df94018cef3bac4731443e1adefcd654"
+    },
+    {
+      "bytes": 8810,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/linear.S",
+      "sha256": "bff254cd0dc65321e8c76a2a5ec4d3c54b4a10746e44cc30e2dcee9b544290bd"
+    },
+    {
+      "bytes": 11183,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/linear_sme.S",
+      "sha256": "c597991598707fd81f20c9bdbb50b9d3079b49fcc0ccb731d01096593df76e6c"
+    },
+    {
+      "bytes": 8,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/metal/.gitignore",
+      "sha256": "020c2606e8ed484089c2083e0be438b9d0736bee1558a6b76af0d58bd23f69cf"
+    },
+    {
+      "bytes": 520,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/metal/Makefile",
+      "sha256": "78bc53ae8fe3a5086d6e665af0874ac0ce1c32c2dbb462eb5fc0d6b969381155"
+    },
+    {
+      "bytes": 7996,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/metal/OPTIMIZED-KERNELS.md",
+      "sha256": "8ebf6ab4a087f362811f2c9c05c6d10693589d4fc19eb106acf9d4758ad97fcd"
+    },
+    {
+      "bytes": 4974,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/metal/QKV-KERNELS.md",
+      "sha256": "5ac63342e0acedfa38b4813a3ad98ff9f2eeceff845ca454dfd40a55a1cb9b86"
+    },
+    {
+      "bytes": 6774,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/metal/README.md",
+      "sha256": "eeace79bbc621f039d6acb28d75d7e0da09551356c2a75e31a709fc8279e0a38"
+    },
+    {
+      "bytes": 42030,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/metal/backend.mm",
+      "sha256": "2d4a2d35f5df992e5e121b298608750cf57bf22e513395e9e260907a4cbc9448"
+    },
+    {
+      "bytes": 5453,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/metal/check_close.py",
+      "sha256": "70f38b70e0233c857c03f75a66f567475528a26e31d73da0a36becc968d2ce2c"
+    },
+    {
+      "bytes": 17411,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/metal/kernels.metal",
+      "sha256": "ffaf40db62f16ea492065e9aecb4cbb9724b2c77bff349c362796a670639c0c0"
+    },
+    {
+      "bytes": 25104,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/metal/optimized.metal",
+      "sha256": "50347b0f9aff9198a5c6e9db907fb0a212beb07ca09253cf6a241ed4a9750eb5"
+    },
+    {
+      "bytes": 3672,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/metal/qkv.metal",
+      "sha256": "2186a0751ae4fddb6d8a2012c617a404649bd12728dcc0667c66a7d9878598f9"
+    },
+    {
+      "bytes": 6942,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/model.S",
+      "sha256": "bba4485a53f75e88749953dae1c5aa7da033c978ce4ccf281e7d9e97bc27de90"
+    },
+    {
+      "bytes": 2997,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/normalization.S",
+      "sha256": "c5001fd8bdca68375f72599df39d3b99aaf856cc94f37a2ef07a27738b1e72ec"
+    },
+    {
+      "bytes": 11780,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/runtime.S",
+      "sha256": "80952e3cca2ad4e0680b0689aa6981f45fbe553072074f3eddf201a68154c19a"
+    },
+    {
+      "bytes": 4704,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/native/softmax.S",
+      "sha256": "4f61cf45328aac18c0abd779c9738a86f0048ca00850b054bb3bf3ef3bfa4161"
+    },
+    {
+      "bytes": 672,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/pyproject.toml",
+      "sha256": "71ae50478a58f631b0f456ca2b22c7fe9bb0047fe9e6d4fc2702f5e54262faf9"
+    },
+    {
+      "bytes": 168,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/requirements-benchmark.txt",
+      "sha256": "0c4d8b5267fd9a04d7788c4e7291022c4a388cb19457b72548c2564e324dd210"
+    },
+    {
+      "bytes": 785,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/requirements-gpu-development.txt",
+      "sha256": "3545c3b731cb50f862939141dd07dd04e6e501fdd55f6be6b84ed8bea675a126"
+    },
+    {
+      "bytes": 4396,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/audit_gpu_development.py",
+      "sha256": "1fa3114bf7ad485923db438f5184c55f1c53ed199cec10adb9abbec293aa1f9d"
+    },
+    {
+      "bytes": 17001,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/benchmark_kernels.py",
+      "sha256": "7f57866c76666c9fca071825327cabebc245d425d6f684049535229cc8187482"
+    },
+    {
+      "bytes": 16633,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/capture_gpu_environment.py",
+      "sha256": "ee60203a031618aef38e7e64d0e121c9ece37a999698378438a4598b864b2b51"
+    },
+    {
+      "bytes": 188,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/check_gpu_repeatability.py",
+      "sha256": "0053058159d18d14ba18127d4121dfa3a3d9dc0539de8efd97c16909b81035d4"
+    },
+    {
+      "bytes": 4862,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/check_metal_attention.py",
+      "sha256": "888a05cf90d921a6eb1e331f1a8b35eeb024796382c1727153a071e66d689d19"
+    },
+    {
+      "bytes": 8428,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/check_metal_development.py",
+      "sha256": "9fe6fd33dde2455be5ea0009716843b19e179cb9228f692a36c6272a420ffaca"
+    },
+    {
+      "bytes": 10945,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/check_metal_norm_qkv.py",
+      "sha256": "f91ceac0d9a81d5e0e986c4d216f3103d47c5968091cafd1ba66a0c4c31e0d99"
+    },
+    {
+      "bytes": 13589,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/check_metal_qkv_optimization.py",
+      "sha256": "ff1abe1e71dae32c2266e2502d61ee06f406d4e92379c42caf8f1f66231b09db"
+    },
+    {
+      "bytes": 6162,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/compare_versions.py",
+      "sha256": "f34a28f66602765d1249ceb909a9a866e3b196392edc4aebade6f2a7f33b7b4f"
+    },
+    {
+      "bytes": 2535,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/draw_architecture.py",
+      "sha256": "c16da6c64e083899f84a69828f57b1e830aa166646b1d6b02d4224acc27c698b"
+    },
+    {
+      "bytes": 2658,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/draw_kernel_tiling.py",
+      "sha256": "6d0e79e33d38c9c12627ab086cda5f7548328235c3396dcb01eabc1f4b47c615"
+    },
+    {
+      "bytes": 4039,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/draw_width_summary.py",
+      "sha256": "72d43a3b8f6272e5abd489ccbcc0cf0d3a5dfdeebc3db7bbbebc6e57ad72aacf"
+    },
+    {
+      "bytes": 6159,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/package_evidence.py",
+      "sha256": "1b1a10ae4ece9ee1db13a70668fc7835aa73f469db6ddb305241cb49a72c8cac"
+    },
+    {
+      "bytes": 14096,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/package_failed_sweep.py",
+      "sha256": "2a3a20d6fb62814779a29b1b2e3231e468d4a96d9999897d42767e61913d2f1e"
+    },
+    {
+      "bytes": 19330,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/package_gpu_development.py",
+      "sha256": "7aa5a76566ef37619427b4eaf8878b53375b32719dbe2fdba5854e6648688b2c"
+    },
+    {
+      "bytes": 28075,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/package_gpu_qkv.py",
+      "sha256": "3acc9d3fa495ec87ff04e049a880156a1f51c0ae91e0ec63a3615f5757905818"
+    },
+    {
+      "bytes": 29465,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/package_gpu_v2_engineering.py",
+      "sha256": "cfed0eeb8cb5fa984929fcd511eba47f3cdf7d4b958c396b16d373617f689953"
+    },
+    {
+      "bytes": 63418,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/package_sweep_evidence.py",
+      "sha256": "b71b4ff991278911d2bb9bf4e1d68271de326742509d79c59b114b34b3e74414"
+    },
+    {
+      "bytes": 1414,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/profile_gpu.py",
+      "sha256": "f2f9d0422c07e6f3ab612309251c8fd686e7fb44e655f020450a8d0dc3e4ad3a"
+    },
+    {
+      "bytes": 8272,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/profile_native.py",
+      "sha256": "fa3d67d0cc8a070ad041e6cd045d66e743bdf43e942ec66d8d8474bb19c47053"
+    },
+    {
+      "bytes": 10151,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/publish_sweep_view.py",
+      "sha256": "09121f77d302bf93c668740b999bbb85a7a3d5d3ebff9829afd72831f1d34d6c"
+    },
+    {
+      "bytes": 6947,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/render_gpu_development.py",
+      "sha256": "12fd016d38d1e0853fdbe13d08a8f8d0747a741da55baca3317cea73d10262f4"
+    },
+    {
+      "bytes": 8266,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/render_sme_dataflow.py",
+      "sha256": "1771caed141aec1ca96d3d9e7e10b8f20e5bac020fd20e774ce236afa22352d5"
+    },
+    {
+      "bytes": 5794,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/render_width_overview.py",
+      "sha256": "bba4e28d56243a6ac50207848cf29e68767caad7f83845e2f3a44cc01533da8b"
+    },
+    {
+      "bytes": 37276,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/report_failed_sweep.py",
+      "sha256": "2148f2936c74617f26e3486ee6694b62cd3e5a77d0d9c4cebea17d7de6c6129e"
+    },
+    {
+      "bytes": 69887,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/report_gpu_qkv.py",
+      "sha256": "3c4a0d999590a66157cfdc43c557b5395263d333ff1db458a23bfc643db8d88b"
+    },
+    {
+      "bytes": 40673,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/report_gpu_v2_engineering.py",
+      "sha256": "079761d81ea985795267c76eb5f1def6667ed5f103df5edaf6b3e23d1e14d263"
+    },
+    {
+      "bytes": 5172,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/report_kernel_optimization.py",
+      "sha256": "52ebdf545cda3d7f252d0e891e9d889f27269bd704bac520fa3dd48d5cbfdc7e"
+    },
+    {
+      "bytes": 8509,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/scripts/summarize_gpu_v2_baselines.py",
+      "sha256": "fd7080cea8d3b7ec769871c8b2a812dc45aa5df4a8625c86f429b8d88de68c2e"
+    },
+    {
+      "bytes": 3416,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/contract_fixtures.py",
+      "sha256": "6c69b363833dd0436d096535b58e142d1c5d7a19ff376b439364f1fb379cc263"
+    },
+    {
+      "bytes": 4548,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_backend.py",
+      "sha256": "1ac5fa6c68c6473f3e4fc1696455b3af3a7c957d76f2aa4e9a8ce8a5fe588900"
+    },
+    {
+      "bytes": 11490,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_failed_sweep_report.py",
+      "sha256": "7ce69a953275fbaa7edb6e8d007d21e7597f4b351dbf8007b8826cf941b207b8"
+    },
+    {
+      "bytes": 11909,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_admission_checks.py",
+      "sha256": "0057ae5dd2a68162f8637a54efbcd7aa62105cfbd82a17993a85d079e7cfe4bf"
+    },
+    {
+      "bytes": 6152,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_environment.py",
+      "sha256": "37b5d688800982999e076b6f0eea8975dc9d96d550d5e26067a876ebc3681b3c"
+    },
+    {
+      "bytes": 8899,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_frameworks.py",
+      "sha256": "c6a359839a3175bffcf18abe336f2c37ceb86a44f8f1532b3f13fed3ec6d15bf"
+    },
+    {
+      "bytes": 8605,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_inputs.py",
+      "sha256": "17ec9682f1dcecb4466d7ec36cb32a7e28e58ba1fa997cd855f11dc69f1c065f"
+    },
+    {
+      "bytes": 14996,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_metal_contract.py",
+      "sha256": "5f222fba4b97ff139c21cb45695e1ab4f21f19f9990dfa7c9daa7bd30f19df5c"
+    },
+    {
+      "bytes": 4253,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_mlx_compile.py",
+      "sha256": "800723381bd3b34aeefe9f2c7080b25797f4628fb3ccf1b8849d99deec9d7c24"
+    },
+    {
+      "bytes": 4174,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_mlx_state_capture.py",
+      "sha256": "9f62d15a4723b4431ff2559538804bb1494f4b8838eca6f0dcee4a759c4ea75f"
+    },
+    {
+      "bytes": 21975,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_policy.py",
+      "sha256": "b96f834d3b7a1f2c2db48deb4284f0d463a1455e005ca15db42c3b99e8d1d652"
+    },
+    {
+      "bytes": 8600,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_precision.py",
+      "sha256": "732d9964f7198410e36442b4c2731827b7c09814fe4e9c259c5d143a6a3946ad"
+    },
+    {
+      "bytes": 5898,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_prepare.py",
+      "sha256": "0c3cf7bd2724787dc3dea23c02c0b7499b369cb632af2ffa641728d7c4e0bc06"
+    },
+    {
+      "bytes": 15684,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_qkv_optimization.py",
+      "sha256": "d117cff8e72e79cca36f576c1115e2679b8dafd9cda2f26d65cde5308e5f6b7c"
+    },
+    {
+      "bytes": 17107,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_qkv_package.py",
+      "sha256": "30f4b06dc9548afbf07b4cf9f21d64af87178971e1d52abe767608b092e44d78"
+    },
+    {
+      "bytes": 30390,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_qkv_report.py",
+      "sha256": "f8561513b8b5ef9040ae6633b57b65f8002c32dc0755a0aa3fcb766c0acc63fa"
+    },
+    {
+      "bytes": 11502,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_repeatability.py",
+      "sha256": "8b6c2525c8347c5a35cadbeb0a5c68dc061cdd7297ac60badec55f7b81a553cb"
+    },
+    {
+      "bytes": 19962,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_run.py",
+      "sha256": "e1ed4d15c4535c6cc209b09e4175b2a664c3755e7ac8dd5eb15dd74b1fff2180"
+    },
+    {
+      "bytes": 24124,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_study.py",
+      "sha256": "c6302e36adec213d53bd92f13fa42114be50b8202e191109bd7d7a1ed1410349"
+    },
+    {
+      "bytes": 5090,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_study_runtime.py",
+      "sha256": "5d63cbcec7a9a2daba8f20e5b4a5fb9dfd35eec13e5b571917ed81b8a49d9e19"
+    },
+    {
+      "bytes": 3309,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_training_shape.py",
+      "sha256": "d842dba7632ed3f172b0c387aa6663f190b4e103d90b153cbc34b7167414d0e1"
+    },
+    {
+      "bytes": 14683,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_gpu_v2_release_tools.py",
+      "sha256": "f3daa977224b8029cf41678faee04748407ca9705e5584fd53c0a3bd5eeb1471"
+    },
+    {
+      "bytes": 7358,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_mlx_header_transport.py",
+      "sha256": "f1295d73e94e2fb392c59e55fbe1a46a0ac9ef181f8962cc65b6ade4eae1c751"
+    },
+    {
+      "bytes": 23149,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_mlx_integration_preflight.py",
+      "sha256": "d07138a719805cd49fcd61fd6a504756b9a38990e75ee9d81ceedcb8eac927a2"
+    },
+    {
+      "bytes": 4460,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_native.py",
+      "sha256": "2f34825c9ed7236447d5e85781fdcfa0ac92748eb41e26f705464790e955d2a1"
+    },
+    {
+      "bytes": 9331,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_package_failed_sweep.py",
+      "sha256": "dcd62678afc2a5b336738f79e992299d22dbcf21ae4ac3d0fd2ec06c4c60e6a2"
+    },
+    {
+      "bytes": 9530,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_package_gpu_development.py",
+      "sha256": "31a4495c8177a0388993761e52e42d2e277bae37bae306c80c0e7f0300d034da"
+    },
+    {
+      "bytes": 38633,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_package_sweep_evidence.py",
+      "sha256": "2932e1ee465063aa10e78861da5cb3f369a050b77940ad33ec91a308ef23d42b"
+    },
+    {
+      "bytes": 7085,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_precision.py",
+      "sha256": "bb226ca0c5d220708e4d96ffe7a59f0805660406a73d415054a9583272360a8b"
+    },
+    {
+      "bytes": 6897,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_precision_audit.py",
+      "sha256": "755a663653813741aaef20eb56b62a6505c8f310ea206b57c4906ff789410a4f"
+    },
+    {
+      "bytes": 1526,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_precision_contract.py",
+      "sha256": "636d0e9f4446d34a514d210b1fb495e45aa5bda5116baa9360b1c729ebe3a69a"
+    },
+    {
+      "bytes": 5867,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_precision_report.py",
+      "sha256": "d294470313fe446749f2cf86bbcfc4ca93ca5decc7910a4ca5a1c1cdf9dfff9d"
+    },
+    {
+      "bytes": 2236,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_profile_native.py",
+      "sha256": "2eb8a6df1b3aa75919a023ca688acdea15bcd821bd148b457c351ebe241be744"
+    },
+    {
+      "bytes": 5039,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_publish_sweep_view.py",
+      "sha256": "ac2eb6339debe52e95ef842919b294b724f94b241a827fcf8844b33e917088d7"
+    },
+    {
+      "bytes": 3762,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_pytorch_format_v2.py",
+      "sha256": "a6f303768718b1423ce4681619b43e322c34f1417885d46c11b004a868336758"
+    },
+    {
+      "bytes": 7217,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_pytorch_hosted_retention.py",
+      "sha256": "deca9c016a912d049f6c38786097fa8bc9a09598aaec22d7219a13e0596cc734"
+    },
+    {
+      "bytes": 8646,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_reference.py",
+      "sha256": "8c4146f35b9a37d0060bd5b1d69bffe32049cb79e3941387bf848c2d51619d3b"
+    },
+    {
+      "bytes": 2400,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_report.py",
+      "sha256": "ff5e23271f8c188ee58b6b08e29516878bfaa54f2690fcceb1f0b73d96788e4a"
+    },
+    {
+      "bytes": 6223,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_runtime_replay.py",
+      "sha256": "ea5c517c3349046f237ac4166a420173d3e0695fef50ee959b5325740c9576f5"
+    },
+    {
+      "bytes": 16887,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_sweep.py",
+      "sha256": "dbc58c061370f50120ac3ab9eb8e3f4fc919b8fe97da106c98d3d09f28016177"
+    },
+    {
+      "bytes": 21910,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_sweep_report.py",
+      "sha256": "ff170832705fe6b13e87b5e669cec8903a3f32e84b1ca060dc2aa9ac91f4ef72"
+    },
+    {
+      "bytes": 8486,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_upstream_pytorch_runtime_origins.py",
+      "sha256": "9172db3c185b558bc39a25c072bca6e94b8ceb10f2d64cb0ff642d6ea9a0eeb3"
+    },
+    {
+      "bytes": 7179,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/tests/test_validation_contract.py",
+      "sha256": "919c210df195c993d73e36c4b72bc27408a651e5ec5c1117c29e032ee4b50bdc"
+    },
+    {
+      "bytes": 62,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/__init__.py",
+      "sha256": "244cb1464fb34db5400859f205e239acabe2965dd81edb74f5c2ce76c144a7c7"
+    },
+    {
+      "bytes": 11611,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/audit.py",
+      "sha256": "b8f9f758363fbfd1634480fc38767431ff4b2e1bb36c8b61b030013fcd5256ec"
+    },
+    {
+      "bytes": 19171,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/backend.py",
+      "sha256": "681b47d24cd9e3e79989a8519f0e2b240099259854f4cee0c17fb6bcb0b53b31"
+    },
+    {
+      "bytes": 1106,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/fetch_data.py",
+      "sha256": "5de73422872af792de8ae7a0eb441be65ac7e75a5b1812b48fd1272bb6f13dfd"
+    },
+    {
+      "bytes": 44185,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_admission_checks.py",
+      "sha256": "4aa0a032d8b9d25e953bc44dfca8bebaff01c89dbb835f39dea6ba36769a114d"
+    },
+    {
+      "bytes": 3956,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_contract.py",
+      "sha256": "63ee980b68ec0e451127d76500f5cd531a29d6e2b2eca397c92172664f1598df"
+    },
+    {
+      "bytes": 2476,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_environment.py",
+      "sha256": "128fac4a81e1d1d472f3f34839f03f8531b7f47e653d10a23d57610642fc4277"
+    },
+    {
+      "bytes": 5085,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_inputs.py",
+      "sha256": "9208574a2b4d1a443734370f80e22946010f8ffd9073e4cb5edb16a4b3060a5f"
+    },
+    {
+      "bytes": 24957,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_metal.py",
+      "sha256": "f257a4c86788b5e3e257751a52acafa5262f8202a6dd9507ffa61d921c23c81a"
+    },
+    {
+      "bytes": 23684,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_mlx.py",
+      "sha256": "540927cb3b34dda7c884d5495ae3b14f3b31cdfc8cc07f95e68786e8501d756c"
+    },
+    {
+      "bytes": 3454,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_mlx_compile.py",
+      "sha256": "6029935a51aeb76707828270b430dc7f4f5374276b96c574de847c30c79ffa6d"
+    },
+    {
+      "bytes": 18159,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_mps.py",
+      "sha256": "715e2727588df9f48c33e38185a6ec2196b8c662cb69f6a94fe98681056ff1ca"
+    },
+    {
+      "bytes": 73847,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_optimize.py",
+      "sha256": "26ab494682b08d9932cdaefc2ef95b1be38ee08114972656802aac50f1b9ac72"
+    },
+    {
+      "bytes": 7259,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_policy.py",
+      "sha256": "4e164d1840eb99b7a76f46853408ba29a874507233900f60603c08b541341738"
+    },
+    {
+      "bytes": 11075,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_precision.py",
+      "sha256": "6c0903f7a374cd9e677a8865a8fa39711c721130b7c08d4216d39fbfafffba0e"
+    },
+    {
+      "bytes": 3471,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_prepare.py",
+      "sha256": "e90f77a22d4fa7916936525d3ccccca7c82edbf7110278c5bad75ced3a9f9fd4"
+    },
+    {
+      "bytes": 16701,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_qkv_optimize.py",
+      "sha256": "780418ae5b8f42c549bae0377139f70cbb9edc66f9603a2714378354d6342590"
+    },
+    {
+      "bytes": 34357,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_repeatability.py",
+      "sha256": "54372951833e053830f2d6e0cb27786a5ab4b11184a9e4f15057bbba886f7965"
+    },
+    {
+      "bytes": 14835,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_run.py",
+      "sha256": "f4ab423bce76f136b3cef8c3f6cf0bc3f93e99394329e77e4142925c839eb1cc"
+    },
+    {
+      "bytes": 28546,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_study.py",
+      "sha256": "4d51d24299e592095ece5fc835bed5cafd791c9b5aff3504c7612d550b29ea87"
+    },
+    {
+      "bytes": 25686,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_study_admission.py",
+      "sha256": "5dc85af071b1842a15b5f0b0018512e9f3f791241ac27a6b293e877dc59eece3"
+    },
+    {
+      "bytes": 15764,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_study_audit.py",
+      "sha256": "bf1e460c78e3da46fbf4eeac95f8c8402e56f92e3be48fd6326927fdf4e7b490"
+    },
+    {
+      "bytes": 13034,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_study_cpu_admission.py",
+      "sha256": "1f90b9be2c23573f72b578f01bc5260dfa427d3c10e0165606bd0ab194bd0f67"
+    },
+    {
+      "bytes": 6119,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_study_replay.py",
+      "sha256": "0d875dbb1a5171f42b304b1f25009c3910806dfe25dad5b2766b9b9d4e129618"
+    },
+    {
+      "bytes": 22545,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_study_report.py",
+      "sha256": "36a5a8c48820cc859b4db05b49424f710df1d1067ef9db2b725cb039811c71cc"
+    },
+    {
+      "bytes": 6500,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_study_runtime.py",
+      "sha256": "9123764de71d3a39367eac945abbf4fec2f22d14249b43d9a1538ebbbb4b50e3"
+    },
+    {
+      "bytes": 9791,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/gpu_study_worker.py",
+      "sha256": "f3d1a45ba8bed212d04453ebf8f869d95640322213aea06cd5d9f8281bec459d"
+    },
+    {
+      "bytes": 7667,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/precision.py",
+      "sha256": "e049d9be8f4e10db462f394d59fdeef6654743bfd9af74512d063d6d753c6502"
+    },
+    {
+      "bytes": 16276,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/precision_audit.py",
+      "sha256": "fffaa767b52967133c65c832fa8cab212dabfb3684429e6a0a466df01f8721a1"
+    },
+    {
+      "bytes": 8816,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/prepare.py",
+      "sha256": "a6d18bd2195140711e6db23a11878e69211fa0a36c45fb6e74c72a0d8cdb5dbe"
+    },
+    {
+      "bytes": 9142,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/python_train.py",
+      "sha256": "7452ffcb13328bcf51cb3ccdfc0884449dffce3284fe034ae4eaa5a0985b2d32"
+    },
+    {
+      "bytes": 4904,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/reference.py",
+      "sha256": "54a20341c9e96196961fd6770ebeda8052b9378f20f9f4934e2781e78d11b19f"
+    },
+    {
+      "bytes": 40141,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/report.py",
+      "sha256": "ad3498a22cabff54b33e6c5c2450b0e441cae16859f35ef73734c9440a5cb26c"
+    },
+    {
+      "bytes": 8776,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/run.py",
+      "sha256": "83f81c3527f0b33059ec98419f88197a5ddba40c3b773b2f9cf3cc870b3e3f6b"
+    },
+    {
+      "bytes": 10840,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/runtime_replay.py",
+      "sha256": "b92206a2cdaf9f36210ca79a3a2de067a984beaabbfe6d4b2ec07dad597429c1"
+    },
+    {
+      "bytes": 4140,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/spec.py",
+      "sha256": "b36d58ee1494399175016a59c0becc9d37597d05241969791fb7ca2234e2f1e3"
+    },
+    {
+      "bytes": 24884,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/sweep.py",
+      "sha256": "803c840e7f5560ced707bcb43be0a1f5b3eed4ce1868db10eb5a059b670020eb"
+    },
+    {
+      "bytes": 55481,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/sweep_report.py",
+      "sha256": "c77b4dda54be7ae63b8940d37dfa489d8c50c0c22e8e7d436cb3120b08c599e1"
+    },
+    {
+      "bytes": 73167,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/transformer/validate.py",
+      "sha256": "b9e796c4763bd0d66b30ea78007331aa3901324c7ee7aa8e4fe399170c49ac57"
+    },
+    {
+      "bytes": 21314,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-format-v2/changes.patch",
+      "sha256": "3834dca844ea3de6b40467ce214b99bce83fa06dae2bc454623516dafc0fdd71"
+    },
+    {
+      "bytes": 526,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-format-v2/hosted-constraints.txt",
+      "sha256": "7c9b1f75aa5fac0701bf7d32a4e5efe174e9cc45871259a7f7f1a70075865190"
+    },
+    {
+      "bytes": 24420,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-format-v2/hosted_build.py",
+      "sha256": "208c142d52c96f5133e6228659765391e955b3bf920e26d496594ac2c66700e6"
+    },
+    {
+      "bytes": 10914,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-format-v2/verify_runtime.py",
+      "sha256": "b30e26ba6436832862ce1e8d7b9ca1a306c281395917395a57ec6762a38055f4"
+    },
+    {
+      "bytes": 9661,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v2/README.md",
+      "sha256": "a9b36a6a3bb1befeafba93f7408479c02d34911852628156d09a4c11eae6b830"
+    },
+    {
+      "bytes": 12142,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v2/contract.json",
+      "sha256": "d88cc08864f4fbe77bc6540d122455d3ea29ab61279da6dfe67e80fb60ead560"
+    },
+    {
+      "bytes": 21314,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v2/formatted.patch",
+      "sha256": "3834dca844ea3de6b40467ce214b99bce83fa06dae2bc454623516dafc0fdd71"
+    },
+    {
+      "bytes": 21314,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v2/original.patch",
+      "sha256": "3dd6bf6567284d798074e7d6102ff7f8b2a051a3a4ff2824f86184c120eb0ce9"
+    },
+    {
+      "bytes": 4312,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v2/requirements-full.txt",
+      "sha256": "9662e568f3f405421f2575698a98b78f0da990e6cab9ac45998a9a4089a75a47"
+    },
+    {
+      "bytes": 30048,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v2/run.py",
+      "sha256": "fa81e5322834100376c14f9bb46e6f3c16e7c0ee9f4b96b22cf08aee07543871"
+    },
+    {
+      "bytes": 15484,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v2/test_run.py",
+      "sha256": "b102272c463903d94ba4fb22b069b8266c3d53b0d1d544a5b24ec8c57dee5644"
+    },
+    {
+      "bytes": 11300,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v3/README.md",
+      "sha256": "8aaceb781c89fd2246844c42ada0c9629bb4185e64480e237f3ba48e7c7ea915"
+    },
+    {
+      "bytes": 14137,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v3/contract.json",
+      "sha256": "0eaa55cae00977b1e5c40aa3ac134afb32a5c097852c4db26042e3b6ff46c1d6"
+    },
+    {
+      "bytes": 21314,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v3/formatted.patch",
+      "sha256": "3834dca844ea3de6b40467ce214b99bce83fa06dae2bc454623516dafc0fdd71"
+    },
+    {
+      "bytes": 21314,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v3/original.patch",
+      "sha256": "3dd6bf6567284d798074e7d6102ff7f8b2a051a3a4ff2824f86184c120eb0ce9"
+    },
+    {
+      "bytes": 4312,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v3/requirements-full.txt",
+      "sha256": "9662e568f3f405421f2575698a98b78f0da990e6cab9ac45998a9a4089a75a47"
+    },
+    {
+      "bytes": 35615,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v3/run.py",
+      "sha256": "b0d8eaf25d897e308bbb0a70df3e7aea12c23709f8447dc1a55ebb3f3b934d5a"
+    },
+    {
+      "bytes": 21467,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v3/test_run.py",
+      "sha256": "4871e78409623d4a970e586c67f2f088f175a4d40813c9b19226d0ca2fc657f5"
+    },
+    {
+      "bytes": 11778,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v3/test_tree_inventory.py",
+      "sha256": "74272f8bdbd2df2995ea5bacdc7b0283fa4fbea290fe7688d5f969487097998a"
+    },
+    {
+      "bytes": 14119,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v3/tree_inventory.py",
+      "sha256": "2feb3082f778bbb42b418746e4d34abd67aeba8609c9e4ee157ca28440fac614"
+    },
+    {
+      "bytes": 13647,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v4/README.md",
+      "sha256": "9a5a7e5ed0623f961d673f049346c318b2cfeaec56e5811aa9c62372640280be"
+    },
+    {
+      "bytes": 15250,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v4/contract.json",
+      "sha256": "1ae763ec0c84fd4a8981fc55dc4d224bdb4d37063afa007b6d86c948002b02aa"
+    },
+    {
+      "bytes": 21314,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v4/formatted.patch",
+      "sha256": "3834dca844ea3de6b40467ce214b99bce83fa06dae2bc454623516dafc0fdd71"
+    },
+    {
+      "bytes": 21314,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v4/original.patch",
+      "sha256": "3dd6bf6567284d798074e7d6102ff7f8b2a051a3a4ff2824f86184c120eb0ce9"
+    },
+    {
+      "bytes": 4312,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v4/requirements-full.txt",
+      "sha256": "9662e568f3f405421f2575698a98b78f0da990e6cab9ac45998a9a4089a75a47"
+    },
+    {
+      "bytes": 41234,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v4/run.py",
+      "sha256": "3a0ee4f221c7683b396274ab95c0259b57cf19793168050c256666d366263595"
+    },
+    {
+      "bytes": 27045,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v4/test_run.py",
+      "sha256": "d46fc8d1ccfa2357a87f2bb0db2eca65c6941997bf79c94a755e0445e4b55c0f"
+    },
+    {
+      "bytes": 11778,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v4/test_tree_inventory.py",
+      "sha256": "74272f8bdbd2df2995ea5bacdc7b0283fa4fbea290fe7688d5f969487097998a"
+    },
+    {
+      "bytes": 14119,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control-v4/tree_inventory.py",
+      "sha256": "2feb3082f778bbb42b418746e4d34abd67aeba8609c9e4ee157ca28440fac614"
+    },
+    {
+      "bytes": 6558,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control/README.md",
+      "sha256": "40ddfb616bfa5f7480b306fe95109aa86ad3a9c3e94c5c1c9781254a5c113ffd"
+    },
+    {
+      "bytes": 10868,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control/contract.json",
+      "sha256": "0aeb0b918dd92c9b23487498afeeccd329408a72cb8f4e5732e748628816cca0"
+    },
+    {
+      "bytes": 21314,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control/formatted.patch",
+      "sha256": "3834dca844ea3de6b40467ce214b99bce83fa06dae2bc454623516dafc0fdd71"
+    },
+    {
+      "bytes": 21314,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control/original.patch",
+      "sha256": "3dd6bf6567284d798074e7d6102ff7f8b2a051a3a4ff2824f86184c120eb0ce9"
+    },
+    {
+      "bytes": 4312,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control/requirements-full.txt",
+      "sha256": "9662e568f3f405421f2575698a98b78f0da990e6cab9ac45998a9a4089a75a47"
+    },
+    {
+      "bytes": 25471,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control/run.py",
+      "sha256": "0f34878418af6913f383a02891e55813e209172f3ffec9b5f6851464b8ccfeaf"
+    },
+    {
+      "bytes": 7759,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-lint-control/test_run.py",
+      "sha256": "14928dd0bd22c787cf6eb058b02058356293a034a6487a56a29d49d63d87a037"
+    },
+    {
+      "bytes": 4234,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/README.md",
+      "sha256": "1c275871d89d41cebf05937b9dca7588640cb0c8571950cf4b5cd0a9a1f5b713"
+    },
+    {
+      "bytes": 21314,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/changes.patch",
+      "sha256": "3834dca844ea3de6b40467ce214b99bce83fa06dae2bc454623516dafc0fdd71"
+    },
+    {
+      "bytes": 21474,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/contract.json",
+      "sha256": "de369cb67b57c2b5cf9021562478fe69236a50d63cb3e70af8beb578a0421b2b"
+    },
+    {
+      "bytes": 10731,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/control.py",
+      "sha256": "9ca69ccc8ac8909c2b5594ec70f9fe34b05b2209765052f727cf6f406e787a9d"
+    },
+    {
+      "bytes": 526,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/hosted-constraints.txt",
+      "sha256": "7c9b1f75aa5fac0701bf7d32a4e5efe174e9cc45871259a7f7f1a70075865190"
+    },
+    {
+      "bytes": 34097,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/hosted_build.py",
+      "sha256": "a4f8cc8da9f78c0b54e9b86e78c345672a7bf2efb126541e6c1441a71944f94e"
+    },
+    {
+      "bytes": 757,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/requirements-full.txt",
+      "sha256": "2af1fbabbbc2992823650e93a55b0b2d92a241226bbff2896c1d062fe94f4902"
+    },
+    {
+      "bytes": 9137,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/test_control.py",
+      "sha256": "b0e42a7ec4c8f28ef2e370a3d04e2f3a391b06a88203a3b47c16bece8d9e4c3b"
+    },
+    {
+      "bytes": 6523,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/test_hosted_build.py",
+      "sha256": "dc3679cc85bf06200a4d24c0484b3bd055c700d031390845d0b5672cc5e06c5f"
+    },
+    {
+      "bytes": 10914,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/verify_runtime.py",
+      "sha256": "b30e26ba6436832862ce1e8d7b9ca1a306c281395917395a57ec6762a38055f4"
+    },
+    {
+      "bytes": 3393,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-pristine-v1/README.md",
+      "sha256": "8e3e1d08af6b62b3f86bdb1b2032b5cad455df3baa72063c31a52433133b0ef8"
+    },
+    {
+      "bytes": 20218,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-pristine-v1/contract.json",
+      "sha256": "3c26473bd6120a75b69f61231b3b137a9eefef5ec22e91b80719e1a142db7d45"
+    },
+    {
+      "bytes": 8947,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-pristine-v1/control.py",
+      "sha256": "3e7f251a4126c8f5b5b00954687d8ee72ce0ed8db0fe6229a1416c35d04f4bcd"
+    },
+    {
+      "bytes": 526,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-pristine-v1/hosted-constraints.txt",
+      "sha256": "7c9b1f75aa5fac0701bf7d32a4e5efe174e9cc45871259a7f7f1a70075865190"
+    },
+    {
+      "bytes": 25845,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-pristine-v1/hosted_build.py",
+      "sha256": "baff14eed08c73596a63c677a2534b41fe52531494971c6d41b673fa47427459"
+    },
+    {
+      "bytes": 757,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-pristine-v1/requirements-full.txt",
+      "sha256": "2af1fbabbbc2992823650e93a55b0b2d92a241226bbff2896c1d062fe94f4902"
+    },
+    {
+      "bytes": 6863,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-pristine-v1/test_control.py",
+      "sha256": "525d27cb24d82c0dfb05a91c417da2b304e3fc2f834fd22368adc6d215baf26b"
+    },
+    {
+      "bytes": 10914,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-pristine-v1/verify_runtime.py",
+      "sha256": "b30e26ba6436832862ce1e8d7b9ca1a306c281395917395a57ec6762a38055f4"
+    },
+    {
+      "bytes": 21314,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch/changes.patch",
+      "sha256": "3dd6bf6567284d798074e7d6102ff7f8b2a051a3a4ff2824f86184c120eb0ce9"
+    },
+    {
+      "bytes": 526,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch/hosted-constraints.txt",
+      "sha256": "7c9b1f75aa5fac0701bf7d32a4e5efe174e9cc45871259a7f7f1a70075865190"
+    },
+    {
+      "bytes": 24238,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch/hosted_build.py",
+      "sha256": "26334551a703ba4c23c174bce5ede129920ba181d97dde2f4eb4aea9853f6e7a"
+    },
+    {
+      "bytes": 10914,
+      "executable_bits": 0,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch/verify_runtime.py",
+      "sha256": "b30e26ba6436832862ce1e8d7b9ca1a306c281395917395a57ec6762a38055f4"
+    }
+  ],
+  "git_object_format": "sha1",
+  "payload_bytes": 59207540,
+  "repository": "outputs/arm64-transformer",
+  "schema": "frozen-own-project-source-v1",
+  "scope": "Every Git-tracked committed regular file; raw Git blobs and executable bits verified. Ignored untracked files are not source inventory.",
+  "tree": "b7c53f0823b5b87a2e52722c79a2e101398eab80",
+  "workspace_root": "/Users/logannye/Documents/Codex/2026-10-28/we-x20"
+}

@@ -1,0 +1,25 @@
+{
+  "before": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T05:35:25Z",
+    "digest": "sha256:4197bdd2eaeffdbf50b5ea6e7236f47ff0e44d1def8dae08e409f536d84e7b32",
+    "id": 691062577,
+    "label": "",
+    "name": "dependency-4197bdd2eaeffdbf-x000-pytest_rerunfailures-14.0-py3-none-any.whl",
+    "node_id": "RA_kwDOVbC4ds4pMMcx",
+    "size": 12709,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T05:35:25Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062577"
+  },
+  "expected": {
+    "asset_id": 691062577,
+    "bytes": 12709,
+    "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pytest_rerunfailures-14.0-py3-none-any.whl",
+    "name": "dependency-4197bdd2eaeffdbf-x000-pytest_rerunfailures-14.0-py3-none-any.whl",
+    "sha256": "4197bdd2eaeffdbf50b5ea6e7236f47ff0e44d1def8dae08e409f536d84e7b32"
+  },
+  "ordinal": 8,
+  "started_utc": "2026-10-30T05:41:12.875324+00:00",
+  "status": "running"
+}

@@ -1,0 +1,25 @@
+{
+  "before": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T05:37:58Z",
+    "digest": "sha256:bc9348c172250d83cdfc009b4dd6f8b4d6c5c7c8ea2559b76101ff55e630be1f",
+    "id": 691067722,
+    "label": "",
+    "name": "mlx-original-shared-evidence.tar.gz",
+    "node_id": "RA_kwDOVbC4ds4pMNtK",
+    "size": 373740535,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T05:38:42Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691067722"
+  },
+  "expected": {
+    "asset_id": 691067722,
+    "bytes": 373740535,
+    "local_path": "outputs/upstream-framework-fixes/shared-mlx/evidence.tar.gz",
+    "name": "mlx-original-shared-evidence.tar.gz",
+    "sha256": "bc9348c172250d83cdfc009b4dd6f8b4d6c5c7c8ea2559b76101ff55e630be1f"
+  },
+  "ordinal": 48,
+  "started_utc": "2026-10-30T05:44:36.644252+00:00",
+  "status": "running"
+}

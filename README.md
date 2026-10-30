@@ -183,6 +183,10 @@ selection rules and timing boundaries. Evidence packages retain source,
 identities, raw states, timing samples and failures; see the linked guides for
 archive reconstruction and verification.
 
+The [framework integration release](https://github.com/logannye/arm64-transformer/releases/tag/transformer-upstream-integration-v2)
+publishes 92 verified evidence assets. Its [publication catalog](experiments/upstream-integration-v2/PUBLICATION.md)
+records the tested source, download hashes, archive layers and restoration paths.
+
 Historical [CPU v6](https://github.com/logannye/arm64-transformer/releases/tag/transformer-attention-precision-v6),
 [GPU v2](https://github.com/logannye/arm64-transformer/releases/tag/transformer-gpu-engineering-v2)
 and [QKV v3](https://github.com/logannye/arm64-transformer/releases/tag/transformer-gpu-qkv-v3)

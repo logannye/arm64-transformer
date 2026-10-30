@@ -1,0 +1,25 @@
+{
+  "before": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T05:35:43Z",
+    "digest": "sha256:8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f",
+    "id": 691063086,
+    "label": "",
+    "name": "dependency-8dd6e646e99ea382-x000-fsspec-2026.9.0-py3-none-any.whl",
+    "node_id": "RA_kwDOVbC4ds4pMMku",
+    "size": 221738,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T05:35:44Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063086"
+  },
+  "expected": {
+    "asset_id": 691063086,
+    "bytes": 221738,
+    "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/fsspec-2026.9.0-py3-none-any.whl",
+    "name": "dependency-8dd6e646e99ea382-x000-fsspec-2026.9.0-py3-none-any.whl",
+    "sha256": "8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f"
+  },
+  "ordinal": 20,
+  "started_utc": "2026-10-30T05:41:47.619425+00:00",
+  "status": "running"
+}

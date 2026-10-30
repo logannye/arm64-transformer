@@ -1,0 +1,25 @@
+{
+  "before": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T05:38:52Z",
+    "digest": "sha256:de461e6cee187cc0f8b3cf7278beeca24cde76bdf71b1941e6149c98f5b584a0",
+    "id": 691069723,
+    "label": "",
+    "name": "mlx-release-main-jit-on-macos14-arm64-cp312.tar.gz",
+    "node_id": "RA_kwDOVbC4ds4pMOMb",
+    "size": 15370241,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T05:38:53Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691069723"
+  },
+  "expected": {
+    "asset_id": 691069723,
+    "bytes": 15370241,
+    "local_path": "work/upstream-integration-v2/mlx/release-40978071574/mlx-release-main-jit-on-macos14-arm64-cp312.tar.gz",
+    "name": "mlx-release-main-jit-on-macos14-arm64-cp312.tar.gz",
+    "sha256": "de461e6cee187cc0f8b3cf7278beeca24cde76bdf71b1941e6149c98f5b584a0"
+  },
+  "ordinal": 50,
+  "started_utc": "2026-10-30T05:45:12.550867+00:00",
+  "status": "running"
+}

@@ -234,8 +234,8 @@ and copied assets. The [reproduction guide](REPRODUCTION.md) distinguishes archi
 reconstruction from a new source/runtime-qualified execution. The Git subset
 omits large raw arrays, native bundles and exhaustive receipts. Evidence packages
 preserve their original `work/` and `outputs/` layout, including failed attempts.
-Their published catalog and remote verification records, rather than this prose,
-authorize an archive-integrity claim.
+The [published catalog and remote verification records](PUBLICATION.md)
+authenticate the complete 92-asset release and its archive layers.
 
 Retention differs by experiment:
 

@@ -1,0 +1,55 @@
+{
+  "after": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T05:39:05Z",
+    "digest": "sha256:03ad69fe76ef29bebcb6ce2364ddc847e4f810aa147c8ca7cfe65442f45acd1f",
+    "id": 691070129,
+    "label": "",
+    "name": "official-40966219164-mlx-cpu-only-macos14-arm64-cp312.tar.gz",
+    "node_id": "RA_kwDOVbC4ds4pMOSx",
+    "size": 14008100,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T05:39:07Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691070129"
+  },
+  "before": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T05:39:05Z",
+    "digest": "sha256:03ad69fe76ef29bebcb6ce2364ddc847e4f810aa147c8ca7cfe65442f45acd1f",
+    "id": 691070129,
+    "label": "",
+    "name": "official-40966219164-mlx-cpu-only-macos14-arm64-cp312.tar.gz",
+    "node_id": "RA_kwDOVbC4ds4pMOSx",
+    "size": 14008100,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T05:39:07Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691070129"
+  },
+  "expected": {
+    "asset_id": 691070129,
+    "bytes": 14008100,
+    "local_path": "work/upstream-integration-v2/mlx/official-40966219164/mlx-cpu-only-macos14-arm64-cp312.tar.gz",
+    "name": "official-40966219164-mlx-cpu-only-macos14-arm64-cp312.tar.gz",
+    "sha256": "03ad69fe76ef29bebcb6ce2364ddc847e4f810aa147c8ca7cfe65442f45acd1f"
+  },
+  "finished_utc": "2026-10-30T05:45:25.663110+00:00",
+  "ordinal": 53,
+  "started_utc": "2026-10-30T05:45:23.639904+00:00",
+  "status": "passed",
+  "stream": {
+    "accept": "application/octet-stream",
+    "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/691070129",
+    "argument_count": 6,
+    "executable": "gh",
+    "payload_copied_to_disk": false,
+    "problem": null,
+    "raw_stderr_retained": false,
+    "returncode": 0,
+    "seconds": 1.2382247080095112,
+    "stderr_bytes": 0,
+    "stderr_markers": [],
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 14008100,
+    "stdout_sha256": "03ad69fe76ef29bebcb6ce2364ddc847e4f810aa147c8ca7cfe65442f45acd1f"
+  }
+}

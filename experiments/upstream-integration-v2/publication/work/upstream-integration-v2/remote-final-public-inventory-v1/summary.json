@@ -1,0 +1,3471 @@
+{
+  "all_assets_covered_by_bound_streamed_downloads": true,
+  "assets": [
+    {
+      "expected": {
+        "asset_id": 691062150,
+        "bytes": 13685868,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "name": "dependency-03a8c78d01d9781b-x000-numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "sha256": "03a8c78d01d9781b28a6989f6fa1bb2c4f2d51201cf99d3dd875df6fbd96b23b"
+      },
+      "ordinal": 0,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062231,
+        "bytes": 417675,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/optree-0.20.0-cp312-cp312-macosx_11_0_arm64.whl",
+        "name": "dependency-05596b84c1d5b43d-x000-optree-0.20.0-cp312-cp312-macosx_11_0_arm64.whl",
+        "sha256": "05596b84c1d5b43d9f45ca0bfee528e3e96f0d547522b074cf20bfe8ffea8938"
+      },
+      "ordinal": 1,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062276,
+        "bytes": 12050,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "name": "dependency-0930db9bdc62d229-x000-markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "sha256": "0930db9bdc62d22944e10b066448bb65dc9abe9112880c7cab8da54db4284d5f"
+      },
+      "ordinal": 2,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062315,
+        "bytes": 65451,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/packaging-24.2-py3-none-any.whl",
+        "name": "dependency-09abb1bccd265c01-x000-packaging-24.2-py3-none-any.whl",
+        "sha256": "09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759"
+      },
+      "ordinal": 3,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062359,
+        "bytes": 135717,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/urllib3-2.8.0-py3-none-any.whl",
+        "name": "dependency-0cf3cae568d36aa9-x000-urllib3-2.8.0-py3-none-any.whl",
+        "sha256": "0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3"
+      },
+      "ordinal": 4,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062417,
+        "bytes": 129859,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl",
+        "name": "dependency-1a7b04c10f32cc88-x000-psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl",
+        "sha256": "1a7b04c10f32cc88ab39cbf606e117fd74721c831c98a27dc04578deb0c16979"
+      },
+      "ordinal": 5,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062459,
+        "bytes": 73075,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/requests-2.34.2-py3-none-any.whl",
+        "name": "dependency-2a0d60c172f83ac6-x000-requests-2.34.2-py3-none-any.whl",
+        "sha256": "2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0"
+      },
+      "ordinal": 6,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062528,
+        "bytes": 33320,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/wheel-0.48.0-py3-none-any.whl",
+        "name": "dependency-3217dcc807155e45-x000-wheel-0.48.0-py3-none-any.whl",
+        "sha256": "3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab"
+      },
+      "ordinal": 7,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062577,
+        "bytes": 12709,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pytest_rerunfailures-14.0-py3-none-any.whl",
+        "name": "dependency-4197bdd2eaeffdbf-x000-pytest_rerunfailures-14.0-py3-none-any.whl",
+        "sha256": "4197bdd2eaeffdbf50b5ea6e7236f47ff0e44d1def8dae08e409f536d84e7b32"
+      },
+      "ordinal": 8,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062641,
+        "bytes": 11050,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/six-1.17.0-py2.py3-none-any.whl",
+        "name": "dependency-4721f391ed90541f-x000-six-1.17.0-py2.py3-none-any.whl",
+        "sha256": "4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274"
+      },
+      "ordinal": 9,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062676,
+        "bytes": 16701,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/filelock-3.20.3-py3-none-any.whl",
+        "name": "dependency-4b0dda527ee31078-x000-filelock-3.20.3-py3-none-any.whl",
+        "sha256": "4b0dda527ee31078689fc205ec4f1c1bf7d56cf88b6dc9426c4f230e46c2dce1"
+      },
+      "ordinal": 10,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062719,
+        "bytes": 14344205,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/uv-0.13.6-py3-none-macosx_11_0_arm64.whl",
+        "name": "dependency-51361029b7cf9118-x000-uv-0.13.6-py3-none-macosx_11_0_arm64.whl",
+        "sha256": "51361029b7cf91185d0092c4b356d110b4ad629e9cb11593f1e006ac72a72ca9"
+      },
+      "ordinal": 11,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062841,
+        "bytes": 10724,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pyproject_hooks-1.3.3-py3-none-any.whl",
+        "name": "dependency-5fc53fdac9f7bd63-x000-pyproject_hooks-1.3.3-py3-none-any.whl",
+        "sha256": "5fc53fdac9f7bd63fbcdc868fb5f90b4784d78a53a3d3388cd738b807441a20b"
+      },
+      "ordinal": 12,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062864,
+        "bytes": 8238,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/expecttest-0.3.0-py3-none-any.whl",
+        "name": "dependency-60f88103086e1754-x000-expecttest-0.3.0-py3-none-any.whl",
+        "sha256": "60f88103086e1754240b42175f622be83b6ffeac419434691ee5a5be819d0544"
+      },
+      "ordinal": 13,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062902,
+        "bytes": 395269,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/hypothesis-6.56.4-py3-none-any.whl",
+        "name": "dependency-67950103ee930c66-x000-hypothesis-6.56.4-py3-none-any.whl",
+        "sha256": "67950103ee930c66673494b3671474a083ea71f1ebe8f0ff849ba8ad5317772d"
+      },
+      "ordinal": 14,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062924,
+        "bytes": 40708,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/execnet-2.1.2-py3-none-any.whl",
+        "name": "dependency-67fba928dd5a544b-x000-execnet-2.1.2-py3-none-any.whl",
+        "sha256": "67fba928dd5a544b783f6056f449e5e3931a5c378b128bc18501f7ea79e296ec"
+      },
+      "ordinal": 15,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062940,
+        "bytes": 31980,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/spin-0.17-py3-none-any.whl",
+        "name": "dependency-6d69a2c6c7c6fe37-x000-spin-0.17-py3-none-any.whl",
+        "sha256": "6d69a2c6c7c6fe373c67dedacbe11552ec906c03d34cd1d6ca026289f74d01e8"
+      },
+      "ordinal": 16,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691062975,
+        "bytes": 293450,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/scikit_build_core-1.1.1-py3-none-any.whl",
+        "name": "dependency-6f6d6cf600e2e963-x000-scikit_build_core-1.1.1-py3-none-any.whl",
+        "sha256": "6f6d6cf600e2e9639fd258ecd11cfc19bd189354b968916a519c6793e7e26237"
+      },
+      "ordinal": 17,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063013,
+        "bytes": 27082,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pluggy-1.7.0-py3-none-any.whl",
+        "name": "dependency-7dd7b0d8832ba3cb-x000-pluggy-1.7.0-py3-none-any.whl",
+        "sha256": "7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec"
+      },
+      "ordinal": 18,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063038,
+        "bytes": 134899,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/jinja2-3.1.6-py3-none-any.whl",
+        "name": "dependency-85ece4451f492d0c-x000-jinja2-3.1.6-py3-none-any.whl",
+        "sha256": "85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67"
+      },
+      "ordinal": 19,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063086,
+        "bytes": 221738,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/fsspec-2026.9.0-py3-none-any.whl",
+        "name": "dependency-8dd6e646e99ea382-x000-fsspec-2026.9.0-py3-none-any.whl",
+        "sha256": "8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f"
+      },
+      "ordinal": 20,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063105,
+        "bytes": 1888534,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/lintrunner-0.13.0-py3-none-macosx_11_0_arm64.whl",
+        "name": "dependency-8df172135368d89e-x000-lintrunner-0.13.0-py3-none-macosx_11_0_arm64.whl",
+        "sha256": "8df172135368d89ed3b60ceaa81838111b98b6a84517afa698472671d8d3d2ba"
+      },
+      "ordinal": 21,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063156,
+        "bytes": 7552,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/iniconfig-2.3.1-py3-none-any.whl",
+        "name": "dependency-9121e2c1fdb35523-x000-iniconfig-2.3.1-py3-none-any.whl",
+        "sha256": "9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7"
+      },
+      "ordinal": 22,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063188,
+        "bytes": 57328,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pathspec-1.1.1-py3-none-any.whl",
+        "name": "dependency-a00ce642f577bf7f-x000-pathspec-1.1.1-py3-none-any.whl",
+        "sha256": "a00ce642f577bf7f473932318056212bc4f8bfdf53128c78bbd5af0b9b20b189"
+      },
+      "ordinal": 23,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063220,
+        "bytes": 536198,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/mpmath-1.3.0-py3-none-any.whl",
+        "name": "dependency-a0b2b9fe80bbcd81-x000-mpmath-1.3.0-py3-none-any.whl",
+        "sha256": "a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c"
+      },
+      "ordinal": 24,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063283,
+        "bytes": 29575,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/sortedcontainers-2.4.0-py2.py3-none-any.whl",
+        "name": "dependency-a163dcaede0f1c02-x000-sortedcontainers-2.4.0-py2.py3-none-any.whl",
+        "sha256": "a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0"
+      },
+      "ordinal": 25,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063310,
+        "bytes": 110502,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/click-8.3.3-py3-none-any.whl",
+        "name": "dependency-a2bf429bb3033c89-x000-click-8.3.3-py3-none-any.whl",
+        "sha256": "a2bf429bb3033c89fa4936ffb35d5cb471e3719e1f3c8a7c3fff0b8314305613"
+      },
+      "ordinal": 26,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063379,
+        "bytes": 8038,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pytest_subtests-0.13.1-py3-none-any.whl",
+        "name": "dependency-ab616a22f64cd17c-x000-pytest_subtests-0.13.1-py3-none-any.whl",
+        "sha256": "ab616a22f64cd17c1aee65f18af94dbc30c444f8683de2b30895c3778265e3bd"
+      },
+      "ordinal": 27,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063415,
+        "bytes": 69583,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/idna-3.20-py3-none-any.whl",
+        "name": "dependency-ab7ae71229745533-x000-idna-3.20-py3-none-any.whl",
+        "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c"
+      },
+      "ordinal": 28,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063458,
+        "bytes": 10581,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/zipp-4.1.2-py3-none-any.whl",
+        "name": "dependency-b30cb6cd25312216-x000-zipp-4.1.2-py3-none-any.whl",
+        "sha256": "b30cb6cd253122169c47de245ca24a86bac2a5d3802ba15bf7ba6414eb9e144d"
+      },
+      "ordinal": 29,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063516,
+        "bytes": 1256462,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/setuptools-78.1.1-py3-none-any.whl",
+        "name": "dependency-c3a9c4211ff4c309-x000-setuptools-78.1.1-py3-none-any.whl",
+        "sha256": "c3a9c4211ff4c309edb8b8c4f1cbfa7ae324c4ba9f91ff254e3d305b9fd54561"
+      },
+      "ordinal": 30,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063588,
+        "bytes": 67548,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/attrs-26.1.0-py3-none-any.whl",
+        "name": "dependency-c647aa4a12dfbad9-x000-attrs-26.1.0-py3-none-any.whl",
+        "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309"
+      },
+      "ordinal": 31,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063646,
+        "bytes": 320900,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pytest-7.3.2-py3-none-any.whl",
+        "name": "dependency-cdcbd012c9312258-x000-pytest-7.3.2-py3-none-any.whl",
+        "sha256": "cdcbd012c9312258922f8cd3f1b62a6580fdced17db6014896053d47cddf9295"
+      },
+      "ordinal": 32,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063719,
+        "bytes": 32221,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/importlib_metadata-10.1.0-py3-none-any.whl",
+        "name": "dependency-cf45ce66a929c64e-x000-importlib_metadata-10.1.0-py3-none-any.whl",
+        "sha256": "cf45ce66a929c64e994185a809c04840d0501db17e663810d993d0f4829265c7"
+      },
+      "ordinal": 33,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691063842,
+        "bytes": 47224338,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/cmake-3.31.6-py3-none-macosx_10_10_universal2.whl",
+        "name": "dependency-da9d4fd9abd571fd-x000-cmake-3.31.6-py3-none-macosx_10_10_universal2.whl",
+        "sha256": "da9d4fd9abd571fd016ddb27da0428b10277010b23bb21e3678f8b9e96e1686e"
+      },
+      "ordinal": 34,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691064154,
+        "bytes": 6299353,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/sympy-1.14.0-py3-none-any.whl",
+        "name": "dependency-e091cc3e99d2141a-x000-sympy-1.14.0-py3-none-any.whl",
+        "sha256": "e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5"
+      },
+      "ordinal": 35,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691064218,
+        "bytes": 2142205,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/networkx-3.7-py3-none-any.whl",
+        "name": "dependency-e3fd2c13a7814cee-x000-networkx-3.7-py3-none-any.whl",
+        "sha256": "e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0"
+      },
+      "ordinal": 36,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691064257,
+        "bytes": 135082,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/certifi-2026.10.23-py3-none-any.whl",
+        "name": "dependency-e9b54de76e530bb6-x000-certifi-2026.10.23-py3-none-any.whl",
+        "sha256": "e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1"
+      },
+      "ordinal": 37,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691064306,
+        "bytes": 31179,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/build-1.6.1-py3-none-any.whl",
+        "name": "dependency-ecd351a4be9d35a9-x000-build-1.6.1-py3-none-any.whl",
+        "sha256": "ecd351a4be9d35a9eaaba244a7687143c9c7d4aea6ac964e7e7ddab20cbcf4e7"
+      },
+      "ordinal": 38,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691064344,
+        "bytes": 367780,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl",
+        "name": "dependency-ed2a239c0ea213ac-x000-charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl",
+        "sha256": "ed2a239c0ea213acc1908150a3037257083c7c083128f1a4cec2ec4b97dca491"
+      },
+      "ordinal": 39,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691064394,
+        "bytes": 44614,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/typing_extensions-4.15.0-py3-none-any.whl",
+        "name": "dependency-f0fa19c6845758ab-x000-typing_extensions-4.15.0-py3-none-any.whl",
+        "sha256": "f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548"
+      },
+      "ordinal": 40,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691064439,
+        "bytes": 310125,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/ninja-1.13.0-py3-none-macosx_10_9_universal2.whl",
+        "name": "dependency-fa2a8bfc62e31b08-x000-ninja-1.13.0-py3-none-macosx_10_9_universal2.whl",
+        "sha256": "fa2a8bfc62e31b08f83127d1613d10821775a0eb334197154c4d6067b7068ff1"
+      },
+      "ordinal": 41,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691064481,
+        "bytes": 173973,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl",
+        "name": "dependency-fc09d0aa354569bc-x000-pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl",
+        "sha256": "fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0"
+      },
+      "ordinal": 42,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691064546,
+        "bytes": 1819850,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pip-26.2.2-py3-none-any.whl",
+        "name": "dependency-fd7f4dfa8190e014-x000-pip-26.2.2-py3-none-any.whl",
+        "sha256": "fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70"
+      },
+      "ordinal": 43,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691064616,
+        "bytes": 41752,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/pytest_xdist-3.3.1-py3-none-any.whl",
+        "name": "dependency-ff9daa7793569e6a-x000-pytest_xdist-3.3.1-py3-none-any.whl",
+        "sha256": "ff9daa7793569e6a68544850fd3927cd257cc03a7ef76c95e86915355e82b5f2"
+      },
+      "ordinal": 44,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690318222,
+        "bytes": 912814484,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0001.tar.gz",
+        "name": "evidence-0001.tar.gz",
+        "sha256": "5a96cfdba13a99e602ab21a003f830d5315604552d5a97a717a52dfc9d6b7f35"
+      },
+      "ordinal": 45,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690318216,
+        "bytes": 907724645,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0002.tar.gz",
+        "name": "evidence-0002.tar.gz",
+        "sha256": "0f7b234da90e8bdd968a2629acd17cfbee660ff9b1822361a59ba06bc13bef0a"
+      },
+      "ordinal": 46,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690318218,
+        "bytes": 854485997,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0003.tar.gz",
+        "name": "evidence-0003.tar.gz",
+        "sha256": "91abdbb71bcb01cd677545c74bd4cbf984d4b1a9ca560f56d42f899573c26b9e"
+      },
+      "ordinal": 47,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690318215,
+        "bytes": 1037007516,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0004.tar.gz",
+        "name": "evidence-0004.tar.gz",
+        "sha256": "c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce"
+      },
+      "ordinal": 48,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690318220,
+        "bytes": 986742002,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0005.tar.gz",
+        "name": "evidence-0005.tar.gz",
+        "sha256": "24d4b2840e3eec5dd52b203dc29a6908e76c4429d14c198d3f002522717f0e0e"
+      },
+      "ordinal": 49,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690334780,
+        "bytes": 1030845920,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0006.tar.gz",
+        "name": "evidence-0006.tar.gz",
+        "sha256": "34e783d7d215032161bd6849ef42deb227a284c4423559dce6393ed10a452801"
+      },
+      "ordinal": 50,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690335485,
+        "bytes": 996936043,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0007.tar.gz",
+        "name": "evidence-0007.tar.gz",
+        "sha256": "5dda7c7029477dae5d71c0d2fbe60d2f651cef052a433f8e20de3f28907e1c8c"
+      },
+      "ordinal": 51,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690335531,
+        "bytes": 1050480864,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0008.tar.gz",
+        "name": "evidence-0008.tar.gz",
+        "sha256": "4f56c1faa8d33151a5d78329d264e870b717054035227355d6668861179b0d48"
+      },
+      "ordinal": 52,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690337323,
+        "bytes": 1015685054,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0009.tar.gz",
+        "name": "evidence-0009.tar.gz",
+        "sha256": "7dcbbf33bec39e01897e52d3254f88d40cadf98f4c3635a1516172405ea17e70"
+      },
+      "ordinal": 53,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690339398,
+        "bytes": 1008190101,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0010.tar.gz",
+        "name": "evidence-0010.tar.gz",
+        "sha256": "98f503b5d90db916ef54b3aeef3cf70c835e0c56dfa794f33c41cc22ebf5a237"
+      },
+      "ordinal": 54,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690347645,
+        "bytes": 1027363723,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0011.tar.gz",
+        "name": "evidence-0011.tar.gz",
+        "sha256": "989576cdd9153ae8d4e8834b985ce3ef0f8766d92324fd96f38b44a446e5da35"
+      },
+      "ordinal": 55,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690348860,
+        "bytes": 223417130,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0012.tar.gz",
+        "name": "evidence-0012.tar.gz",
+        "sha256": "f5c9516abc602fd473576ab5c9edd7f429463b169bcc6a4c8bab875dcca06c3b"
+      },
+      "ordinal": 56,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691064654,
+        "bytes": 53413515,
+        "local_path": "work/upstream-integration-v2/mlx/hosted-40964965287/mlx-jit-off-macos14-arm64-cp312.tar.gz",
+        "name": "hosted-40964965287-mlx-jit-off-macos14-arm64-cp312.tar.gz",
+        "sha256": "ddb48d8f415c2fd42379c1cc73ae8bbefa592d357f2fb9025a82f65c6e2f0e2d"
+      },
+      "ordinal": 57,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691064812,
+        "bytes": 15526304,
+        "local_path": "work/upstream-integration-v2/mlx/hosted-40964965287/mlx-jit-on-macos14-arm64-cp312.tar.gz",
+        "name": "hosted-40964965287-mlx-jit-on-macos14-arm64-cp312.tar.gz",
+        "sha256": "907ae13629a4eebf60edcc915ffa74ecc0c4d6466e5725305e3dfaa4db2dc0d2"
+      },
+      "ordinal": 58,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690349676,
+        "bytes": 5302169,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/input-selection.json",
+        "name": "input-selection.json",
+        "sha256": "b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a"
+      },
+      "ordinal": 59,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691746601,
+        "bytes": 22022,
+        "local_path": "work/upstream-integration-v2/supplement-v2/original-wrapper-bytecode-v1/lint-v3-original-host-bytecode.bin",
+        "name": "lint-v3-original-host-bytecode.bin",
+        "sha256": "3750033702c4a05fecc7a4df2d681331dc2e8e597b25530e38dbb537841466ab"
+      },
+      "ordinal": 60,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691746699,
+        "bytes": 22022,
+        "local_path": "work/upstream-integration-v2/supplement-v2/original-wrapper-bytecode-v1/lint-v4-original-host-bytecode.bin",
+        "name": "lint-v4-original-host-bytecode.bin",
+        "sha256": "2e9f6ea6c34c499cfa09261d1a2e8ef6415e9daba77d937a3b39d7c03c4c561b"
+      },
+      "ordinal": 61,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691064897,
+        "bytes": 744438215,
+        "local_path": "outputs/upstream-integration-v2/mlx/fp64-full-model-v1.tar.gz",
+        "name": "mlx-eager-fp64-full-model-v1.tar.gz",
+        "sha256": "cc658bcfea16a2126a92dc756f98cb8ec5ddef891cd65e82841a8a6c7f9b5661"
+      },
+      "ordinal": 62,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691067722,
+        "bytes": 373740535,
+        "local_path": "outputs/upstream-framework-fixes/shared-mlx/evidence.tar.gz",
+        "name": "mlx-original-shared-evidence.tar.gz",
+        "sha256": "bc9348c172250d83cdfc009b4dd6f8b4d6c5c7c8ea2559b76101ff55e630be1f"
+      },
+      "ordinal": 63,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691069445,
+        "bytes": 59883749,
+        "local_path": "work/upstream-integration-v2/mlx/release-40978071574/mlx-release-main-jit-off-macos14-arm64-cp312.tar.gz",
+        "name": "mlx-release-main-jit-off-macos14-arm64-cp312.tar.gz",
+        "sha256": "d370e452b2ea485108721088838446f0c0a29ffd1cd7fcd46a66857a7bfb96eb"
+      },
+      "ordinal": 64,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691069723,
+        "bytes": 15370241,
+        "local_path": "work/upstream-integration-v2/mlx/release-40978071574/mlx-release-main-jit-on-macos14-arm64-cp312.tar.gz",
+        "name": "mlx-release-main-jit-on-macos14-arm64-cp312.tar.gz",
+        "sha256": "de461e6cee187cc0f8b3cf7278beeca24cde76bdf71b1941e6149c98f5b584a0"
+      },
+      "ordinal": 65,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691069808,
+        "bytes": 59919589,
+        "local_path": "work/upstream-integration-v2/mlx/release-40978071574/mlx-release-patched-jit-off-macos14-arm64-cp312.tar.gz",
+        "name": "mlx-release-patched-jit-off-macos14-arm64-cp312.tar.gz",
+        "sha256": "39cc7f4e72619e3a6a97c4c57cafc91e97c541c7c6047a81e6067431b280ddf7"
+      },
+      "ordinal": 66,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691070054,
+        "bytes": 15390369,
+        "local_path": "work/upstream-integration-v2/mlx/release-40978071574/mlx-release-patched-jit-on-macos14-arm64-cp312.tar.gz",
+        "name": "mlx-release-patched-jit-on-macos14-arm64-cp312.tar.gz",
+        "sha256": "f2045a87c87963a82ff95884e27b73e100c5defee37c7289efa9feaaa242003d"
+      },
+      "ordinal": 67,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690335386,
+        "bytes": 882,
+        "local_path": "outputs/upstream-integration-v2/release-assets/mlx-remainder-asset-aliases.json",
+        "name": "mlx-remainder-asset-aliases.json",
+        "sha256": "6ab9e2d8f995a96b4944280256e90892d521bf39338299621c4eec56b1124007"
+      },
+      "ordinal": 68,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690335390,
+        "bytes": 15421247,
+        "local_path": "outputs/upstream-integration-v2/release-assets/mlx-remainder-evidence.tar.gz",
+        "name": "mlx-remainder-evidence.tar.gz",
+        "sha256": "c05834ec7e26cb1617191dfedd8676f461a381f7e2862ad3c1ff721fbb57a0bb"
+      },
+      "ordinal": 69,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690335388,
+        "bytes": 1717805,
+        "local_path": "outputs/upstream-integration-v2/release-assets/mlx-remainder-package.json",
+        "name": "mlx-remainder-package.json",
+        "sha256": "77e8501e76e7d7fd1b55d1d2a64275b0b400051a9cd13599baa23edf10b98ad6"
+      },
+      "ordinal": 70,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690335389,
+        "bytes": 435239,
+        "local_path": "outputs/upstream-integration-v2/release-assets/mlx-remainder-selection.json",
+        "name": "mlx-remainder-selection.json",
+        "sha256": "51130156f54360009bfe1c62f725af319b85c598c2b18e7437f7f90f415879e6"
+      },
+      "ordinal": 71,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691070129,
+        "bytes": 14008100,
+        "local_path": "work/upstream-integration-v2/mlx/official-40966219164/mlx-cpu-only-macos14-arm64-cp312.tar.gz",
+        "name": "official-40966219164-mlx-cpu-only-macos14-arm64-cp312.tar.gz",
+        "sha256": "03ad69fe76ef29bebcb6ce2364ddc847e4f810aa147c8ca7cfe65442f45acd1f"
+      },
+      "ordinal": 72,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691070240,
+        "bytes": 53395010,
+        "local_path": "work/upstream-integration-v2/mlx/official-40966219164/mlx-jit-off-macos14-arm64-cp312.tar.gz",
+        "name": "official-40966219164-mlx-jit-off-macos14-arm64-cp312.tar.gz",
+        "sha256": "8164a7865c3e59723161aa17809d02a452ea09a81912e6ba686bc05afca40e7c"
+      },
+      "ordinal": 73,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691070688,
+        "bytes": 15527616,
+        "local_path": "work/upstream-integration-v2/mlx/official-40966219164/mlx-jit-on-macos14-arm64-cp312.tar.gz",
+        "name": "official-40966219164-mlx-jit-on-macos14-arm64-cp312.tar.gz",
+        "sha256": "5edb6e3f6a98c428f66e6850e30cb164f46238e293c3b88703dfc008e829508e"
+      },
+      "ordinal": 74,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 690349378,
+        "bytes": 19875100,
+        "local_path": "outputs/upstream-integration-v2/evidence-major-v1/package.json",
+        "name": "package.json",
+        "sha256": "3c239abfeaeb15f0e9b7719f2d3bf66b767d3406e21f9b6166d1a9c95459f024"
+      },
+      "ordinal": 75,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691070863,
+        "bytes": 116652205,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40976850708-verified-v1/artifact/pytorch-integrated-runtime.tar.gz",
+        "name": "pytorch-integrated-runtime-40976850708.tar.gz",
+        "sha256": "74d7d171dfc9127d0c0477d5921782d92c72615a2b21962f0a1004d9f5e43f94"
+      },
+      "ordinal": 76,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691071467,
+        "bytes": 116647267,
+        "local_path": "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/pytorch-integrated-runtime.tar.gz",
+        "name": "pytorch-integrated-runtime-40989036595.tar.gz",
+        "sha256": "e0d82f7dfa61da87ef59abceaf5a7fa2030f20178f08f4ae1b456249930620de"
+      },
+      "ordinal": 77,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691746811,
+        "bytes": 116651557,
+        "local_path": "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/formatted/pytorch-integrated-runtime.tar.gz",
+        "name": "pytorch-paired-formatted-runtime-41008996057.tar.gz",
+        "sha256": "febbdf27c26f07f7dc505f645855dbe09a2bfad3d128b461c2759d8627d3539d"
+      },
+      "ordinal": 78,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691747809,
+        "bytes": 239588,
+        "local_path": "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/formatted/pytorch-paired-formatted-test-source.tar.gz",
+        "name": "pytorch-paired-formatted-test-source-41008996057.tar.gz",
+        "sha256": "fc6d5ef18b638ca461df40a73378f83a8554675f2c4777596b2fc0657b4f921e"
+      },
+      "ordinal": 79,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691747869,
+        "bytes": 116623257,
+        "local_path": "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/pristine/pytorch-integrated-runtime.tar.gz",
+        "name": "pytorch-paired-pristine-runtime-41008996057.tar.gz",
+        "sha256": "28ee4c66080572e53a43fec11da1d6fefde2055e7325fee1549c1b0adc012ae2"
+      },
+      "ordinal": 80,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691748486,
+        "bytes": 237611,
+        "local_path": "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/pristine/pytorch-paired-pristine-test-source.tar.gz",
+        "name": "pytorch-paired-pristine-test-source-41008996057.tar.gz",
+        "sha256": "204ff3be72b443afec9ac84f2281234884c9f21c04b609f6f032530724a8a716"
+      },
+      "ordinal": 81,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691748564,
+        "bytes": 786491000,
+        "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/evidence-0001.tar.gz",
+        "name": "upstream-supplement-v3-evidence-0001.tar.gz",
+        "sha256": "7dfd972fd4c5d081d006610ed4a9e60a1b312e890d80a2aa83565af62bfa0e4c"
+      },
+      "ordinal": 82,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691752369,
+        "bytes": 917031151,
+        "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/evidence-0002.tar.gz",
+        "name": "upstream-supplement-v3-evidence-0002.tar.gz",
+        "sha256": "3f2dce41e3d647fbf0b28108052f2860b1c4e2bc80d5fb1d822e4395e284c1c0"
+      },
+      "ordinal": 83,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691756332,
+        "bytes": 918442365,
+        "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/evidence-0003.tar.gz",
+        "name": "upstream-supplement-v3-evidence-0003.tar.gz",
+        "sha256": "4a575a086bbf5919da7fb361f1594a10fc19134dc6758b6f4b48224e826ccfb6"
+      },
+      "ordinal": 84,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691760773,
+        "bytes": 267197573,
+        "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/evidence-0004.tar.gz",
+        "name": "upstream-supplement-v3-evidence-0004.tar.gz",
+        "sha256": "a89b92de7085d2abe55b0c50807ae1d8ac23f29987bf8a4c74d41b9e8d8d1239"
+      },
+      "ordinal": 85,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691762292,
+        "bytes": 816678992,
+        "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/evidence-0005.tar.gz",
+        "name": "upstream-supplement-v3-evidence-0005.tar.gz",
+        "sha256": "73745dfe57f2761199f4cfece7fcf1d91e25d23a3695d4dffe8a6cf8cfa3856c"
+      },
+      "ordinal": 86,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691766540,
+        "bytes": 89603264,
+        "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/evidence-0006.tar.gz",
+        "name": "upstream-supplement-v3-evidence-0006.tar.gz",
+        "sha256": "6bb1f1fde3ad78a25ed393a21840abbe776727ec382fb2b26227bdb19632c92d"
+      },
+      "ordinal": 87,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691767054,
+        "bytes": 5003065,
+        "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/input-selection.json",
+        "name": "upstream-supplement-v3-input-selection.json",
+        "sha256": "b1557b748624afc6c2ec65ae9054fae340f3b577bc517e040b1e122d61c58c95"
+      },
+      "ordinal": 88,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691767150,
+        "bytes": 18679595,
+        "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/package.json",
+        "name": "upstream-supplement-v3-package.json",
+        "sha256": "fb21c76bab9559ac8b0532211685accb7bc1bf5135fda500892921b768c829e6"
+      },
+      "ordinal": 89,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691796651,
+        "bytes": 2677500,
+        "local_path": "work/upstream-integration-v2/final-supplement-selection-v1/selection.receipt.json",
+        "name": "upstream-supplement-v3-selection-receipt.json",
+        "sha256": "f8f49be951e4f64e1cc759bb2020215cef45bc03e40b108245247d28cc34e562"
+      },
+      "ordinal": 90,
+      "status": "passed"
+    },
+    {
+      "expected": {
+        "asset_id": 691796861,
+        "bytes": 1658,
+        "local_path": "work/upstream-integration-v2/final-supplement-verification-v1.json",
+        "name": "upstream-supplement-v3-verification.json",
+        "sha256": "30c5b10bce70b569d4239e17eccadbefe3fb1e80997d5777c4a5c5e34961a183"
+      },
+      "ordinal": 91,
+      "status": "passed"
+    }
+  ],
+  "authenticated_identity": {
+    "id": 87274608,
+    "login": "logannye",
+    "type": "User"
+  },
+  "complete": true,
+  "contract_sha256": "57f70e7379af9ad0d8b786269c9694bd38dd49784a4c435ecc55a31babba28f8",
+  "created_utc": "2026-10-30T10:55:04.671213+00:00",
+  "credentials_recorded": false,
+  "download_receipt_index_sha256": "b234cb9004c36fbdf5d2fe1feeec6a03f6574bb43616958bd668b421a6411feb",
+  "download_receipts": [
+    {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/remote-download-closed-subset-v1/summary.json",
+      "sha256": "6bbde5620a6c6f973082b5f92c0521f5aa1685f33f22fe122a12cb01e6f813b2"
+    },
+    {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/remote-download-closed-tail-v1/summary.json",
+      "sha256": "2d8a479797074c900efdb10f8f3ed63d28966915f61a468d522263af70cc4a5e"
+    },
+    {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/remote-canonical-58-v1/summary.json",
+      "sha256": "1a2d3b1e1dc119d43222a877e7daa717662d774f1551fd85dbb6e15e835354a7"
+    },
+    {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/remote-final-delta-v1/summary.json",
+      "sha256": "6c7bd81331e87a14cb8aff22f5fc1ee9281d0978b1dacca64b425e77361ba611"
+    },
+    {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/remote-final-metadata-v1/summary.json",
+      "sha256": "ad469956666bcc45f328453df445e3487c6401e2fc8987136e21915b29114832"
+    }
+  ],
+  "finished_utc": "2026-10-30T10:55:07.262446+00:00",
+  "inventory_after": {
+    "selected": [
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:12Z",
+        "digest": "sha256:03a8c78d01d9781b28a6989f6fa1bb2c4f2d51201cf99d3dd875df6fbd96b23b",
+        "id": 691062150,
+        "label": "",
+        "name": "dependency-03a8c78d01d9781b-x000-numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMWG",
+        "size": 13685868,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:13Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062150"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:14Z",
+        "digest": "sha256:05596b84c1d5b43d9f45ca0bfee528e3e96f0d547522b074cf20bfe8ffea8938",
+        "id": 691062231,
+        "label": "",
+        "name": "dependency-05596b84c1d5b43d-x000-optree-0.20.0-cp312-cp312-macosx_11_0_arm64.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMXX",
+        "size": 417675,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:14Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062231"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:16Z",
+        "digest": "sha256:0930db9bdc62d22944e10b066448bb65dc9abe9112880c7cab8da54db4284d5f",
+        "id": 691062276,
+        "label": "",
+        "name": "dependency-0930db9bdc62d229-x000-markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMYE",
+        "size": 12050,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:16Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062276"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:17Z",
+        "digest": "sha256:09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759",
+        "id": 691062315,
+        "label": "",
+        "name": "dependency-09abb1bccd265c01-x000-packaging-24.2-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMYr",
+        "size": 65451,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:17Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062315"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:18Z",
+        "digest": "sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3",
+        "id": 691062359,
+        "label": "",
+        "name": "dependency-0cf3cae568d36aa9-x000-urllib3-2.8.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMZX",
+        "size": 135717,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:19Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062359"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:20Z",
+        "digest": "sha256:1a7b04c10f32cc88ab39cbf606e117fd74721c831c98a27dc04578deb0c16979",
+        "id": 691062417,
+        "label": "",
+        "name": "dependency-1a7b04c10f32cc88-x000-psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMaR",
+        "size": 129859,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062417"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:21Z",
+        "digest": "sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0",
+        "id": 691062459,
+        "label": "",
+        "name": "dependency-2a0d60c172f83ac6-x000-requests-2.34.2-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMa7",
+        "size": 73075,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:21Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062459"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:23Z",
+        "digest": "sha256:3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab",
+        "id": 691062528,
+        "label": "",
+        "name": "dependency-3217dcc807155e45-x000-wheel-0.48.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMcA",
+        "size": 33320,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:24Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062528"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:25Z",
+        "digest": "sha256:4197bdd2eaeffdbf50b5ea6e7236f47ff0e44d1def8dae08e409f536d84e7b32",
+        "id": 691062577,
+        "label": "",
+        "name": "dependency-4197bdd2eaeffdbf-x000-pytest_rerunfailures-14.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMcx",
+        "size": 12709,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:25Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062577"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:27Z",
+        "digest": "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274",
+        "id": 691062641,
+        "label": "",
+        "name": "dependency-4721f391ed90541f-x000-six-1.17.0-py2.py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMdx",
+        "size": 11050,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:27Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062641"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:28Z",
+        "digest": "sha256:4b0dda527ee31078689fc205ec4f1c1bf7d56cf88b6dc9426c4f230e46c2dce1",
+        "id": 691062676,
+        "label": "",
+        "name": "dependency-4b0dda527ee31078-x000-filelock-3.20.3-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMeU",
+        "size": 16701,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:28Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062676"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:30Z",
+        "digest": "sha256:51361029b7cf91185d0092c4b356d110b4ad629e9cb11593f1e006ac72a72ca9",
+        "id": 691062719,
+        "label": "",
+        "name": "dependency-51361029b7cf9118-x000-uv-0.13.6-py3-none-macosx_11_0_arm64.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMe_",
+        "size": 14344205,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062719"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:33Z",
+        "digest": "sha256:5fc53fdac9f7bd63fbcdc868fb5f90b4784d78a53a3d3388cd738b807441a20b",
+        "id": 691062841,
+        "label": "",
+        "name": "dependency-5fc53fdac9f7bd63-x000-pyproject_hooks-1.3.3-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMg5",
+        "size": 10724,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:33Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062841"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:34Z",
+        "digest": "sha256:60f88103086e1754240b42175f622be83b6ffeac419434691ee5a5be819d0544",
+        "id": 691062864,
+        "label": "",
+        "name": "dependency-60f88103086e1754-x000-expecttest-0.3.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMhQ",
+        "size": 8238,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:34Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062864"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:36Z",
+        "digest": "sha256:67950103ee930c66673494b3671474a083ea71f1ebe8f0ff849ba8ad5317772d",
+        "id": 691062902,
+        "label": "",
+        "name": "dependency-67950103ee930c66-x000-hypothesis-6.56.4-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMh2",
+        "size": 395269,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:36Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062902"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:37Z",
+        "digest": "sha256:67fba928dd5a544b783f6056f449e5e3931a5c378b128bc18501f7ea79e296ec",
+        "id": 691062924,
+        "label": "",
+        "name": "dependency-67fba928dd5a544b-x000-execnet-2.1.2-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMiM",
+        "size": 40708,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:37Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062924"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:38Z",
+        "digest": "sha256:6d69a2c6c7c6fe373c67dedacbe11552ec906c03d34cd1d6ca026289f74d01e8",
+        "id": 691062940,
+        "label": "",
+        "name": "dependency-6d69a2c6c7c6fe37-x000-spin-0.17-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMic",
+        "size": 31980,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:39Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062940"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:40Z",
+        "digest": "sha256:6f6d6cf600e2e9639fd258ecd11cfc19bd189354b968916a519c6793e7e26237",
+        "id": 691062975,
+        "label": "",
+        "name": "dependency-6f6d6cf600e2e963-x000-scikit_build_core-1.1.1-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMi_",
+        "size": 293450,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:40Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062975"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:41Z",
+        "digest": "sha256:7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec",
+        "id": 691063013,
+        "label": "",
+        "name": "dependency-7dd7b0d8832ba3cb-x000-pluggy-1.7.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMjl",
+        "size": 27082,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:41Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063013"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:42Z",
+        "digest": "sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67",
+        "id": 691063038,
+        "label": "",
+        "name": "dependency-85ece4451f492d0c-x000-jinja2-3.1.6-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMj-",
+        "size": 134899,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:42Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063038"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:43Z",
+        "digest": "sha256:8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f",
+        "id": 691063086,
+        "label": "",
+        "name": "dependency-8dd6e646e99ea382-x000-fsspec-2026.9.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMku",
+        "size": 221738,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:44Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063086"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:44Z",
+        "digest": "sha256:8df172135368d89ed3b60ceaa81838111b98b6a84517afa698472671d8d3d2ba",
+        "id": 691063105,
+        "label": "",
+        "name": "dependency-8df172135368d89e-x000-lintrunner-0.13.0-py3-none-macosx_11_0_arm64.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMlB",
+        "size": 1888534,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:45Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063105"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:46Z",
+        "digest": "sha256:9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7",
+        "id": 691063156,
+        "label": "",
+        "name": "dependency-9121e2c1fdb35523-x000-iniconfig-2.3.1-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMl0",
+        "size": 7552,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:46Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063156"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:47Z",
+        "digest": "sha256:a00ce642f577bf7f473932318056212bc4f8bfdf53128c78bbd5af0b9b20b189",
+        "id": 691063188,
+        "label": "",
+        "name": "dependency-a00ce642f577bf7f-x000-pathspec-1.1.1-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMmU",
+        "size": 57328,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:47Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063188"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:48Z",
+        "digest": "sha256:a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c",
+        "id": 691063220,
+        "label": "",
+        "name": "dependency-a0b2b9fe80bbcd81-x000-mpmath-1.3.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMm0",
+        "size": 536198,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:49Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063220"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:50Z",
+        "digest": "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0",
+        "id": 691063283,
+        "label": "",
+        "name": "dependency-a163dcaede0f1c02-x000-sortedcontainers-2.4.0-py2.py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMnz",
+        "size": 29575,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:50Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063283"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:51Z",
+        "digest": "sha256:a2bf429bb3033c89fa4936ffb35d5cb471e3719e1f3c8a7c3fff0b8314305613",
+        "id": 691063310,
+        "label": "",
+        "name": "dependency-a2bf429bb3033c89-x000-click-8.3.3-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMoO",
+        "size": 110502,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:51Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063310"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:53Z",
+        "digest": "sha256:ab616a22f64cd17c1aee65f18af94dbc30c444f8683de2b30895c3778265e3bd",
+        "id": 691063379,
+        "label": "",
+        "name": "dependency-ab616a22f64cd17c-x000-pytest_subtests-0.13.1-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMpT",
+        "size": 8038,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:53Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063379"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:54Z",
+        "digest": "sha256:ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+        "id": 691063415,
+        "label": "",
+        "name": "dependency-ab7ae71229745533-x000-idna-3.20-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMp3",
+        "size": 69583,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:54Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063415"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:55Z",
+        "digest": "sha256:b30cb6cd253122169c47de245ca24a86bac2a5d3802ba15bf7ba6414eb9e144d",
+        "id": 691063458,
+        "label": "",
+        "name": "dependency-b30cb6cd25312216-x000-zipp-4.1.2-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMqi",
+        "size": 10581,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:55Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063458"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:56Z",
+        "digest": "sha256:c3a9c4211ff4c309edb8b8c4f1cbfa7ae324c4ba9f91ff254e3d305b9fd54561",
+        "id": 691063516,
+        "label": "",
+        "name": "dependency-c3a9c4211ff4c309-x000-setuptools-78.1.1-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMrc",
+        "size": 1256462,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:57Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063516"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:58Z",
+        "digest": "sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309",
+        "id": 691063588,
+        "label": "",
+        "name": "dependency-c647aa4a12dfbad9-x000-attrs-26.1.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMsk",
+        "size": 67548,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:58Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063588"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:59Z",
+        "digest": "sha256:cdcbd012c9312258922f8cd3f1b62a6580fdced17db6014896053d47cddf9295",
+        "id": 691063646,
+        "label": "",
+        "name": "dependency-cdcbd012c9312258-x000-pytest-7.3.2-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMte",
+        "size": 320900,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:59Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063646"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:00Z",
+        "digest": "sha256:cf45ce66a929c64e994185a809c04840d0501db17e663810d993d0f4829265c7",
+        "id": 691063719,
+        "label": "",
+        "name": "dependency-cf45ce66a929c64e-x000-importlib_metadata-10.1.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMun",
+        "size": 32221,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:01Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063719"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:02Z",
+        "digest": "sha256:da9d4fd9abd571fd016ddb27da0428b10277010b23bb21e3678f8b9e96e1686e",
+        "id": 691063842,
+        "label": "",
+        "name": "dependency-da9d4fd9abd571fd-x000-cmake-3.31.6-py3-none-macosx_10_10_universal2.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMwi",
+        "size": 47224338,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:07Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063842"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:09Z",
+        "digest": "sha256:e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5",
+        "id": 691064154,
+        "label": "",
+        "name": "dependency-e091cc3e99d2141a-x000-sympy-1.14.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM1a",
+        "size": 6299353,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:09Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064154"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:10Z",
+        "digest": "sha256:e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0",
+        "id": 691064218,
+        "label": "",
+        "name": "dependency-e3fd2c13a7814cee-x000-networkx-3.7-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM2a",
+        "size": 2142205,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:11Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064218"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:12Z",
+        "digest": "sha256:e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1",
+        "id": 691064257,
+        "label": "",
+        "name": "dependency-e9b54de76e530bb6-x000-certifi-2026.10.23-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM3B",
+        "size": 135082,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:12Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064257"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:13Z",
+        "digest": "sha256:ecd351a4be9d35a9eaaba244a7687143c9c7d4aea6ac964e7e7ddab20cbcf4e7",
+        "id": 691064306,
+        "label": "",
+        "name": "dependency-ecd351a4be9d35a9-x000-build-1.6.1-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM3y",
+        "size": 31179,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:13Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064306"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:14Z",
+        "digest": "sha256:ed2a239c0ea213acc1908150a3037257083c7c083128f1a4cec2ec4b97dca491",
+        "id": 691064344,
+        "label": "",
+        "name": "dependency-ed2a239c0ea213ac-x000-charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM4Y",
+        "size": 367780,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:14Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064344"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:15Z",
+        "digest": "sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548",
+        "id": 691064394,
+        "label": "",
+        "name": "dependency-f0fa19c6845758ab-x000-typing_extensions-4.15.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM5K",
+        "size": 44614,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:15Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064394"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:16Z",
+        "digest": "sha256:fa2a8bfc62e31b08f83127d1613d10821775a0eb334197154c4d6067b7068ff1",
+        "id": 691064439,
+        "label": "",
+        "name": "dependency-fa2a8bfc62e31b08-x000-ninja-1.13.0-py3-none-macosx_10_9_universal2.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM53",
+        "size": 310125,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:17Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064439"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:18Z",
+        "digest": "sha256:fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0",
+        "id": 691064481,
+        "label": "",
+        "name": "dependency-fc09d0aa354569bc-x000-pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM6h",
+        "size": 173973,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:18Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064481"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:19Z",
+        "digest": "sha256:fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70",
+        "id": 691064546,
+        "label": "",
+        "name": "dependency-fd7f4dfa8190e014-x000-pip-26.2.2-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM7i",
+        "size": 1819850,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:19Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064546"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:21Z",
+        "digest": "sha256:ff9daa7793569e6a68544850fd3927cd257cc03a7ef76c95e86915355e82b5f2",
+        "id": 691064616,
+        "label": "",
+        "name": "dependency-ff9daa7793569e6a-x000-pytest_xdist-3.3.1-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM8o",
+        "size": 41752,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:21Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064616"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:5a96cfdba13a99e602ab21a003f830d5315604552d5a97a717a52dfc9d6b7f35",
+        "id": 690318222,
+        "label": "",
+        "name": "evidence-0001.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuO",
+        "size": 912814484,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:18Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318222"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:0f7b234da90e8bdd968a2629acd17cfbee660ff9b1822361a59ba06bc13bef0a",
+        "id": 690318216,
+        "label": "",
+        "name": "evidence-0002.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuI",
+        "size": 907724645,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318216"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:91abdbb71bcb01cd677545c74bd4cbf984d4b1a9ca560f56d42f899573c26b9e",
+        "id": 690318218,
+        "label": "",
+        "name": "evidence-0003.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuK",
+        "size": 854485997,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:01Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318218"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce",
+        "id": 690318215,
+        "label": "",
+        "name": "evidence-0004.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuH",
+        "size": 1037007516,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:09:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318215"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:24d4b2840e3eec5dd52b203dc29a6908e76c4429d14c198d3f002522717f0e0e",
+        "id": 690318220,
+        "label": "",
+        "name": "evidence-0005.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuM",
+        "size": 986742002,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:08:15Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318220"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:01Z",
+        "digest": "sha256:34e783d7d215032161bd6849ef42deb227a284c4423559dce6393ed10a452801",
+        "id": 690334780,
+        "label": "",
+        "name": "evidence-0006.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJaw8",
+        "size": 1030845920,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:13:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690334780"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:19Z",
+        "digest": "sha256:5dda7c7029477dae5d71c0d2fbe60d2f651cef052a433f8e20de3f28907e1c8c",
+        "id": 690335485,
+        "label": "",
+        "name": "evidence-0007.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa79",
+        "size": 996936043,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:15Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335485"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:20Z",
+        "digest": "sha256:4f56c1faa8d33151a5d78329d264e870b717054035227355d6668861179b0d48",
+        "id": 690335531,
+        "label": "",
+        "name": "evidence-0008.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa8r",
+        "size": 1050480864,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:33Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335531"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:08:15Z",
+        "digest": "sha256:7dcbbf33bec39e01897e52d3254f88d40cadf98f4c3635a1516172405ea17e70",
+        "id": 690337323,
+        "label": "",
+        "name": "evidence-0009.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJbYr",
+        "size": 1015685054,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:15:28Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690337323"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:09:20Z",
+        "digest": "sha256:98f503b5d90db916ef54b3aeef3cf70c835e0c56dfa794f33c41cc22ebf5a237",
+        "id": 690339398,
+        "label": "",
+        "name": "evidence-0010.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJb5G",
+        "size": 1008190101,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:16:02Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690339398"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:13:32Z",
+        "digest": "sha256:989576cdd9153ae8d4e8834b985ce3ef0f8766d92324fd96f38b44a446e5da35",
+        "id": 690347645,
+        "label": "",
+        "name": "evidence-0011.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJd59",
+        "size": 1027363723,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:17:09Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690347645"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:14:16Z",
+        "digest": "sha256:f5c9516abc602fd473576ab5c9edd7f429463b169bcc6a4c8bab875dcca06c3b",
+        "id": 690348860,
+        "label": "",
+        "name": "evidence-0012.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJeM8",
+        "size": 223417130,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:15:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690348860"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:22Z",
+        "digest": "sha256:ddb48d8f415c2fd42379c1cc73ae8bbefa592d357f2fb9025a82f65c6e2f0e2d",
+        "id": 691064654,
+        "label": "",
+        "name": "hosted-40964965287-mlx-jit-off-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMM9O",
+        "size": 53413515,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:27Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064654"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:28Z",
+        "digest": "sha256:907ae13629a4eebf60edcc915ffa74ecc0c4d6466e5725305e3dfaa4db2dc0d2",
+        "id": 691064812,
+        "label": "",
+        "name": "hosted-40964965287-mlx-jit-on-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMM_s",
+        "size": 15526304,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:30Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064812"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:14:44Z",
+        "digest": "sha256:b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a",
+        "id": 690349676,
+        "label": "",
+        "name": "input-selection.json",
+        "node_id": "RA_kwDOVbC4ds4pJeZs",
+        "size": 5302169,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:47Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349676"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:28:17Z",
+        "digest": "sha256:3750033702c4a05fecc7a4df2d681331dc2e8e597b25530e38dbb537841466ab",
+        "id": 691746601,
+        "label": "",
+        "name": "lint-v3-original-host-bytecode.bin",
+        "node_id": "RA_kwDOVbC4ds4pOzcp",
+        "size": 22022,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:28:17Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691746601"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:28:20Z",
+        "digest": "sha256:2e9f6ea6c34c499cfa09261d1a2e8ef6415e9daba77d937a3b39d7c03c4c561b",
+        "id": 691746699,
+        "label": "",
+        "name": "lint-v4-original-host-bytecode.bin",
+        "node_id": "RA_kwDOVbC4ds4pOzeL",
+        "size": 22022,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:28:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691746699"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:31Z",
+        "digest": "sha256:cc658bcfea16a2126a92dc756f98cb8ec5ddef891cd65e82841a8a6c7f9b5661",
+        "id": 691064897,
+        "label": "",
+        "name": "mlx-eager-fp64-full-model-v1.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMNBB",
+        "size": 744438215,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:37:57Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064897"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:37:58Z",
+        "digest": "sha256:bc9348c172250d83cdfc009b4dd6f8b4d6c5c7c8ea2559b76101ff55e630be1f",
+        "id": 691067722,
+        "label": "",
+        "name": "mlx-original-shared-evidence.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMNtK",
+        "size": 373740535,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:38:42Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691067722"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:38:43Z",
+        "digest": "sha256:d370e452b2ea485108721088838446f0c0a29ffd1cd7fcd46a66857a7bfb96eb",
+        "id": 691069445,
+        "label": "",
+        "name": "mlx-release-main-jit-off-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMOIF",
+        "size": 59883749,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:38:51Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691069445"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:38:52Z",
+        "digest": "sha256:de461e6cee187cc0f8b3cf7278beeca24cde76bdf71b1941e6149c98f5b584a0",
+        "id": 691069723,
+        "label": "",
+        "name": "mlx-release-main-jit-on-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMOMb",
+        "size": 15370241,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:38:53Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691069723"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:38:54Z",
+        "digest": "sha256:39cc7f4e72619e3a6a97c4c57cafc91e97c541c7c6047a81e6067431b280ddf7",
+        "id": 691069808,
+        "label": "",
+        "name": "mlx-release-patched-jit-off-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMONw",
+        "size": 59919589,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:39:01Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691069808"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:39:02Z",
+        "digest": "sha256:f2045a87c87963a82ff95884e27b73e100c5defee37c7289efa9feaaa242003d",
+        "id": 691070054,
+        "label": "",
+        "name": "mlx-release-patched-jit-on-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMORm",
+        "size": 15390369,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:39:04Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691070054"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:6ab9e2d8f995a96b4944280256e90892d521bf39338299621c4eec56b1124007",
+        "id": 690335386,
+        "label": "",
+        "name": "mlx-remainder-asset-aliases.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6a",
+        "size": 882,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:16Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335386"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:c05834ec7e26cb1617191dfedd8676f461a381f7e2862ad3c1ff721fbb57a0bb",
+        "id": 690335390,
+        "label": "",
+        "name": "mlx-remainder-evidence.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa6e",
+        "size": 15421247,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:19Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335390"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:77e8501e76e7d7fd1b55d1d2a64275b0b400051a9cd13599baa23edf10b98ad6",
+        "id": 690335388,
+        "label": "",
+        "name": "mlx-remainder-package.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6c",
+        "size": 1717805,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:17Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335388"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:51130156f54360009bfe1c62f725af319b85c598c2b18e7437f7f90f415879e6",
+        "id": 690335389,
+        "label": "",
+        "name": "mlx-remainder-selection.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6d",
+        "size": 435239,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:16Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335389"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:39:05Z",
+        "digest": "sha256:03ad69fe76ef29bebcb6ce2364ddc847e4f810aa147c8ca7cfe65442f45acd1f",
+        "id": 691070129,
+        "label": "",
+        "name": "official-40966219164-mlx-cpu-only-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMOSx",
+        "size": 14008100,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:39:07Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691070129"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:39:09Z",
+        "digest": "sha256:8164a7865c3e59723161aa17809d02a452ea09a81912e6ba686bc05afca40e7c",
+        "id": 691070240,
+        "label": "",
+        "name": "official-40966219164-mlx-jit-off-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMOUg",
+        "size": 53395010,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:39:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691070240"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:39:21Z",
+        "digest": "sha256:5edb6e3f6a98c428f66e6850e30cb164f46238e293c3b88703dfc008e829508e",
+        "id": 691070688,
+        "label": "",
+        "name": "official-40966219164-mlx-jit-on-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMObg",
+        "size": 15527616,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:39:24Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691070688"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:14:34Z",
+        "digest": "sha256:3c239abfeaeb15f0e9b7719f2d3bf66b767d3406e21f9b6166d1a9c95459f024",
+        "id": 690349378,
+        "label": "",
+        "name": "package.json",
+        "node_id": "RA_kwDOVbC4ds4pJeVC",
+        "size": 19875100,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:43Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349378"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:39:25Z",
+        "digest": "sha256:74d7d171dfc9127d0c0477d5921782d92c72615a2b21962f0a1004d9f5e43f94",
+        "id": 691070863,
+        "label": "",
+        "name": "pytorch-integrated-runtime-40976850708.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMOeP",
+        "size": 116652205,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:39:37Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691070863"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:39:38Z",
+        "digest": "sha256:e0d82f7dfa61da87ef59abceaf5a7fa2030f20178f08f4ae1b456249930620de",
+        "id": 691071467,
+        "label": "",
+        "name": "pytorch-integrated-runtime-40989036595.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMOnr",
+        "size": 116647267,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:39:50Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691071467"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:28:22Z",
+        "digest": "sha256:febbdf27c26f07f7dc505f645855dbe09a2bfad3d128b461c2759d8627d3539d",
+        "id": 691746811,
+        "label": "",
+        "name": "pytorch-paired-formatted-runtime-41008996057.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pOzf7",
+        "size": 116651557,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:28:43Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691746811"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:28:45Z",
+        "digest": "sha256:fc6d5ef18b638ca461df40a73378f83a8554675f2c4777596b2fc0657b4f921e",
+        "id": 691747809,
+        "label": "",
+        "name": "pytorch-paired-formatted-test-source-41008996057.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pOzvh",
+        "size": 239588,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:28:46Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691747809"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:28:48Z",
+        "digest": "sha256:28ee4c66080572e53a43fec11da1d6fefde2055e7325fee1549c1b0adc012ae2",
+        "id": 691747869,
+        "label": "",
+        "name": "pytorch-paired-pristine-runtime-41008996057.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pOzwd",
+        "size": 116623257,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:29:01Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691747869"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:29:04Z",
+        "digest": "sha256:204ff3be72b443afec9ac84f2281234884c9f21c04b609f6f032530724a8a716",
+        "id": 691748486,
+        "label": "",
+        "name": "pytorch-paired-pristine-test-source-41008996057.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pOz6G",
+        "size": 237611,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:29:04Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691748486"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:29:06Z",
+        "digest": "sha256:7dfd972fd4c5d081d006610ed4a9e60a1b312e890d80a2aa83565af62bfa0e4c",
+        "id": 691748564,
+        "label": "",
+        "name": "upstream-supplement-v3-evidence-0001.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pOz7U",
+        "size": 786491000,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:30:42Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691748564"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:30:45Z",
+        "digest": "sha256:3f2dce41e3d647fbf0b28108052f2860b1c4e2bc80d5fb1d822e4395e284c1c0",
+        "id": 691752369,
+        "label": "",
+        "name": "upstream-supplement-v3-evidence-0002.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pO02x",
+        "size": 917031151,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:32:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691752369"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:32:36Z",
+        "digest": "sha256:4a575a086bbf5919da7fb361f1594a10fc19134dc6758b6f4b48224e826ccfb6",
+        "id": 691756332,
+        "label": "",
+        "name": "upstream-supplement-v3-evidence-0003.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pO10s",
+        "size": 918442365,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:34:24Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691756332"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:34:26Z",
+        "digest": "sha256:a89b92de7085d2abe55b0c50807ae1d8ac23f29987bf8a4c74d41b9e8d8d1239",
+        "id": 691760773,
+        "label": "",
+        "name": "upstream-supplement-v3-evidence-0004.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pO26F",
+        "size": 267197573,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:34:58Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691760773"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:35:01Z",
+        "digest": "sha256:73745dfe57f2761199f4cfece7fcf1d91e25d23a3695d4dffe8a6cf8cfa3856c",
+        "id": 691762292,
+        "label": "",
+        "name": "upstream-supplement-v3-evidence-0005.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pO3R0",
+        "size": 816678992,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:36:42Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691762292"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:36:45Z",
+        "digest": "sha256:6bb1f1fde3ad78a25ed393a21840abbe776727ec382fb2b26227bdb19632c92d",
+        "id": 691766540,
+        "label": "",
+        "name": "upstream-supplement-v3-evidence-0006.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pO4UM",
+        "size": 89603264,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:36:55Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691766540"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:36:58Z",
+        "digest": "sha256:b1557b748624afc6c2ec65ae9054fae340f3b577bc517e040b1e122d61c58c95",
+        "id": 691767054,
+        "label": "",
+        "name": "upstream-supplement-v3-input-selection.json",
+        "node_id": "RA_kwDOVbC4ds4pO4cO",
+        "size": 5003065,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:36:59Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691767054"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:37:01Z",
+        "digest": "sha256:fb21c76bab9559ac8b0532211685accb7bc1bf5135fda500892921b768c829e6",
+        "id": 691767150,
+        "label": "",
+        "name": "upstream-supplement-v3-package.json",
+        "node_id": "RA_kwDOVbC4ds4pO4du",
+        "size": 18679595,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:37:03Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691767150"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:48:39Z",
+        "digest": "sha256:f8f49be951e4f64e1cc759bb2020215cef45bc03e40b108245247d28cc34e562",
+        "id": 691796651,
+        "label": "",
+        "name": "upstream-supplement-v3-selection-receipt.json",
+        "node_id": "RA_kwDOVbC4ds4pO_qr",
+        "size": 2677500,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:48:40Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691796651"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:48:42Z",
+        "digest": "sha256:30c5b10bce70b569d4239e17eccadbefe3fb1e80997d5777c4a5c5e34961a183",
+        "id": 691796861,
+        "label": "",
+        "name": "upstream-supplement-v3-verification.json",
+        "node_id": "RA_kwDOVbC4ds4pO_t9",
+        "size": 1658,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:48:43Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691796861"
+      }
+    ],
+    "unselected": []
+  },
+  "inventory_before": {
+    "selected": [
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:12Z",
+        "digest": "sha256:03a8c78d01d9781b28a6989f6fa1bb2c4f2d51201cf99d3dd875df6fbd96b23b",
+        "id": 691062150,
+        "label": "",
+        "name": "dependency-03a8c78d01d9781b-x000-numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMWG",
+        "size": 13685868,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:13Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062150"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:14Z",
+        "digest": "sha256:05596b84c1d5b43d9f45ca0bfee528e3e96f0d547522b074cf20bfe8ffea8938",
+        "id": 691062231,
+        "label": "",
+        "name": "dependency-05596b84c1d5b43d-x000-optree-0.20.0-cp312-cp312-macosx_11_0_arm64.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMXX",
+        "size": 417675,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:14Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062231"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:16Z",
+        "digest": "sha256:0930db9bdc62d22944e10b066448bb65dc9abe9112880c7cab8da54db4284d5f",
+        "id": 691062276,
+        "label": "",
+        "name": "dependency-0930db9bdc62d229-x000-markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMYE",
+        "size": 12050,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:16Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062276"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:17Z",
+        "digest": "sha256:09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759",
+        "id": 691062315,
+        "label": "",
+        "name": "dependency-09abb1bccd265c01-x000-packaging-24.2-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMYr",
+        "size": 65451,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:17Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062315"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:18Z",
+        "digest": "sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3",
+        "id": 691062359,
+        "label": "",
+        "name": "dependency-0cf3cae568d36aa9-x000-urllib3-2.8.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMZX",
+        "size": 135717,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:19Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062359"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:20Z",
+        "digest": "sha256:1a7b04c10f32cc88ab39cbf606e117fd74721c831c98a27dc04578deb0c16979",
+        "id": 691062417,
+        "label": "",
+        "name": "dependency-1a7b04c10f32cc88-x000-psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMaR",
+        "size": 129859,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062417"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:21Z",
+        "digest": "sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0",
+        "id": 691062459,
+        "label": "",
+        "name": "dependency-2a0d60c172f83ac6-x000-requests-2.34.2-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMa7",
+        "size": 73075,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:21Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062459"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:23Z",
+        "digest": "sha256:3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab",
+        "id": 691062528,
+        "label": "",
+        "name": "dependency-3217dcc807155e45-x000-wheel-0.48.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMcA",
+        "size": 33320,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:24Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062528"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:25Z",
+        "digest": "sha256:4197bdd2eaeffdbf50b5ea6e7236f47ff0e44d1def8dae08e409f536d84e7b32",
+        "id": 691062577,
+        "label": "",
+        "name": "dependency-4197bdd2eaeffdbf-x000-pytest_rerunfailures-14.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMcx",
+        "size": 12709,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:25Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062577"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:27Z",
+        "digest": "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274",
+        "id": 691062641,
+        "label": "",
+        "name": "dependency-4721f391ed90541f-x000-six-1.17.0-py2.py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMdx",
+        "size": 11050,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:27Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062641"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:28Z",
+        "digest": "sha256:4b0dda527ee31078689fc205ec4f1c1bf7d56cf88b6dc9426c4f230e46c2dce1",
+        "id": 691062676,
+        "label": "",
+        "name": "dependency-4b0dda527ee31078-x000-filelock-3.20.3-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMeU",
+        "size": 16701,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:28Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062676"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:30Z",
+        "digest": "sha256:51361029b7cf91185d0092c4b356d110b4ad629e9cb11593f1e006ac72a72ca9",
+        "id": 691062719,
+        "label": "",
+        "name": "dependency-51361029b7cf9118-x000-uv-0.13.6-py3-none-macosx_11_0_arm64.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMe_",
+        "size": 14344205,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062719"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:33Z",
+        "digest": "sha256:5fc53fdac9f7bd63fbcdc868fb5f90b4784d78a53a3d3388cd738b807441a20b",
+        "id": 691062841,
+        "label": "",
+        "name": "dependency-5fc53fdac9f7bd63-x000-pyproject_hooks-1.3.3-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMg5",
+        "size": 10724,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:33Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062841"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:34Z",
+        "digest": "sha256:60f88103086e1754240b42175f622be83b6ffeac419434691ee5a5be819d0544",
+        "id": 691062864,
+        "label": "",
+        "name": "dependency-60f88103086e1754-x000-expecttest-0.3.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMhQ",
+        "size": 8238,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:34Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062864"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:36Z",
+        "digest": "sha256:67950103ee930c66673494b3671474a083ea71f1ebe8f0ff849ba8ad5317772d",
+        "id": 691062902,
+        "label": "",
+        "name": "dependency-67950103ee930c66-x000-hypothesis-6.56.4-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMh2",
+        "size": 395269,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:36Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062902"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:37Z",
+        "digest": "sha256:67fba928dd5a544b783f6056f449e5e3931a5c378b128bc18501f7ea79e296ec",
+        "id": 691062924,
+        "label": "",
+        "name": "dependency-67fba928dd5a544b-x000-execnet-2.1.2-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMiM",
+        "size": 40708,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:37Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062924"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:38Z",
+        "digest": "sha256:6d69a2c6c7c6fe373c67dedacbe11552ec906c03d34cd1d6ca026289f74d01e8",
+        "id": 691062940,
+        "label": "",
+        "name": "dependency-6d69a2c6c7c6fe37-x000-spin-0.17-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMic",
+        "size": 31980,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:39Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062940"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:40Z",
+        "digest": "sha256:6f6d6cf600e2e9639fd258ecd11cfc19bd189354b968916a519c6793e7e26237",
+        "id": 691062975,
+        "label": "",
+        "name": "dependency-6f6d6cf600e2e963-x000-scikit_build_core-1.1.1-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMi_",
+        "size": 293450,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:40Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062975"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:41Z",
+        "digest": "sha256:7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec",
+        "id": 691063013,
+        "label": "",
+        "name": "dependency-7dd7b0d8832ba3cb-x000-pluggy-1.7.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMjl",
+        "size": 27082,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:41Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063013"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:42Z",
+        "digest": "sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67",
+        "id": 691063038,
+        "label": "",
+        "name": "dependency-85ece4451f492d0c-x000-jinja2-3.1.6-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMj-",
+        "size": 134899,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:42Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063038"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:43Z",
+        "digest": "sha256:8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f",
+        "id": 691063086,
+        "label": "",
+        "name": "dependency-8dd6e646e99ea382-x000-fsspec-2026.9.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMku",
+        "size": 221738,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:44Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063086"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:44Z",
+        "digest": "sha256:8df172135368d89ed3b60ceaa81838111b98b6a84517afa698472671d8d3d2ba",
+        "id": 691063105,
+        "label": "",
+        "name": "dependency-8df172135368d89e-x000-lintrunner-0.13.0-py3-none-macosx_11_0_arm64.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMlB",
+        "size": 1888534,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:45Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063105"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:46Z",
+        "digest": "sha256:9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7",
+        "id": 691063156,
+        "label": "",
+        "name": "dependency-9121e2c1fdb35523-x000-iniconfig-2.3.1-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMl0",
+        "size": 7552,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:46Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063156"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:47Z",
+        "digest": "sha256:a00ce642f577bf7f473932318056212bc4f8bfdf53128c78bbd5af0b9b20b189",
+        "id": 691063188,
+        "label": "",
+        "name": "dependency-a00ce642f577bf7f-x000-pathspec-1.1.1-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMmU",
+        "size": 57328,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:47Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063188"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:48Z",
+        "digest": "sha256:a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c",
+        "id": 691063220,
+        "label": "",
+        "name": "dependency-a0b2b9fe80bbcd81-x000-mpmath-1.3.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMm0",
+        "size": 536198,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:49Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063220"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:50Z",
+        "digest": "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0",
+        "id": 691063283,
+        "label": "",
+        "name": "dependency-a163dcaede0f1c02-x000-sortedcontainers-2.4.0-py2.py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMnz",
+        "size": 29575,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:50Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063283"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:51Z",
+        "digest": "sha256:a2bf429bb3033c89fa4936ffb35d5cb471e3719e1f3c8a7c3fff0b8314305613",
+        "id": 691063310,
+        "label": "",
+        "name": "dependency-a2bf429bb3033c89-x000-click-8.3.3-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMoO",
+        "size": 110502,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:51Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063310"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:53Z",
+        "digest": "sha256:ab616a22f64cd17c1aee65f18af94dbc30c444f8683de2b30895c3778265e3bd",
+        "id": 691063379,
+        "label": "",
+        "name": "dependency-ab616a22f64cd17c-x000-pytest_subtests-0.13.1-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMpT",
+        "size": 8038,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:53Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063379"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:54Z",
+        "digest": "sha256:ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+        "id": 691063415,
+        "label": "",
+        "name": "dependency-ab7ae71229745533-x000-idna-3.20-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMp3",
+        "size": 69583,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:54Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063415"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:55Z",
+        "digest": "sha256:b30cb6cd253122169c47de245ca24a86bac2a5d3802ba15bf7ba6414eb9e144d",
+        "id": 691063458,
+        "label": "",
+        "name": "dependency-b30cb6cd25312216-x000-zipp-4.1.2-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMqi",
+        "size": 10581,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:55Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063458"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:56Z",
+        "digest": "sha256:c3a9c4211ff4c309edb8b8c4f1cbfa7ae324c4ba9f91ff254e3d305b9fd54561",
+        "id": 691063516,
+        "label": "",
+        "name": "dependency-c3a9c4211ff4c309-x000-setuptools-78.1.1-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMrc",
+        "size": 1256462,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:57Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063516"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:58Z",
+        "digest": "sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309",
+        "id": 691063588,
+        "label": "",
+        "name": "dependency-c647aa4a12dfbad9-x000-attrs-26.1.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMsk",
+        "size": 67548,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:58Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063588"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:35:59Z",
+        "digest": "sha256:cdcbd012c9312258922f8cd3f1b62a6580fdced17db6014896053d47cddf9295",
+        "id": 691063646,
+        "label": "",
+        "name": "dependency-cdcbd012c9312258-x000-pytest-7.3.2-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMte",
+        "size": 320900,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:35:59Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063646"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:00Z",
+        "digest": "sha256:cf45ce66a929c64e994185a809c04840d0501db17e663810d993d0f4829265c7",
+        "id": 691063719,
+        "label": "",
+        "name": "dependency-cf45ce66a929c64e-x000-importlib_metadata-10.1.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMun",
+        "size": 32221,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:01Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063719"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:02Z",
+        "digest": "sha256:da9d4fd9abd571fd016ddb27da0428b10277010b23bb21e3678f8b9e96e1686e",
+        "id": 691063842,
+        "label": "",
+        "name": "dependency-da9d4fd9abd571fd-x000-cmake-3.31.6-py3-none-macosx_10_10_universal2.whl",
+        "node_id": "RA_kwDOVbC4ds4pMMwi",
+        "size": 47224338,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:07Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063842"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:09Z",
+        "digest": "sha256:e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5",
+        "id": 691064154,
+        "label": "",
+        "name": "dependency-e091cc3e99d2141a-x000-sympy-1.14.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM1a",
+        "size": 6299353,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:09Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064154"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:10Z",
+        "digest": "sha256:e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0",
+        "id": 691064218,
+        "label": "",
+        "name": "dependency-e3fd2c13a7814cee-x000-networkx-3.7-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM2a",
+        "size": 2142205,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:11Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064218"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:12Z",
+        "digest": "sha256:e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1",
+        "id": 691064257,
+        "label": "",
+        "name": "dependency-e9b54de76e530bb6-x000-certifi-2026.10.23-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM3B",
+        "size": 135082,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:12Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064257"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:13Z",
+        "digest": "sha256:ecd351a4be9d35a9eaaba244a7687143c9c7d4aea6ac964e7e7ddab20cbcf4e7",
+        "id": 691064306,
+        "label": "",
+        "name": "dependency-ecd351a4be9d35a9-x000-build-1.6.1-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM3y",
+        "size": 31179,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:13Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064306"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:14Z",
+        "digest": "sha256:ed2a239c0ea213acc1908150a3037257083c7c083128f1a4cec2ec4b97dca491",
+        "id": 691064344,
+        "label": "",
+        "name": "dependency-ed2a239c0ea213ac-x000-charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM4Y",
+        "size": 367780,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:14Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064344"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:15Z",
+        "digest": "sha256:f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548",
+        "id": 691064394,
+        "label": "",
+        "name": "dependency-f0fa19c6845758ab-x000-typing_extensions-4.15.0-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM5K",
+        "size": 44614,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:15Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064394"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:16Z",
+        "digest": "sha256:fa2a8bfc62e31b08f83127d1613d10821775a0eb334197154c4d6067b7068ff1",
+        "id": 691064439,
+        "label": "",
+        "name": "dependency-fa2a8bfc62e31b08-x000-ninja-1.13.0-py3-none-macosx_10_9_universal2.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM53",
+        "size": 310125,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:17Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064439"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:18Z",
+        "digest": "sha256:fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0",
+        "id": 691064481,
+        "label": "",
+        "name": "dependency-fc09d0aa354569bc-x000-pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM6h",
+        "size": 173973,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:18Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064481"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:19Z",
+        "digest": "sha256:fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70",
+        "id": 691064546,
+        "label": "",
+        "name": "dependency-fd7f4dfa8190e014-x000-pip-26.2.2-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM7i",
+        "size": 1819850,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:19Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064546"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:21Z",
+        "digest": "sha256:ff9daa7793569e6a68544850fd3927cd257cc03a7ef76c95e86915355e82b5f2",
+        "id": 691064616,
+        "label": "",
+        "name": "dependency-ff9daa7793569e6a-x000-pytest_xdist-3.3.1-py3-none-any.whl",
+        "node_id": "RA_kwDOVbC4ds4pMM8o",
+        "size": 41752,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:21Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064616"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:5a96cfdba13a99e602ab21a003f830d5315604552d5a97a717a52dfc9d6b7f35",
+        "id": 690318222,
+        "label": "",
+        "name": "evidence-0001.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuO",
+        "size": 912814484,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:18Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318222"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:0f7b234da90e8bdd968a2629acd17cfbee660ff9b1822361a59ba06bc13bef0a",
+        "id": 690318216,
+        "label": "",
+        "name": "evidence-0002.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuI",
+        "size": 907724645,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318216"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:91abdbb71bcb01cd677545c74bd4cbf984d4b1a9ca560f56d42f899573c26b9e",
+        "id": 690318218,
+        "label": "",
+        "name": "evidence-0003.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuK",
+        "size": 854485997,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:01Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318218"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce",
+        "id": 690318215,
+        "label": "",
+        "name": "evidence-0004.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuH",
+        "size": 1037007516,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:09:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318215"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:00:20Z",
+        "digest": "sha256:24d4b2840e3eec5dd52b203dc29a6908e76c4429d14c198d3f002522717f0e0e",
+        "id": 690318220,
+        "label": "",
+        "name": "evidence-0005.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJWuM",
+        "size": 986742002,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:08:15Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318220"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:01Z",
+        "digest": "sha256:34e783d7d215032161bd6849ef42deb227a284c4423559dce6393ed10a452801",
+        "id": 690334780,
+        "label": "",
+        "name": "evidence-0006.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJaw8",
+        "size": 1030845920,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:13:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690334780"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:19Z",
+        "digest": "sha256:5dda7c7029477dae5d71c0d2fbe60d2f651cef052a433f8e20de3f28907e1c8c",
+        "id": 690335485,
+        "label": "",
+        "name": "evidence-0007.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa79",
+        "size": 996936043,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:15Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335485"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:20Z",
+        "digest": "sha256:4f56c1faa8d33151a5d78329d264e870b717054035227355d6668861179b0d48",
+        "id": 690335531,
+        "label": "",
+        "name": "evidence-0008.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa8r",
+        "size": 1050480864,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:33Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335531"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:08:15Z",
+        "digest": "sha256:7dcbbf33bec39e01897e52d3254f88d40cadf98f4c3635a1516172405ea17e70",
+        "id": 690337323,
+        "label": "",
+        "name": "evidence-0009.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJbYr",
+        "size": 1015685054,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:15:28Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690337323"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:09:20Z",
+        "digest": "sha256:98f503b5d90db916ef54b3aeef3cf70c835e0c56dfa794f33c41cc22ebf5a237",
+        "id": 690339398,
+        "label": "",
+        "name": "evidence-0010.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJb5G",
+        "size": 1008190101,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:16:02Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690339398"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:13:32Z",
+        "digest": "sha256:989576cdd9153ae8d4e8834b985ce3ef0f8766d92324fd96f38b44a446e5da35",
+        "id": 690347645,
+        "label": "",
+        "name": "evidence-0011.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJd59",
+        "size": 1027363723,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:17:09Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690347645"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:14:16Z",
+        "digest": "sha256:f5c9516abc602fd473576ab5c9edd7f429463b169bcc6a4c8bab875dcca06c3b",
+        "id": 690348860,
+        "label": "",
+        "name": "evidence-0012.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJeM8",
+        "size": 223417130,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:15:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690348860"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:22Z",
+        "digest": "sha256:ddb48d8f415c2fd42379c1cc73ae8bbefa592d357f2fb9025a82f65c6e2f0e2d",
+        "id": 691064654,
+        "label": "",
+        "name": "hosted-40964965287-mlx-jit-off-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMM9O",
+        "size": 53413515,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:27Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064654"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:28Z",
+        "digest": "sha256:907ae13629a4eebf60edcc915ffa74ecc0c4d6466e5725305e3dfaa4db2dc0d2",
+        "id": 691064812,
+        "label": "",
+        "name": "hosted-40964965287-mlx-jit-on-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMM_s",
+        "size": 15526304,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:36:30Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064812"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:14:44Z",
+        "digest": "sha256:b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a",
+        "id": 690349676,
+        "label": "",
+        "name": "input-selection.json",
+        "node_id": "RA_kwDOVbC4ds4pJeZs",
+        "size": 5302169,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:47Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349676"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:28:17Z",
+        "digest": "sha256:3750033702c4a05fecc7a4df2d681331dc2e8e597b25530e38dbb537841466ab",
+        "id": 691746601,
+        "label": "",
+        "name": "lint-v3-original-host-bytecode.bin",
+        "node_id": "RA_kwDOVbC4ds4pOzcp",
+        "size": 22022,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:28:17Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691746601"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:28:20Z",
+        "digest": "sha256:2e9f6ea6c34c499cfa09261d1a2e8ef6415e9daba77d937a3b39d7c03c4c561b",
+        "id": 691746699,
+        "label": "",
+        "name": "lint-v4-original-host-bytecode.bin",
+        "node_id": "RA_kwDOVbC4ds4pOzeL",
+        "size": 22022,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:28:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691746699"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:36:31Z",
+        "digest": "sha256:cc658bcfea16a2126a92dc756f98cb8ec5ddef891cd65e82841a8a6c7f9b5661",
+        "id": 691064897,
+        "label": "",
+        "name": "mlx-eager-fp64-full-model-v1.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMNBB",
+        "size": 744438215,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:37:57Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064897"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:37:58Z",
+        "digest": "sha256:bc9348c172250d83cdfc009b4dd6f8b4d6c5c7c8ea2559b76101ff55e630be1f",
+        "id": 691067722,
+        "label": "",
+        "name": "mlx-original-shared-evidence.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMNtK",
+        "size": 373740535,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:38:42Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691067722"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:38:43Z",
+        "digest": "sha256:d370e452b2ea485108721088838446f0c0a29ffd1cd7fcd46a66857a7bfb96eb",
+        "id": 691069445,
+        "label": "",
+        "name": "mlx-release-main-jit-off-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMOIF",
+        "size": 59883749,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:38:51Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691069445"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:38:52Z",
+        "digest": "sha256:de461e6cee187cc0f8b3cf7278beeca24cde76bdf71b1941e6149c98f5b584a0",
+        "id": 691069723,
+        "label": "",
+        "name": "mlx-release-main-jit-on-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMOMb",
+        "size": 15370241,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:38:53Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691069723"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:38:54Z",
+        "digest": "sha256:39cc7f4e72619e3a6a97c4c57cafc91e97c541c7c6047a81e6067431b280ddf7",
+        "id": 691069808,
+        "label": "",
+        "name": "mlx-release-patched-jit-off-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMONw",
+        "size": 59919589,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:39:01Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691069808"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:39:02Z",
+        "digest": "sha256:f2045a87c87963a82ff95884e27b73e100c5defee37c7289efa9feaaa242003d",
+        "id": 691070054,
+        "label": "",
+        "name": "mlx-release-patched-jit-on-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMORm",
+        "size": 15390369,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:39:04Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691070054"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:6ab9e2d8f995a96b4944280256e90892d521bf39338299621c4eec56b1124007",
+        "id": 690335386,
+        "label": "",
+        "name": "mlx-remainder-asset-aliases.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6a",
+        "size": 882,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:16Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335386"
+      },
+      {
+        "content_type": "application/x-gtar",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:c05834ec7e26cb1617191dfedd8676f461a381f7e2862ad3c1ff721fbb57a0bb",
+        "id": 690335390,
+        "label": "",
+        "name": "mlx-remainder-evidence.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pJa6e",
+        "size": 15421247,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:19Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335390"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:77e8501e76e7d7fd1b55d1d2a64275b0b400051a9cd13599baa23edf10b98ad6",
+        "id": 690335388,
+        "label": "",
+        "name": "mlx-remainder-package.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6c",
+        "size": 1717805,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:17Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335388"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:07:16Z",
+        "digest": "sha256:51130156f54360009bfe1c62f725af319b85c598c2b18e7437f7f90f415879e6",
+        "id": 690335389,
+        "label": "",
+        "name": "mlx-remainder-selection.json",
+        "node_id": "RA_kwDOVbC4ds4pJa6d",
+        "size": 435239,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:07:16Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690335389"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:39:05Z",
+        "digest": "sha256:03ad69fe76ef29bebcb6ce2364ddc847e4f810aa147c8ca7cfe65442f45acd1f",
+        "id": 691070129,
+        "label": "",
+        "name": "official-40966219164-mlx-cpu-only-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMOSx",
+        "size": 14008100,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:39:07Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691070129"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:39:09Z",
+        "digest": "sha256:8164a7865c3e59723161aa17809d02a452ea09a81912e6ba686bc05afca40e7c",
+        "id": 691070240,
+        "label": "",
+        "name": "official-40966219164-mlx-jit-off-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMOUg",
+        "size": 53395010,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:39:20Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691070240"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:39:21Z",
+        "digest": "sha256:5edb6e3f6a98c428f66e6850e30cb164f46238e293c3b88703dfc008e829508e",
+        "id": 691070688,
+        "label": "",
+        "name": "official-40966219164-mlx-jit-on-macos14-arm64-cp312.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMObg",
+        "size": 15527616,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:39:24Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691070688"
+      },
+      {
+        "content_type": "application/json",
+        "created_at": "2026-10-30T00:14:34Z",
+        "digest": "sha256:3c239abfeaeb15f0e9b7719f2d3bf66b767d3406e21f9b6166d1a9c95459f024",
+        "id": 690349378,
+        "label": "",
+        "name": "package.json",
+        "node_id": "RA_kwDOVbC4ds4pJeVC",
+        "size": 19875100,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T00:14:43Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349378"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:39:25Z",
+        "digest": "sha256:74d7d171dfc9127d0c0477d5921782d92c72615a2b21962f0a1004d9f5e43f94",
+        "id": 691070863,
+        "label": "",
+        "name": "pytorch-integrated-runtime-40976850708.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMOeP",
+        "size": 116652205,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:39:37Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691070863"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T05:39:38Z",
+        "digest": "sha256:e0d82f7dfa61da87ef59abceaf5a7fa2030f20178f08f4ae1b456249930620de",
+        "id": 691071467,
+        "label": "",
+        "name": "pytorch-integrated-runtime-40989036595.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pMOnr",
+        "size": 116647267,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T05:39:50Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691071467"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:28:22Z",
+        "digest": "sha256:febbdf27c26f07f7dc505f645855dbe09a2bfad3d128b461c2759d8627d3539d",
+        "id": 691746811,
+        "label": "",
+        "name": "pytorch-paired-formatted-runtime-41008996057.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pOzf7",
+        "size": 116651557,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:28:43Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691746811"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:28:45Z",
+        "digest": "sha256:fc6d5ef18b638ca461df40a73378f83a8554675f2c4777596b2fc0657b4f921e",
+        "id": 691747809,
+        "label": "",
+        "name": "pytorch-paired-formatted-test-source-41008996057.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pOzvh",
+        "size": 239588,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:28:46Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691747809"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:28:48Z",
+        "digest": "sha256:28ee4c66080572e53a43fec11da1d6fefde2055e7325fee1549c1b0adc012ae2",
+        "id": 691747869,
+        "label": "",
+        "name": "pytorch-paired-pristine-runtime-41008996057.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pOzwd",
+        "size": 116623257,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:29:01Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691747869"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:29:04Z",
+        "digest": "sha256:204ff3be72b443afec9ac84f2281234884c9f21c04b609f6f032530724a8a716",
+        "id": 691748486,
+        "label": "",
+        "name": "pytorch-paired-pristine-test-source-41008996057.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pOz6G",
+        "size": 237611,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:29:04Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691748486"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:29:06Z",
+        "digest": "sha256:7dfd972fd4c5d081d006610ed4a9e60a1b312e890d80a2aa83565af62bfa0e4c",
+        "id": 691748564,
+        "label": "",
+        "name": "upstream-supplement-v3-evidence-0001.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pOz7U",
+        "size": 786491000,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:30:42Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691748564"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:30:45Z",
+        "digest": "sha256:3f2dce41e3d647fbf0b28108052f2860b1c4e2bc80d5fb1d822e4395e284c1c0",
+        "id": 691752369,
+        "label": "",
+        "name": "upstream-supplement-v3-evidence-0002.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pO02x",
+        "size": 917031151,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:32:32Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691752369"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:32:36Z",
+        "digest": "sha256:4a575a086bbf5919da7fb361f1594a10fc19134dc6758b6f4b48224e826ccfb6",
+        "id": 691756332,
+        "label": "",
+        "name": "upstream-supplement-v3-evidence-0003.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pO10s",
+        "size": 918442365,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:34:24Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691756332"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:34:26Z",
+        "digest": "sha256:a89b92de7085d2abe55b0c50807ae1d8ac23f29987bf8a4c74d41b9e8d8d1239",
+        "id": 691760773,
+        "label": "",
+        "name": "upstream-supplement-v3-evidence-0004.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pO26F",
+        "size": 267197573,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:34:58Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691760773"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:35:01Z",
+        "digest": "sha256:73745dfe57f2761199f4cfece7fcf1d91e25d23a3695d4dffe8a6cf8cfa3856c",
+        "id": 691762292,
+        "label": "",
+        "name": "upstream-supplement-v3-evidence-0005.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pO3R0",
+        "size": 816678992,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:36:42Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691762292"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:36:45Z",
+        "digest": "sha256:6bb1f1fde3ad78a25ed393a21840abbe776727ec382fb2b26227bdb19632c92d",
+        "id": 691766540,
+        "label": "",
+        "name": "upstream-supplement-v3-evidence-0006.tar.gz",
+        "node_id": "RA_kwDOVbC4ds4pO4UM",
+        "size": 89603264,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:36:55Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691766540"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:36:58Z",
+        "digest": "sha256:b1557b748624afc6c2ec65ae9054fae340f3b577bc517e040b1e122d61c58c95",
+        "id": 691767054,
+        "label": "",
+        "name": "upstream-supplement-v3-input-selection.json",
+        "node_id": "RA_kwDOVbC4ds4pO4cO",
+        "size": 5003065,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:36:59Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691767054"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:37:01Z",
+        "digest": "sha256:fb21c76bab9559ac8b0532211685accb7bc1bf5135fda500892921b768c829e6",
+        "id": 691767150,
+        "label": "",
+        "name": "upstream-supplement-v3-package.json",
+        "node_id": "RA_kwDOVbC4ds4pO4du",
+        "size": 18679595,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:37:03Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691767150"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:48:39Z",
+        "digest": "sha256:f8f49be951e4f64e1cc759bb2020215cef45bc03e40b108245247d28cc34e562",
+        "id": 691796651,
+        "label": "",
+        "name": "upstream-supplement-v3-selection-receipt.json",
+        "node_id": "RA_kwDOVbC4ds4pO_qr",
+        "size": 2677500,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:48:40Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691796651"
+      },
+      {
+        "content_type": "application/octet-stream",
+        "created_at": "2026-10-30T10:48:42Z",
+        "digest": "sha256:30c5b10bce70b569d4239e17eccadbefe3fb1e80997d5777c4a5c5e34961a183",
+        "id": 691796861,
+        "label": "",
+        "name": "upstream-supplement-v3-verification.json",
+        "node_id": "RA_kwDOVbC4ds4pO_t9",
+        "size": 1658,
+        "state": "uploaded",
+        "updated_at": "2026-10-30T10:48:43Z",
+        "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691796861"
+      }
+    ],
+    "unselected": []
+  },
+  "operation": "inventory",
+  "passed": true,
+  "payload_copied_to_disk": false,
+  "release_id": 428513598,
+  "release_identity": {
+    "created_at": "2026-10-30T10:08:20Z",
+    "draft": false,
+    "id": 428513598,
+    "prerelease": false,
+    "published_at": "2026-10-30T10:53:47Z",
+    "tag_name": "transformer-upstream-integration-v2"
+  },
+  "repository": "logannye/arm64-transformer",
+  "schema": "release-asset-verification-result-v1",
+  "scope": "exact_final_inventory_with_bound_download_receipts",
+  "status": "passed",
+  "tag_name": "transformer-upstream-integration-v2",
+  "verifier_sha256": "9f529d2aade99c073bc504b7e2cc186901fa816dd4f71e1a65ced2104f7c440c",
+  "whole_release_inventory_claimed": true
+}

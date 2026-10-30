@@ -1,0 +1,17 @@
+# GPU framework integration: deterministic reductions and complete execution
+
+This release extends the hardware-mapping experiment into standard GPU frameworks. Stable grouping and single-writer reductions make embedding gradients exactly repeatable; attention dispatch preserves the state needed for backward and uses schedules that fit GPU resource limits.
+
+- **Patched MLX:** complete Release integration checks pass in both shader modes, including fresh-process training replay and independent FP64 checks. The matched operator experiment contains 1,104 workers and 328 comparisons: 180 qualified timing ratios; 148 baseline failures remain visible with ratios suppressed.
+- **Patched PyTorch MPS:** 79 focused tests, 4,320 embedding evaluations, and the matched-transformer checks pass. The broad suite retains 25 failures and two errors. All 27 failing IDs also fail in an unmodified build under matched recorded controls; an independent audit verifies all 54 fresh executions, 27 matching failure kinds/source-bound locations, and 81 matching state comparisons. This does not establish a shared cause or clear the failed suite.
+- **Formal study:** 0/180 fits. Private patched builds do not replace the required supported standard baselines. Accuracy, exact repeatability, and the unopened admission stream remain unchanged.
+
+The [README](https://github.com/logannye/arm64-transformer/blob/695afbfebcae976e315125f9cbddbf4186dd2fe2/README.md) leads with the hardware-mapping idea and selective precision. The [integration report](https://github.com/logannye/arm64-transformer/blob/695afbfebcae976e315125f9cbddbf4186dd2fe2/experiments/upstream-integration-v2/README.md) includes numerical margins, operator figures, retained failures, and scope limits. The [human handoff](https://github.com/logannye/arm64-transformer/blob/695afbfebcae976e315125f9cbddbf4186dd2fe2/experiments/upstream-integration-v2/HUMAN-REVIEW.md) identifies the review and upstream submission steps. No upstream submissions have been made.
+
+## Evidence and reconstruction
+
+The release tag identifies tested source commit `695afbfebcae976e315125f9cbddbf4186dd2fe2`. [Push CI](https://github.com/logannye/arm64-transformer/actions/runs/41038541163) and [PR CI](https://github.com/logannye/arm64-transformer/actions/runs/41038825815) pass on that revision. Later publication bookkeeping records remote asset identities separately.
+
+Retain the original major layer, MLX remainder layer, final supplement, canonical runtime/dependency assets, and full selection receipts. Follow the [reproduction guide](https://github.com/logannye/arm64-transformer/blob/695afbfebcae976e315125f9cbddbf4186dd2fe2/experiments/upstream-integration-v2/REPRODUCTION.md). Each package must be restored with its `package.json`, `input-selection.json`, and complete shard set. Asset-name prefixes distinguish packages; the catalog records original paths and aliases. Verify every download and member before reconstruction. Historical failures and both interrupted paired attempts are retained unchanged.
+
+The supplemental selection receipt and verification result are separate post-packaging metadata assets. They authenticate the exact layer history without changing the selected files or creating a circular hash dependency. Initial-state FP64 checks, exact six-step replay, operator timing, and full-fit numerical qualification remain separate claims.

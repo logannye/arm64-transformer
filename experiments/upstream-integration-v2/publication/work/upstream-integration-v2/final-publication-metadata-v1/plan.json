@@ -1,0 +1,50 @@
+{
+  "assets": [
+    {
+      "asset_name": "upstream-supplement-v3-selection-receipt.json",
+      "bytes": 2677500,
+      "executable_bits": 0,
+      "local_path": "work/upstream-integration-v2/final-supplement-selection-v1/selection.receipt.json",
+      "restore_path": "work/upstream-integration-v2/final-supplement-selection-v1/selection.receipt.json",
+      "role": "supplement_layer_history",
+      "sha256": "f8f49be951e4f64e1cc759bb2020215cef45bc03e40b108245247d28cc34e562",
+      "source_stat": {
+        "st_ctime_ns": 1793355769114485110,
+        "st_dev": 16777234,
+        "st_ino": 298582837,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793355769047865509,
+        "st_nlink": 1,
+        "st_size": 2677500
+      }
+    },
+    {
+      "asset_name": "upstream-supplement-v3-verification.json",
+      "bytes": 1658,
+      "executable_bits": 0,
+      "local_path": "work/upstream-integration-v2/final-supplement-verification-v1.json",
+      "restore_path": "work/upstream-integration-v2/final-supplement-verification-v1.json",
+      "role": "supplement_local_verification",
+      "sha256": "30c5b10bce70b569d4239e17eccadbefe3fb1e80997d5777c4a5c5e34961a183",
+      "source_stat": {
+        "st_ctime_ns": 1793355944539523806,
+        "st_dev": 16777234,
+        "st_ino": 298583379,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793355944539523806,
+        "st_nlink": 1,
+        "st_size": 1658
+      }
+    }
+  ],
+  "complete_delta_plan_sha256": "292c3bdbe71fbe94c27b3acb82a40b425f17ec5a1f1e359d6ec4154234806760",
+  "expected_draft": true,
+  "expected_package_sha256": "fb21c76bab9559ac8b0532211685accb7bc1bf5135fda500892921b768c829e6",
+  "expected_preceding_count": 90,
+  "expected_selection_sha256": "b1557b748624afc6c2ec65ae9054fae340f3b577bc517e040b1e122d61c58c95",
+  "release_id": 428513598,
+  "repository": "logannye/arm64-transformer",
+  "schema": "post-package-publication-metadata-v1",
+  "scope": "Separately declared post-freeze publication metadata. Original selection, package, shards and scientific outcomes remain unchanged. Upload only after complete_delta closes, with no replacement, then stream verify and include in the final whole inventory.",
+  "tag_name": "transformer-upstream-integration-v2"
+}

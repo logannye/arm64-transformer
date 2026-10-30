@@ -1,0 +1,27 @@
+{
+  "schema": "final-publication-metadata-independent-review-v1",
+  "complete": false,
+  "passed": false,
+  "reviewed_source_sha256": "72e0293874b643cc55057c43953c88682b4f26135c426de61173bb38bf3cc5df",
+  "stdlib_test_methods_passed": 9,
+  "cli_help_passed": true,
+  "failure": "Project-config Ruff E501 at scope string; no substantive source-review finding",
+  "logs": [
+    {
+      "path": "work/upstream-integration-v2/final-publication-metadata-independent-review-v1/00.log",
+      "bytes": 1461,
+      "sha256": "1dfdf99c5fa519e508dce4a9439c1bcd5b0d4688c742c83233cb97119660d6f4"
+    },
+    {
+      "path": "work/upstream-integration-v2/final-publication-metadata-independent-review-v1/01.log",
+      "bytes": 257,
+      "sha256": "1f604a3dad8f32fbdb2e9272b7a30c19bde4bbddb84a9547d82f469d982715b8"
+    },
+    {
+      "path": "work/upstream-integration-v2/final-publication-metadata-independent-review-v1/02.log",
+      "bytes": 505,
+      "sha256": "71c9dee6550241872230dcfd33750cadd6656a0a039a35e2314c3046c4cd4fa5"
+    }
+  ],
+  "network_executed": false
+}
