@@ -195,3 +195,13 @@ alongside the retained 0 through 3 controls. Replay all four new policies on the
 same failing batch, then test any passing candidate on the complete historical
 and existing development inventories. Policy 7 combines both normalizations and
 QKV refinement; no FFN projection, ReLU rule, architecture or tolerance changes.
+
+The first complete-model GPU factorial evaluates logits returned by the gradient
+graph. Its MLX width-1024 policy-0 control passes, unlike the retained standalone
+inference path. Before extending any conclusion, repeat the same four policies
+in explicit forward-only mode at all three localized cases, retaining both MLX
+compilation modes. Also repeat the compiled MLX gradient cases with an actual
+compiled-graph proof and one-Python-trace replay check. Policy 0 additionally
+records raw ordinary-backend outputs for the matching operation, using the
+gradient graph's own logits for the gradient control. The independent auditor
+recomputes control equality. Passing one operation never qualifies the other.

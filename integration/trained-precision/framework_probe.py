@@ -3,6 +3,7 @@
 import argparse
 import hashlib
 import importlib.util
+import io
 import json
 import os
 import sys
@@ -32,10 +33,11 @@ def run(args):
         engine=args.engine,
         width=args.width,
         batch_size=16,
-        gradients_checked=True,
+        gradients_checked=not args.forward_only,
         framework_candidate="compensated-framework-model-diagnostic-v1",
         framework_candidate_policy=args.policy,
         framework_compiled=args.compiled,
+        framework_operation="forward" if args.forward_only else "gradient",
         complete=False,
         passed=False,
         formal_eligible=False,
@@ -100,8 +102,10 @@ def run(args):
         first = case["sequence"] // 16 * 16
         batch = rows[first : first + 16]
         tokens, targets = np.ascontiguousarray(batch[:, :-1]), np.ascontiguousarray(batch[:, 1:])
-        oracle = numpy_model(flat, tokens, targets, backward=True)
-        double = torch_evaluate(flat, tokens, targets, dtype=torch.float64, gradients=True)
+        oracle = numpy_model(flat, tokens, targets, backward=not args.forward_only)
+        double = torch_evaluate(
+            flat, tokens, targets, dtype=torch.float64, gradients=not args.forward_only
+        )
         candidate = load("framework_reference", Path(__file__).with_name("framework_reference.py"))
         parameters = {
             name: flat[start : start + count].reshape(spec.PARAM_SHAPES[name])
@@ -115,17 +119,19 @@ def run(args):
 
             def evaluate():
                 p = {
-                    name: torch.tensor(a, device="mps", requires_grad=True)
+                    name: torch.tensor(a, device="mps", requires_grad=not args.forward_only)
                     for name, a in parameters.items()
                 }
-                logits = candidate.forward(p, x, ops, args.policy)
-                loss = torch.nn.functional.cross_entropy(logits.reshape(-1, 128), y.reshape(-1))
-                loss.backward()
-                gradient = torch.cat([p[name].grad.reshape(-1) for name in spec.PARAMS])
-                return {
-                    name: value.detach().cpu().numpy().copy()
-                    for name, value in dict(logits=logits, loss=loss, gradient=gradient).items()
-                }
+                with torch.set_grad_enabled(not args.forward_only):
+                    logits = candidate.forward(p, x, ops, args.policy)
+                    loss = torch.nn.functional.cross_entropy(logits.reshape(-1, 128), y.reshape(-1))
+                    values = dict(logits=logits, loss=loss)
+                    if not args.forward_only:
+                        loss.backward()
+                        values["gradient"] = torch.cat(
+                            [p[name].grad.reshape(-1) for name in spec.PARAMS]
+                        )
+                return {name: value.detach().cpu().numpy().copy() for name, value in values.items()}
 
         else:
             import mlx.core as mx
@@ -141,20 +147,100 @@ def run(args):
                 logits = candidate.forward(p, x, ops, args.policy)
                 return nn.losses.cross_entropy(logits, y, reduction="mean"), logits
 
-            function = mx.value_and_grad(loss)
+            def forward_only(p, x, y):
+                return candidate.forward(p, x, ops, args.policy)
+
+            base_function = forward_only if args.forward_only else mx.value_and_grad(loss)
+            trace_count = 0
+
+            def traced(p, x, y):
+                nonlocal trace_count
+                trace_count += 1
+                return base_function(p, x, y)
+
+            function = traced
             if args.compiled:
+                from transformer.gpu_mlx_compile import verify_compilation
+
+                record["compilation_configuration"] = verify_compilation(mx)
                 function = mx.compile(function)
 
             def evaluate():
-                (loss, logits), grad = function(p, x, y)
-                gradient = mx.concatenate([grad[name].reshape(-1) for name in spec.PARAMS])
-                mx.eval(loss, logits, gradient)
-                return {
-                    name: np.array(value, copy=True)
-                    for name, value in dict(logits=logits, loss=loss, gradient=gradient).items()
-                }
+                if args.forward_only:
+                    logits = function(p, x, y)
+                    values = dict(logits=logits)
+                else:
+                    (loss, logits), grad = function(p, x, y)
+                    gradient = mx.concatenate([grad[name].reshape(-1) for name in spec.PARAMS])
+                    values = dict(logits=logits, loss=loss, gradient=gradient)
+                if args.compiled:
+                    if trace_count != 1:
+                        raise ValueError("Compiled model re-entered Python")
+                    if "model_compilation" not in record:
+                        graphs = {}
+                        for name in ("logits",) if args.forward_only else ("logits", "gradient"):
+                            graph = io.StringIO()
+                            mx.export_to_dot(graph, values[name])
+                            data = graph.getvalue()
+                            path = args.output / (name + ".dot")
+                            path.write_text(data)
+                            graphs[name] = dict(
+                                path=path.name,
+                                sha256=sha(path),
+                                bytes=path.stat().st_size,
+                                compiled_primitive_present="Compiled" in data,
+                            )
+                        record["model_compilation"] = dict(graphs=graphs)
+                    record["model_compilation"]["python_trace_count"] = trace_count
+                mx.eval(*values.values())
+                if args.forward_only:
+                    # Materialize the inference graph before evaluating loss.
+                    # Requesting a VJP may dispatch a different attention kernel.
+                    values["loss"] = nn.losses.cross_entropy(logits, y, reduction="mean")
+                    mx.eval(values["loss"])
+                return {name: np.array(value, copy=True) for name, value in values.items()}
 
         actual, repeat = evaluate(), evaluate()
+        if args.policy == 0:
+            if args.engine == "mps":
+                ordinary = torch_evaluate(
+                    flat,
+                    tokens,
+                    targets,
+                    dtype=torch.float32,
+                    device="mps",
+                    gradients=not args.forward_only,
+                )
+            else:
+                from transformer.gpu_mlx import Backend
+
+                backend = Backend(flat, max_batch=16, max_length=32)
+                try:
+                    device = backend.upload_inputs(tokens, targets)
+                    if args.forward_only:
+                        ordinary = dict(
+                            logits=backend.to_numpy(backend.forward(device)).copy(),
+                            loss=backend.to_numpy(backend.loss(device)).copy(),
+                        )
+                    else:
+                        loss, gradient = backend.loss_and_grad(device)
+                        ordinary = dict(
+                            logits=backend.to_numpy(backend._last_logits).copy(),
+                            loss=backend.to_numpy(loss).copy(),
+                            gradient=backend.to_numpy(gradient).copy(),
+                        )
+                finally:
+                    backend.close()
+            record["ordinary_control_exact"] = {
+                name: actual[name].dtype == value.dtype
+                and actual[name].shape == value.shape
+                and actual[name].tobytes() == value.tobytes()
+                for name, value in ordinary.items()
+            }
+            control = save_arrays(args.output / "ordinary-control.npz", ordinary, args.raw_store)
+            record["ordinary_control_raw"] = dict(
+                path="ordinary-control.npz", sha256=control["sha256"], bytes=control["bytes"]
+            )
         checks = {}
         for name in oracle:
             checks[name] = comparison(
@@ -170,13 +256,14 @@ def run(args):
                 passed=actual[name].dtype == repeat[name].dtype
                 and actual[name].tobytes() == repeat[name].tobytes()
             )
-        for name, (start, count) in spec.PARAMS.items():
-            checks["gradient/" + name] = comparison(
-                name,
-                actual["gradient"][start : start + count],
-                oracle["gradient"][start : start + count],
-                tolerance="gradient",
-            )
+        if not args.forward_only:
+            for name, (start, count) in spec.PARAMS.items():
+                checks["gradient/" + name] = comparison(
+                    name,
+                    actual["gradient"][start : start + count],
+                    oracle["gradient"][start : start + count],
+                    tolerance="gradient",
+                )
         arrays = dict(tokens=tokens, targets=targets)
         for label, values in (
             ("actual", actual),
@@ -231,4 +318,5 @@ if __name__ == "__main__":
     parser.add_argument("--policy", type=int, choices=range(4), required=True)
     parser.add_argument("--compiled", action="store_true")
     parser.add_argument("--raw-store", type=Path)
+    parser.add_argument("--forward-only", action="store_true")
     raise SystemExit(run(parser.parse_args()))

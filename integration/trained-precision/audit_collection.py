@@ -42,7 +42,12 @@ def implementation(receipt):
         "metal_library_sha256": metal.get("binary_sha256"),
         "metal_policy_sha256": metal.get("kernel_policy_sha256"),
     }
-    for key in ("framework_candidate", "framework_candidate_policy", "framework_compiled"):
+    for key in (
+        "framework_candidate",
+        "framework_candidate_policy",
+        "framework_compiled",
+        "framework_operation",
+    ):
         if key in receipt:
             identity[key] = receipt[key]
     return identity

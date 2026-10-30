@@ -231,3 +231,24 @@ def test_lossless_archive_is_audited_without_restoring_the_whole_campaign(replay
     with pytest.raises(ValueError):
         run(replay, store)
     assert not list(store.glob(".audit-*"))
+
+
+@pytest.mark.parametrize("forged", [False, True])
+def test_framework_control_equality_is_recomputed_from_arrays(replay, forged):
+    _, output, _, receipt, arrays = replay
+    receipt.update(
+        framework_operation="forward", framework_candidate_policy=0, framework_compiled=False
+    )
+    raw = output / "control.npz"
+    np.savez_compressed(
+        raw, logits=arrays["actual_logits"], loss=arrays["actual_loss"] + int(forged)
+    )
+    receipt["ordinary_control_raw"] = dict(
+        path=raw.name, sha256=audit.sha256(raw), bytes=raw.stat().st_size
+    )
+    receipt["ordinary_control_exact"] = dict(logits=True, loss=True)
+    if forged:
+        with pytest.raises(ValueError, match="Control agreement"):
+            run(replay)
+    else:
+        assert all(run(replay)["ordinary_control_exact"].values())

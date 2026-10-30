@@ -9,6 +9,7 @@ import hashlib
 import importlib.util
 import io
 import json
+import struct
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -193,6 +194,90 @@ def audit_worker(output, receipt_sha, plan_path, plan_sha, evidence_root, raw_st
         audited.append({"id": case["id"], "passed": passed, "checks": checks})
     passed = all(case["passed"] for case in audited)
     require(result["passed"] == passed, "Worker decision disagrees with raw")
+    control_exact = None
+    if "framework_operation" in result:
+        require(
+            result["framework_operation"]
+            == ("gradient" if result["gradients_checked"] else "forward"),
+            "Framework operation differs from the saved quantities",
+        )
+        if result["framework_candidate_policy"] == 0:
+            require(len(result["cases"]) == 1, "Control probe requires exactly one case")
+            binding = result["ordinary_control_raw"]
+            row = result["cases"][0]
+            with (
+                raw_path(output, binding["path"], binding["sha256"], raw_store) as control_raw,
+                raw_path(output, row["raw"], row["raw_sha256"], raw_store) as actual_raw,
+                np.load(control_raw, allow_pickle=False) as control,
+                np.load(actual_raw, allow_pickle=False) as actual,
+            ):
+                require(set(control.files) == set(quantities), "Control quantity inventory differs")
+                control_exact = {
+                    name: control[name].dtype == actual["actual_" + name].dtype
+                    and control[name].shape == actual["actual_" + name].shape
+                    and control[name].tobytes() == actual["actual_" + name].tobytes()
+                    for name in quantities
+                }
+            require(
+                control_exact == result["ordinary_control_exact"], "Control agreement claim differs"
+            )
+        if result["framework_compiled"]:
+            configuration = result["compilation_configuration"]
+            graph = configuration["graph_dot"]
+            require(
+                configuration["status"] == "passed"
+                and configuration["device"] == "gpu"
+                and configuration["shape"] == [257]
+                and configuration["dtype"] == "float32"
+                and configuration["python_trace_count"] == 1
+                and configuration["executions"] == 4
+                and configuration["mode_override_used"] is False
+                and configuration["mlx_disable_compile"] is None
+                and configuration["compiled_primitive_present"] is True
+                and "Compiled" in graph
+                and hashlib.sha256(graph.encode()).hexdigest() == configuration["graph_sha256"],
+                "Compilation configuration proof differs",
+            )
+            expected_observations = []
+            for index, offset in enumerate((0.5, 1.0, 2.0, -1.0)):
+                values = [max(2.0 * ((i - 128) / 16.0) + offset, 0.0) for i in range(257)]
+                expected_observations.append(
+                    dict(
+                        index=index,
+                        offset=offset,
+                        python_trace_count=1,
+                        fp32_sha256=hashlib.sha256(struct.pack("<257f", *values)).hexdigest(),
+                        exact_dyadic_oracle=True,
+                    )
+                )
+            require(
+                configuration["observations"] == expected_observations,
+                "Compilation probe outputs differ",
+            )
+            proof = result["model_compilation"]
+            require(
+                result["engine"] == "mlx"
+                and type(proof["python_trace_count"]) is int
+                and proof["python_trace_count"] == 1,
+                "Wrong compilation trace",
+            )
+            require(
+                set(proof["graphs"])
+                == ({"logits", "gradient"} if result["gradients_checked"] else {"logits"}),
+                "Missing model graph",
+            )
+            for binding in proof["graphs"].values():
+                path = checked(output, binding["path"], binding["sha256"])
+                require(
+                    path.stat().st_size == binding["bytes"] <= 8 * 1024**2,
+                    "Model graph size differs",
+                )
+                graph = path.read_text()
+                require(
+                    graph.startswith("digraph")
+                    and binding["compiled_primitive_present"] == ("Compiled" in graph),
+                    "Model graph compilation claim differs",
+                )
     native = result.get("native", {})
     dispatch_verified = False
     if "backend_after" in native:
@@ -250,6 +335,8 @@ def audit_worker(output, receipt_sha, plan_path, plan_sha, evidence_root, raw_st
         "framework_candidate": result.get("framework_candidate"),
         "framework_candidate_policy": result.get("framework_candidate_policy"),
         "framework_compiled": result.get("framework_compiled"),
+        "framework_operation": result.get("framework_operation"),
+        "ordinary_control_exact": control_exact,
         "cases": audited,
     }
 
