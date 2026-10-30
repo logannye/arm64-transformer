@@ -14,10 +14,13 @@ loss and every parameter gradient. Each engine executes twice, and both raw
 results are retained. Baseline and candidate failures remain in the evidence.
 The same worker accepts the separately authenticated fresh-development inventory.
 
-The native four-policy build is produced by the hosted
+The native policy build is produced by the hosted
 [`trained-precision.yml`](../../.github/workflows/trained-precision.yml) workflow.
 Policy 1 changes first-LayerNorm arithmetic; policy 2 changes QKV accumulation;
-policy 3 changes both. FP32 stored state remains fixed. Default builds retain
+policy 3 changes both. The later bit 4 refines the second LayerNorm in both
+directions, giving policies 4–7 after the fresh ReLU-branch localization.
+`relu_localize.py` retains that counterfactual diagnostic and its original
+gradient failure. FP32 stored state remains fixed. Default builds retain
 policy 0. Use externally verified artifact hashes with `--library` and
 `--library-sha256`; never rebuild these candidates implicitly during replay.
 

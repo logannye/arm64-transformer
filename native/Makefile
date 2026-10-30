@@ -21,7 +21,7 @@ $(BUILD):
 $(BUILD)/layout.inc: ../transformer/spec.py | $(BUILD)
 	ARM64_TRANSFORMER_WIDTH=$(WIDTH) PYTHONPATH=.. $(PYTHON) -m transformer.spec --output $@
 $(BUILD)/precision.h: FORCE | $(BUILD)
-	@case "$(PRECISION)" in 0|1|2|3) ;; *) exit 2 ;; esac
+	@case "$(PRECISION)" in 0|1|2|3|4|5|6|7) ;; *) exit 2 ;; esac
 	@printf '#define TF_PRECISION_POLICY %s\n' '$(PRECISION)' > $@.tmp
 	@cmp -s $@.tmp $@ && rm $@.tmp || mv $@.tmp $@
 $(BUILD)/%.o: %.S $(BUILD)/layout.inc $(BUILD)/precision.h | $(BUILD)

@@ -1565,7 +1565,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--runtime", action="store_true")
     parser.add_argument("--work-dir", type=Path)
-    parser.add_argument("--development-precision-policy", type=int, choices=range(4))
+    parser.add_argument("--development-precision-policy", type=int, choices=range(8))
     args = parser.parse_args()
     if args.output.exists():
         parser.error("Audit output already exists; choose a fresh evidence path")

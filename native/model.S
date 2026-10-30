@@ -127,7 +127,11 @@ Lembed_vec:
  PTR x5,x21,W_INV2
  mov x6,#CONTEXT
  mov x7,#WIDTH
+ .if WIDTH >= 512 && (TF_PRECISION_POLICY & 4)
+ bl _tf_ln_forward_precise
+ .else
  bl _tf_ln_forward
+ .endif
  PTR x0,x21,W_N2
  PTR x1,x19,P_FF1_WEIGHT
  PTR x2,x19,P_FF1_BIAS
@@ -226,7 +230,11 @@ _tf_backward:
  PTR x5,x22,P_LN2_WEIGHT
  PTR x6,x22,P_LN2_BIAS
  ADDR x7,Lnormshape
+ .if WIDTH >= 512 && (TF_PRECISION_POLICY & 4)
+ bl _tf_ln_backward_precise
+ .else
  bl _tf_ln_backward
+ .endif
  PTR x0,x21,W_DR2
  PTR x1,x21,W_TEMP
  PTR x2,x21,W_DR1

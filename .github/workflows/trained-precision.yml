@@ -10,10 +10,15 @@ jobs:
   native:
     runs-on: macos-26
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        width: [512, 1024]
     env:
       OMP_NUM_THREADS: "1"
       OPENBLAS_NUM_THREADS: "1"
       VECLIB_MAXIMUM_THREADS: "1"
+      ARM64_TRANSFORMER_WIDTH: ${{ matrix.width }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -23,54 +28,47 @@ jobs:
           python -m pip install --only-binary=:all: -e '.[dev]'
       - name: Build and check each candidate in one reusable build tree
         run: |
-          mkdir -p results/precision-build
-          for width in 512 1024; do
-            for policy in 0 1 2 3; do
-              make -C native WIDTH=$width PRECISION=$policy PYTHON=python
-              ARM64_TRANSFORMER_WIDTH=$width python -m pytest tests/test_native_precision.py -q
-              dest=results/precision-build/width-$width/policy-$policy
-              mkdir -p "$dest"
-              cp native/build/width-$width/libtransformer.dylib "$dest/"
-              cp native/build/width-$width/transformer-arm64 "$dest/"
-              cp native/build/width-$width/layout.inc "$dest/"
-              cp native/build/width-$width/precision.h "$dest/"
-              shasum -a 256 "$dest/"* > "$dest/SHA256SUMS"
-            done
+          width=$ARM64_TRANSFORMER_WIDTH
+          for policy in 0 1 2 3 4 5 6 7; do
+            make -C native WIDTH=$width PRECISION=$policy PYTHON=python
+            python -m pytest tests/test_native_precision.py -q
+            dest=results/precision-build/width-$width/policy-$policy
+            mkdir -p "$dest"
+            cp native/build/width-$width/libtransformer.dylib "$dest/"
+            cp native/build/width-$width/transformer-arm64 "$dest/"
+            cp native/build/width-$width/layout.inc "$dest/"
+            cp native/build/width-$width/precision.h "$dest/"
+            shasum -a 256 "$dest/"* > "$dest/SHA256SUMS"
           done
           git rev-parse HEAD > results/precision-build/source-revision.txt
           sw_vers > results/precision-build/platform.txt
           sysctl -n machdep.cpu.brand_string >> results/precision-build/platform.txt
-      - name: Full model and executable checks for both normalization candidates
-        run: |
-          for width in 512 1024; do
-            for policy in 1 3; do
-              make -C native WIDTH=$width PRECISION=$policy PYTHON=python
-              export ARM64_TRANSFORMER_WIDTH=$width
-              python -m pytest -q
-              dest=results/precision-runtime/width-$width/policy-$policy
-              python -m transformer.validate --output "$dest/auto.json" \
-                --development-precision-policy "$policy" \
-                --runtime --work-dir "$dest/smoke-auto"
-              ARM64_TRANSFORMER_BACKEND=neon python -m transformer.validate \
-                --output "$dest/neon.json" --development-precision-policy "$policy" \
-                --runtime --work-dir "$dest/smoke-neon"
-              supported=$(python -c "import json; print(json.load(open('$dest/auto.json'))['backend']['sme_supported'])")
-              if [ "$supported" = 1 ]; then
-                ARM64_TRANSFORMER_BACKEND=sme python -m transformer.validate \
-                  --output "$dest/sme.json" --development-precision-policy "$policy" \
-                  --runtime --work-dir "$dest/smoke-sme"
-              fi
-            done
-          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: precision-native-candidates
+          name: precision-native-candidates-width-${{ matrix.width }}
           path: results/precision-build/
           retention-days: 30
+      - name: Full model and executable checks for the second-normalization candidate
+        run: |
+          width=$ARM64_TRANSFORMER_WIDTH
+          make -C native WIDTH=$width PRECISION=7 PYTHON=python
+          python -m pytest -q
+          dest=results/precision-runtime/width-$width/policy-7
+          python -m transformer.validate --output "$dest/auto.json" \
+            --development-precision-policy 7 --runtime --work-dir "$dest/smoke-auto"
+          ARM64_TRANSFORMER_BACKEND=neon python -m transformer.validate \
+            --output "$dest/neon.json" --development-precision-policy 7 \
+            --runtime --work-dir "$dest/smoke-neon"
+          supported=$(python -c "import json; print(json.load(open('$dest/auto.json'))['backend']['sme_supported'])")
+          if [ "$supported" = 1 ]; then
+            ARM64_TRANSFORMER_BACKEND=sme python -m transformer.validate \
+              --output "$dest/sme.json" --development-precision-policy 7 \
+              --runtime --work-dir "$dest/smoke-sme"
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: precision-native-runtime-evidence
+          name: precision-native-runtime-evidence-width-${{ matrix.width }}
           path: results/precision-runtime/
           retention-days: 30

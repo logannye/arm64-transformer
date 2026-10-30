@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 
 from transformer import spec
-from transformer.validate import DEFAULT_LIBRARY, Native
+from transformer.validate import DEFAULT_LIBRARY, Native, workspace_tensor
 
 pytestmark = pytest.mark.skipif(
     platform.system() != "Darwin" or not DEFAULT_LIBRARY.is_file(),
@@ -89,3 +89,37 @@ def test_compiled_policy_is_explicit(native):
     header = (DEFAULT_LIBRARY.parent / "precision.h").read_text()
     policy = int(header.split()[-1]) if spec.WIDTH >= 512 else 0
     assert native.lib.tf_precision_policy() == policy
+
+
+def test_second_normalization_candidate_is_wired_in_both_directions(native):
+    if not native.lib.tf_precision_policy() & 4:
+        pytest.skip("Second-normalization refinement is not selected")
+    from transformer.reference import Transformer
+
+    model = Transformer(1729)
+    flat = model.flat_parameters()
+    tokens = np.arange(spec.CONTEXT, dtype="i4")
+    targets = (tokens + 1) % spec.VOCAB
+    work = native.forward(flat, tokens)
+    r1 = workspace_tensor(work, "r1").astype("f8")
+    gamma, beta = (getattr(model, name).detach().numpy() for name in ("ln2_weight", "ln2_bias"))
+    centered = r1 - r1.mean(-1, keepdims=True)
+    normalized = centered / np.sqrt((centered * centered).mean(-1, keepdims=True) + spec.EPS)
+    np.testing.assert_array_equal(
+        workspace_tensor(work, "n2"), (normalized * gamma + beta).astype("f4")
+    )
+    native.backward(flat, tokens, targets, work)
+    dx = np.empty((spec.CONTEXT, spec.WIDTH), "f4")
+    dg, db = np.zeros(spec.WIDTH, "f4"), np.zeros(spec.WIDTH, "f4")
+    native.call(
+        "ln_backward_precise",
+        workspace_tensor(work, "dn2"),
+        workspace_tensor(work, "norm2"),
+        workspace_tensor(work, "inv2"),
+        gamma.copy(),
+        dx,
+        dg,
+        db,
+        np.array([spec.CONTEXT, spec.WIDTH], "i4"),
+    )
+    np.testing.assert_array_equal(workspace_tensor(work, "temp"), dx)

@@ -172,3 +172,26 @@ checks that the extracted equations reproduce the ordinary model. This is an
 explicit diagnostic model implementation, not a runtime operator override,
 framework source repair, admitted replacement or performance result. All input
 and output identities, failures and existing tolerances remain retained.
+
+The fresh width-512 step-1 synthetic batch fails native-policy-1 and policy-3
+gradients despite passing logits. Before any further native arithmetic candidate,
+trace its feed-forward preactivation signs against the FP64 equations. For each
+successive native prefix, recompute the remaining prefix through the first
+feed-forward projection in FP64 and retain any ReLU gate disagreements. As a
+diagnostic only, hold the entire FP64 forward computation fixed and substitute
+the observed native ReLU gate in its backward equation. Compare that gradient
+with both the original FP64 gradient and the reproduced native gradient. This
+counterfactual tests whether a branch disagreement explains the failure; it is
+not a replacement gradient, a tolerance exception or an admitted model.
+
+That diagnostic found one sign disagreement at batch/token/channel [14, 2, 248]:
+the FP64 preactivation is -1.649231633270125e-8 and native policy 3 produces
+7.147900760173798e-8. Holding the FP64 forward fixed and using the native backward
+gate removes all 469 gradient failures. Policy 3's prefix first introduces the
+gate disagreement at the second normalization. Before any new native execution,
+extend the original policy bits with bit 4: FP64 second-LayerNorm forward and
+backward arithmetic with the same FP32 saved buffers. Build policies 4 through 7
+alongside the retained 0 through 3 controls. Replay all four new policies on the
+same failing batch, then test any passing candidate on the complete historical
+and existing development inventories. Policy 7 combines both normalizations and
+QKV refinement; no FFN projection, ReLU rule, architecture or tolerance changes.

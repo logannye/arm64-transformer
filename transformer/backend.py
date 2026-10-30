@@ -95,7 +95,7 @@ def read_backend(path, *, policy=None):
 
 
 def validate_runtime_backend(value, config, *, admitted=None, policy="auto", precision_policy=0):
-    if type(precision_policy) is not int or precision_policy not in range(4):
+    if type(precision_policy) is not int or precision_policy not in range(8):
         raise ValueError("Unknown native precision policy")
     if precision_policy and config["width"] < 512:
         raise ValueError("Precision candidates apply only to wide models")
