@@ -174,6 +174,13 @@ unexecuted. Reserved admission stream `20261104` is unopened. The
 [configuration corrections](experiments/gpu-compile-control-v1/CORRECTION.md)
 preserve the narrower scope of older diagnostics.
 
+An [independent study](experiments/gpu-v4-owned/README.md) now permits pinned,
+project-maintained full-source PyTorch and MLX builds. This route requires no
+upstream submission or release, while preserving accuracy, exact repeatability
+and matched-workload gates. Its eventual claims will explicitly name the patched
+baselines. It is in development: the retained broad MPS failures remain blocking,
+and neither study has started formal fits.
+
 ## Reproduce and inspect
 
 Start with the [QKV reproduction guide](experiments/gpu-v3-qkv/REPRODUCE.md),
