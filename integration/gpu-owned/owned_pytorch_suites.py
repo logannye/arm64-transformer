@@ -10,7 +10,9 @@ import ast
 import hashlib
 import importlib.util
 import json
+import math
 import os
+import re
 import shlex
 import stat
 import subprocess
@@ -650,6 +652,97 @@ def validate_native_proof(proof, runtime, root):
     return proof
 
 
+def validate_loaded_proof(
+    imported, native, runtime, runtime_root, project, source_root, sources, extra
+):
+    """Validate retained import identities without accessing their original paths."""
+    require(isinstance(imported, dict) and imported, "Missing retained Python import map")
+    roots = [
+        (Path(runtime_root), runtime["files"]),
+        (Path(project["root"]), project["files"]),
+        (Path(source_root), sources),
+    ]
+    for name, row in imported.items():
+        require(
+            isinstance(name, str)
+            and name
+            and isinstance(row, dict)
+            and set(row) == {"path", "sha256"},
+            "Malformed retained import map",
+        )
+        absolute = row["path"]
+        require(isinstance(absolute, str), "Missing retained import path")
+        path = Path(absolute)
+        require(
+            path.is_absolute() and str(path) == absolute and ".." not in path.parts,
+            "Noncanonical retained import path",
+        )
+        hashes = {
+            files[str(path.relative_to(root))]
+            for root, files in roots
+            if path.is_relative_to(root) and str(path.relative_to(root)) in files
+        }
+        if absolute in extra:
+            hashes.add(extra[absolute])
+        require(
+            len(hashes) == 1
+            and isinstance(row["sha256"], str)
+            and row["sha256"] in hashes
+            and re.fullmatch(r"[0-9a-f]{64}", row["sha256"]),
+            "Retained import is outside or differs from its authenticated authority",
+        )
+    framework = native["framework_module_origins"]["pytorch"]
+    for name, path in framework["module_origins"].items():
+        require(
+            imported.get(name, {}).get("path") == path,
+            "Native and Python module origin maps differ",
+        )
+    numpy_path = imported.get("numpy", {}).get("path")
+    require(
+        numpy_path in runtime["layout"]["packages"]["numpy"],
+        "Retained NumPy origin is absent or differs",
+    )
+    return imported
+
+
+def validate_descendant_intervals(proofs, parent_pid, parent_interval):
+    """Require unique child processes, parent containment and serial execution."""
+    require(type(parent_pid) is int and parent_pid > 0, "Invalid parent process")
+
+    def interval(value):
+        require(
+            len(value) == 2
+            and all(type(v) in (int, float) and math.isfinite(v) for v in value)
+            and value[0] <= value[1],
+            "Invalid retained process interval",
+        )
+        return value
+
+    parent_start, parent_end = interval(parent_interval)
+    pids, intervals = set(), []
+    for proof in proofs:
+        pid = proof["pid"]
+        require(
+            type(pid) is int
+            and pid > 0
+            and pid != parent_pid
+            and pid not in pids
+            and type(proof["parent_pid"]) is int
+            and proof["parent_pid"] == parent_pid,
+            "Duplicate or foreign descendant process",
+        )
+        pids.add(pid)
+        start, end = interval((proof["started_unix"], proof["ended_unix"]))
+        require(parent_start <= start <= end <= parent_end, "Descendant interval escaped parent")
+        intervals.append((start, end))
+    intervals.sort()
+    require(
+        all(a[1] <= b[0] for a, b in zip(intervals, intervals[1:])),
+        "Conformance descendants overlapped",
+    )
+    return intervals
+
+
 def worker_command(plan, path, sha, output, runtime):
     source = plan["producer"]
     code = (
@@ -769,14 +862,21 @@ def descendant(plan_path, plan_sha, parent_output, parent_pid, upstream):
     return code
 
 
-def check_descendants(output, plan, plan_sha, pid):
+def check_descendants(output, plan, plan_sha, pid, parent_interval):
     runtime = read(plan["authority_inputs"]["inventory"]["path"])
     binding(plan["authority_inputs"]["inventory"]["path"], plan["authority_inputs"]["inventory"])
 
+    runtime_receipt = read(plan["authority_inputs"]["receipt"]["path"])
+    binding(plan["authority_inputs"]["receipt"]["path"], plan["authority_inputs"]["receipt"])
+    binding(plan["source_manifest"]["path"], plan["source_manifest"])
+    sources = {
+        name: item["sha256"]
+        for name, item in read(plan["source_manifest"]["path"])["files"].items()
+    }
     actual = sorted(p.name for p in output.glob("descendant-*"))
     expected = sorted("descendant-" + r["name"] for r in plan["subprocess_contract"]["invocations"])
     require(actual == expected, "Missing, duplicate or foreign conformance subprocess")
-    proofs = []
+    proofs, children = [], []
     for row in plan["subprocess_contract"]["invocations"]:
         path = output / ("descendant-" + row["name"]) / "receipt.json"
         proof = read(path)
@@ -808,11 +908,19 @@ def check_descendants(output, plan, plan_sha, pid):
             "Child bytecode policy differs",
         )
         validate_native_proof(proof["native_origin_verification"], runtime, plan["runtime_root"])
-        require(
-            isinstance(proof.get("loaded_python_files"), dict) and proof["loaded_python_files"],
-            "Missing descendant Python origin inventory",
+        validate_loaded_proof(
+            proof.get("loaded_python_files"),
+            proof["native_origin_verification"],
+            runtime,
+            plan["runtime_root"],
+            runtime_receipt["project"],
+            plan["source_root"],
+            sources,
+            {},
         )
+        children.append(proof)
         proofs.append(binding(path))
+    validate_descendant_intervals(children, pid, parent_interval)
     return proofs
 
 
@@ -833,6 +941,7 @@ def worker(path, sha, output):
         "name": "pytorch_mps",
         "producer": PRODUCER,
         "worker_pid": os.getpid(),
+        "started_unix": time.time(),
         "plan_sha256": sha,
         "complete": False,
         "passed": False,
@@ -896,6 +1005,16 @@ def worker(path, sha, output):
         record["loaded_python_files_before"] = loaded_files(
             runtime, authority, receipt["project"], plan["source_root"], sources, extras
         )
+        validate_loaded_proof(
+            record["loaded_python_files_before"],
+            before,
+            runtime,
+            authority.root,
+            receipt["project"],
+            plan["source_root"],
+            sources,
+            extras,
+        )
         record["conditions_before"] = driver.conditions()
         write(output / "receipt.json", record)
         with (output / "tests.log").open("x") as log:
@@ -909,7 +1028,9 @@ def worker(path, sha, output):
         record["conditions_after"] = driver.conditions()
         record["stock_fixture_loaded"] = policy.loaded_extension(module, Path(plan["cache"]))
         extras[record["stock_fixture_loaded"]["path"]] = record["stock_fixture_loaded"]["sha256"]
-        record["descendants"] = check_descendants(output, plan, sha, os.getpid())
+        record["descendants"] = check_descendants(
+            output, plan, sha, os.getpid(), (record["started_unix"], time.time())
+        )
         after = origins(backend, authority, runtime)
         require(
             before["files"] == after["files"], "Native framework images changed during full suite"
@@ -917,6 +1038,16 @@ def worker(path, sha, output):
         record["native_origin_verification"]["after"] = after
         record["loaded_python_files_after"] = loaded_files(
             runtime, authority, receipt["project"], plan["source_root"], sources, extras
+        )
+        validate_loaded_proof(
+            record["loaded_python_files_after"],
+            after,
+            runtime,
+            authority.root,
+            receipt["project"],
+            plan["source_root"],
+            sources,
+            extras,
         )
         executable = binding(Path(original_executable).resolve(strict=True))
         relative = str(Path(executable["path"]).relative_to(authority.root))
@@ -988,7 +1119,13 @@ def validate_execution(
         "owned_frameworks": {"frameworks": selected, "runtime_receipt": path},
     }
     validate_suite(record, worker_output, manifest, expected, "pytorch_mps")
-    check_descendants(worker_output, plan, record["plan_sha256"], execution["pid"])
+    check_descendants(
+        worker_output,
+        plan,
+        record["plan_sha256"],
+        execution["pid"],
+        (execution["started_unix"], execution["ended_unix"]),
+    )
     require(
         execution["returncode"] == 0 and not execution["timed_out"] and "error" not in execution,
         "Failed full-suite process",

@@ -498,6 +498,59 @@ class NativeProofTests(unittest.TestCase):
             },
         }
 
+    def test_retained_python_map_is_checked_without_live_files(self):
+        self.runtime["files"]["deps/numpy/__init__.py"] = "b" * 64
+        self.runtime["layout"] = {"packages": {"numpy": ["/runtime/deps/numpy/__init__.py"]}}
+        imported = {
+            name: {"path": path, "sha256": "a" * 64}
+            for name, path in self.proof["framework_module_origins"]["pytorch"][
+                "module_origins"
+            ].items()
+        }
+        imported["numpy"] = {"path": "/runtime/deps/numpy/__init__.py", "sha256": "b" * 64}
+        project = {"root": "/absent-project", "files": {}}
+
+        def check(value):
+            M.validate_loaded_proof(
+                value, self.proof, self.runtime, self.root, project, "/absent-source", {}, {}
+            )
+
+        check(imported)
+        for mutation in ("foreign", "hash", "hash_type", "missing", "path"):
+            value = json.loads(json.dumps(imported))
+            if mutation == "foreign":
+                value["foreign"] = {"path": "/unbound/module.py", "sha256": "a" * 64}
+            elif mutation == "hash":
+                value["numpy"]["sha256"] = "a" * 64
+            elif mutation == "hash_type":
+                value["numpy"]["sha256"] = []
+            elif mutation == "missing":
+                del value["torch._C"]
+            else:
+                value["numpy"]["path"] = "/runtime/deps/../deps/numpy/__init__.py"
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                check(value)
+
+    def test_descendant_processes_must_be_serial_and_inside_parent(self):
+        children = [
+            dict(pid=2, parent_pid=1, started_unix=2, ended_unix=3),
+            dict(pid=3, parent_pid=1, started_unix=4, ended_unix=5),
+        ]
+        self.assertEqual(M.validate_descendant_intervals(children, 1, (1, 6)), [(2, 3), (4, 5)])
+        for key, value in (
+            ("pid", 2),
+            ("parent_pid", 9),
+            ("parent_pid", True),
+            ("started_unix", 2.5),
+            ("ended_unix", 7),
+            ("started_unix", float("nan")),
+            ("pid", True),
+        ):
+            mutant = json.loads(json.dumps(children))
+            mutant[1][key] = value
+            with self.subTest(key=key, value=value), self.assertRaises(ValueError):
+                M.validate_descendant_intervals(mutant, 1, (1, 6))
+
     def test_complete_proof(self):
         M.validate_native_proof(self.proof, self.runtime, self.root)
 

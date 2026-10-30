@@ -126,11 +126,18 @@ The driver/reference paths select the already-retained immutable result helpers,
 not another framework implementation. The two external SHA256 arguments must
 come from verified publication/capture evidence.
 
-The 43 CPU-only regression checks pass, including actual fresh-process launcher
+The 45 CPU-only regression checks pass under the retained CPython 3.12 interpreter,
+including actual fresh-process launcher
 checks, source mutations, cache bounds, native-origin mutations, and unconditional
-interpreter restoration after a test-runner exception. Ruff passes for the new
+interpreter restoration after a test-runner exception. Retained Python import maps
+are checked against authenticated runtime, project, full-source and explicit
+fixture authorities without accessing their original paths. Child receipts must
+have distinct integer process identities and serial, finite intervals contained
+within the parent process. Missing origins, changed hashes, foreign imports and
+overlapping or escaped intervals are rejected. Ruff passes for the new
 Python files. These tests do not validate native execution or complete the
-pending archive auditor.
+pending archive auditor. The original AST fingerprints bind CPython 3.12's AST
+representation; a different Python AST version does not inherit this check.
 
 Both `prepare` and `run` require the same sanitized environment constructed by
 `controls`, including its exact cache path and selected Ninja search path. The
