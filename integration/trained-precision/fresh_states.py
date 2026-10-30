@@ -8,6 +8,7 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
 import sys
 import traceback
 from pathlib import Path
@@ -24,6 +25,7 @@ def sha(path):
 
 
 def worker(args):
+    policy = args.precision_policy
     if os.environ.get("ARM64_TRANSFORMER_WIDTH") != str(args.width):
         raise ValueError("Set the width before importing model code")
     if sha(args.library) != args.library_sha256:
@@ -43,6 +45,12 @@ def worker(args):
     before = source_inventory()
     producer_sha = sha(Path(__file__))
     output = args.output
+    required = len(CHECKPOINTS) * spec.PARAM_COUNT * 4 * (3 if policy == 15 else 1)
+    storage_root = output.parent
+    while not storage_root.exists():
+        storage_root = storage_root.parent
+    if shutil.disk_usage(storage_root).free < required + 5 * 1024**3:
+        raise ValueError("Insufficient space for saved states and 5 GiB reserve")
     output.mkdir(parents=True, exist_ok=False)
     report = args.evidence_root / f"experiments/width-sweep-v6/width-{args.width}/summary.json"
     if sha(report) != args.summary_sha256:
@@ -72,11 +80,13 @@ def worker(args):
     native = Native(args.library)
     native.lib.tf_precision_policy.argtypes = []
     native.lib.tf_precision_policy.restype = ctypes.c_uint64
-    if native.lib.tf_precision_policy() != 1:
-        raise ValueError("Fresh trajectory requires the declared first-LayerNorm candidate")
+    if native.lib.tf_precision_policy() != policy:
+        raise ValueError("Fresh trajectory binary differs from the declared precision policy")
     m, v = np.zeros_like(flat), np.zeros_like(flat)
     record = {
-        "schema": "trained-precision-fresh-development-v1",
+        "schema": "trained-precision-fresh-development-v1"
+        if policy == 1
+        else "trained-precision-fresh-development-v2",
         "seed": SEED,
         "width": args.width,
         "steps": STEPS,
@@ -95,7 +105,11 @@ def worker(args):
         "states": [],
         "saved": {},
     }
+    if policy == 15:
+        record.update(precision_policy=policy, saved_optimizer={})
     for step in range(STEPS + 1):
+        if shutil.disk_usage(output).free < 5 * 1024**3:
+            raise ValueError("Development trajectory reached the 5 GiB disk reserve")
         if step:
             batch = rows[schedule[step - 1]]
             result = native_evaluate(
@@ -119,9 +133,16 @@ def worker(args):
             path = output / f"step-{step:03d}.f32"
             flat.tofile(path)
             record["saved"][path.name] = sha(path)
+            if policy == 15:
+                for name, values in (("m", m), ("v", v)):
+                    path = output / f"step-{step:03d}-{name}.f32"
+                    values.tofile(path)
+                    record["saved_optimizer"][path.name] = sha(path)
         print(json.dumps({"width": args.width, "step": step, "finite": True}), flush=True)
     if before != source_inventory() or producer_sha != sha(Path(__file__)):
         raise ValueError("Model source changed during development training")
+    if sha(args.library) != args.library_sha256 or native.lib.tf_precision_policy() != policy:
+        raise ValueError("Native binary changed during development training")
     record.update(
         complete=True,
         backend_after=native.backend_identity,
@@ -136,6 +157,7 @@ def worker(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--width", type=int, choices=(512, 1024), required=True)
+    parser.add_argument("--precision-policy", type=int, choices=(1, 15), default=1)
     for name in ("evidence-root", "output", "library"):
         parser.add_argument("--" + name, type=Path, required=True)
     for name in ("library-sha256", "summary-sha256"):

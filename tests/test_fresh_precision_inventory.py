@@ -11,6 +11,11 @@ PATH = Path(__file__).resolve().parents[1] / "integration/trained-precision/fres
 SPEC = importlib.util.spec_from_file_location("fresh_inventory", PATH)
 M = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(M)
+RESUME_SPEC = importlib.util.spec_from_file_location(
+    "resume_native", PATH.with_name("resume_native.py")
+)
+RESUME = importlib.util.module_from_spec(RESUME_SPEC)
+RESUME_SPEC.loader.exec_module(RESUME)
 
 
 @pytest.fixture
@@ -73,6 +78,91 @@ def test_complete_twice_reproduced_trajectories(trajectories):
     assert not result["formal_eligible"] and not result["admission_stream_opened"]
     assert len(result["cases"]) == 20
     assert {c["sequence"] for c in result["cases"]} == {0, 16}
+
+
+def policy15(trajectories):
+    root, manifest = trajectories
+    manifest.update(schema="trained-precision-fresh-pairs-v2", precision_policy=15)
+    for pair in manifest["pairs"]:
+        for repeat in ("first", "second"):
+            binding = pair[repeat]
+            path = root / binding["path"]
+            record = json.loads(path.read_text())
+            record.update(
+                schema="trained-precision-fresh-development-v2",
+                precision_policy=15,
+                saved_optimizer={},
+            )
+            for state in record["states"]:
+                state.update(m=state["parameters"], v=state["parameters"])
+            for step in (0, 1, 8, 32, 64):
+                for key in ("m", "v"):
+                    name = f"step-{step:03d}-{key}.f32"
+                    os.link(path.parent / f"step-{step:03d}.f32", path.parent / name)
+                    record["saved_optimizer"][name] = record["states"][step][key]
+            for direction in ("forward", "backward"):
+                record["backend_after"][f"sme_{direction}_calls"] = 64 * 16 * 3
+            path.write_text(json.dumps(record))
+            binding["sha256"] = M.sha(path)
+
+
+def test_policy15_preserves_both_saved_optimizer_moments(trajectories):
+    policy15(trajectories)
+    result = run(trajectories)
+    assert len(result["cases"]) == 20
+    assert all(c["id"].startswith("fresh-p15-") for c in result["cases"])
+    assert {c["checkpoint_origin"] for c in result["cases"]} == {"native-precision-policy-15"}
+    assert sum(name.endswith(("-m.f32", "-v.f32")) for name in result["files"]) == 40
+
+
+@pytest.mark.parametrize("change", ["policy", "missing_moment", "moment_hash", "counter"])
+def test_policy15_rejects_wrong_policy_or_saved_moments(trajectories, change):
+    policy15(trajectories)
+    root, manifest = trajectories
+    binding = manifest["pairs"][0]["second"]
+    path = root / binding["path"]
+    record = json.loads(path.read_text())
+    if change == "policy":
+        record["precision_policy"] = 1
+    elif change == "missing_moment":
+        record["saved_optimizer"].pop("step-032-m.f32")
+    elif change == "moment_hash":
+        record["saved_optimizer"]["step-032-m.f32"] = "0" * 64
+    else:
+        record["backend_after"]["sme_forward_calls"] = 64 * 16 * 5
+    path.write_text(json.dumps(record))
+    binding["sha256"] = M.sha(path)
+    with pytest.raises(ValueError):
+        run(trajectories)
+
+
+@pytest.mark.parametrize("change", [None, "receipt", "state", "schedule", "saved_binding"])
+def test_continuation_authenticates_saved_state_and_schedule(trajectories, change):
+    policy15(trajectories)
+    root, manifest = trajectories
+    path = root / manifest["pairs"][0]["first"]["path"]
+    record = json.loads(path.read_text())
+    training = root / "train.i32"
+    training.write_bytes(bytes(2048 * 33 * 4))
+    record["training_inputs"]["train.i32"] = {"path": str(training), "sha256": M.sha(training)}
+    if change == "saved_binding":
+        record["saved_optimizer"]["step-032-v.f32"] = "0" * 64
+    path.write_text(json.dumps(record))
+    expected = M.sha(path)
+    if change == "receipt":
+        expected = "0" * 64
+    elif change == "state":
+        with (path.parent / "step-032-m.f32").open("r+b") as stream:
+            stream.write(b"changed")
+    elif change == "schedule":
+        (path.parent / "schedule.i32").write_bytes(bytes(64 * 16 * 4 - 1))
+    if change is None:
+        checked, paths, bindings = RESUME.inputs(path, expected)
+        assert checked == record
+        assert set(paths) == set(bindings) == {"rows", "schedule", "parameters", "m", "v"}
+    else:
+        with pytest.raises(ValueError):
+            RESUME.inputs(path, expected)
 
 
 @pytest.mark.parametrize("change", ["moment", "missing", "pid", "counter", "scope"])

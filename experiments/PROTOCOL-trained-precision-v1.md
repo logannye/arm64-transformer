@@ -262,3 +262,22 @@ and 128 MiB decoded bound, exact hashes and lengths for both representations,
 and rejection of truncated or concatenated streams. Graphs below 8 MiB retain
 the original plain format. This changes evidence transport only, not arithmetic,
 compilation mode, numerical decisions or the qualification of the failed run.
+
+After the policy-15 historical replay, repeat the same fixed 64-update
+training-only development trajectory with policy 15 at widths 512 and 1024.
+Declare this as fresh-trajectory v2, preserving v1's policy-1 receipts and
+checkpoints. Use two fresh processes per width and require exact equality of all
+65 parameter/first-moment/second-moment state digests. Save both Adam moments,
+alongside parameters, at steps 0, 1, 8, 32 and 64. The ordinary dense count is now
+three per sequence and direction; precise QKV/FF1 calls remain separate.
+
+Then start a third fresh process from each width's saved step-32 parameters,
+moments and original schedule. Require exact equality to the uninterrupted run
+at every state through step 64, including the optimizer step number. This tests
+training and checkpoint continuation under the stronger native arithmetic; it
+does not require equality between independently trained engines or qualify
+cross-engine accuracy. Its 20 resulting training/synthetic common-state probes
+need the same separate dual-FP64 forward/gradient audits as earlier states. No
+assessment stream, optimizer equation, training schedule, tolerance or formal
+budget changes. Reserve at least 5 GiB beyond the planned checkpoint bytes and
+run these workers only after the current serial replay plan finishes.

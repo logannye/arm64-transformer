@@ -64,6 +64,14 @@ digests to match, verifies saved bytes and actual dispatch counts, then emits
 trajectory does not establish 1,024-update accuracy, convergence or assessment
 performance.
 
+The explicit `fresh_states.py --precision-policy 15` successor retains a separate
+v2 identity and also saves both Adam moments. A v2 pair manifest must select
+policy 15; the inventory checks its three-call ordinary dense accounting and
+every saved moment. `resume_native.py` authenticates a completed v2 receipt and
+resumes its saved step-32 state in a fresh process, checking every parameter and
+moment digest through step 64 against the uninterrupted run. These checks are
+development-only and must run serially after other numerical workers finish.
+
 ## Independent checks and bounded storage
 
 `audit_replay.py` recomputes decisions from externally hash-bound raw arrays,

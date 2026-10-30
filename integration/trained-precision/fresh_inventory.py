@@ -30,9 +30,15 @@ def checked(root, relative, expected):
 def inventory(root, manifest_path, manifest_sha):
     require(sha(manifest_path) == manifest_sha, "Trajectory authority changed")
     manifest = json.loads(Path(manifest_path).read_text())
+    policy = manifest.get("precision_policy", 1)
     require(
-        manifest["schema"] == "trained-precision-fresh-pairs-v1"
-        and [p["width"] for p in manifest["pairs"]] == [512, 1024],
+        type(policy) is int
+        and (manifest["schema"], policy)
+        in {("trained-precision-fresh-pairs-v1", 1), ("trained-precision-fresh-pairs-v2", 15)},
+        "Unknown development trajectory policy",
+    )
+    require(
+        [p["width"] for p in manifest["pairs"]] == [512, 1024],
         "Wrong development trajectory inventory",
     )
     cases, files, proofs = [], {}, []
@@ -43,7 +49,9 @@ def inventory(root, manifest_path, manifest_sha):
             path = checked(root, bound["path"], bound["sha256"])
             result = json.loads(path.read_text())
             require(
-                result["schema"] == "trained-precision-fresh-development-v1"
+                result["schema"]
+                == f"trained-precision-fresh-development-v{1 if policy == 1 else 2}"
+                and result.get("precision_policy", 1) == policy
                 and result["complete"] is True
                 and result["formal_eligible"] is False
                 and result["admission_stream_opened"] is False
@@ -73,8 +81,26 @@ def inventory(root, manifest_path, manifest_sha):
                     (path.parent / file).stat().st_size == (8 * width**2 + 301 * width + 128) * 4,
                     "Wrong checkpoint size",
                 )
+            moments = {}
+            if policy == 15:
+                moments = result["saved_optimizer"]
+                require(
+                    set(moments)
+                    == {f"step-{n:03d}-{key}.f32" for n in (0, 1, 8, 32, 64) for key in ("m", "v")},
+                    "Missing saved optimizer state",
+                )
+                for step in (0, 1, 8, 32, 64):
+                    for key in ("m", "v"):
+                        filename = f"step-{step:03d}-{key}.f32"
+                        require(moments[filename] == states[step][key], "Saved moment differs")
+                        require(
+                            (path.parent / filename).stat().st_size
+                            == (8 * width**2 + 301 * width + 128) * 4,
+                            "Wrong saved moment size",
+                        )
             for file, digest in {
                 **saved,
+                **moments,
                 "rows.i32": result["rows_sha256"],
                 "schedule.i32": result["schedule_sha256"],
             }.items():
@@ -92,7 +118,8 @@ def inventory(root, manifest_path, manifest_sha):
             for backend in ("sme", "neon"):
                 for direction in ("forward", "backward"):
                     key = f"{backend}_{direction}_calls"
-                    expected = 64 * 16 * 5 if backend == selected else 0
+                    dense_calls = 5 - bool(policy & 2) - bool(policy & 8)
+                    expected = 64 * 16 * dense_calls if backend == selected else 0
                     require(after[key] - before[key] == expected, "Missing dense dispatch proof")
             files[bound["path"]] = bound["sha256"]
             repeats.append(result)
@@ -105,12 +132,13 @@ def inventory(root, manifest_path, manifest_sha):
         proofs.append({"width": width, "states_compared": 65, "receipts": pair})
         first = repeats[0]
         relative = Path(pair["first"]["path"]).parent
+        prefix = "fresh-p15" if policy == 15 else "fresh"
         for step in (0, 1, 8, 32, 64):
             checkpoint = f"step-{step:03d}.f32"
             for sequence in (0, 16):
                 cases.append(
                     {
-                        "id": f"fresh-w{width}-step{step:03d}-sequence{sequence:02d}",
+                        "id": f"{prefix}-w{width}-step{step:03d}-sequence{sequence:02d}",
                         "width": width,
                         "checkpoint": (relative / checkpoint).as_posix(),
                         "checkpoint_sha256": first["saved"][checkpoint],
@@ -120,7 +148,7 @@ def inventory(root, manifest_path, manifest_sha):
                         "split": "development-training"
                         if sequence == 0
                         else "development-synthetic",
-                        "checkpoint_origin": "native-precision-policy-1",
+                        "checkpoint_origin": f"native-precision-policy-{policy}",
                         "historical_failures": [],
                     }
                 )
