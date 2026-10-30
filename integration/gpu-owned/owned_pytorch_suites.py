@@ -28,6 +28,7 @@ PROTOCOL = "gpu-v4-owned-five-engine-v1"
 PRODUCER = "integration/gpu-owned/owned_pytorch_suites.py"
 SHARED = "integration/gpu-owned/owned_mlx_suites.py"
 POLICY = "integration/gpu-owned/owned_pytorch_fixture.py"
+ARCHIVE = "integration/gpu-owned/owned_pytorch_archive.py"
 INVENTORY = "integration/gpu-owned/owned-suite-inventory-v1.json"
 INVENTORY_SHA = "cff557d2b1d68857bc488e77e6672fb0fb386409e88ad6ca4e7fa31bd862d852"
 FALLBACK_AST_SHA = "3d8e80a2297c719dd126826912efaa594a2104a9f930addb4daf4c955d75439e"
@@ -166,6 +167,7 @@ def helpers(plan):
         PRODUCER,
         SHARED,
         POLICY,
+        ARCHIVE,
         INVENTORY,
         "integration/gpu-owned/stock_mps_fixture_fragments.py.txt",
     ):
@@ -769,10 +771,10 @@ def worker_command(plan, path, sha, output, runtime):
     ]
 
 
-def child_command(plan, plan_path, plan_sha, output, pid):
-    executable = read(plan["authority_inputs"]["inventory"]["path"])["layout"][
-        "interpreter_resolved"
-    ]
+def child_command(plan, plan_path, plan_sha, output, pid, *, runtime=None):
+    if runtime is None:
+        runtime = read(plan["authority_inputs"]["inventory"]["path"])
+    executable = runtime["layout"]["interpreter_resolved"]
     # The tiny stdlib launcher authenticates both entrypoint and plan before import.
     source = plan["producer"]
     names = {tuple(row["argv"]): row["name"] for row in plan["subprocess_contract"]["invocations"]}
@@ -862,6 +864,50 @@ def descendant(plan_path, plan_sha, parent_output, parent_pid, upstream):
     return code
 
 
+def validate_descendant_proof(
+    proof, plan, plan_sha, pid, bytecode_prefix, runtime, runtime_receipt, sources
+):
+    """Check a retained child without consulting its original paths."""
+    require(
+        proof["schema"] == "gpu-owned-mps-suite-descendant-v1"
+        and proof["protocol"] == PROTOCOL
+        and proof["producer"] == PRODUCER
+        and proof["plan_sha256"] == plan_sha
+        and proof["parent_pid"] == pid
+        and type(proof["pid"]) is int
+        and proof["pid"] > 0
+        and proof["pid"] != pid
+        and proof["complete"] is True
+        and type(proof["returncode"]) is int
+        and proof["returncode"] == 0
+        and proof["invocation"] in plan["subprocess_contract"]["invocations"]
+        and "error" not in proof
+        and "integrity_error" not in proof
+        and proof["formal_fits"] == 0
+        and proof["formal_admission_opened"] is False,
+        "Unqualified conformance subprocess proof",
+    )
+    require(
+        proof["runtime_receipt_sha256"] == plan["authority_inputs"]["receipt"]["sha256"],
+        "Conformance subprocess runtime differs",
+    )
+    require(
+        proof["bytecode_prefix"] == bytecode_prefix,
+        "Child bytecode policy differs",
+    )
+    validate_native_proof(proof["native_origin_verification"], runtime, plan["runtime_root"])
+    validate_loaded_proof(
+        proof.get("loaded_python_files"),
+        proof["native_origin_verification"],
+        runtime,
+        plan["runtime_root"],
+        runtime_receipt["project"],
+        plan["source_root"],
+        sources,
+        {},
+    )
+
+
 def check_descendants(output, plan, plan_sha, pid, parent_interval):
     runtime = read(plan["authority_inputs"]["inventory"]["path"])
     binding(plan["authority_inputs"]["inventory"]["path"], plan["authority_inputs"]["inventory"])
@@ -880,44 +926,18 @@ def check_descendants(output, plan, plan_sha, pid, parent_interval):
     for row in plan["subprocess_contract"]["invocations"]:
         path = output / ("descendant-" + row["name"]) / "receipt.json"
         proof = read(path)
-        require(
-            proof["schema"] == "gpu-owned-mps-suite-descendant-v1"
-            and proof["protocol"] == PROTOCOL
-            and proof["producer"] == PRODUCER
-            and proof["plan_sha256"] == plan_sha
-            and proof["parent_pid"] == pid
-            and type(proof["pid"]) is int
-            and proof["pid"] > 0
-            and proof["pid"] != pid
-            and proof["complete"] is True
-            and proof["returncode"] == 0
-            and proof["invocation"] == row
-            and "error" not in proof
-            and "integrity_error" not in proof
-            and proof["formal_fits"] == 0
-            and proof["formal_admission_opened"] is False,
-            "Unqualified conformance subprocess proof",
-        )
-        require(
-            proof["runtime_receipt_sha256"] == plan["authority_inputs"]["receipt"]["sha256"],
-            "Conformance subprocess runtime differs",
-        )
-        require(
-            proof["bytecode_prefix"] == str(path.parent / "unused-bytecode-cache")
-            and not Path(proof["bytecode_prefix"]).exists(),
-            "Child bytecode policy differs",
-        )
-        validate_native_proof(proof["native_origin_verification"], runtime, plan["runtime_root"])
-        validate_loaded_proof(
-            proof.get("loaded_python_files"),
-            proof["native_origin_verification"],
+        require(proof["invocation"] == row, "Conformance child order differs")
+        validate_descendant_proof(
+            proof,
+            plan,
+            plan_sha,
+            pid,
+            str(path.parent / "unused-bytecode-cache"),
             runtime,
-            plan["runtime_root"],
-            runtime_receipt["project"],
-            plan["source_root"],
+            runtime_receipt,
             sources,
-            {},
         )
+        require(not Path(proof["bytecode_prefix"]).exists(), "Child cache was populated")
         children.append(proof)
         proofs.append(binding(path))
     validate_descendant_intervals(children, pid, parent_interval)
@@ -1118,7 +1138,7 @@ def validate_execution(
         },
         "owned_frameworks": {"frameworks": selected, "runtime_receipt": path},
     }
-    validate_suite(record, worker_output, manifest, expected, "pytorch_mps")
+    validate_suite(record, worker_output, manifest, expected, "pytorch_mps", receipt)
     check_descendants(
         worker_output,
         plan,
@@ -1216,6 +1236,12 @@ def run(path, sha, output):
             and "integrity_error" not in record,
             "Incomplete full suite",
         )
+        archive = load(Path(__file__).resolve().parents[2] / ARCHIVE, "owned_mps_archive")
+        record["portable_evidence"] = archive.retain(
+            plan, path, worker_output, record, binding, LIMITS
+        )
+        write(worker_output / "receipt.json", record)
+        summary["receipt"] = binding(worker_output / "receipt.json")
         summary["complete"] = True
         validate_execution(
             record, worker_output, execution, plan, sha, authority, runtime, selected, expected

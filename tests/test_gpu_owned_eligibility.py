@@ -180,7 +180,7 @@ def test_eligibility_never_accepts_smoke_or_boolean_as_full_suites(tmp_path):
         gate.verify_eligibility(manifest, {"baseline": tmp_path})
 
 
-def test_generic_passing_mps_suite_cannot_bypass_unfinished_archive_audit(tmp_path):
+def test_generic_passing_mps_suite_cannot_bypass_required_archive_audit(tmp_path):
     record = {
         "schema": "gpu-owned-suite-execution-v1",
         "protocol": gate.OWNED.protocol,
@@ -191,3 +191,17 @@ def test_generic_passing_mps_suite_cannot_bypass_unfinished_archive_audit(tmp_pa
     }
     with pytest.raises(ValueError, match="MPS archive qualification remains blocked"):
         gate.validate_suite(record, tmp_path, {}, gate.suite_contract(), "pytorch_mps")
+
+
+def test_mps_archive_requires_external_runtime_authority(tmp_path):
+    with pytest.raises(ValueError, match="bound runtime authority"):
+        gate.validate_mps_archive({}, tmp_path, {}, None)
+
+
+def test_mps_archive_authenticates_validator_before_loading_it(tmp_path, monkeypatch):
+    def unexpected(*args, **kwargs):
+        raise AssertionError("Unbound source was executed")
+
+    monkeypatch.setattr(gate.runpy, "run_path", unexpected)
+    with pytest.raises(ValueError, match="selected project authority"):
+        gate.validate_mps_archive({}, tmp_path, {"bindings": {"source": {}}}, {})

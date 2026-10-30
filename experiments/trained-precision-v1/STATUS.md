@@ -32,6 +32,20 @@ manifests. Earlier native and factorial audits are retained under
 the source repository; the source includes the inventory, producers, independent
 raw auditor and collection auditor needed to reproduce their checks.
 
+Native policy 15 additionally refines QKV, second LayerNorm and the first
+feed-forward projection. On the M4, it passes all 89 historical B16 forward
+anchors and all 20 fresh logits/loss/gradient batches. The MPS and compiled-MLX
+custom policy-7 models, which refine first LayerNorm, QKV and attention, each pass
+all 89 historical forward anchors and all 20 fresh forward batches. These complete
+collections have independent raw audits in `work/precision-phase5/prior-*-audit.json`.
+Full historical gradients on the M4 are still required for the new candidates.
+MPS and compiled MLX each also pass all seven gradient-screen anchors and all 20
+fresh logits/loss/gradient batches, with independent raw audits. The screen is
+the two width-512 anchors plus the five remaining width-1024 QKV-localization
+cases, not the full historical gradient denominator. The machine-readable
+[evidence index](evidence-index.json) binds these audits and the preceding failed
+framework candidates. Referenced `work/` raw artifacts remain local.
+
 ## Failures retained and next decisions
 
 Ordinary maintained MPS and MLX still fail the historical width-1024 forward
@@ -43,9 +57,12 @@ both operations on those three cases, including compiled MLX with graph/trace
 proof. Ordinary MLX width-1024 inference fails while its gradient graph passes;
 operation-matched ordinary controls reproduce exactly. The 28 operation-specific
 factorial receipts and four new native screens have independent raw audits in
-`work/trained-followup-audit-v3`. Full-inventory candidate replay is in progress;
-these localized passes do not qualify a framework source repair or performance
-comparison.
+`work/trained-followup-audit-v3`. Complete policy-2/policy-3 forward replay then
+found respectively 11/5 remaining MPS anchors and 4/5 MLX anchors at width 1024.
+The five remaining MPS policy-3 cases match the CPU QKV-localization residuals.
+Adding the prospectively declared compensated QKV bit removes those failures in
+the full policy-7 forward inventory. These custom model results do not qualify a
+framework source repair or performance comparison.
 
 The first Python candidate (v1) passed historical logits but failed two gradient
 coordinates on one width-1024 batch. V2 adds first-LayerNorm precision and passes
@@ -65,6 +82,10 @@ the same gradient failure. Policy 7 improves the preactivation to +1.19e-8.
 Its input through the second LayerNorm now gives the correct gate when the first
 feed-forward dot product is recomputed in FP64. This isolates the remaining sign
 error to that projection; it does not justify changing ReLU or its tolerance.
+The complete bit-8 factorial retains failures for policies 8, 9, 11, 12 and 13;
+policies 10, 14 and 15 pass that regression's logits, loss and gradients. The
+independent raw audits retain every outcome. Policy 15 also passes both complete
+fresh inventories, including the previously failing branch.
 
 The fresh states come from the declared 64-update training-only trajectory at
 steps 0, 1, 8, 32 and 64, with one training-derived and one synthetic B16 probe per
@@ -81,6 +102,15 @@ passes 1,153 tests plus 190 subtests (14 skips), with 1,979 runtime checks each
 under auto and forced NEON. Explicit policy-dependent dense-kernel accounting
 uses a development-only validation contract.
 Historical validators keep their original contract.
+The hosted policy-15 build at `5c0899ad6f5e5f2505aa523d35f46e3ae68f0c38`
+passes 1,167 tests plus 190 subtests (14 skips) at each wide width, with 1,979
+executable checks in each auto/NEON run. Run
+[41125590880](https://github.com/logannye/arm64-transformer/actions/runs/41125590880)
+also checks all 16 primitive policies. Hosted
+[41127179360](https://github.com/logannye/arm64-transformer/actions/runs/41127179360)
+replays the complete historical native gradients from existing public tensors;
+width 512 has passed and width 1024 remains in progress. Its M1/NEON platform
+cannot qualify the M4/SME path or support new performance claims.
 
 The full-source PyTorch FP16/layout v2 build completed compilation, but failed
 its check because four Objective-C++ commands omit explicit `-g0` despite the
@@ -88,9 +118,12 @@ CMake cache containing it. The failure is retained in run 41110294834. Recipe v3
 passes CMake flag variables explicitly and checks generated commands early;
 its hosted validation remains pending. That build
 addresses retained integration failures, not the MPS trained-attention arithmetic
-failures. Full framework conformance, archive-safe MPS evidence validation, new
-runtime capture and a prospectively frozen successor comparison contract remain
-necessary before any formal five-engine campaign.
+failures. The portable MPS evidence producer and archive auditor now have 66
+CPU-only checks, plus 25 eligibility checks. They verify retained evidence after
+relocation without reading original paths. No actual runtime or full MPS suite is
+qualified by those tests. Full framework conformance against the new runtime,
+archive validation of that run, new runtime capture and a prospectively frozen
+successor comparison contract remain necessary before any formal campaign.
 
 Large raw arrays are stored losslessly in `work/trained-raw-store-v1`. Each receipt
 binds the original NPZ hash; the store preserves exact compressed members and ZIP
@@ -98,3 +131,7 @@ metadata and verifies byte-identical reconstruction. New workers can write share
 members directly from memory, and auditors read one bounded archive in memory.
 No arrays are rounded, downcast or discarded. The interrupted storage run and the
 sandboxed Metal launch that returned `No Metal device` remain explicit records.
+The current disk has about 2.6 GiB free after these bounded replays. Complete
+additional historical gradients and new framework-runtime validation require
+more space; the 2 GiB raw-evidence reserve and the suite's 5 GiB minimum remain
+unchanged. No historical raw evidence was discarded to bypass those limits.

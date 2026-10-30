@@ -2,8 +2,10 @@
 
 This same-input diagnostic is not a replacement framework arm. There is no
 custom operator, native extension, CPU tensor fallback or change to stored dtype.
-Do not compile/fuse the expression: its error decompositions require rounding at
-each declared FP32 operation. The bounded probe uses finite moderate operands.
+Error decompositions assume rounding at each declared FP32 operation. The original
+bounded same-input probe uses finite moderate operands without compilation.
+Compiled full-model candidates have separate graph, numerical and replay checks;
+an uncompiled pass does not qualify a fused graph.
 """
 
 import math

@@ -19,6 +19,10 @@ The native policy build is produced by the hosted
 Policy 1 changes first-LayerNorm arithmetic; policy 2 changes QKV accumulation;
 policy 3 changes both. The later bit 4 refines the second LayerNorm in both
 directions, giving policies 4–7 after the fresh ReLU-branch localization.
+Bit 8 refines the first feed-forward projection and its derivatives, giving the
+complete 0–15 factorial. Policy 15 enables all four refinements. The ordinary
+dense-kernel count is `5 - bool(policy & 2) - bool(policy & 8)` in each direction;
+development workers verify observed dispatch against that declared count.
 `relu_localize.py` retains that counterfactual diagnostic and its original
 gradient failure. FP32 stored state remains fixed. Default builds retain
 policy 0. Use externally verified artifact hashes with `--library` and
@@ -37,10 +41,18 @@ optimized shaders. `localize_gpu.py` separates same-input local operation errors
 from propagated prefix errors. `compensated_probe.py` tests attention in isolation;
 `framework_probe.py` tests the complete model under a four-way normalization and
 attention factorial, including separate compiled and uncompiled MLX controls.
-`--framework-policy 2|3` extends these candidates to whole replay inventories;
+`--framework-policy 2|3|6|7` extends these candidates to whole replay inventories;
+bit 4 adds the tiled compensated QKV projection. Its explicit first-order
+derivatives use standard device tensor operations and retain only FP32 inputs,
+weights and returned gradients. This avoids saving every product/reduction
+temporary for backward. It remains a custom model, not a native framework patch.
 `--framework-compiled` explicitly selects compiled MLX. The reusable evaluator
 takes new parameters and batches on every call and retains its graph/trace and
 execution-count proof. Forward and gradient receipts remain separate.
+`graph_evidence.py` retains small graphs as DOT and larger graphs as lossless gzip,
+with hashes and strict bounds for both encoded and decoded bytes. The independent
+auditor rejects truncated, concatenated or oversized compressed streams. Graph
+transport does not change model arithmetic or relax numerical tolerances.
 These probes are diagnostic Python model expressions, not full-source framework
 repairs or admitted comparison arms.
 
@@ -90,6 +102,12 @@ Materialized raw files with changed bytes are rejected; the store never masks a
 corrupted existing file. This permits a complete re-audit without materializing
 the entire campaign. Keep the store's `objects` and `recipes` directories with
 the original worker receipts, inventory and authenticated input checkpoints.
+
+The hosted [`trained-precision-replay.yml`](../../.github/workflows/trained-precision-replay.yml)
+workflow restores only hash-authenticated tensor inputs from the existing public
+CPU-v6 release, then replays all historical native-policy-15 gradients and audits
+the raw arrays. Its Apple M1/NEON result is separate from Apple M4/SME evidence.
+Large hosted raw artifacts need not be downloaded onto the local development disk.
 
 The complete maintained-framework builds, full upstream suites, archive-safe MPS
 qualification, fresh runtime capture, prospective formal contract and all-engine

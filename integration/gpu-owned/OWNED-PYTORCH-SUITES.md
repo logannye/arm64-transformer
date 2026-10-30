@@ -5,10 +5,9 @@
 complete maintained PyTorch distribution intended for both CPU and MPS study
 workers. This is framework eligibility evidence, not numerical admission or a
 formal fit. No GPU suite or native compilation was performed while implementing
-the adapter. **This adapter is prepared but not qualification-ready.** Owned MPS
-eligibility is explicitly blocked until a separately reviewed archive-safe audit
-validates its complete descendant, fixture, helper and source evidence. The
-generic full-test count check cannot qualify MPS in the meantime.
+the adapter and portable auditor. **No runtime is qualified by these source-level
+checks.** The eligibility gate requires complete portable MPS evidence in addition
+to the unchanged full test inventory. Generic passing counts cannot qualify MPS.
 
 The current version binds the original 10,353 test identities, their order, skips,
 and expected failures through `owned-suite-inventory-v1.json`. All failures remain
@@ -97,19 +96,31 @@ attention implementation.
 ## Evidence and invocation
 
 The parent checks raw full-suite results and invokes the same production
-eligibility validator as the prospective study. At this stopping point that
-validator explicitly rejects owned MPS qualification, even if all raw methods
-pass. The remaining archive auditor must independently revalidate relative raw
-bindings for both descendant receipts and the launcher; complete imported-file
-proofs, process intervals and parent identity; the bounded stock fixture and
-its generated native files; retained helper identities; and the full selected
-source manifest. No absolute local path may substitute for archived evidence.
-Until that code and its mutation tests are completed and reviewed, this producer
-cannot return a qualified passing study receipt. A worker's `passed` boolean cannot substitute
-for the expected test inventory, exact skip policy, raw results, source/runtime
-hashes, native module and library origins, complete child receipts or successful
-postflight checks. Failed and interrupted attempts retain available logs and
-receipts; they cannot produce passing eligibility. Formal fits remain zero.
+eligibility validator as the prospective study. `owned_pytorch_archive.py` retains
+relative, hash-bound copies of the frozen plan, runtime authorities, full source
+manifest, exact result helpers, stock fixture sources and headers, generated
+fixture cache, launcher and both child receipts. Each raw byte binding is checked
+before and after copying. Authority/source metadata are bounded to 256 MiB; the
+existing 2 GiB full-output bound and 1 GiB fixture-cache bound still apply.
+
+The archive auditor reads retained members under the supplied evidence root.
+Original absolute paths are identity labels, not fallback read locations. It
+rechecks the selected source revision and patch, fixture AST and source hashes,
+helper pins, compiler/cache identity, resource observations, exact isolated parent
+argv and child launcher, process intervals, parent identity, and complete native
+and Python import proofs. It rejects unbound extra portable members, symlinks,
+missing or altered files and weakened execution controls. The entire retained
+member set is rehashed at the end. Relocation tests delete the original inputs
+before auditing the copied archive.
+
+A worker's `passed` boolean cannot substitute for the expected test inventory,
+exact skip policy, raw results, source/runtime hashes, native module and library
+origins, complete child receipts or successful postflight checks. Failed and
+interrupted attempts retain available logs and receipts; they cannot produce
+passing eligibility. Formal fits remain zero. A new framework binary still needs
+a fresh capture and complete suite execution. The 10,357-test half candidate also
+needs its own prospective inventory; these changes do not revise the 10,353-test
+historical contract or promote old-runtime results.
 
 Use the retained interpreter for CPU-only tests:
 
@@ -126,8 +137,8 @@ The driver/reference paths select the already-retained immutable result helpers,
 not another framework implementation. The two external SHA256 arguments must
 come from verified publication/capture evidence.
 
-The 45 CPU-only regression checks pass under the retained CPython 3.12 interpreter,
-including actual fresh-process launcher
+The 45 producer checks and 21 portable-archive checks pass under the retained
+CPython 3.12 interpreter, including actual fresh-process launcher
 checks, source mutations, cache bounds, native-origin mutations, and unconditional
 interpreter restoration after a test-runner exception. Retained Python import maps
 are checked against authenticated runtime, project, full-source and explicit
@@ -135,8 +146,8 @@ fixture authorities without accessing their original paths. Child receipts must
 have distinct integer process identities and serial, finite intervals contained
 within the parent process. Missing origins, changed hashes, foreign imports and
 overlapping or escaped intervals are rejected. Ruff passes for the new
-Python files. These tests do not validate native execution or complete the
-pending archive auditor. The original AST fingerprints bind CPython 3.12's AST
+Python files. These tests do not validate native execution or qualify a runtime.
+The original AST fingerprints bind CPython 3.12's AST
 representation; a different Python AST version does not inherit this check.
 
 Both `prepare` and `run` require the same sanitized environment constructed by

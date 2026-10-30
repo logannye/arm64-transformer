@@ -1,0 +1,1425 @@
+{
+  "schema": "trained-precision-development-evidence-index-v1",
+  "created_utc": "2026-10-30T21:20:34.218983+00:00",
+  "scope": "Development regression/fresh-state evidence; no formal qualification or timing",
+  "local_hardware": "Apple M4 Max, native automatic dispatch selected SME with 64-byte streaming vectors",
+  "formal_eligible": false,
+  "formal_fits_started": 0,
+  "admission_stream_opened": false,
+  "inventory": {
+    "historical": {
+      "path": "experiments/trained-precision-v1/replay-inventory.json",
+      "sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "bytes": 64457
+    },
+    "fresh": {
+      "path": "work/trained-fresh-v1/replay-inventory.json",
+      "sha256": "fdcc95dd1eb193b2c0115c50d0faca301f5487f75aa84418a8f84c000cc2fb48",
+      "bytes": 14805
+    },
+    "screen": {
+      "path": "work/framework-qkv-screen-inventory.json",
+      "sha256": "05a066d69369a5503cf973bc8d0b228ab1de62b6ac92ed675e75b2b52cc812e0",
+      "bytes": 7961
+    }
+  },
+  "local_results": [
+    {
+      "name": "mlx-1024-policy7-fresh-forward",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 10,
+      "unique_batches": 10,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase5/prior-fresh-audit.json",
+        "sha256": "e3c2c389a718656dad46d62a9adcf6dc0c8accd3c8d8102d2f1760440ce13c17",
+        "bytes": 282443
+      },
+      "inventory_sha256": "fdcc95dd1eb193b2c0115c50d0faca301f5487f75aa84418a8f84c000cc2fb48",
+      "engine": "mlx",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mlx",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v2",
+        "framework_candidate_policy": 7,
+        "framework_compiled": true,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase4/mlx-1024-policy7-fresh-forward/result.json",
+          "sha256": "3a1f8a9c199317db3add14f8b8281f48bc83197bfa7c86243f4aa0b8a8a89e30"
+        }
+      ]
+    },
+    {
+      "name": "mlx-512-policy7-fresh-forward",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 10,
+      "unique_batches": 10,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase5/prior-fresh-audit.json",
+        "sha256": "e3c2c389a718656dad46d62a9adcf6dc0c8accd3c8d8102d2f1760440ce13c17",
+        "bytes": 282443
+      },
+      "inventory_sha256": "fdcc95dd1eb193b2c0115c50d0faca301f5487f75aa84418a8f84c000cc2fb48",
+      "engine": "mlx",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mlx",
+        "width": 512,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v2",
+        "framework_candidate_policy": 7,
+        "framework_compiled": true,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase4/mlx-512-policy7-fresh-forward/result.json",
+          "sha256": "3e0ce22461ad311ea84c60965252c6abe277185351b3d3a77be16c3fcdf5312b"
+        }
+      ]
+    },
+    {
+      "name": "mps-1024-policy7-fresh-forward",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 10,
+      "unique_batches": 10,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase5/prior-fresh-audit.json",
+        "sha256": "e3c2c389a718656dad46d62a9adcf6dc0c8accd3c8d8102d2f1760440ce13c17",
+        "bytes": 282443
+      },
+      "inventory_sha256": "fdcc95dd1eb193b2c0115c50d0faca301f5487f75aa84418a8f84c000cc2fb48",
+      "engine": "mps",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mps",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v2",
+        "framework_candidate_policy": 7,
+        "framework_compiled": false,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase4/mps-1024-policy7-fresh-forward/result.json",
+          "sha256": "7fd83fb9b1d676f72a2eff2fe25cd580a0de6d4db5939b60d549e94ba612ee09"
+        }
+      ]
+    },
+    {
+      "name": "mps-512-policy7-fresh-forward",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 10,
+      "unique_batches": 10,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase5/prior-fresh-audit.json",
+        "sha256": "e3c2c389a718656dad46d62a9adcf6dc0c8accd3c8d8102d2f1760440ce13c17",
+        "bytes": 282443
+      },
+      "inventory_sha256": "fdcc95dd1eb193b2c0115c50d0faca301f5487f75aa84418a8f84c000cc2fb48",
+      "engine": "mps",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mps",
+        "width": 512,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v2",
+        "framework_candidate_policy": 7,
+        "framework_compiled": false,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase4/mps-512-policy7-fresh-forward/result.json",
+          "sha256": "8d0dff790fd3a14d314e2df1454ffec7e05e591e8dadd700854f148587a72ae7"
+        }
+      ]
+    },
+    {
+      "name": "native-1024-policy15-fresh-gradient",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 10,
+      "unique_batches": 10,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase5/prior-fresh-audit.json",
+        "sha256": "e3c2c389a718656dad46d62a9adcf6dc0c8accd3c8d8102d2f1760440ce13c17",
+        "bytes": 282443
+      },
+      "inventory_sha256": "fdcc95dd1eb193b2c0115c50d0faca301f5487f75aa84418a8f84c000cc2fb48",
+      "engine": "native",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "implementation": {
+        "engine": "native",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": true,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": "90bc2f74fdaddd5e19a1185b57b10c39810f7bac6b2c636fa0ef31e29ada9eff",
+        "native_policy": 15,
+        "native_selected_kind": 1,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null
+      },
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "2.5.2",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.14.1"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase4/native-1024-policy15-fresh-gradient/result.json",
+          "sha256": "fb759a32b5eef447a73632c9dd17e84ed5839b95bf0873cce0f3eececa971514"
+        }
+      ]
+    },
+    {
+      "name": "native-512-policy15-fresh-gradient",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 10,
+      "unique_batches": 10,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase5/prior-fresh-audit.json",
+        "sha256": "e3c2c389a718656dad46d62a9adcf6dc0c8accd3c8d8102d2f1760440ce13c17",
+        "bytes": 282443
+      },
+      "inventory_sha256": "fdcc95dd1eb193b2c0115c50d0faca301f5487f75aa84418a8f84c000cc2fb48",
+      "engine": "native",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "implementation": {
+        "engine": "native",
+        "width": 512,
+        "batch_size": 16,
+        "gradients_checked": true,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": "08bd16a9bb8d1a823756ce5388b3f5b1fbb14bf02ac87821f7b981f9f0cc6bad",
+        "native_policy": 15,
+        "native_selected_kind": 1,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null
+      },
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "2.5.2",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.14.1"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase4/native-512-policy15-fresh-gradient/result.json",
+          "sha256": "babc206c6dee3c84171d81705c34207ec70e37aafbbc813990e19cf9ea42c63b"
+        }
+      ]
+    },
+    {
+      "name": "mlx-1024-policy7-historical-forward",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 87,
+      "unique_batches": 71,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase5/prior-historical-audit.json",
+        "sha256": "4795bb07eff81de5d2fcf2520bdfe3fbaf2e48c3f320d8e20f94426fc2beedbb",
+        "bytes": 450815
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mlx",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mlx",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v2",
+        "framework_candidate_policy": 7,
+        "framework_compiled": true,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase4/mlx-1024-policy7-historical-forward/result.json",
+          "sha256": "35900ae9e0a525215d329f13506012cd7a77072a9a2af452c5d25a112e0046c4"
+        }
+      ]
+    },
+    {
+      "name": "mlx-512-policy7-historical-forward",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 2,
+      "unique_batches": 2,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase5/prior-historical-audit.json",
+        "sha256": "4795bb07eff81de5d2fcf2520bdfe3fbaf2e48c3f320d8e20f94426fc2beedbb",
+        "bytes": 450815
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mlx",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mlx",
+        "width": 512,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v2",
+        "framework_candidate_policy": 7,
+        "framework_compiled": true,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase4/mlx-512-policy7-historical-forward/result.json",
+          "sha256": "7e8b299509feaf5edcdc4a69683c3239d95ae0b3c533947ca7c33d1d06c0ab5f"
+        }
+      ]
+    },
+    {
+      "name": "mps-1024-policy7-historical-forward",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 87,
+      "unique_batches": 71,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase5/prior-historical-audit.json",
+        "sha256": "4795bb07eff81de5d2fcf2520bdfe3fbaf2e48c3f320d8e20f94426fc2beedbb",
+        "bytes": 450815
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mps",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mps",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v2",
+        "framework_candidate_policy": 7,
+        "framework_compiled": false,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase4/mps-1024-policy7-historical-forward/result.json",
+          "sha256": "6ed4fc45f0a9bbb24943308e4d9df159b0ec1a419a6bdc15f023b1b1ce8db807"
+        }
+      ]
+    },
+    {
+      "name": "mps-512-policy7-historical-forward",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 2,
+      "unique_batches": 2,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase5/prior-historical-audit.json",
+        "sha256": "4795bb07eff81de5d2fcf2520bdfe3fbaf2e48c3f320d8e20f94426fc2beedbb",
+        "bytes": 450815
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mps",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mps",
+        "width": 512,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v2",
+        "framework_candidate_policy": 7,
+        "framework_compiled": false,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase4/mps-512-policy7-historical-forward/result.json",
+          "sha256": "a84a38f35766562c7dde9f24fb2f370bc25e3b3e748ddcc01b7f7ed80dbaee7b"
+        }
+      ]
+    },
+    {
+      "name": "native-1024-policy15-historical-forward",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 87,
+      "unique_batches": 71,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase5/prior-historical-audit.json",
+        "sha256": "4795bb07eff81de5d2fcf2520bdfe3fbaf2e48c3f320d8e20f94426fc2beedbb",
+        "bytes": 450815
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "native",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "native",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": "90bc2f74fdaddd5e19a1185b57b10c39810f7bac6b2c636fa0ef31e29ada9eff",
+        "native_policy": 15,
+        "native_selected_kind": 1,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null
+      },
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "2.5.2",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.14.1"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase4/native-1024-policy15-historical-forward/result.json",
+          "sha256": "11c2fe56ad24a173f1b22e0df52c4f27fb4ffb269a77b71accb8239d54872e7d"
+        }
+      ]
+    },
+    {
+      "name": "native-512-policy15-historical-forward",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 2,
+      "unique_batches": 2,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase5/prior-historical-audit.json",
+        "sha256": "4795bb07eff81de5d2fcf2520bdfe3fbaf2e48c3f320d8e20f94426fc2beedbb",
+        "bytes": 450815
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "native",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "native",
+        "width": 512,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": "08bd16a9bb8d1a823756ce5388b3f5b1fbb14bf02ac87821f7b981f9f0cc6bad",
+        "native_policy": 15,
+        "native_selected_kind": 1,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null
+      },
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "2.5.2",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.14.1"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase4/native-512-policy15-historical-forward/result.json",
+          "sha256": "71c98743b50301c1cf442647ac05f8e5989137b5a0b1540ac136f2bea9de19ed"
+        }
+      ]
+    },
+    {
+      "name": "mlx-1024-policy6-screen-forward",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 5,
+      "unique_batches": 5,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase5/prior-screen-audit.json",
+        "sha256": "f9129f5c273b1ca80a7d2167a50fe70187cb468855056f067bcc40bc0a18c30a",
+        "bytes": 50977
+      },
+      "inventory_sha256": "05a066d69369a5503cf973bc8d0b228ab1de62b6ac92ed675e75b2b52cc812e0",
+      "engine": "mlx",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mlx",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v2",
+        "framework_candidate_policy": 6,
+        "framework_compiled": true,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase4/mlx-1024-policy6-screen-forward/result.json",
+          "sha256": "ea5e0d2b2ea3d6871141a1e28b910e3116ae32439ebdece340cef512fc956dcc"
+        }
+      ]
+    },
+    {
+      "name": "mlx-1024-policy7-screen-forward",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 5,
+      "unique_batches": 5,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase5/prior-screen-audit.json",
+        "sha256": "f9129f5c273b1ca80a7d2167a50fe70187cb468855056f067bcc40bc0a18c30a",
+        "bytes": 50977
+      },
+      "inventory_sha256": "05a066d69369a5503cf973bc8d0b228ab1de62b6ac92ed675e75b2b52cc812e0",
+      "engine": "mlx",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mlx",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v2",
+        "framework_candidate_policy": 7,
+        "framework_compiled": true,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase4/mlx-1024-policy7-screen-forward/result.json",
+          "sha256": "7e1c8e6ad1511e452a501b88316d771bfd1cf9ee776ceba3b1f1889e96bcc00d"
+        }
+      ]
+    },
+    {
+      "name": "mlx-1024-policy2",
+      "evidence_valid": true,
+      "numerics_passed": false,
+      "sequence_anchors": 87,
+      "unique_batches": 71,
+      "failed_sequence_anchors": 4,
+      "failed_unique_batches": 4,
+      "audit": {
+        "path": "work/framework-full-forward-v1-audit-complete/audit.json",
+        "sha256": "583b971c0b3f6dbaa075810be57087f1d55dffa30b8558fb19df0a1f7d677258",
+        "bytes": 619483
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mlx",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mlx",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v1",
+        "framework_candidate_policy": 2,
+        "framework_compiled": true,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "38b5f01bd63b513ba9a2c2c385097865f13c4dc3a6e5b82a1a24b05ecc521390",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/framework-full-forward-v1/mlx-1024-policy2/result.json",
+          "sha256": "14808f538157b2073b9c2cc0495efe60fa032cd90a38d6edf07ba07ff7240349"
+        }
+      ]
+    },
+    {
+      "name": "mlx-1024-policy3",
+      "evidence_valid": true,
+      "numerics_passed": false,
+      "sequence_anchors": 87,
+      "unique_batches": 71,
+      "failed_sequence_anchors": 5,
+      "failed_unique_batches": 5,
+      "audit": {
+        "path": "work/framework-full-forward-v1-audit-complete/audit.json",
+        "sha256": "583b971c0b3f6dbaa075810be57087f1d55dffa30b8558fb19df0a1f7d677258",
+        "bytes": 619483
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mlx",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mlx",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v1",
+        "framework_candidate_policy": 3,
+        "framework_compiled": true,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "38b5f01bd63b513ba9a2c2c385097865f13c4dc3a6e5b82a1a24b05ecc521390",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/framework-full-forward-v1/mlx-1024-policy3/result.json",
+          "sha256": "5d94271f7a46d74c10c0c66a42c6f13a984984cff496cd7f63cf0b713041ff1c"
+        }
+      ]
+    },
+    {
+      "name": "mlx-512-policy2",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 2,
+      "unique_batches": 2,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/framework-full-forward-v1-audit-complete/audit.json",
+        "sha256": "583b971c0b3f6dbaa075810be57087f1d55dffa30b8558fb19df0a1f7d677258",
+        "bytes": 619483
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mlx",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mlx",
+        "width": 512,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v1",
+        "framework_candidate_policy": 2,
+        "framework_compiled": true,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "38b5f01bd63b513ba9a2c2c385097865f13c4dc3a6e5b82a1a24b05ecc521390",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/framework-full-forward-v1/mlx-512-policy2/result.json",
+          "sha256": "c55589b46ffee6d4dcf92140d0d690561726d6e2e863785503a64d17cd27757a"
+        }
+      ]
+    },
+    {
+      "name": "mlx-512-policy3",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 2,
+      "unique_batches": 2,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/framework-full-forward-v1-audit-complete/audit.json",
+        "sha256": "583b971c0b3f6dbaa075810be57087f1d55dffa30b8558fb19df0a1f7d677258",
+        "bytes": 619483
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mlx",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mlx",
+        "width": 512,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v1",
+        "framework_candidate_policy": 3,
+        "framework_compiled": true,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "38b5f01bd63b513ba9a2c2c385097865f13c4dc3a6e5b82a1a24b05ecc521390",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/framework-full-forward-v1/mlx-512-policy3/result.json",
+          "sha256": "dc92b9de33f73f488948da0326316554a2588a4373a8b787ddfa3d206f35f523"
+        }
+      ]
+    },
+    {
+      "name": "mps-1024-policy2",
+      "evidence_valid": true,
+      "numerics_passed": false,
+      "sequence_anchors": 87,
+      "unique_batches": 71,
+      "failed_sequence_anchors": 11,
+      "failed_unique_batches": 9,
+      "audit": {
+        "path": "work/framework-full-forward-v1-audit-complete/audit.json",
+        "sha256": "583b971c0b3f6dbaa075810be57087f1d55dffa30b8558fb19df0a1f7d677258",
+        "bytes": 619483
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mps",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mps",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v1",
+        "framework_candidate_policy": 2,
+        "framework_compiled": false,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "38b5f01bd63b513ba9a2c2c385097865f13c4dc3a6e5b82a1a24b05ecc521390",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/framework-full-forward-v1/mps-1024-policy2/result.json",
+          "sha256": "65cacaf33664622af2b8b9f3803a7de1fcbe8047d55a1c47d48f780ed4c4ffed"
+        }
+      ]
+    },
+    {
+      "name": "mps-1024-policy3",
+      "evidence_valid": true,
+      "numerics_passed": false,
+      "sequence_anchors": 87,
+      "unique_batches": 71,
+      "failed_sequence_anchors": 5,
+      "failed_unique_batches": 5,
+      "audit": {
+        "path": "work/framework-full-forward-v1-audit-complete/audit.json",
+        "sha256": "583b971c0b3f6dbaa075810be57087f1d55dffa30b8558fb19df0a1f7d677258",
+        "bytes": 619483
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mps",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mps",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v1",
+        "framework_candidate_policy": 3,
+        "framework_compiled": false,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "38b5f01bd63b513ba9a2c2c385097865f13c4dc3a6e5b82a1a24b05ecc521390",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/framework-full-forward-v1/mps-1024-policy3/result.json",
+          "sha256": "ee6e17ce13006ccebe199fc4dfa660049e8ad6ee9fe2975df87852601c14fcb5"
+        }
+      ]
+    },
+    {
+      "name": "mps-512-policy2",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 2,
+      "unique_batches": 2,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/framework-full-forward-v1-audit-complete/audit.json",
+        "sha256": "583b971c0b3f6dbaa075810be57087f1d55dffa30b8558fb19df0a1f7d677258",
+        "bytes": 619483
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mps",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mps",
+        "width": 512,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v1",
+        "framework_candidate_policy": 2,
+        "framework_compiled": false,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "38b5f01bd63b513ba9a2c2c385097865f13c4dc3a6e5b82a1a24b05ecc521390",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/framework-full-forward-v1/mps-512-policy2/result.json",
+          "sha256": "b5bbe9f15a468ff7b34f64d32de3713a4137782d8ebd852d953ac431215be7a3"
+        }
+      ]
+    },
+    {
+      "name": "mps-512-policy3",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 2,
+      "unique_batches": 2,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/framework-full-forward-v1-audit-complete/audit.json",
+        "sha256": "583b971c0b3f6dbaa075810be57087f1d55dffa30b8558fb19df0a1f7d677258",
+        "bytes": 619483
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mps",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": false,
+      "implementation": {
+        "engine": "mps",
+        "width": 512,
+        "batch_size": 16,
+        "gradients_checked": false,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v1",
+        "framework_candidate_policy": 3,
+        "framework_compiled": false,
+        "framework_operation": "forward"
+      },
+      "source_inventory_sha256": "38b5f01bd63b513ba9a2c2c385097865f13c4dc3a6e5b82a1a24b05ecc521390",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/framework-full-forward-v1/mps-512-policy3/result.json",
+          "sha256": "ee8076905c414335b77e9ffe68ba260b70bd7a6668a06cffeb5f3d1cb24d77e9"
+        }
+      ]
+    },
+    {
+      "name": "mlx-1024-policy7-fresh-gradient",
+      "audit": {
+        "path": "work/precision-phase5/mlx-1024-policy7-fresh-gradient-audit.json",
+        "sha256": "7ce07cfbea5ad2253bb964493cbc1ba5a0f89b0805ae6b871c4a54d51600d049",
+        "bytes": 54724
+      },
+      "worker_receipt": {
+        "path": "work/precision-phase5/mlx-1024-policy7-fresh-gradient/result.json",
+        "sha256": "60970fe644c795eaf9980020bf93c3566753877d3d8a029a471c9dd00fe50c0c",
+        "bytes": 160632
+      },
+      "inventory_sha256": "fdcc95dd1eb193b2c0115c50d0faca301f5487f75aa84418a8f84c000cc2fb48",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "engine": "mlx",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "sequence_anchors": 10,
+      "unique_batches": 10,
+      "failed_sequence_anchors": 0,
+      "framework_candidate": "compensated-framework-model-diagnostic-v2",
+      "framework_candidate_policy": 7,
+      "framework_compiled": true,
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      }
+    },
+    {
+      "name": "mlx-1024-policy7-screen-gradient",
+      "audit": {
+        "path": "work/precision-phase5/mlx-1024-policy7-screen-gradient-audit.json",
+        "sha256": "4fa4bf4bad1b74fcaac5e4ef778cf580af49be6ac6843017f707bc935b8f9c3f",
+        "bytes": 27924
+      },
+      "worker_receipt": {
+        "path": "work/precision-phase5/mlx-1024-policy7-screen-gradient/result.json",
+        "sha256": "2c66355172def3981949fd02b39233d92dd8e148917fd4083965e806e19f379f",
+        "bytes": 101507
+      },
+      "inventory_sha256": "05a066d69369a5503cf973bc8d0b228ab1de62b6ac92ed675e75b2b52cc812e0",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "engine": "mlx",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "sequence_anchors": 5,
+      "unique_batches": 5,
+      "failed_sequence_anchors": 0,
+      "framework_candidate": "compensated-framework-model-diagnostic-v2",
+      "framework_candidate_policy": 7,
+      "framework_compiled": true,
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      }
+    },
+    {
+      "name": "mlx-512-policy7-fresh-gradient",
+      "audit": {
+        "path": "work/precision-phase5/mlx-512-policy7-fresh-gradient-audit.json",
+        "sha256": "8c87d1b247b7ec6b16c411c0b08da87f84efd7cdb838ffdbb97e491204d7ca46",
+        "bytes": 54828
+      },
+      "worker_receipt": {
+        "path": "work/precision-phase5/mlx-512-policy7-fresh-gradient/result.json",
+        "sha256": "9567e0e8bd1965215666c03b0cfc78b435845d497de45ddb0665e7862e4b1305",
+        "bytes": 160052
+      },
+      "inventory_sha256": "fdcc95dd1eb193b2c0115c50d0faca301f5487f75aa84418a8f84c000cc2fb48",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "engine": "mlx",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "sequence_anchors": 10,
+      "unique_batches": 10,
+      "failed_sequence_anchors": 0,
+      "framework_candidate": "compensated-framework-model-diagnostic-v2",
+      "framework_candidate_policy": 7,
+      "framework_compiled": true,
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      }
+    },
+    {
+      "name": "mlx-512-policy7-screen-gradient",
+      "audit": {
+        "path": "work/precision-phase5/mlx-512-policy7-screen-gradient-audit.json",
+        "sha256": "ce07794e84a64128eb985209e12dea923190eac41c542d40f892129a862940dc",
+        "bytes": 11673
+      },
+      "worker_receipt": {
+        "path": "work/precision-phase5/mlx-512-policy7-screen-gradient/result.json",
+        "sha256": "02b90bb71dc94f66e32a9f2c2d7697d3e78b13ce595abd83426855c768700f11",
+        "bytes": 63913
+      },
+      "inventory_sha256": "05a066d69369a5503cf973bc8d0b228ab1de62b6ac92ed675e75b2b52cc812e0",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "engine": "mlx",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "sequence_anchors": 2,
+      "unique_batches": 2,
+      "failed_sequence_anchors": 0,
+      "framework_candidate": "compensated-framework-model-diagnostic-v2",
+      "framework_candidate_policy": 7,
+      "framework_compiled": true,
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      }
+    },
+    {
+      "name": "mps-1024-policy7-fresh-gradient",
+      "audit": {
+        "path": "work/precision-phase5/mps-1024-policy7-fresh-gradient-audit.json",
+        "sha256": "a3ad88a7776d6e2948263a43ec0fe06e468c3374582208f665a9ec65bfe2d6c7",
+        "bytes": 54718
+      },
+      "worker_receipt": {
+        "path": "work/precision-phase5/mps-1024-policy7-fresh-gradient/result.json",
+        "sha256": "0468a106be5de88a94d53c3b1984446f7a7080461a2a60569a92430571c75d97",
+        "bytes": 145872
+      },
+      "inventory_sha256": "fdcc95dd1eb193b2c0115c50d0faca301f5487f75aa84418a8f84c000cc2fb48",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "engine": "mps",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "sequence_anchors": 10,
+      "unique_batches": 10,
+      "failed_sequence_anchors": 0,
+      "framework_candidate": "compensated-framework-model-diagnostic-v2",
+      "framework_candidate_policy": 7,
+      "framework_compiled": false,
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      }
+    },
+    {
+      "name": "mps-1024-policy7-screen-gradient",
+      "audit": {
+        "path": "work/precision-phase5/mps-1024-policy7-screen-gradient-audit.json",
+        "sha256": "c0841d0a818137efb6936ea7c6db4886af34ec575fc5343a8d0c12836e0aca3a",
+        "bytes": 27922
+      },
+      "worker_receipt": {
+        "path": "work/precision-phase5/mps-1024-policy7-screen-gradient/result.json",
+        "sha256": "73099a65ace382d659434d41cdd86c5f3cc7d627882b098d01ba8e6b918d6cec",
+        "bytes": 86766
+      },
+      "inventory_sha256": "05a066d69369a5503cf973bc8d0b228ab1de62b6ac92ed675e75b2b52cc812e0",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "engine": "mps",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "sequence_anchors": 5,
+      "unique_batches": 5,
+      "failed_sequence_anchors": 0,
+      "framework_candidate": "compensated-framework-model-diagnostic-v2",
+      "framework_candidate_policy": 7,
+      "framework_compiled": false,
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      }
+    },
+    {
+      "name": "mps-512-policy7-fresh-gradient",
+      "audit": {
+        "path": "work/precision-phase5/mps-512-policy7-fresh-gradient-audit.json",
+        "sha256": "d46e14a0da193a89f932a6c511b0b79e79bd3a9071941037cee07a0c0d069103",
+        "bytes": 54816
+      },
+      "worker_receipt": {
+        "path": "work/precision-phase5/mps-512-policy7-fresh-gradient/result.json",
+        "sha256": "674ceb571e072a3fd65c2252582ee23d11a3d17b4db52e55cf58d76ef1c58d8f",
+        "bytes": 145454
+      },
+      "inventory_sha256": "fdcc95dd1eb193b2c0115c50d0faca301f5487f75aa84418a8f84c000cc2fb48",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "engine": "mps",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "sequence_anchors": 10,
+      "unique_batches": 10,
+      "failed_sequence_anchors": 0,
+      "framework_candidate": "compensated-framework-model-diagnostic-v2",
+      "framework_candidate_policy": 7,
+      "framework_compiled": false,
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      }
+    },
+    {
+      "name": "mps-512-policy7-screen-gradient",
+      "audit": {
+        "path": "work/precision-phase5/mps-512-policy7-screen-gradient-audit.json",
+        "sha256": "ea7835e29075be1546acf2529bfdd8ef10e20dc3295a1eff7a94a43f6f41361e",
+        "bytes": 11680
+      },
+      "worker_receipt": {
+        "path": "work/precision-phase5/mps-512-policy7-screen-gradient/result.json",
+        "sha256": "bc2320eb2eb4fa0869b72e96825a3af490301bbe9e084ccce7c616956ced155c",
+        "bytes": 49339
+      },
+      "inventory_sha256": "05a066d69369a5503cf973bc8d0b228ab1de62b6ac92ed675e75b2b52cc812e0",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "engine": "mps",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "sequence_anchors": 2,
+      "unique_batches": 2,
+      "failed_sequence_anchors": 0,
+      "framework_candidate": "compensated-framework-model-diagnostic-v2",
+      "framework_candidate_policy": 7,
+      "framework_compiled": false,
+      "source_inventory_sha256": "99103f3b0e2ddebc488e01a59f8235d16e5f7263d9fe74c7ea6994b9e24f547f",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      }
+    }
+  ],
+  "hosted_results": [
+    {
+      "run_url": "https://github.com/logannye/arm64-transformer/actions/runs/41127179360",
+      "source_revision": "7aafeccc83d2d36fc5c784dd967496be197e4efd",
+      "verification": "Independent raw audit ran on hosted M1/NEON; no local raw-artifact re-audit",
+      "log": {
+        "path": "work/hosted-native-replay-7aafecc/width-512.log",
+        "sha256": "20e275e615e8d20cc4f890d277ea110ed339952529d8dccf5e38e5a4a944a1af",
+        "bytes": 33985
+      },
+      "result": {
+        "name": "native-neon-policy15-width-512",
+        "evidence_valid": true,
+        "numerics_passed": true,
+        "sequence_anchors": 2,
+        "unique_batches": 2,
+        "failed_sequence_anchors": 0,
+        "failed_unique_batches": 0,
+        "receipts": [
+          {
+            "path": "worker-000/result.json",
+            "sha256": "099fd08ba24eeb2289ef56a23bcdb95278ee02ee9d78ffe47cdcea39983035fe"
+          }
+        ],
+        "audit_sha256": "94e7b2cd384be72e1fd14babf557da2ce367918b30e5f08b3eaa39e77abb400e",
+        "formal_eligible": false,
+        "admission_stream_opened": false,
+        "scope": "Hosted M1/NEON replay; not M4/SME or timing qualification"
+      }
+    }
+  ],
+  "incomplete_workers": [
+    {
+      "receipt": {
+        "path": "work/framework-qkv-forward-v1/mlx-1024-policy6/result.json",
+        "sha256": "af701be1fb56560e1aadaa4a05e873028fbc0148bb0575ce3cb81eda75a0e4dc",
+        "bytes": 41042
+      },
+      "error": "ValueError: Model graph exceeds 8 MiB",
+      "cases_retained": 5
+    }
+  ],
+  "resource_stops": [],
+  "remaining": [
+    "Complete historical gradients for native policy 15 on M4/SME and the MPS/MLX custom policy-7 models",
+    "Successful complete maintained-framework build, new runtime capture and full conformance suites",
+    "Prospective successor suite/model/comparison contracts; no historical result relabeling",
+    "All-engine checkpoint admission and formal performance study after correctness/eligibility gates pass"
+  ]
+}
