@@ -72,7 +72,13 @@ python -I -S -B integration/trained-precision/zip_evidence.py restore \
 ```
 
 Alternatively pass `--raw-store /ABSOLUTE/EVIDENCE/STORE` to either auditor.
-It restores, authenticates, checks and removes one temporary NPZ at a time.
+It authenticates and checks one archive in memory at a time, with a 512 MiB
+compressed-archive bound. Auditing does not write temporary evidence copies.
+New replay workers and `framework_probe.py` also accept `--raw-store`: each
+bounded NPZ is assembled in memory and only previously unseen compressed members
+are written. The receipt still binds the original complete NPZ hash and size.
+This preserves the 4 GiB logical evidence limit per replay worker even when
+several archives share most of their stored bytes.
 Materialized raw files with changed bytes are rejected; the store never masks a
 corrupted existing file. This permits a complete re-audit without materializing
 the entire campaign. Keep the store's `objects` and `recipes` directories with

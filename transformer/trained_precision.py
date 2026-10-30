@@ -10,10 +10,12 @@ from __future__ import annotations
 import argparse
 import hashlib
 import importlib.util
+import io
 import json
 import os
 import platform
 import re
+import shutil
 import sys
 import traceback
 from pathlib import Path
@@ -110,8 +112,36 @@ def source_inventory():
     paths += [
         ROOT / "integration/trained-precision/precision_reference.py",
         ROOT / "integration/trained-precision/precision_reference_v2.py",
+        ROOT / "integration/trained-precision/zip_evidence.py",
     ]
     return {str(p.relative_to(ROOT)): digest(p) for p in sorted(paths)}
+
+
+def save_arrays(path, arrays, store=None):
+    """Write original NPZ bytes once, or retain their exact shared members."""
+    import numpy as np
+
+    path = Path(path)
+    if path.exists() or path.is_symlink():
+        raise ValueError("Raw evidence already exists")
+    if store is None:
+        with path.open("xb") as stream:
+            np.savez_compressed(stream, **arrays)
+        return {"sha256": digest(path), "bytes": path.stat().st_size}
+    if sum(value.nbytes for value in arrays.values()) > 512 * 1024**2:
+        raise ValueError("In-memory raw evidence exceeds 512 MiB")
+    storage = load_module(
+        "precision_zip_store", ROOT / "integration/trained-precision/zip_evidence.py"
+    )
+    with io.BytesIO() as stream:
+        np.savez_compressed(stream, **arrays)
+        store = Path(store)
+        store.mkdir(parents=True, exist_ok=True)
+        if shutil.disk_usage(store).free < 2 * 1024**3 + stream.tell():
+            raise RuntimeError("Preserve 2 GiB free space plus the complete next archive")
+        stream.seek(0)
+        identity = hashlib.file_digest(stream, "sha256").hexdigest()
+        return storage.pack_stream(stream, identity, store)
 
 
 def torch_evaluate(
@@ -311,6 +341,7 @@ def worker(args):
         receipt["inventory_sha256"] = args.inventory_sha256
         receipt["expected_cases"] = [c["id"] for c in cases]
         receipt["full_width_inventory"] = args.case_limit is None and args.case_offset == 0
+        raw_total = 0
         for case in cases:
             checkpoint = checked_file(root, case["checkpoint"], case["checkpoint_sha256"])
             rows_path = checked_file(root, case["rows"], case["rows_sha256"])
@@ -421,22 +452,19 @@ def worker(args):
                 ("torch64", double),
             ):
                 arrays.update({label + "_" + name: value for name, value in values.items()})
-            if (
-                sum(p.stat().st_size for p in output.glob("*.npz"))
-                + sum(a.nbytes for a in arrays.values())
-                > 4 * 1024**3
-            ):
+            if raw_total + sum(a.nbytes for a in arrays.values()) > 4 * 1024**3:
                 raise RuntimeError(
                     "Worker raw-evidence budget exceeded; remaining cases unexecuted"
                 )
-            with raw.open("xb") as stream:
-                np.savez_compressed(stream, **arrays)
+            stored = save_arrays(raw, arrays, args.raw_store)
+            raw_total += stored["bytes"]
             record = {
                 "case": case,
                 "first_sequence": first,
                 "checks": checks,
                 "raw": raw.name,
-                "raw_sha256": digest(raw),
+                "raw_sha256": stored["sha256"],
+                "raw_bytes": stored["bytes"],
                 "passed": all(c["passed"] for c in checks.values()),
             }
             receipt["cases"].append(record)
@@ -527,6 +555,7 @@ def main():
     run.add_argument("--case-limit", type=int)
     run.add_argument("--case-offset", type=int, default=0)
     run.add_argument("--output", required=True)
+    run.add_argument("--raw-store", help="Retain exact NPZ members without a duplicate archive")
     args = parser.parse_args()
     if args.command == "inventory":
         result = inventory(args.evidence_root)

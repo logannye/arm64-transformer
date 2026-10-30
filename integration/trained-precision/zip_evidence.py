@@ -42,14 +42,15 @@ def member(store, category, identity):
     return path
 
 
-def reconstruct(store, identity, output=None):
+def reconstruct(store, identity, output=None, *, max_bytes=MAX_BYTES):
     identity = key(identity)
+    require(type(max_bytes) is int and 0 < max_bytes <= MAX_BYTES, "Invalid reconstruction bound")
     recipe = json.loads(member(store, "recipes", identity).read_text())
     require(
         recipe["schema"] == "exact-npz-members-v1"
         and recipe["sha256"] == identity
         and type(recipe["bytes"]) is int
-        and 0 < recipe["bytes"] <= MAX_BYTES
+        and 0 < recipe["bytes"] <= max_bytes
         and 0 < len(recipe["parts"]) <= 128,
         "Invalid archive recipe",
     )
@@ -95,19 +96,24 @@ def restore(store, identity, destination):
         raise
 
 
-def pack(path, identity, store, *, replace=False):
-    path, store = Path(path), Path(store)
-    identity = key(identity)
-    require(path.is_file() and not path.is_symlink(), "Original must be a regular file")
-    require(digest(path) == identity, "Original archive changed")
-    before = path.stat()
-    require(0 < before.st_size <= MAX_BYTES, "Original exceeds the archive bound")
+def pack_stream(stream, identity, store):
+    """Retain a bounded seekable ZIP without writing a duplicate archive."""
+    store, identity = Path(store), key(identity)
+    stream.seek(0, 2)
+    size = stream.tell()
+    require(0 < size <= MAX_BYTES, "Original exceeds the archive bound")
+    stream.seek(0)
+    require(
+        hashlib.file_digest(stream, "sha256").hexdigest() == identity, "Original archive changed"
+    )
     for name in ("objects", "recipes"):
         (store / name).mkdir(parents=True, exist_ok=True)
     target = member(store, "recipes", identity)
+    stored = 0
     if not target.exists():
-        parts, cursor, stored = [], 0, 0
-        with path.open("rb") as stream, zipfile.ZipFile(path) as archive:
+        parts, cursor = [], 0
+        stream.seek(0)
+        with zipfile.ZipFile(stream) as archive:
             entries = archive.infolist()
             require(entries and len(entries) <= 32, "Unexpected NPZ member count")
             for entry in entries:
@@ -118,56 +124,68 @@ def pack(path, identity, store, *, replace=False):
                 require(header[:4] == b"PK\x03\x04", "Invalid local ZIP header")
                 filename_size, extra_size = struct.unpack_from("<HH", header, 26)
                 data_start = entry.header_offset + 30 + filename_size + extra_size
-                require(data_start + entry.compress_size <= before.st_size, "Truncated member")
+                require(data_start + entry.compress_size <= size, "Truncated member")
                 require(data_start - cursor <= CHUNK, "Excessive ZIP metadata")
                 stream.seek(cursor)
                 parts.append(
                     {"inline": base64.b64encode(stream.read(data_start - cursor)).decode()}
                 )
                 remaining, block_hash = entry.compress_size, hashlib.sha256()
-                with tempfile.TemporaryFile(dir=store) as temporary:
-                    while remaining:
-                        data = stream.read(min(CHUNK, remaining))
-                        require(data, "Truncated compressed member")
-                        block_hash.update(data)
-                        temporary.write(data)
-                        remaining -= len(data)
-                    object_key = block_hash.hexdigest()
-                    object_path = member(store, "objects", object_key)
-                    if not object_path.exists():
-                        temporary.seek(0)
-                        pending = None
-                        try:
-                            with tempfile.NamedTemporaryFile(
-                                dir=store / "objects", prefix=".pending-", delete=False
-                            ) as output:
-                                pending = Path(output.name)
-                                while data := temporary.read(CHUNK):
-                                    output.write(data)
-                                output.flush()
-                                os.fsync(output.fileno())
-                            os.replace(pending, object_path)
-                        finally:
-                            if pending is not None:
-                                pending.unlink(missing_ok=True)
-                        stored += entry.compress_size
-                    require(digest(object_path) == object_key, "Existing object changed")
+                while remaining:
+                    data = stream.read(min(CHUNK, remaining))
+                    require(data, "Truncated compressed member")
+                    block_hash.update(data)
+                    remaining -= len(data)
+                object_key = block_hash.hexdigest()
+                object_path = member(store, "objects", object_key)
+                if not object_path.exists():
+                    stream.seek(data_start)
+                    remaining, pending = entry.compress_size, None
+                    try:
+                        with tempfile.NamedTemporaryFile(
+                            dir=store / "objects", prefix=".pending-", delete=False
+                        ) as output:
+                            pending = Path(output.name)
+                            while remaining:
+                                data = stream.read(min(CHUNK, remaining))
+                                require(data, "Truncated compressed member")
+                                output.write(data)
+                                remaining -= len(data)
+                            output.flush()
+                            os.fsync(output.fileno())
+                        require(digest(pending) == object_key, "Original changed while archiving")
+                        os.replace(pending, object_path)
+                    finally:
+                        if pending is not None:
+                            pending.unlink(missing_ok=True)
+                    stored += entry.compress_size
+                require(digest(object_path) == object_key, "Existing object changed")
                 parts.append({"object": object_key, "bytes": entry.compress_size})
                 cursor = data_start + entry.compress_size
-            require(before.st_size - cursor <= CHUNK, "Excessive trailing metadata")
+            require(size - cursor <= CHUNK, "Excessive trailing metadata")
             stream.seek(cursor)
             parts.append({"inline": base64.b64encode(stream.read()).decode()})
-        recipe = dict(
-            schema="exact-npz-members-v1", sha256=identity, bytes=before.st_size, parts=parts
-        )
+        recipe = dict(schema="exact-npz-members-v1", sha256=identity, bytes=size, parts=parts)
         with target.open("x") as output:
             json.dump(recipe, output, separators=(",", ":"))
             output.write("\n")
             output.flush()
             os.fsync(output.fileno())
-    else:
-        stored = 0
     reconstruct(store, identity)
+    stream.seek(0)
+    require(
+        hashlib.file_digest(stream, "sha256").hexdigest() == identity,
+        "Original changed while archiving",
+    )
+    return dict(sha256=identity, bytes=size, new_object_bytes=stored)
+
+
+def pack(path, identity, store, *, replace=False):
+    path = Path(path)
+    require(path.is_file() and not path.is_symlink(), "Original must be a regular file")
+    before = path.stat()
+    with path.open("rb") as stream:
+        result = pack_stream(stream, identity, store)
     after = path.stat()
     require(
         all(
@@ -179,9 +197,7 @@ def pack(path, identity, store, *, replace=False):
     )
     if replace:
         path.unlink()
-    return dict(
-        sha256=identity, bytes=before.st_size, new_object_bytes=stored, original_removed=replace
-    )
+    return dict(result, original_removed=replace)
 
 
 def pack_worker(worker, receipt_sha, store, *, replace=False):

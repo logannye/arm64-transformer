@@ -64,7 +64,12 @@ def run(args):
         from transformer import spec
         from transformer.gpu_admission_checks import numpy_model
         from transformer.precision_audit import comparison
-        from transformer.trained_precision import checked_file, source_inventory, torch_evaluate
+        from transformer.trained_precision import (
+            checked_file,
+            save_arrays,
+            source_inventory,
+            torch_evaluate,
+        )
 
         torch.set_num_threads(1)
         torch.set_num_interop_threads(1)
@@ -181,7 +186,7 @@ def run(args):
         ):
             arrays.update({label + "_" + name: value for name, value in values.items()})
         raw = args.output / "arrays.npz"
-        np.savez_compressed(raw, **arrays)
+        stored = save_arrays(raw, arrays, args.raw_store)
         passed = all(c["passed"] for c in checks.values())
         record.update(
             complete=True,
@@ -191,7 +196,8 @@ def run(args):
                     case=case,
                     first_sequence=first,
                     raw=raw.name,
-                    raw_sha256=sha(raw),
+                    raw_sha256=stored["sha256"],
+                    raw_bytes=stored["bytes"],
                     checks=checks,
                     passed=passed,
                 )
@@ -224,4 +230,5 @@ if __name__ == "__main__":
     parser.add_argument("--engine", choices=("mps", "mlx"), required=True)
     parser.add_argument("--policy", type=int, choices=range(4), required=True)
     parser.add_argument("--compiled", action="store_true")
+    parser.add_argument("--raw-store", type=Path)
     raise SystemExit(run(parser.parse_args()))

@@ -10,7 +10,32 @@ import torch
 from transformer import spec
 from transformer.gpu_admission_checks import numpy_model
 from transformer.reference import Transformer
-from transformer.trained_precision import checked_file, digest, inventory, torch_evaluate, write_new
+from transformer.trained_precision import (
+    checked_file,
+    digest,
+    inventory,
+    load_module,
+    save_arrays,
+    torch_evaluate,
+    write_new,
+)
+
+
+def test_shared_storage_preserves_npz_bytes_without_duplicate_file(tmp_path):
+    from transformer.trained_precision import ROOT
+
+    arrays = {"values": np.arange(1024, dtype="f4")}
+    ordinary = tmp_path / "ordinary.npz"
+    expected = save_arrays(ordinary, arrays)
+    store = tmp_path / "store"
+    archived = tmp_path / "archived.npz"
+    result = save_arrays(archived, arrays, store)
+    assert result["sha256"] == expected["sha256"]
+    assert result["bytes"] == expected["bytes"]
+    assert not archived.exists()
+    storage = load_module("test_zip", ROOT / "integration/trained-precision/zip_evidence.py")
+    storage.restore(store, result["sha256"], archived)
+    assert archived.read_bytes() == ordinary.read_bytes()
 
 
 @pytest.fixture

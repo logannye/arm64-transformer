@@ -104,6 +104,23 @@ class EvidenceStorageTests(unittest.TestCase):
             M.restore(self.store, self.identity, target)
         self.assertFalse(target.exists())
 
+    def test_memory_bound_is_checked_before_reconstruction(self):
+        self.pack()
+        output = io.BytesIO()
+        with self.assertRaises(ValueError, msg="Reject before consuming any payload"):
+            M.reconstruct(self.store, self.identity, output, max_bytes=len(self.original) - 1)
+        self.assertEqual(output.getvalue(), b"")
+
+    def test_memory_archive_writes_only_new_shared_objects(self):
+        stream = io.BytesIO(self.original)
+        result = M.pack_stream(stream, self.identity, self.store)
+        self.assertGreater(result["new_object_bytes"], 0)
+        self.assertEqual(M.pack_stream(stream, self.identity, self.store)["new_object_bytes"], 0)
+        restored = io.BytesIO()
+        M.reconstruct(self.store, self.identity, restored)
+        self.assertEqual(restored.getvalue(), self.original)
+        self.assertEqual(sorted(p.name for p in self.store.iterdir()), ["objects", "recipes"])
+
 
 if __name__ == "__main__":
     unittest.main()

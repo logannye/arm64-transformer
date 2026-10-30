@@ -7,8 +7,8 @@ The caller supplies receipt and inventory hashes from a separately frozen list.
 import argparse
 import hashlib
 import importlib.util
+import io
 import json
-import tempfile
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -47,9 +47,12 @@ def raw_path(root, relative, expected, store):
     )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    with tempfile.TemporaryDirectory(dir=store, prefix=".audit-") as temporary:
-        restored = Path(temporary) / "raw.npz"
-        module.restore(store, expected, restored)
+    # One bounded in-memory archive avoids writing a temporary copy of evidence
+    # on a storage-constrained machine. Verify the complete original bytes before
+    # NumPy opens the ZIP; close it before the next case.
+    with io.BytesIO() as restored:
+        module.reconstruct(store, expected, restored, max_bytes=512 * 1024**2)
+        restored.seek(0)
         yield restored
 
 
