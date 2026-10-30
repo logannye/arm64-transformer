@@ -13,6 +13,11 @@ PATH = (
 SPEC = importlib.util.spec_from_file_location("compensated_attention", PATH)
 CANDIDATE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(CANDIDATE)
+MODEL_SPEC = importlib.util.spec_from_file_location(
+    "framework_reference", PATH.with_name("framework_reference.py")
+)
+MODEL = importlib.util.module_from_spec(MODEL_SPEC)
+MODEL_SPEC.loader.exec_module(MODEL)
 OPS = types.SimpleNamespace(
     concatenate=lambda a, axis: torch.cat(a, dim=axis),
     zeros_like=torch.zeros_like,
@@ -59,3 +64,35 @@ def test_compensated_attention_is_causal_for_repeated_values():
     after, _ = CANDIDATE.attention(q, k, v, OPS)
     assert torch.equal(before[..., :4, :], after[..., :4, :])
     torch.testing.assert_close(before, q)
+
+
+def test_compensated_normalization_equation_and_autograd():
+    rng = torch.Generator().manual_seed(20261103)
+    x = (torch.randn((2, 3, 513), generator=rng) * 0.01).requires_grad_()
+    weight = torch.randn(513, generator=rng).requires_grad_()
+    bias = torch.randn(513, generator=rng).requires_grad_()
+    doubles = [a.detach().double().requires_grad_() for a in (x, weight, bias)]
+    upstream = torch.randn(x.shape, generator=rng) * 0.01
+    actual = MODEL.normalization(x, weight, bias, MODEL.torch_ops(torch, "cpu"))
+    (actual * upstream).sum().backward()
+    expected = torch.nn.functional.layer_norm(doubles[0], (513,), *doubles[1:], eps=1e-5)
+    (expected * upstream.double()).sum().backward()
+    torch.testing.assert_close(actual.double(), expected, atol=2e-5, rtol=2e-4)
+    for value, double in zip((x, weight, bias), doubles, strict=True):
+        torch.testing.assert_close(value.grad.double(), double.grad, atol=3e-5, rtol=3e-3)
+
+
+def test_model_policy_zero_preserves_ordinary_equations_and_gradients():
+    from transformer.reference import Transformer
+
+    model = Transformer()
+    tokens = torch.arange(6).reshape(2, 3)
+    params = dict(model.named_parameters())
+    expected = model(tokens)
+    expected.square().mean().backward()
+    gradients = {name: value.grad.clone() for name, value in params.items()}
+    model.zero_grad()
+    actual = MODEL.forward(params, tokens, MODEL.torch_ops(torch, "cpu"), 0)
+    actual.square().mean().backward()
+    assert torch.equal(actual, expected)
+    assert all(torch.equal(params[name].grad, value) for name, value in gradients.items())

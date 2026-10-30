@@ -160,3 +160,15 @@ operations and every tolerance remain fixed. Screen primitive saved-state and
 gradient behavior, then the entire original regression inventory and the same
 fresh training/synthetic development inventory. Neither candidate is ordinary
 PyTorch or an automatically admitted replacement for a historical study arm.
+
+After the same-QKV GPU diagnostic, the next fixed model diagnostic is the complete
+four-way factorial of compensated first normalization (bit 1) and compensated
+attention (bit 2), with the ordinary QKV projection unchanged. It uses the three
+retained MPS/MLX localization cases: MPS width 1024, MLX widths 512 and 1024. Run
+all four policies through complete logits, loss and every parameter gradient.
+For MLX retain both ordinary and compiled expression execution; do not assume
+that passing unfused expressions survive compiler transformations. Policy 0
+checks that the extracted equations reproduce the ordinary model. This is an
+explicit diagnostic model implementation, not a runtime operator override,
+framework source repair, admitted replacement or performance result. All input
+and output identities, failures and existing tolerances remain retained.
