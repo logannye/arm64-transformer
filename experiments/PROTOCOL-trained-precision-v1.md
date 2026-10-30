@@ -136,3 +136,16 @@ remain bound. These candidates address the reference shader path only; optimized
 policy paths are unchanged and cannot inherit their results. No timing or formal
 selection follows from the exposed cases alone. Local and propagated prefix
 errors are examined separately, with trace/ordinary-output equality reported.
+
+The follow-up framework attention diagnostic is fixed before execution in
+`compensated_attention.py`: two-float products with Dekker splitting, pairwise
+two-float sums, split attention scale, compensated score centering, exponential
+correction and probability division, and compensated value contraction. It uses
+ordinary FP32 framework tensor operations without graph compilation or fusion.
+The diagnostic is restricted to finite same-input QKV operands with absolute
+values at most 10,000; this is not a generic library implementation or a new
+comparison arm. It runs on the already captured MPS/MLX localization traces,
+with a fixed development-only upstream derivative from `[20261103, width, 91]`.
+Both forward and ordinary framework autograd are compared with independent
+NumPy/PyTorch FP64 equations and repeated exactly. A passing diagnostic does not
+qualify a full-source framework repair or establish its performance.

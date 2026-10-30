@@ -1,5 +1,6 @@
 """A raw auditor must reject forged success, input changes and missing coverage."""
 
+import copy
 import importlib.util
 import json
 from pathlib import Path
@@ -124,3 +125,58 @@ def test_tolerance_boundary_is_inclusive_and_does_not_expand():
     expected = np.zeros(1, "f8")
     assert audit.compare(np.array([2e-5]), expected, 2e-5, 2e-4)["passed"]
     assert not audit.compare(np.array([np.nextafter(2e-5, 1)]), expected, 2e-5, 2e-4)["passed"]
+
+
+def collection_fixture(replay):
+    path = PATH.with_name("audit_collection.py")
+    spec = importlib.util.spec_from_file_location("collection_auditor", path)
+    collection = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(collection)
+    root, output, plan_path, receipt, arrays = replay
+    receipt.update(source_sha256={"producer.py": "bound"}, runtime={"python": "test"})
+    second = copy.deepcopy(receipt)
+    second["cases"][0]["case"].update(id="second", sequence=1)
+    second["cases"][0]["first_sequence"] = 1
+    second["expected_cases"] = ["second"]
+    plan = json.loads(plan_path.read_text())
+    plan["cases"].append(second["cases"][0]["case"])
+    plan_path.write_text(json.dumps(plan))
+    other = output.with_name("worker2")
+    other.mkdir()
+    np.savez_compressed(other / "first.npz", **arrays)
+    second["cases"][0]["raw_sha256"] = audit.sha256(other / "first.npz")
+    workers = []
+    for target, value in ((output, receipt), (other, second)):
+        value.update(inventory_sha256=audit.sha256(plan_path), full_width_inventory=False)
+        (target / "result.json").write_text(json.dumps(value))
+        workers.append(
+            dict(path=target.name + "/result.json", sha256=audit.sha256(target / "result.json"))
+        )
+    group = dict(
+        name="candidate", implementation=collection.implementation(receipt), workers=workers
+    )
+    return collection, group, plan, plan_path, root, output.parent
+
+
+def test_shards_must_cover_complete_inventory(replay):
+    collection, group, plan, path, root, workers = collection_fixture(replay)
+    result = collection.audit_group(group, plan, path, audit.sha256(path), root, workers)
+    assert result["evidence_valid"] and result["numerics_passed"]
+    assert result["sequence_anchors"] == result["unique_batches"] == 2
+
+
+@pytest.mark.parametrize("change", ["missing", "duplicate", "reorder", "identity", "receipt"])
+def test_collection_rejects_missing_or_mixed_shards(replay, change):
+    collection, group, plan, path, root, workers = collection_fixture(replay)
+    if change == "missing":
+        group["workers"].pop()
+    elif change == "duplicate":
+        group["workers"].append(group["workers"][0])
+    elif change == "reorder":
+        group["workers"].reverse()
+    elif change == "identity":
+        group["implementation"]["gradients_checked"] = True
+    else:
+        group["workers"][0]["sha256"] = "0" * 64
+    with pytest.raises(ValueError):
+        collection.audit_group(group, plan, path, audit.sha256(path), root, workers)

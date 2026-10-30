@@ -80,6 +80,8 @@ def worker(args):
         "seed": SEED,
         "width": args.width,
         "steps": STEPS,
+        "pid": os.getpid(),
+        "executable": str(Path(sys.executable).resolve(strict=True)),
         "checkpoints": list(CHECKPOINTS),
         "source_sha256": before,
         "producer_sha256": producer_sha,
