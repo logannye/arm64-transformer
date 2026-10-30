@@ -99,14 +99,20 @@ def load_module(name, path):
     return module
 
 
-def torch_evaluate(flat, tokens, targets, *, dtype, device="cpu", gradients=False):
+def torch_evaluate(flat, tokens, targets, *, dtype, device="cpu", gradients=False, policy=0):
     import numpy as np
     import torch
 
     from transformer import spec
     from transformer.reference import Transformer
 
-    model = Transformer().load_flat(flat).to(device=device, dtype=dtype)
+    if policy:
+        from transformer.torch_precision_probe import PrecisionProbe
+
+        model = PrecisionProbe(policy)
+    else:
+        model = Transformer()
+    model = model.load_flat(flat).to(device=device, dtype=dtype)
     x, y = (torch.tensor(a.astype(np.int64), device=device) for a in (tokens, targets))
     with torch.set_grad_enabled(gradients):
         logits = model(x)
@@ -160,6 +166,7 @@ def worker(args):
         "width": args.width,
         "batch_size": args.batch_size,
         "gradients_checked": args.gradients,
+        "torch_diagnostic_policy": args.torch_policy,
         "formal_eligible": False,
         "complete": False,
         "passed": False,
@@ -171,6 +178,8 @@ def worker(args):
     try:
         if os.environ.get("ARM64_TRANSFORMER_WIDTH") != str(args.width):
             raise ValueError("Worker width must be set before imports")
+        if args.torch_policy and args.engine != "cpu_torch":
+            raise ValueError("Counterfactual precision probes are CPU-only")
         if digest(args.inventory) != args.inventory_sha256:
             raise ValueError("Inventory identity changed")
         plan = json.loads(Path(args.inventory).read_text())
@@ -304,6 +313,7 @@ def worker(args):
                         dtype=torch.float32,
                         device="mps" if args.engine == "mps" else "cpu",
                         gradients=args.gradients,
+                        policy=args.torch_policy,
                     )
 
                 actual, repeat = evaluate(), evaluate()
@@ -412,6 +422,7 @@ def main():
     run.add_argument("--kernel-policy")
     run.add_argument("--owned-workspace")
     run.add_argument("--gradients", action="store_true")
+    run.add_argument("--torch-policy", type=int, choices=range(8), default=0)
     run.add_argument("--case-limit", type=int)
     run.add_argument("--output", required=True)
     args = parser.parse_args()

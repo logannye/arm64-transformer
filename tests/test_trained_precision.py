@@ -99,3 +99,23 @@ def test_replay_dual_fp64_forward_and_every_gradient():
     assert actual["gradient"].shape == (spec.PARAM_COUNT,)
     for name in expected:
         np.testing.assert_allclose(actual[name], expected[name], atol=1e-10, rtol=1e-10)
+
+
+@pytest.mark.parametrize("policy", range(8))
+def test_explicit_torch_substitution_preserves_fp32_boundaries_and_equations(policy):
+    torch.set_num_threads(1)
+    flat = Transformer(seed=20261103).flat_parameters()
+    tokens = np.array([[65, 65, 66]], "i4")
+    targets = np.array([[65, 66, 67]], "i4")
+    expected = numpy_model(flat, tokens, targets)
+    actual = torch_evaluate(
+        flat, tokens, targets, dtype=torch.float32, gradients=True, policy=policy
+    )
+    for name in expected:
+        assert actual[name].dtype == np.float32
+        np.testing.assert_allclose(
+            actual[name],
+            expected[name],
+            atol=3e-5 if name == "gradient" else 2e-5,
+            rtol=3e-3 if name == "gradient" else 2e-4,
+        )

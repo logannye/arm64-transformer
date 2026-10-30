@@ -59,6 +59,14 @@ initialization, epsilon, learning rate, training budget, corpus or tolerances.
 
 ## Framework and formal work
 
+Before framework arithmetic changes, a separate CPU localization probe tests the
+complete eight-policy factorial of first-LayerNorm, QKV and attention FP64
+substitutions (bits 1, 2, 4). Each selected module returns FP32. The attention
+substitution retains FP64 internal saved state and therefore is explicitly a
+counterfactual diagnostic, not a qualified FP32-state baseline. All eight outcomes
+are retained. This inventory is fixed before its first execution and does not
+authorize selecting or timing a replacement framework based on exposed test data.
+
 Framework repairs need their own same-input localization and full-source binary
 qualification. Existing maintained-framework short replay passes do not establish
 trained-state accuracy. MPS integration failures and its unfinished archive audit
