@@ -94,17 +94,25 @@ def read_backend(path, *, policy=None):
     return validate_backend(decode_backend(Path(path).read_bytes()), policy=policy)
 
 
-def validate_runtime_backend(value, config, *, admitted=None, policy="auto"):
+def validate_runtime_backend(value, config, *, admitted=None, policy="auto", precision_policy=0):
+    if type(precision_policy) is not int or precision_policy not in range(4):
+        raise ValueError("Unknown native precision policy")
+    if precision_policy and config["width"] < 512:
+        raise ValueError("Precision candidates apply only to wide models")
     validate_backend(value, policy=policy)
     if admitted is not None and identity(value) != identity(admitted):
         raise ValueError("Runtime backend identity differs from its numerical preflight")
-    forward = 5 * (
+    # The QKV candidate calls its dedicated scalar FP64 routine. It must not
+    # be counted as an ordinary NEON/SME dense call. Historical callers retain
+    # the fixed five-call contract unless they explicitly select development.
+    dense_calls = 5 - bool(precision_policy & 2)
+    forward = dense_calls * (
         config["epochs"] * (config["train_sequences"] + config["validation_sequences"])
         + config["test_sequences"]
         + 20
         + 100
     )
-    backward = 5 * config["epochs"] * config["train_sequences"]
+    backward = dense_calls * config["epochs"] * config["train_sequences"]
     prefix = "sme" if value["selected_kind"] and config["width"] >= 64 else "neon"
     other = "neon" if prefix == "sme" else "sme"
     expected = {

@@ -98,6 +98,26 @@ def test_backend_legacy_admission_is_explicit_and_missing_both_symbols_only():
         library_backend(SimpleNamespace(tf_backend_init=lambda: 0), allow_legacy=True)
 
 
+@pytest.mark.parametrize("precision", [2, 3])
+def test_precise_qkv_runtime_counts_require_explicit_development_policy(precision):
+    value = metadata(width=512)
+    value["sme_forward_calls"] = 75232
+    value["sme_backward_calls"] = 65536
+    assert validate_runtime_backend(value, config(512), precision_policy=precision) == value
+    with pytest.raises(ValueError, match="counters"):
+        validate_runtime_backend(value, config(512))
+    with pytest.raises(ValueError, match="counters"):
+        validate_runtime_backend(metadata(width=512), config(512), precision_policy=precision)
+    with pytest.raises(ValueError, match="wide"):
+        validate_runtime_backend(value, config(256), precision_policy=precision)
+
+
+@pytest.mark.parametrize("precision", [True, -1, 4, "3"])
+def test_invalid_precision_dispatch_policy_is_rejected(precision):
+    with pytest.raises(ValueError, match="precision"):
+        validate_runtime_backend(metadata(width=512), config(512), precision_policy=precision)
+
+
 def gate(policy=0, supported=1):
     return {
         "backend": metadata(policy, supported),

@@ -9,7 +9,7 @@ permissions:
 jobs:
   native:
     runs-on: macos-26
-    timeout-minutes: 30
+    timeout-minutes: 45
     env:
       OMP_NUM_THREADS: "1"
       OPENBLAS_NUM_THREADS: "1"
@@ -40,27 +40,37 @@ jobs:
           git rev-parse HEAD > results/precision-build/source-revision.txt
           sw_vers > results/precision-build/platform.txt
           sysctl -n machdep.cpu.brand_string >> results/precision-build/platform.txt
-      - name: Full model and executable checks for the first-LayerNorm candidate
+      - name: Full model and executable checks for both normalization candidates
         run: |
           for width in 512 1024; do
-            make -C native WIDTH=$width PRECISION=1 PYTHON=python
-            export ARM64_TRANSFORMER_WIDTH=$width
-            python -m pytest -q
-            python -m transformer.validate --output results/precision-build/width-$width/auto.json \
-              --runtime --work-dir results/precision-build/width-$width/smoke-auto
-            ARM64_TRANSFORMER_BACKEND=neon python -m transformer.validate \
-              --output results/precision-build/width-$width/neon.json \
-              --runtime --work-dir results/precision-build/width-$width/smoke-neon
-            supported=$(python -c "import json; print(json.load(open('results/precision-build/width-$width/auto.json'))['backend']['sme_supported'])")
-            if [ "$supported" = 1 ]; then
-              ARM64_TRANSFORMER_BACKEND=sme python -m transformer.validate \
-                --output results/precision-build/width-$width/sme.json \
-                --runtime --work-dir results/precision-build/width-$width/smoke-sme
-            fi
+            for policy in 1 3; do
+              make -C native WIDTH=$width PRECISION=$policy PYTHON=python
+              export ARM64_TRANSFORMER_WIDTH=$width
+              python -m pytest -q
+              dest=results/precision-runtime/width-$width/policy-$policy
+              python -m transformer.validate --output "$dest/auto.json" \
+                --development-precision-policy "$policy" \
+                --runtime --work-dir "$dest/smoke-auto"
+              ARM64_TRANSFORMER_BACKEND=neon python -m transformer.validate \
+                --output "$dest/neon.json" --development-precision-policy "$policy" \
+                --runtime --work-dir "$dest/smoke-neon"
+              supported=$(python -c "import json; print(json.load(open('$dest/auto.json'))['backend']['sme_supported'])")
+              if [ "$supported" = 1 ]; then
+                ARM64_TRANSFORMER_BACKEND=sme python -m transformer.validate \
+                  --output "$dest/sme.json" --development-precision-policy "$policy" \
+                  --runtime --work-dir "$dest/smoke-sme"
+              fi
+            done
           done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: precision-native-candidates
           path: results/precision-build/
+          retention-days: 30
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: precision-native-runtime-evidence
+          path: results/precision-runtime/
           retention-days: 30
