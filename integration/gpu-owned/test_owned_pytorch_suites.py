@@ -592,5 +592,47 @@ class NativeProofTests(unittest.TestCase):
             M.validate_native_proof(self.proof, self.runtime, self.root)
 
 
+class ProspectiveInventoryTests(unittest.TestCase):
+    def setUp(self):
+        self.plan = {"suite_contract": "half-v3"}
+        self.value = M.read(HERE / "owned-suite-inventory-half-v3.json")
+        wanted = self.value["prospective_selection"]
+        self.selected = {
+            "pytorch": {
+                key: wanted[key]
+                for key in ("base", "patches", "combined_patch_sha256", "build_run")
+            }
+        }
+
+    def test_all_old_ids_and_eligibility_retained_with_four_additions(self):
+        old = M.suite_inventory({})
+        new = M.suite_inventory(self.plan, self.selected)
+        original, successor = old["pytorch"], new["pytorch"]
+        additions = old["prospective_unselected_pytorch_additions"]
+        self.assertEqual(len(original["test_ids"]), 10353)
+        self.assertEqual(successor["test_ids"], sorted(original["test_ids"] + additions))
+        self.assertEqual(len(successor["test_ids"]), 10357)
+        for field in ("skip_ids", "expected_failure_ids"):
+            self.assertEqual(successor[field], original[field])
+        self.assertEqual(new["mlx"], old["mlx"])
+        self.assertFalse(new["formal_eligible"])
+
+    def test_explicit_selection_required_and_old_build_rejected(self):
+        with self.assertRaises(ValueError):
+            M.suite_inventory(self.plan)
+        for field in ("base", "patches", "combined_patch_sha256", "build_run"):
+            changed = json.loads(json.dumps(self.selected))
+            changed["pytorch"][field] = "old build"
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                M.suite_inventory(self.plan, changed)
+
+    def test_unknown_inventory_and_changed_contract_bytes_rejected(self):
+        with self.assertRaises(ValueError):
+            M.inventory_spec({"suite_contract": "arbitrary"})
+        with patch.object(M, "HALF_V3_INVENTORY_SHA", "0" * 64):
+            with self.assertRaises(ValueError):
+                M.suite_inventory(self.plan, self.selected)
+
+
 if __name__ == "__main__":
     unittest.main()

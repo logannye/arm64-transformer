@@ -28,9 +28,12 @@ fresh serial processes on the real device.
 The 34-method focused sequence retains all 27 original failures, four new FP16
 regressions and three original nondeterminism methods. A focused pass cannot
 qualify the full 10,357-method suite, the owned joint runtime, transformer
-arithmetic or a formal fit. The complete suite still needs its explicit successor
-inventory, runtime capture, conformance-fixture policy and portable evidence audit.
-The old 10,353-method owned-suite contract is unchanged.
+arithmetic or a formal fit. The complete suite uses the explicit
+`owned_pytorch_suites.py prepare --suite-contract half-v3` route after fresh
+runtime capture with `capture_runtime.py --half-v3-plan ...
+--half-v3-plan-sha256 ...`. Its stock conformance-fixture checks and portable
+archive audit remain mandatory. These adapters are implemented; no full-suite
+execution is asserted. The old 10,353-method owned-suite contract is unchanged.
 
 The 30 standard-library checks exercise stale selection, missing/changed native
 evidence, both compile databases, Half coverage and payload corruption, exact

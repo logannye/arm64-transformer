@@ -1,6 +1,6 @@
 {
   "schema": "trained-precision-development-evidence-index-v1",
-  "created_utc": "2026-10-30T21:20:34.218983+00:00",
+  "created_utc": "2026-10-30T21:47:23.695701+00:00",
   "scope": "Development regression/fresh-state evidence; no formal qualification or timing",
   "local_hardware": "Apple M4 Max, native automatic dispatch selected SME with 64-byte streaming vectors",
   "formal_eligible": false,
@@ -709,6 +709,52 @@
       ]
     },
     {
+      "name": "native-512-policy15-historical-gradient",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 2,
+      "unique_batches": 2,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase6/native-512-policy15-historical-gradient-audit.json",
+        "sha256": "f64a61b29e5b8ffea2e970017063a48776eb56a4743278f83e98efc7dd37e5a7",
+        "bytes": 24475
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "native",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "implementation": {
+        "engine": "native",
+        "width": 512,
+        "batch_size": 16,
+        "gradients_checked": true,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": "08bd16a9bb8d1a823756ce5388b3f5b1fbb14bf02ac87821f7b981f9f0cc6bad",
+        "native_policy": 15,
+        "native_selected_kind": 1,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null
+      },
+      "source_inventory_sha256": "5c4524d8656c0dbc3cd6d4e47f28511b0621ab1ead9118251374314d5a5fd7eb",
+      "runtime": {
+        "numpy": "2.5.2",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.14.1"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase6/native-512-policy15-historical-gradient-000/result.json",
+          "sha256": "dbb7ecc9b9688a2bdbc473d13fde0ef208f2b2500372f87ef8ae35a60cea778f"
+        }
+      ]
+    },
+    {
       "name": "mlx-1024-policy2",
       "evidence_valid": true,
       "numerics_passed": false,
@@ -1374,6 +1420,55 @@
     }
   ],
   "hosted_results": [
+    {
+      "run_url": "https://github.com/logannye/arm64-transformer/actions/runs/41127179360",
+      "source_revision": "7aafeccc83d2d36fc5c784dd967496be197e4efd",
+      "verification": "Independent raw audit ran on hosted M1/NEON; no local raw-artifact re-audit",
+      "log": {
+        "path": "work/hosted-native-replay-7aafecc/width-1024.log",
+        "sha256": "ca32b50f798b19bb425273e63b32b5aeed7c75ab496c14a16d43d80c9e0d65e2",
+        "bytes": 111788
+      },
+      "result": {
+        "name": "native-neon-policy15-width-1024",
+        "evidence_valid": true,
+        "numerics_passed": true,
+        "sequence_anchors": 87,
+        "unique_batches": 71,
+        "failed_sequence_anchors": 0,
+        "failed_unique_batches": 0,
+        "receipts": [
+          {
+            "path": "worker-000/result.json",
+            "sha256": "399981f80f9578c01ed9e3d8f8d63e7537b098c77c94bb3b9acb41ed13107cc4"
+          },
+          {
+            "path": "worker-016/result.json",
+            "sha256": "601d1ed30f04aab4284d0d1e50707a7ed81ca061a1386f5f0b7d7ef2ad1df2f5"
+          },
+          {
+            "path": "worker-032/result.json",
+            "sha256": "527348bfb10f0ea291ed5bc9bd6c8f529919765527adf0ab5791e0562f5e403b"
+          },
+          {
+            "path": "worker-048/result.json",
+            "sha256": "0a962be76c0e2da1e4cd6ddf29bcee3a970144c812a791648df21371186de226"
+          },
+          {
+            "path": "worker-064/result.json",
+            "sha256": "e3a4058e7c91e8e0ab7e566fe032e75ab60a011eec5b8df2e76694148c9fd2d1"
+          },
+          {
+            "path": "worker-080/result.json",
+            "sha256": "c94e2271964a32d9b7e7e3a88f34373a132655cedf2ecd02c3e4e3c233533681"
+          }
+        ],
+        "audit_sha256": "25e31376365d044abb6720b478600f439a9e0b4eed5d671a06eafebbdd57980f",
+        "formal_eligible": false,
+        "admission_stream_opened": false,
+        "scope": "Hosted M1/NEON replay; not M4/SME or timing qualification"
+      }
+    },
     {
       "run_url": "https://github.com/logannye/arm64-transformer/actions/runs/41127179360",
       "source_revision": "7aafeccc83d2d36fc5c784dd967496be197e4efd",

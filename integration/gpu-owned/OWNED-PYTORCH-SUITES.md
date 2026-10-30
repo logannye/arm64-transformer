@@ -9,13 +9,23 @@ the adapter and portable auditor. **No runtime is qualified by these source-leve
 checks.** The eligibility gate requires complete portable MPS evidence in addition
 to the unchanged full test inventory. Generic passing counts cannot qualify MPS.
 
-The current version binds the original 10,353 test identities, their order, skips,
+The default contract binds the original 10,353 test identities, their order, skips,
 and expected failures through `owned-suite-inventory-v1.json`. All failures remain
-blocking. The four additional half-precision regressions in the prospective
-candidate produce a different 10,357-test inventory. That candidate requires an
-explicit prospective framework selection and suite-contract revision before it
-can use this qualification route. No filtering or automatic test-count adjustment
-is permitted, and old results are not promoted to a new runtime.
+blocking. An explicit `prepare --suite-contract half-v3` selects the separately
+pinned `owned-suite-inventory-half-v3.json`: the original IDs plus four FP16
+regressions, with unchanged skip and expected-failure identities. It requires the
+v3 base, ordered patches, combined patch and hosted build selection. An old
+runtime or a relabeled original plan cannot use it. No filtering or automatic
+test-count adjustment is permitted, and old results are not promoted.
+
+`capture_runtime.py --half-v3-plan ... --half-v3-plan-sha256 ...` can capture a
+fresh joint runtime only after the v3 candidate plan's complete source/runtime
+and hosted artifact authentication. It checks that the requested Torch payload
+is the same one in that plan, rechecks the plan after authentication, retains the
+existing MLX selection, and binds both CPU and MPS to the new Torch distribution.
+This captures development identity and leaves `gpu_owned_study.FRAMEWORKS` and
+the historical formal contract unchanged. A successor formal campaign still
+requires explicit qualification and selection of these new bytes.
 
 Preparation authenticates an externally SHA-bound complete source manifest and
 compares its base revision and combined patch with the selected native build. It
@@ -118,8 +128,8 @@ exact skip policy, raw results, source/runtime hashes, native module and library
 origins, complete child receipts or successful postflight checks. Failed and
 interrupted attempts retain available logs and receipts; they cannot produce
 passing eligibility. Formal fits remain zero. A new framework binary still needs
-a fresh capture and complete suite execution. The 10,357-test half candidate also
-needs its own prospective inventory; these changes do not revise the 10,353-test
+a fresh capture and complete suite execution. The 10,357-test half candidate uses
+its own explicit prospective inventory; this does not revise the 10,353-test
 historical contract or promote old-runtime results.
 
 Use the retained interpreter for CPU-only tests:
@@ -137,7 +147,7 @@ The driver/reference paths select the already-retained immutable result helpers,
 not another framework implementation. The two external SHA256 arguments must
 come from verified publication/capture evidence.
 
-The 45 producer checks and 21 portable-archive checks pass under the retained
+The 48 producer checks and 22 portable-archive checks pass under the retained
 CPython 3.12 interpreter, including actual fresh-process launcher
 checks, source mutations, cache bounds, native-origin mutations, and unconditional
 interpreter restoration after a test-runner exception. Retained Python import maps

@@ -31,6 +31,8 @@ POLICY = "integration/gpu-owned/owned_pytorch_fixture.py"
 ARCHIVE = "integration/gpu-owned/owned_pytorch_archive.py"
 INVENTORY = "integration/gpu-owned/owned-suite-inventory-v1.json"
 INVENTORY_SHA = "cff557d2b1d68857bc488e77e6672fb0fb386409e88ad6ca4e7fa31bd862d852"
+HALF_V3_INVENTORY = "integration/gpu-owned/owned-suite-inventory-half-v3.json"
+HALF_V3_INVENTORY_SHA = "00d3a5c03b32a91cc28f24355c4a43045f044c77c8d06bcf765c75fbe8b8f639"
 FALLBACK_AST_SHA = "3d8e80a2297c719dd126826912efaa594a2104a9f930addb4daf4c955d75439e"
 HELPERS = {
     "driver": (
@@ -154,6 +156,33 @@ def load(path, name):
     return module
 
 
+def inventory_spec(plan):
+    """Only explicit, source-pinned prospective inventories are executable."""
+    choice = plan.get("suite_contract", "original")
+    require(choice in {"original", "half-v3"}, "Unknown prospective suite contract")
+    if choice == "half-v3":
+        return HALF_V3_INVENTORY, HALF_V3_INVENTORY_SHA
+    return INVENTORY, INVENTORY_SHA
+
+
+def suite_inventory(plan, selected=None):
+    relative, expected_sha = inventory_spec(plan)
+    path = Path(__file__).resolve().parents[2] / relative
+    pinned(path, expected_sha)
+    value = read(path)
+    if plan.get("suite_contract", "original") == "half-v3":
+        require(selected is not None, "Half-v3 needs an authenticated framework selection")
+        wanted = value["prospective_selection"]
+        require(
+            all(
+                selected["pytorch"].get(key) == wanted[key]
+                for key in ("base", "patches", "combined_patch_sha256", "build_run")
+            ),
+            "Half-v3 suite cannot use an earlier or unselected framework",
+        )
+    return value
+
+
 def helpers(plan):
     """Authenticate this entrypoint and shared bootstrap before any project import."""
     raw = plan["authority_inputs"]["receipt"]
@@ -163,16 +192,17 @@ def helpers(plan):
     root = Path(project["root"])
     require(root.resolve(strict=True) == root, "Noncanonical project")
     require((root / PRODUCER) == Path(__file__).resolve(), "Foreign producer path")
+    inventory, inventory_sha = inventory_spec(plan)
     for name in (
         PRODUCER,
         SHARED,
         POLICY,
         ARCHIVE,
-        INVENTORY,
+        inventory,
         "integration/gpu-owned/stock_mps_fixture_fragments.py.txt",
     ):
         pinned(root / name, project["files"][name])
-    pinned(root / INVENTORY, INVENTORY_SHA)
+    pinned(root / inventory, inventory_sha)
     shared = load(root / SHARED, "owned_mps_shared_bootstrap")
     policy = load(root / POLICY, "owned_mps_fixture_policy")
     return shared, policy
@@ -390,9 +420,11 @@ def authenticate_plan(path, expected_sha, *, full_source=True):
     require(plan["producer"]["path"] == str(Path(__file__).resolve()), "Wrong suite producer")
     shared, policy = helpers(plan)
     authority, backend, runtime, selection = shared.bootstrap(plan)
-    expected = read(Path(__file__).with_name("owned-suite-inventory-v1.json"))
+    inventory, _ = inventory_spec(plan)
+    inventory_path = Path(__file__).resolve().parents[2] / inventory
+    expected = suite_inventory(plan, selection)
     require(
-        plan["inventory"] == binding(Path(__file__).with_name("owned-suite-inventory-v1.json")),
+        plan["inventory"] == binding(inventory_path),
         "Suite inventory changed",
     )
     sources = source_files(plan, selection, verify=full_source)
@@ -465,14 +497,16 @@ def freeze(args):
         "formal_admission_opened": False,
         "formal_fits": 0,
         "limits": dict(LIMITS),
+        "suite_contract": getattr(args, "suite_contract", "original"),
     }
     shared, policy = helpers(plan)
     authority, _, runtime, selected = shared.bootstrap(plan)
     receipt, _ = authority.verify()
     validate_output(args.output, protected_roots(plan, runtime, receipt))
-    inventory_path = Path(__file__).with_name("owned-suite-inventory-v1.json")
-    plan["inventory"] = pinned(inventory_path, INVENTORY_SHA)
-    expected = read(inventory_path)["pytorch"]
+    inventory, inventory_sha = inventory_spec(plan)
+    inventory_path = Path(__file__).resolve().parents[2] / inventory
+    plan["inventory"] = pinned(inventory_path, inventory_sha)
+    expected = suite_inventory(plan, selected)["pytorch"]
     files = source_files(plan, selected)
     require(
         files["test/test_mps.py"] == expected["test_source_sha256"], "Unselected full suite source"
@@ -1271,6 +1305,7 @@ def main():
         p.add_argument("--" + name, type=Path, required=True)
     p.add_argument("--receipt-sha256", required=True)
     p.add_argument("--source-manifest-sha256", required=True)
+    p.add_argument("--suite-contract", choices=("original", "half-v3"), default="original")
     for name in ("run", "worker"):
         p = subs.add_parser(name)
         p.add_argument("--plan", type=Path, required=True)

@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import importlib
 import importlib.machinery
+import importlib.util
 import json
 import os
 import platform
@@ -239,7 +240,54 @@ def require_launch():
     )
 
 
-def capture(project, expected_head, torch_runtime, numpy_overlay, mlx_bundle, dependencies, output):
+def half_v3_selection(project, source, original, plan_path, plan_sha, torch_runtime):
+    """Authenticate a built development candidate; never change formal selection."""
+    require(plan_path is not None and plan_sha is not None, "Both candidate plan bindings required")
+    relative = "integration/gpu-owned/candidate_half_v3_validation.py"
+    path = project / relative
+    require(
+        file_binding(path)["sha256"] == source["files"].get(relative), "Unbound candidate helper"
+    )
+    spec = importlib.util.spec_from_file_location("captured_half_v3_candidate", path)
+    candidate = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(candidate)
+    plan, _ = candidate.authenticate_plan(plan_path, plan_sha)
+    plan_binding = file_binding(plan_path)
+    require(plan_binding["sha256"] == plan_sha, "Candidate plan changed after authentication")
+    require(Path(plan["runtime"]) == torch_runtime, "Capture runtime differs from candidate plan")
+    contract, _, _ = candidate.selection_contract()
+    selected = json.loads(json.dumps(original))
+    selected["pytorch"] = {
+        "kind": "project_maintained_full_source_build",
+        "base": contract["source_revision"],
+        "patches": [row["sha256"] for row in contract["component_patches"]],
+        "combined_patch_sha256": contract["combined_patch_sha256"],
+        "build_run": int(candidate.HOSTED_RUN),
+        "runtime_manifest_sha256": plan["runtime_manifest"]["sha256"],
+        "engines": ["cpu_torch", "mps"],
+        "same_distribution_required": True,
+    }
+    return selected, {
+        "plan": plan_binding,
+        "helper": file_binding(path),
+        "schema": candidate.SCHEMA,
+        "formal_eligible": False,
+        "scope": "New development runtime identity; historical formal selection unchanged",
+    }
+
+
+def capture(
+    project,
+    expected_head,
+    torch_runtime,
+    numpy_overlay,
+    mlx_bundle,
+    dependencies,
+    output,
+    *,
+    half_v3_plan=None,
+    half_v3_plan_sha256=None,
+):
     require_launch()
     project = directory(project)
     paths = import_roots(torch_runtime, numpy_overlay, mlx_bundle, dependencies)
@@ -268,6 +316,16 @@ def capture(project, expected_head, torch_runtime, numpy_overlay, mlx_bundle, de
         source = source_inventory(project, expected_head)
         original_path = list(sys.path)
         owned, runtime, backend = load_control_plane(project, original_path)
+        selection = owned.FRAMEWORKS
+        if half_v3_plan is not None or half_v3_plan_sha256 is not None:
+            selection, record["development_candidate"] = half_v3_selection(
+                project,
+                source,
+                selection,
+                half_v3_plan,
+                half_v3_plan_sha256,
+                torch_runtime,
+            )
         proposed_path = [str(project), *map(str, paths), *original_path]
         inventory = runtime.discover_runtime(Path("/"), paths)
         verify_actual_import_resolution(inventory, proposed_path)
@@ -283,7 +341,6 @@ def capture(project, expected_head, torch_runtime, numpy_overlay, mlx_bundle, de
         )
         torch_manifest = file_binding(torch_runtime / "runtime-manifest.json")
         mlx_manifest = file_binding(mlx_bundle / "MANIFEST.json")
-        selection = owned.FRAMEWORKS
         for name, actual in (("pytorch", torch_manifest), ("mlx", mlx_manifest)):
             require(
                 actual["sha256"] == selection[name]["runtime_manifest_sha256"],
@@ -386,6 +443,8 @@ def main():
     ):
         parser.add_argument("--" + name, type=Path, required=True)
     parser.add_argument("--expected-head", required=True)
+    parser.add_argument("--half-v3-plan", type=Path)
+    parser.add_argument("--half-v3-plan-sha256")
     args = parser.parse_args()
     result = capture(
         args.project,
@@ -395,6 +454,8 @@ def main():
         args.mlx_bundle,
         args.dependencies,
         args.output,
+        half_v3_plan=args.half_v3_plan,
+        half_v3_plan_sha256=args.half_v3_plan_sha256,
     )
     print(
         json.dumps(

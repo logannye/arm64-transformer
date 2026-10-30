@@ -268,11 +268,10 @@ def audit(root, record, manifest, runtime_receipt, producer, policy):
         and plan["producer"]["sha256"] == binding["source"][producer.PRODUCER],
         "Producer authority differs",
     )
+    inventory, inventory_sha = producer.inventory_spec(plan)
     require(
-        plan["inventory"]["sha256"]
-        == producer.INVENTORY_SHA
-        == binding["source"].get(producer.INVENTORY)
-        and absolute(plan["inventory"]["path"]) == absolute(project["root"]) / producer.INVENTORY,
+        plan["inventory"]["sha256"] == inventory_sha == binding["source"].get(inventory)
+        and absolute(plan["inventory"]["path"]) == absolute(project["root"]) / inventory,
         "Plan suite inventory differs from the selected contract",
     )
     require(
@@ -286,6 +285,9 @@ def audit(root, record, manifest, runtime_receipt, producer, policy):
         require(all(row[k] == expected[k] for k in ("sha256", "bytes")), "Plan authority differs")
     runtime = authorities["inventory"]
     selected = authorities["selection"]
+    # Authenticate the explicit successor selection without reading any original
+    # producer path. The source-pinned contract lives beside this current auditor.
+    producer.suite_inventory(plan, selected)
     require(
         runtime["files"] == binding["runtime"]
         and runtime["layout"] == binding["runtime_layout"]

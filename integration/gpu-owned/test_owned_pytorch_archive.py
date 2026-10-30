@@ -383,6 +383,20 @@ class PortableTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.check()
 
+    def test_old_evidence_cannot_be_relabeled_as_half_v3(self):
+        evidence = self.record["portable_evidence"]
+        row = evidence["plan"]
+        path = self.archived / row["path"]
+        plan = M.read(path)
+        plan["suite_contract"] = "half-v3"
+        path.write_text(json.dumps(plan))
+        changed = M.binding(path)
+        for target in (row, evidence["original_plan"]):
+            target.update({key: changed[key] for key in ("sha256", "bytes")})
+        self.record["plan_sha256"] = changed["sha256"]
+        with self.assertRaisesRegex(ValueError, "Plan suite inventory differs"):
+            self.check()
+
     def test_missing_generated_fixture(self):
         self.record["portable_evidence"]["cache"].pop(
             "mps_iter_conformance/mps_iter_conformance.so"

@@ -109,7 +109,8 @@ executable checks in each auto/NEON run. Run
 also checks all 16 primitive policies. Hosted
 [41127179360](https://github.com/logannye/arm64-transformer/actions/runs/41127179360)
 replays the complete historical native gradients from existing public tensors;
-width 512 has passed and width 1024 remains in progress. Its M1/NEON platform
+both widths passed their complete independent raw audits (89 anchors, 73 distinct
+batches, including every gradient). Its M1/NEON platform
 cannot qualify the M4/SME path or support new performance claims.
 
 The full-source PyTorch FP16/layout v2 build completed compilation, but failed
@@ -118,7 +119,7 @@ CMake cache containing it. The failure is retained in run 41110294834. Recipe v3
 passes CMake flag variables explicitly and checks generated commands early;
 its hosted validation remains pending. That build
 addresses retained integration failures, not the MPS trained-attention arithmetic
-failures. The portable MPS evidence producer and archive auditor now have 66
+failures. The portable MPS evidence producer and archive auditor now have 70
 CPU-only checks, plus 25 eligibility checks. They verify retained evidence after
 relocation without reading original paths. No actual runtime or full MPS suite is
 qualified by those tests. Full framework conformance against the new runtime,
@@ -152,4 +153,7 @@ The separate [v3 framework artifact adapter](../../integration/gpu-owned/CANDIDA
 has 30 standard-library checks. It verifies the new build's actual early/final
 compiler commands and retained Half differential bytes before preparing the
 34-method focused device replay. This adapter neither qualifies the pending
-build nor promotes the old runtime's evidence.
+build nor promotes the old runtime's evidence. Explicit candidate runtime capture
+and the separately pinned 10,357-test full-suite route are implemented with the
+same conformance-fixture and portable-evidence requirements. Their new runtime
+and actual suite execution remain pending.

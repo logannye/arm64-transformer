@@ -2,6 +2,7 @@
 
 import hashlib
 import importlib.util
+import json
 import subprocess
 import sys
 import tempfile
@@ -59,6 +60,75 @@ class CaptureTests(unittest.TestCase):
         )
         subprocess.run([sys.executable, "-I", "-S", "-B", "-c", script], check=True)
         self.assertFalse(marker.exists())
+
+    def half_fixture(self, *, mutate_plan=False):
+        relative = "integration/gpu-owned/candidate_half_v3_validation.py"
+        helper = self.root / relative
+        helper.parent.mkdir(parents=True)
+        contract = {
+            "source_revision": "a" * 40,
+            "component_patches": [{"sha256": "b" * 64}, {"sha256": "c" * 64}],
+            "combined_patch_sha256": "d" * 64,
+        }
+        # A bounded test-only authenticated-helper interface. The production
+        # candidate's archive/build checks have their own mutation suite.
+        helper.write_text(
+            "import hashlib,json\nfrom pathlib import Path\n"
+            "SCHEMA='test-only-candidate'\nHOSTED_RUN='41125186309'\n"
+            "def authenticate_plan(path, expected):\n"
+            "    raw=Path(path).read_bytes()\n"
+            "    if hashlib.sha256(raw).hexdigest()!=expected: raise ValueError('plan')\n"
+            "    plan=json.loads(raw)\n"
+            + ("    Path(path).write_bytes(raw+b'\\n')\n" if mutate_plan else "")
+            + "    return plan, None\n"
+            + "def selection_contract(): return "
+            + repr(contract)
+            + ",None,None\n"
+        )
+        runtime = self.root / "runtime"
+        runtime.mkdir()
+        plan = self.root / "plan.json"
+        plan.write_text(
+            json.dumps({"runtime": str(runtime), "runtime_manifest": {"sha256": "e" * 64}})
+        )
+        source = {"files": {relative: capture.sha(helper)}}
+        return helper, source, plan, capture.sha(plan), runtime
+
+    def test_half_candidate_capture_is_explicit_and_preserves_original_selection(self):
+        _, source, plan, digest, runtime = self.half_fixture()
+        original = {"pytorch": {"old": True}, "mlx": {"unchanged": True}}
+        selected, proof = capture.half_v3_selection(
+            self.root, source, original, plan, digest, runtime
+        )
+        self.assertEqual(original["pytorch"], {"old": True})
+        self.assertEqual(selected["mlx"], original["mlx"])
+        self.assertEqual(selected["pytorch"]["build_run"], 41125186309)
+        self.assertEqual(selected["pytorch"]["runtime_manifest_sha256"], "e" * 64)
+        self.assertEqual(selected["pytorch"]["engines"], ["cpu_torch", "mps"])
+        self.assertEqual(proof["plan"]["sha256"], digest)
+        self.assertFalse(proof["formal_eligible"])
+
+    def test_half_candidate_rejects_missing_binding_and_foreign_runtime(self):
+        _, source, plan, digest, runtime = self.half_fixture()
+        for path, sha, selected_runtime in (
+            (plan, None, runtime),
+            (None, digest, runtime),
+            (plan, "0" * 64, runtime),
+            (plan, digest, self.root / "different-runtime"),
+        ):
+            with self.subTest(path=path, sha=sha), self.assertRaises(ValueError):
+                capture.half_v3_selection(self.root, source, {}, path, sha, selected_runtime)
+
+    def test_half_candidate_helper_checked_before_loading(self):
+        helper, source, plan, digest, runtime = self.half_fixture()
+        helper.write_text("raise RuntimeError('unbound helper executed')\n")
+        with self.assertRaisesRegex(ValueError, "Unbound candidate helper"):
+            capture.half_v3_selection(self.root, source, {}, plan, digest, runtime)
+
+    def test_half_candidate_plan_rechecked_after_authentication(self):
+        _, source, plan, digest, runtime = self.half_fixture(mutate_plan=True)
+        with self.assertRaisesRegex(ValueError, "changed after authentication"):
+            capture.half_v3_selection(self.root, source, {}, plan, digest, runtime)
 
     def test_binding_rejects_replacement_during_read(self):
         path = self.root / "input"
