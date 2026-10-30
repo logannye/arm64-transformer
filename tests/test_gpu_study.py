@@ -624,3 +624,28 @@ def test_reporter_recomputes_quality_and_prediction_differences(monkeypatch):
     saved["prediction_differences"]["metal/test"]["argmax_changes"] = 1
     with pytest.raises(ValueError, match="differences changed"):
         report.verify_prediction_records(saved, arrays, logits, cell, hashes)
+
+
+def test_owned_formal_gpu_worker_preserves_complete_budget_through_owned_factory(
+    formal_mock, tmp_path, monkeypatch
+):
+    from transformer import gpu_study_context
+
+    worker, fixture, instances = formal_mock
+    manifest = study.planned_manifest("owned")
+    seen = []
+
+    def create(engine, initial, **options):
+        seen.append((engine, options))
+        backend = FormalMockBackend(initial, max_batch=options["max_batch"])
+        instances.append(backend)
+        return backend
+
+    monkeypatch.setattr(gpu_study_context, "create_backend", create)
+    worker.gpu_fit(fixture, tmp_path, "mps", manifest=manifest, roots={"test_only": True})
+    assert seen == [("mps", {"max_batch": 16, "manifest": manifest, "roots": {"test_only": True}})]
+    assert instances[0].updates == 1025  # 1 restored warmup plus1024 measured updates.
+    result = study.read_json(tmp_path / "runtime.json")
+    assert result["steps"] == 1024 and result["best_epoch"] == 1
+    assert result["framework_import_seconds"] is None
+    assert "setup_seconds" in result["import_scope"]

@@ -126,12 +126,20 @@ reproduce in a pristine matched build, but remain blocking integration failures
 for this new route. This contract does not remove tests or reclassify those
 failures to permit measurement. We can investigate and repair them ourselves.
 
-An independently executable study still needs full-workload baseline and CPU
-checks beyond the completed short synthetic development probes, dedicated admission
-identities, the complete passing
-admission inventory, and finally all 180 fits and checkpoint audits. Existing
-planning or preflight output is not an executable manifest or a passing admission
-receipt. The old standard-study runner must reject this new protocol.
+The owned command path now implements runtime capture, baseline diagnostics,
+freeze, admission, execution and checkpoint-audit routing. CPU-only mutation
+tests exercise its authority and failure handling. Real-device framework suites,
+full-workload baseline and fresh CPU checks, the complete passing admission
+inventory, and finally all 180 fits and checkpoint audits remain required.
+Existing planning or preflight output is not a passing admission receipt. The
+standard and owned namespaces remain separate.
+
+The MPS full-suite launcher has static regression coverage, but its dedicated
+archive audit for subprocesses, the stock conformance fixture, helper code and
+full-source metadata remains unfinished. **Owned MPS qualification fails closed
+until that audit is implemented and reviewed.** Generic passing test totals
+cannot qualify it. No fresh owned runtime capture or full-suite execution has
+been claimed at this checkpoint.
 
 ## Planning and preflight
 
@@ -153,9 +161,14 @@ The evidence root is the common reconstructed `work/` and `outputs/` parent
 described in the [integration reproduction guide](../upstream-integration-v2/REPRODUCTION.md).
 Preflight authenticates the selected patch identities and retained failed broad
 suite; it reports blockers without turning them into passes. An optional
-hash-bound joint-runtime development probe remains a smoke check. A dedicated
-owned-study freeze, admission, execution and audit integration still has to be
-implemented and validated before formal measurement can begin.
+hash-bound joint-runtime development probe remains a smoke check. The
+[owned command guide](../../integration/gpu-owned/OWNED-COMMANDS.md) describes
+the separate executing interface and its remaining validation gates. Start with
+[runtime identity capture](../../integration/gpu-owned/RUNTIME-IDENTITY.md)
+under canonical CPython with a fixed hash seed and explicit authenticated import
+paths. Full source, dependency and native-library identities are checked before
+and after execution. These controls have CPU-only regression coverage; they do
+not substitute for device integration, admission or the full study.
 
 The preserved historical CPU numerical failures remain unresolved. A successful
 owned-build study could establish a matched comparison against these maintained

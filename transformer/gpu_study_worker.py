@@ -9,7 +9,6 @@ import math
 import os
 import resource
 import subprocess
-import sys
 import time
 from pathlib import Path
 
@@ -38,24 +37,35 @@ def checkpoint_improves(candidate_loss, previous_loss):
     return candidate_loss < previous_loss
 
 
-def gpu_fit(fixture, output, engine):
+def gpu_fit(fixture, output, engine, *, manifest=None, roots=None):
     """Mirror the declared timing boundary, preserving all device state controls."""
     import numpy as np
 
     from transformer.gpu_run import checked_state, evaluate, require_finite, scalar, state_equal
+    from transformer.gpu_study_context import create_backend, resolve_context
     from transformer.spec import PARAM_COUNT
 
+    owned = resolve_context(manifest).owned
     import_start = time.perf_counter()
-    module = importlib.import_module(f"transformer.gpu_{engine}")
+    if not owned:
+        module = importlib.import_module(f"transformer.gpu_{engine}")
     receipt = {
         "scope": "formal_measurement",
         "engine": engine,
         "status": "started",
-        "framework_import_seconds": time.perf_counter() - import_start,
+        "framework_import_seconds": None if owned else time.perf_counter() - import_start,
     }
+    if owned:
+        receipt["import_scope"] = (
+            "Authenticated runtime import and construction included in setup_seconds"
+        )
     setup, backend = time.perf_counter(), None
     try:
-        backend = module.Backend(fixture["initial"], max_batch=16)
+        backend = (
+            create_backend(engine, fixture["initial"], max_batch=16, manifest=manifest, roots=roots)
+            if owned
+            else module.Backend(fixture["initial"], max_batch=16)
+        )
         if engine == "metal":
             from transformer.gpu_policy import bundle, identity
             from transformer.spec import WIDTH
@@ -197,19 +207,30 @@ def run_cell(manifest_path, expected_hash, admission, roots, cell_id, output):
     output = Path(output)
     require(not output.exists() and not output.is_symlink(), "Output collision")
     output.parent.mkdir(parents=True, exist_ok=True)
+    from transformer.gpu_study_context import child_controls, python_command, resolve_context
+
     if cell["engine"] in ("cpu_arm64", "cpu_torch"):
         cpu = Path(roots["cpu"]).resolve()
         command = (
             [str(cpu / f"native/build/width-{cell['width']}/transformer-arm64")]
             if cell["engine"] == "cpu_arm64"
-            else [sys.executable, "-m", "transformer.python_train"]
+            else python_command(manifest, output, roots=roots, cpu=True)
+            + ["-m", "transformer.python_train"]
         )
         env = child_environment(ENVIRONMENT)
         env["PYTHONPATH"] = python_path(manifest, roots, cpu=True)
+        arguments = [str(fixture_path.resolve()), str(output.resolve())]
+        if resolve_context(manifest).owned and cell["engine"] == "cpu_torch":
+            from transformer.gpu_owned_cpu import prepare_command
+
+            command = prepare_command(
+                manifest, roots, "cpu_torch", "fit", arguments, output, admission_receipt=admission
+            )
+            arguments = []
         subprocess.run(
-            command + [str(fixture_path.resolve()), str(output.resolve())],
+            command + arguments,
             cwd=cpu,
-            env=env,
+            env=child_controls(manifest, env),
             check=True,
         )
     else:
@@ -217,8 +238,26 @@ def run_cell(manifest_path, expected_hash, admission, roots, cell_id, output):
 
         fixture = load_fixture(fixture_path)
         output.mkdir()
-        gpu_fit(fixture, output, cell["engine"])
+        gpu_fit(fixture, output, cell["engine"], manifest=manifest, roots=roots)
     verify_bindings(manifest, roots)
+    if resolve_context(manifest).owned and cell["engine"] == "cpu_torch":
+        from transformer.gpu_owned_cpu import verify_proof
+
+        files = {
+            path.name: digest(path)
+            for path in output.iterdir()
+            if path.is_file() and path.name != "owned-cpu-proof.json"
+        }
+        verify_proof(
+            output / "owned-cpu-proof.json",
+            manifest,
+            engine="cpu_torch",
+            kind="fit",
+            output_hashes=files,
+            input_hashes={
+                path.name: digest(path) for path in fixture_path.iterdir() if path.is_file()
+            },
+        )
     require(
         all((output / name).is_file() for name in required_artifacts(cell["engine"])),
         "Missing measured artifacts",

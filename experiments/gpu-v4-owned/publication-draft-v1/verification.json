@@ -1,0 +1,1084 @@
+{
+  "all_assets_streamed_and_exact_inventory_verified": true,
+  "assets": [
+    {
+      "after": {
+        "digest": "sha256:9abf0ec680587d38e33c9f1c8d8143f0ab745e4bed33507385e76e3044036a14",
+        "id": 692893126,
+        "metadata_sha256": "4bdb38f7c2d885ea7e2145c1a2d573c91904fa794974aca9cd09bca2054b9ade",
+        "name": "failed-model-v1.tar.gz",
+        "size": 3055238,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:9abf0ec680587d38e33c9f1c8d8143f0ab745e4bed33507385e76e3044036a14",
+        "id": 692893126,
+        "metadata_sha256": "4bdb38f7c2d885ea7e2145c1a2d573c91904fa794974aca9cd09bca2054b9ade",
+        "name": "failed-model-v1.tar.gz",
+        "size": 3055238,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692893126,
+        "bytes": 3055238,
+        "local_path": "work/gpu-v4-owned/evidence-archives-v1/failed-model-v1.tar.gz",
+        "name": "failed-model-v1.tar.gz",
+        "sha256": "9abf0ec680587d38e33c9f1c8d8143f0ab745e4bed33507385e76e3044036a14"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 0.9132447917945683,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 3055238,
+        "stdout_sha256": "9abf0ec680587d38e33c9f1c8d8143f0ab745e4bed33507385e76e3044036a14"
+      }
+    },
+    {
+      "after": {
+        "digest": "sha256:2e9afdd7ac89fa5988dd5c9eb00fe1461f56fff4308971c5bd01288d0542b314",
+        "id": 692893125,
+        "metadata_sha256": "832c856942ea077383392a972df7df8406e4bac15e6c92d9d8fab64f69eea0ca",
+        "name": "half-index-v1.tar.gz",
+        "size": 206933,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:2e9afdd7ac89fa5988dd5c9eb00fe1461f56fff4308971c5bd01288d0542b314",
+        "id": 692893125,
+        "metadata_sha256": "832c856942ea077383392a972df7df8406e4bac15e6c92d9d8fab64f69eea0ca",
+        "name": "half-index-v1.tar.gz",
+        "size": 206933,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692893125,
+        "bytes": 206933,
+        "local_path": "work/gpu-v4-owned/evidence-archives-v1/half-index-v1.tar.gz",
+        "name": "half-index-v1.tar.gz",
+        "sha256": "2e9afdd7ac89fa5988dd5c9eb00fe1461f56fff4308971c5bd01288d0542b314"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 0.942269999999553,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 206933,
+        "stdout_sha256": "2e9afdd7ac89fa5988dd5c9eb00fe1461f56fff4308971c5bd01288d0542b314"
+      }
+    },
+    {
+      "after": {
+        "digest": "sha256:27b2bfaa53012d56a8ff5b3c9407f04b5e155c67f86faa0f12d2edb30d8e807f",
+        "id": 692893124,
+        "metadata_sha256": "47de9298cfa5e2a61c4fc7da63869cebdbb0dd6e90c5c97919c8bb08e874d5e4",
+        "name": "joint-runtime-v1-through-v4.tar.gz",
+        "size": 29937,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:27b2bfaa53012d56a8ff5b3c9407f04b5e155c67f86faa0f12d2edb30d8e807f",
+        "id": 692893124,
+        "metadata_sha256": "47de9298cfa5e2a61c4fc7da63869cebdbb0dd6e90c5c97919c8bb08e874d5e4",
+        "name": "joint-runtime-v1-through-v4.tar.gz",
+        "size": 29937,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692893124,
+        "bytes": 29937,
+        "local_path": "work/gpu-v4-owned/evidence-archives-v1/joint-runtime-v1-through-v4.tar.gz",
+        "name": "joint-runtime-v1-through-v4.tar.gz",
+        "sha256": "27b2bfaa53012d56a8ff5b3c9407f04b5e155c67f86faa0f12d2edb30d8e807f"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 0.565465500112623,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 29937,
+        "stdout_sha256": "27b2bfaa53012d56a8ff5b3c9407f04b5e155c67f86faa0f12d2edb30d8e807f"
+      }
+    },
+    {
+      "after": {
+        "digest": "sha256:e6cb07e839f68e7082c5b215cb9b8d7f8c7dfd0a0f7e1c40f0e9c568b2ed0ee6",
+        "id": 692893122,
+        "metadata_sha256": "12255bfd11dc70b179cf7efcee8402f8c76ca75c4b37e85193c2fd30d43de808",
+        "name": "layout-diagnostic-v1.tar.gz",
+        "size": 6224205,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:e6cb07e839f68e7082c5b215cb9b8d7f8c7dfd0a0f7e1c40f0e9c568b2ed0ee6",
+        "id": 692893122,
+        "metadata_sha256": "12255bfd11dc70b179cf7efcee8402f8c76ca75c4b37e85193c2fd30d43de808",
+        "name": "layout-diagnostic-v1.tar.gz",
+        "size": 6224205,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692893122,
+        "bytes": 6224205,
+        "local_path": "work/gpu-v4-owned/evidence-archives-v1/layout-diagnostic-v1.tar.gz",
+        "name": "layout-diagnostic-v1.tar.gz",
+        "sha256": "e6cb07e839f68e7082c5b215cb9b8d7f8c7dfd0a0f7e1c40f0e9c568b2ed0ee6"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 0.9394819997251034,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 6224205,
+        "stdout_sha256": "e6cb07e839f68e7082c5b215cb9b8d7f8c7dfd0a0f7e1c40f0e9c568b2ed0ee6"
+      }
+    },
+    {
+      "after": {
+        "digest": "sha256:f66acf4ad877ef57e1b5d66a9c5247e3a75f64c4bc31cb512d678260559d44fe",
+        "id": 692893123,
+        "metadata_sha256": "f553c4fb32e0071f0d3c1621b742f30e512731098a8fce123b20e54bdfa496b6",
+        "name": "model-compatibility-v2-cpu-torch.tar.gz",
+        "size": 1002761498,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:f66acf4ad877ef57e1b5d66a9c5247e3a75f64c4bc31cb512d678260559d44fe",
+        "id": 692893123,
+        "metadata_sha256": "f553c4fb32e0071f0d3c1621b742f30e512731098a8fce123b20e54bdfa496b6",
+        "name": "model-compatibility-v2-cpu-torch.tar.gz",
+        "size": 1002761498,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692893123,
+        "bytes": 1002761498,
+        "local_path": "work/gpu-v4-owned/model-evidence-archives-v1/model-compatibility-v2-cpu-torch.tar.gz",
+        "name": "model-compatibility-v2-cpu-torch.tar.gz",
+        "sha256": "f66acf4ad877ef57e1b5d66a9c5247e3a75f64c4bc31cb512d678260559d44fe"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 47.005665958859026,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1002761498,
+        "stdout_sha256": "f66acf4ad877ef57e1b5d66a9c5247e3a75f64c4bc31cb512d678260559d44fe"
+      }
+    },
+    {
+      "after": {
+        "digest": "sha256:ce89d98edca540cc0d41425f7035853793173403a465fe6907d6d7fa0973cb9a",
+        "id": 692893152,
+        "metadata_sha256": "31f8f73d6ad9aabb548f32095851f7cfb45c722ec145f36ad3796241f8429492",
+        "name": "model-compatibility-v2-metadata.tar.gz",
+        "size": 55769,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:ce89d98edca540cc0d41425f7035853793173403a465fe6907d6d7fa0973cb9a",
+        "id": 692893152,
+        "metadata_sha256": "31f8f73d6ad9aabb548f32095851f7cfb45c722ec145f36ad3796241f8429492",
+        "name": "model-compatibility-v2-metadata.tar.gz",
+        "size": 55769,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692893152,
+        "bytes": 55769,
+        "local_path": "work/gpu-v4-owned/model-evidence-archives-v1/model-compatibility-v2-metadata.tar.gz",
+        "name": "model-compatibility-v2-metadata.tar.gz",
+        "sha256": "ce89d98edca540cc0d41425f7035853793173403a465fe6907d6d7fa0973cb9a"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 0.9963846248574555,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 55769,
+        "stdout_sha256": "ce89d98edca540cc0d41425f7035853793173403a465fe6907d6d7fa0973cb9a"
+      }
+    },
+    {
+      "after": {
+        "digest": "sha256:a408308592fe926a7df09eef200c0016855f1f6ce5c8a4582acdbc4c1e33565a",
+        "id": 692893174,
+        "metadata_sha256": "add1f9e2fc5faa06afd93c0c01b58d7da545702def8d840dc376bd615afe0ecd",
+        "name": "model-compatibility-v2-mlx.tar.gz",
+        "size": 1002671723,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:a408308592fe926a7df09eef200c0016855f1f6ce5c8a4582acdbc4c1e33565a",
+        "id": 692893174,
+        "metadata_sha256": "add1f9e2fc5faa06afd93c0c01b58d7da545702def8d840dc376bd615afe0ecd",
+        "name": "model-compatibility-v2-mlx.tar.gz",
+        "size": 1002671723,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692893174,
+        "bytes": 1002671723,
+        "local_path": "work/gpu-v4-owned/model-evidence-archives-v1/model-compatibility-v2-mlx.tar.gz",
+        "name": "model-compatibility-v2-mlx.tar.gz",
+        "sha256": "a408308592fe926a7df09eef200c0016855f1f6ce5c8a4582acdbc4c1e33565a"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 56.93351695826277,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1002671723,
+        "stdout_sha256": "a408308592fe926a7df09eef200c0016855f1f6ce5c8a4582acdbc4c1e33565a"
+      }
+    },
+    {
+      "after": {
+        "digest": "sha256:651d9cc7d90ebd1461b90c5abef6a57ad78b291a882834f90b788c93738031ee",
+        "id": 692893186,
+        "metadata_sha256": "87e45b5e247682301af74aaa455c295524a9ca149a05ca996450b46ab86279ee",
+        "name": "model-compatibility-v2-mps.tar.gz",
+        "size": 1002621927,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:651d9cc7d90ebd1461b90c5abef6a57ad78b291a882834f90b788c93738031ee",
+        "id": 692893186,
+        "metadata_sha256": "87e45b5e247682301af74aaa455c295524a9ca149a05ca996450b46ab86279ee",
+        "name": "model-compatibility-v2-mps.tar.gz",
+        "size": 1002621927,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692893186,
+        "bytes": 1002621927,
+        "local_path": "work/gpu-v4-owned/model-evidence-archives-v1/model-compatibility-v2-mps.tar.gz",
+        "name": "model-compatibility-v2-mps.tar.gz",
+        "sha256": "651d9cc7d90ebd1461b90c5abef6a57ad78b291a882834f90b788c93738031ee"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 49.720433958340436,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1002621927,
+        "stdout_sha256": "651d9cc7d90ebd1461b90c5abef6a57ad78b291a882834f90b788c93738031ee"
+      }
+    },
+    {
+      "after": {
+        "digest": "sha256:4ddfbbe8150ba56949785468335e48b2c89d5301f428204b3471f6ee1b46c2dd",
+        "id": 692930105,
+        "metadata_sha256": "da04eec7924871391addfc31f897eea970927245a659dc105d86e93db9cb6c22",
+        "name": "model-full-shape-v1-cpu-torch-b1-t32.tar.gz",
+        "size": 1014374610,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:4ddfbbe8150ba56949785468335e48b2c89d5301f428204b3471f6ee1b46c2dd",
+        "id": 692930105,
+        "metadata_sha256": "da04eec7924871391addfc31f897eea970927245a659dc105d86e93db9cb6c22",
+        "name": "model-full-shape-v1-cpu-torch-b1-t32.tar.gz",
+        "size": 1014374610,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692930105,
+        "bytes": 1014374610,
+        "local_path": "work/gpu-v4-owned/full-shape-evidence-archives-v1/model-full-shape-v1-cpu-torch-b1-t32.tar.gz",
+        "name": "model-full-shape-v1-cpu-torch-b1-t32.tar.gz",
+        "sha256": "4ddfbbe8150ba56949785468335e48b2c89d5301f428204b3471f6ee1b46c2dd"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 50.21457233373076,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1014374610,
+        "stdout_sha256": "4ddfbbe8150ba56949785468335e48b2c89d5301f428204b3471f6ee1b46c2dd"
+      }
+    },
+    {
+      "after": {
+        "digest": "sha256:c344013b963c9d9a1ec2ed9adbfa49457f707b9dc1f1212766e4e19772d37011",
+        "id": 692930101,
+        "metadata_sha256": "1b3196260dc0f3280bf5c8e9c7e1d7aaa869040e3b73fc7e2b0f8f5edc78efa9",
+        "name": "model-full-shape-v1-cpu-torch-b16-t32.tar.gz",
+        "size": 1049773364,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:c344013b963c9d9a1ec2ed9adbfa49457f707b9dc1f1212766e4e19772d37011",
+        "id": 692930101,
+        "metadata_sha256": "1b3196260dc0f3280bf5c8e9c7e1d7aaa869040e3b73fc7e2b0f8f5edc78efa9",
+        "name": "model-full-shape-v1-cpu-torch-b16-t32.tar.gz",
+        "size": 1049773364,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692930101,
+        "bytes": 1049773364,
+        "local_path": "work/gpu-v4-owned/full-shape-evidence-archives-v1/model-full-shape-v1-cpu-torch-b16-t32.tar.gz",
+        "name": "model-full-shape-v1-cpu-torch-b16-t32.tar.gz",
+        "sha256": "c344013b963c9d9a1ec2ed9adbfa49457f707b9dc1f1212766e4e19772d37011"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 56.514075624756515,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1049773364,
+        "stdout_sha256": "c344013b963c9d9a1ec2ed9adbfa49457f707b9dc1f1212766e4e19772d37011"
+      }
+    },
+    {
+      "after": {
+        "digest": "sha256:1681af8280cda9c100d635ea018fe006a673ad16d4c9b9211744bb79518b7217",
+        "id": 692930100,
+        "metadata_sha256": "26ad0c022a7e2cd1065c3cb0a3e11efc9c29ce885edc87d8f37285e00807a17a",
+        "name": "model-full-shape-v1-metadata.tar.gz",
+        "size": 109091,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:1681af8280cda9c100d635ea018fe006a673ad16d4c9b9211744bb79518b7217",
+        "id": 692930100,
+        "metadata_sha256": "26ad0c022a7e2cd1065c3cb0a3e11efc9c29ce885edc87d8f37285e00807a17a",
+        "name": "model-full-shape-v1-metadata.tar.gz",
+        "size": 109091,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692930100,
+        "bytes": 109091,
+        "local_path": "work/gpu-v4-owned/full-shape-evidence-archives-v1/model-full-shape-v1-metadata.tar.gz",
+        "name": "model-full-shape-v1-metadata.tar.gz",
+        "sha256": "1681af8280cda9c100d635ea018fe006a673ad16d4c9b9211744bb79518b7217"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 0.7743004998192191,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 109091,
+        "stdout_sha256": "1681af8280cda9c100d635ea018fe006a673ad16d4c9b9211744bb79518b7217"
+      }
+    },
+    {
+      "after": {
+        "digest": "sha256:2e62d4d875f819f78b94a1bbc5599e5b33d2ac137d9f9e7847dbd22e1dfba8b8",
+        "id": 692930096,
+        "metadata_sha256": "4bb9d5a06ecf3a8ee7716e5946bda8832b344317d1d10bd3f974d1cefddf2179",
+        "name": "model-full-shape-v1-mlx-b1-t32.tar.gz",
+        "size": 1014330520,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:2e62d4d875f819f78b94a1bbc5599e5b33d2ac137d9f9e7847dbd22e1dfba8b8",
+        "id": 692930096,
+        "metadata_sha256": "4bb9d5a06ecf3a8ee7716e5946bda8832b344317d1d10bd3f974d1cefddf2179",
+        "name": "model-full-shape-v1-mlx-b1-t32.tar.gz",
+        "size": 1014330520,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692930096,
+        "bytes": 1014330520,
+        "local_path": "work/gpu-v4-owned/full-shape-evidence-archives-v1/model-full-shape-v1-mlx-b1-t32.tar.gz",
+        "name": "model-full-shape-v1-mlx-b1-t32.tar.gz",
+        "sha256": "2e62d4d875f819f78b94a1bbc5599e5b33d2ac137d9f9e7847dbd22e1dfba8b8"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 50.532225334085524,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1014330520,
+        "stdout_sha256": "2e62d4d875f819f78b94a1bbc5599e5b33d2ac137d9f9e7847dbd22e1dfba8b8"
+      }
+    },
+    {
+      "after": {
+        "digest": "sha256:d779cc951dd214dd6aac7e770a4f1357890b502638b87329c146fb6ad3da194f",
+        "id": 692930102,
+        "metadata_sha256": "a36844f20210707fdc6e5706bb2665454c71f68b5d124b64c6fab40c06b27ee5",
+        "name": "model-full-shape-v1-mlx-b16-t32.tar.gz",
+        "size": 1049685250,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:d779cc951dd214dd6aac7e770a4f1357890b502638b87329c146fb6ad3da194f",
+        "id": 692930102,
+        "metadata_sha256": "a36844f20210707fdc6e5706bb2665454c71f68b5d124b64c6fab40c06b27ee5",
+        "name": "model-full-shape-v1-mlx-b16-t32.tar.gz",
+        "size": 1049685250,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692930102,
+        "bytes": 1049685250,
+        "local_path": "work/gpu-v4-owned/full-shape-evidence-archives-v1/model-full-shape-v1-mlx-b16-t32.tar.gz",
+        "name": "model-full-shape-v1-mlx-b16-t32.tar.gz",
+        "sha256": "d779cc951dd214dd6aac7e770a4f1357890b502638b87329c146fb6ad3da194f"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 47.00330187473446,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1049685250,
+        "stdout_sha256": "d779cc951dd214dd6aac7e770a4f1357890b502638b87329c146fb6ad3da194f"
+      }
+    },
+    {
+      "after": {
+        "digest": "sha256:08cd57ca91dec4331416f2b263a7bf4c0973c21a98a0874296d13ab6e4fd4b9d",
+        "id": 692930134,
+        "metadata_sha256": "90b4a27326d38f4fd6c6216d0d36db97957f8f4f5887513820db892d421dea30",
+        "name": "model-full-shape-v1-mps-b1-t32.tar.gz",
+        "size": 1014286695,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:08cd57ca91dec4331416f2b263a7bf4c0973c21a98a0874296d13ab6e4fd4b9d",
+        "id": 692930134,
+        "metadata_sha256": "90b4a27326d38f4fd6c6216d0d36db97957f8f4f5887513820db892d421dea30",
+        "name": "model-full-shape-v1-mps-b1-t32.tar.gz",
+        "size": 1014286695,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692930134,
+        "bytes": 1014286695,
+        "local_path": "work/gpu-v4-owned/full-shape-evidence-archives-v1/model-full-shape-v1-mps-b1-t32.tar.gz",
+        "name": "model-full-shape-v1-mps-b1-t32.tar.gz",
+        "sha256": "08cd57ca91dec4331416f2b263a7bf4c0973c21a98a0874296d13ab6e4fd4b9d"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 52.146279625128955,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1014286695,
+        "stdout_sha256": "08cd57ca91dec4331416f2b263a7bf4c0973c21a98a0874296d13ab6e4fd4b9d"
+      }
+    },
+    {
+      "after": {
+        "digest": "sha256:c2c4c08ea7c4ee314359039e2e44aabc57fa37e42bba87ce5389fc3ad17c77c4",
+        "id": 692938596,
+        "metadata_sha256": "aed6fd464a988fda4e9bb6925d9238bb925c0abac6e5d1218b08efb36ee98cf7",
+        "name": "model-full-shape-v1-mps-b16-t32.tar.gz",
+        "size": 1049651099,
+        "state": "uploaded"
+      },
+      "before": {
+        "digest": "sha256:c2c4c08ea7c4ee314359039e2e44aabc57fa37e42bba87ce5389fc3ad17c77c4",
+        "id": 692938596,
+        "metadata_sha256": "aed6fd464a988fda4e9bb6925d9238bb925c0abac6e5d1218b08efb36ee98cf7",
+        "name": "model-full-shape-v1-mps-b16-t32.tar.gz",
+        "size": 1049651099,
+        "state": "uploaded"
+      },
+      "expected": {
+        "asset_id": 692938596,
+        "bytes": 1049651099,
+        "local_path": "work/gpu-v4-owned/full-shape-evidence-archives-v1/model-full-shape-v1-mps-b16-t32.tar.gz",
+        "name": "model-full-shape-v1-mps-b16-t32.tar.gz",
+        "sha256": "c2c4c08ea7c4ee314359039e2e44aabc57fa37e42bba87ce5389fc3ad17c77c4"
+      },
+      "status": "passed",
+      "stream": {
+        "http_method": "GET",
+        "operation": "asset_payload_sha256",
+        "payload_copied_to_disk": false,
+        "problem": null,
+        "raw_stderr_retained": false,
+        "returncode": 0,
+        "seconds": 51.5204513752833,
+        "stderr_bytes": 0,
+        "stderr_markers": [],
+        "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_bytes": 1049651099,
+        "stdout_sha256": "c2c4c08ea7c4ee314359039e2e44aabc57fa37e42bba87ce5389fc3ad17c77c4"
+      }
+    }
+  ],
+  "authenticated_after": {
+    "id": 87274608,
+    "login": "logannye"
+  },
+  "authenticated_before": {
+    "id": 87274608,
+    "login": "logannye"
+  },
+  "complete": true,
+  "contract_file_sha256": "9b91754e057771787bf3d7e681d3aa3ee4ec20d685c5f1c69fad141ec2bca6d6",
+  "credentials_or_download_urls_recorded": false,
+  "expected_contract_sha256": "9b91754e057771787bf3d7e681d3aa3ee4ec20d685c5f1c69fad141ec2bca6d6",
+  "expected_release_id": 429316980,
+  "finished_utc": "2026-10-30T18:12:46.947232+00:00",
+  "formal_eligible": false,
+  "inventory_after": [
+    {
+      "digest": "sha256:9abf0ec680587d38e33c9f1c8d8143f0ab745e4bed33507385e76e3044036a14",
+      "id": 692893126,
+      "metadata_sha256": "4bdb38f7c2d885ea7e2145c1a2d573c91904fa794974aca9cd09bca2054b9ade",
+      "name": "failed-model-v1.tar.gz",
+      "size": 3055238,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:2e9afdd7ac89fa5988dd5c9eb00fe1461f56fff4308971c5bd01288d0542b314",
+      "id": 692893125,
+      "metadata_sha256": "832c856942ea077383392a972df7df8406e4bac15e6c92d9d8fab64f69eea0ca",
+      "name": "half-index-v1.tar.gz",
+      "size": 206933,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:27b2bfaa53012d56a8ff5b3c9407f04b5e155c67f86faa0f12d2edb30d8e807f",
+      "id": 692893124,
+      "metadata_sha256": "47de9298cfa5e2a61c4fc7da63869cebdbb0dd6e90c5c97919c8bb08e874d5e4",
+      "name": "joint-runtime-v1-through-v4.tar.gz",
+      "size": 29937,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:e6cb07e839f68e7082c5b215cb9b8d7f8c7dfd0a0f7e1c40f0e9c568b2ed0ee6",
+      "id": 692893122,
+      "metadata_sha256": "12255bfd11dc70b179cf7efcee8402f8c76ca75c4b37e85193c2fd30d43de808",
+      "name": "layout-diagnostic-v1.tar.gz",
+      "size": 6224205,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:f66acf4ad877ef57e1b5d66a9c5247e3a75f64c4bc31cb512d678260559d44fe",
+      "id": 692893123,
+      "metadata_sha256": "f553c4fb32e0071f0d3c1621b742f30e512731098a8fce123b20e54bdfa496b6",
+      "name": "model-compatibility-v2-cpu-torch.tar.gz",
+      "size": 1002761498,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:ce89d98edca540cc0d41425f7035853793173403a465fe6907d6d7fa0973cb9a",
+      "id": 692893152,
+      "metadata_sha256": "31f8f73d6ad9aabb548f32095851f7cfb45c722ec145f36ad3796241f8429492",
+      "name": "model-compatibility-v2-metadata.tar.gz",
+      "size": 55769,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:a408308592fe926a7df09eef200c0016855f1f6ce5c8a4582acdbc4c1e33565a",
+      "id": 692893174,
+      "metadata_sha256": "add1f9e2fc5faa06afd93c0c01b58d7da545702def8d840dc376bd615afe0ecd",
+      "name": "model-compatibility-v2-mlx.tar.gz",
+      "size": 1002671723,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:651d9cc7d90ebd1461b90c5abef6a57ad78b291a882834f90b788c93738031ee",
+      "id": 692893186,
+      "metadata_sha256": "87e45b5e247682301af74aaa455c295524a9ca149a05ca996450b46ab86279ee",
+      "name": "model-compatibility-v2-mps.tar.gz",
+      "size": 1002621927,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:4ddfbbe8150ba56949785468335e48b2c89d5301f428204b3471f6ee1b46c2dd",
+      "id": 692930105,
+      "metadata_sha256": "da04eec7924871391addfc31f897eea970927245a659dc105d86e93db9cb6c22",
+      "name": "model-full-shape-v1-cpu-torch-b1-t32.tar.gz",
+      "size": 1014374610,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:c344013b963c9d9a1ec2ed9adbfa49457f707b9dc1f1212766e4e19772d37011",
+      "id": 692930101,
+      "metadata_sha256": "1b3196260dc0f3280bf5c8e9c7e1d7aaa869040e3b73fc7e2b0f8f5edc78efa9",
+      "name": "model-full-shape-v1-cpu-torch-b16-t32.tar.gz",
+      "size": 1049773364,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:1681af8280cda9c100d635ea018fe006a673ad16d4c9b9211744bb79518b7217",
+      "id": 692930100,
+      "metadata_sha256": "26ad0c022a7e2cd1065c3cb0a3e11efc9c29ce885edc87d8f37285e00807a17a",
+      "name": "model-full-shape-v1-metadata.tar.gz",
+      "size": 109091,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:2e62d4d875f819f78b94a1bbc5599e5b33d2ac137d9f9e7847dbd22e1dfba8b8",
+      "id": 692930096,
+      "metadata_sha256": "4bb9d5a06ecf3a8ee7716e5946bda8832b344317d1d10bd3f974d1cefddf2179",
+      "name": "model-full-shape-v1-mlx-b1-t32.tar.gz",
+      "size": 1014330520,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:d779cc951dd214dd6aac7e770a4f1357890b502638b87329c146fb6ad3da194f",
+      "id": 692930102,
+      "metadata_sha256": "a36844f20210707fdc6e5706bb2665454c71f68b5d124b64c6fab40c06b27ee5",
+      "name": "model-full-shape-v1-mlx-b16-t32.tar.gz",
+      "size": 1049685250,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:08cd57ca91dec4331416f2b263a7bf4c0973c21a98a0874296d13ab6e4fd4b9d",
+      "id": 692930134,
+      "metadata_sha256": "90b4a27326d38f4fd6c6216d0d36db97957f8f4f5887513820db892d421dea30",
+      "name": "model-full-shape-v1-mps-b1-t32.tar.gz",
+      "size": 1014286695,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:c2c4c08ea7c4ee314359039e2e44aabc57fa37e42bba87ce5389fc3ad17c77c4",
+      "id": 692938596,
+      "metadata_sha256": "aed6fd464a988fda4e9bb6925d9238bb925c0abac6e5d1218b08efb36ee98cf7",
+      "name": "model-full-shape-v1-mps-b16-t32.tar.gz",
+      "size": 1049651099,
+      "state": "uploaded"
+    }
+  ],
+  "inventory_before": [
+    {
+      "digest": "sha256:9abf0ec680587d38e33c9f1c8d8143f0ab745e4bed33507385e76e3044036a14",
+      "id": 692893126,
+      "metadata_sha256": "4bdb38f7c2d885ea7e2145c1a2d573c91904fa794974aca9cd09bca2054b9ade",
+      "name": "failed-model-v1.tar.gz",
+      "size": 3055238,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:2e9afdd7ac89fa5988dd5c9eb00fe1461f56fff4308971c5bd01288d0542b314",
+      "id": 692893125,
+      "metadata_sha256": "832c856942ea077383392a972df7df8406e4bac15e6c92d9d8fab64f69eea0ca",
+      "name": "half-index-v1.tar.gz",
+      "size": 206933,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:27b2bfaa53012d56a8ff5b3c9407f04b5e155c67f86faa0f12d2edb30d8e807f",
+      "id": 692893124,
+      "metadata_sha256": "47de9298cfa5e2a61c4fc7da63869cebdbb0dd6e90c5c97919c8bb08e874d5e4",
+      "name": "joint-runtime-v1-through-v4.tar.gz",
+      "size": 29937,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:e6cb07e839f68e7082c5b215cb9b8d7f8c7dfd0a0f7e1c40f0e9c568b2ed0ee6",
+      "id": 692893122,
+      "metadata_sha256": "12255bfd11dc70b179cf7efcee8402f8c76ca75c4b37e85193c2fd30d43de808",
+      "name": "layout-diagnostic-v1.tar.gz",
+      "size": 6224205,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:f66acf4ad877ef57e1b5d66a9c5247e3a75f64c4bc31cb512d678260559d44fe",
+      "id": 692893123,
+      "metadata_sha256": "f553c4fb32e0071f0d3c1621b742f30e512731098a8fce123b20e54bdfa496b6",
+      "name": "model-compatibility-v2-cpu-torch.tar.gz",
+      "size": 1002761498,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:ce89d98edca540cc0d41425f7035853793173403a465fe6907d6d7fa0973cb9a",
+      "id": 692893152,
+      "metadata_sha256": "31f8f73d6ad9aabb548f32095851f7cfb45c722ec145f36ad3796241f8429492",
+      "name": "model-compatibility-v2-metadata.tar.gz",
+      "size": 55769,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:a408308592fe926a7df09eef200c0016855f1f6ce5c8a4582acdbc4c1e33565a",
+      "id": 692893174,
+      "metadata_sha256": "add1f9e2fc5faa06afd93c0c01b58d7da545702def8d840dc376bd615afe0ecd",
+      "name": "model-compatibility-v2-mlx.tar.gz",
+      "size": 1002671723,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:651d9cc7d90ebd1461b90c5abef6a57ad78b291a882834f90b788c93738031ee",
+      "id": 692893186,
+      "metadata_sha256": "87e45b5e247682301af74aaa455c295524a9ca149a05ca996450b46ab86279ee",
+      "name": "model-compatibility-v2-mps.tar.gz",
+      "size": 1002621927,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:4ddfbbe8150ba56949785468335e48b2c89d5301f428204b3471f6ee1b46c2dd",
+      "id": 692930105,
+      "metadata_sha256": "da04eec7924871391addfc31f897eea970927245a659dc105d86e93db9cb6c22",
+      "name": "model-full-shape-v1-cpu-torch-b1-t32.tar.gz",
+      "size": 1014374610,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:c344013b963c9d9a1ec2ed9adbfa49457f707b9dc1f1212766e4e19772d37011",
+      "id": 692930101,
+      "metadata_sha256": "1b3196260dc0f3280bf5c8e9c7e1d7aaa869040e3b73fc7e2b0f8f5edc78efa9",
+      "name": "model-full-shape-v1-cpu-torch-b16-t32.tar.gz",
+      "size": 1049773364,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:1681af8280cda9c100d635ea018fe006a673ad16d4c9b9211744bb79518b7217",
+      "id": 692930100,
+      "metadata_sha256": "26ad0c022a7e2cd1065c3cb0a3e11efc9c29ce885edc87d8f37285e00807a17a",
+      "name": "model-full-shape-v1-metadata.tar.gz",
+      "size": 109091,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:2e62d4d875f819f78b94a1bbc5599e5b33d2ac137d9f9e7847dbd22e1dfba8b8",
+      "id": 692930096,
+      "metadata_sha256": "4bb9d5a06ecf3a8ee7716e5946bda8832b344317d1d10bd3f974d1cefddf2179",
+      "name": "model-full-shape-v1-mlx-b1-t32.tar.gz",
+      "size": 1014330520,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:d779cc951dd214dd6aac7e770a4f1357890b502638b87329c146fb6ad3da194f",
+      "id": 692930102,
+      "metadata_sha256": "a36844f20210707fdc6e5706bb2665454c71f68b5d124b64c6fab40c06b27ee5",
+      "name": "model-full-shape-v1-mlx-b16-t32.tar.gz",
+      "size": 1049685250,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:08cd57ca91dec4331416f2b263a7bf4c0973c21a98a0874296d13ab6e4fd4b9d",
+      "id": 692930134,
+      "metadata_sha256": "90b4a27326d38f4fd6c6216d0d36db97957f8f4f5887513820db892d421dea30",
+      "name": "model-full-shape-v1-mps-b1-t32.tar.gz",
+      "size": 1014286695,
+      "state": "uploaded"
+    },
+    {
+      "digest": "sha256:c2c4c08ea7c4ee314359039e2e44aabc57fa37e42bba87ce5389fc3ad17c77c4",
+      "id": 692938596,
+      "metadata_sha256": "aed6fd464a988fda4e9bb6925d9238bb925c0abac6e5d1218b08efb36ee98cf7",
+      "name": "model-full-shape-v1-mps-b16-t32.tar.gz",
+      "size": 1049651099,
+      "state": "uploaded"
+    }
+  ],
+  "local_preflight": {
+    "failed-model-v1.tar.gz": {
+      "bytes": 3055238,
+      "sha256": "9abf0ec680587d38e33c9f1c8d8143f0ab745e4bed33507385e76e3044036a14",
+      "stat": {
+        "st_ctime_ns": 1793379377775767378,
+        "st_dev": 16777234,
+        "st_ino": 298775720,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793379377735319856,
+        "st_nlink": 1,
+        "st_size": 3055238
+      }
+    },
+    "half-index-v1.tar.gz": {
+      "bytes": 206933,
+      "sha256": "2e9afdd7ac89fa5988dd5c9eb00fe1461f56fff4308971c5bd01288d0542b314",
+      "stat": {
+        "st_ctime_ns": 1793379377773697585,
+        "st_dev": 16777234,
+        "st_ino": 298775719,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793379377646241265,
+        "st_nlink": 1,
+        "st_size": 206933
+      }
+    },
+    "joint-runtime-v1-through-v4.tar.gz": {
+      "bytes": 29937,
+      "sha256": "27b2bfaa53012d56a8ff5b3c9407f04b5e155c67f86faa0f12d2edb30d8e807f",
+      "stat": {
+        "st_ctime_ns": 1793379377157219744,
+        "st_dev": 16777234,
+        "st_ino": 298775702,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793379377089068456,
+        "st_nlink": 1,
+        "st_size": 29937
+      }
+    },
+    "layout-diagnostic-v1.tar.gz": {
+      "bytes": 6224205,
+      "sha256": "e6cb07e839f68e7082c5b215cb9b8d7f8c7dfd0a0f7e1c40f0e9c568b2ed0ee6",
+      "stat": {
+        "st_ctime_ns": 1793379377558072341,
+        "st_dev": 16777234,
+        "st_ino": 298775703,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793379377558072341,
+        "st_nlink": 1,
+        "st_size": 6224205
+      }
+    },
+    "model-compatibility-v2-cpu-torch.tar.gz": {
+      "bytes": 1002761498,
+      "sha256": "f66acf4ad877ef57e1b5d66a9c5247e3a75f64c4bc31cb512d678260559d44fe",
+      "stat": {
+        "st_ctime_ns": 1793380241962297862,
+        "st_dev": 16777234,
+        "st_ino": 298789702,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793380241962297862,
+        "st_nlink": 1,
+        "st_size": 1002761498
+      }
+    },
+    "model-compatibility-v2-metadata.tar.gz": {
+      "bytes": 55769,
+      "sha256": "ce89d98edca540cc0d41425f7035853793173403a465fe6907d6d7fa0973cb9a",
+      "stat": {
+        "st_ctime_ns": 1793380304287284882,
+        "st_dev": 16777234,
+        "st_ino": 298790576,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793380304205361253,
+        "st_nlink": 1,
+        "st_size": 55769
+      }
+    },
+    "model-compatibility-v2-mlx.tar.gz": {
+      "bytes": 1002671723,
+      "sha256": "a408308592fe926a7df09eef200c0016855f1f6ce5c8a4582acdbc4c1e33565a",
+      "stat": {
+        "st_ctime_ns": 1793380301383381736,
+        "st_dev": 16777234,
+        "st_ino": 298790525,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793380301383381736,
+        "st_nlink": 1,
+        "st_size": 1002671723
+      }
+    },
+    "model-compatibility-v2-mps.tar.gz": {
+      "bytes": 1002621927,
+      "sha256": "651d9cc7d90ebd1461b90c5abef6a57ad78b291a882834f90b788c93738031ee",
+      "stat": {
+        "st_ctime_ns": 1793380271699209960,
+        "st_dev": 16777234,
+        "st_ino": 298790155,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793380271699209960,
+        "st_nlink": 1,
+        "st_size": 1002621927
+      }
+    },
+    "model-full-shape-v1-cpu-torch-b1-t32.tar.gz": {
+      "bytes": 1014374610,
+      "sha256": "4ddfbbe8150ba56949785468335e48b2c89d5301f428204b3471f6ee1b46c2dd",
+      "stat": {
+        "st_ctime_ns": 1793382191661776575,
+        "st_dev": 16777234,
+        "st_ino": 298832094,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793382191661776575,
+        "st_nlink": 1,
+        "st_size": 1014374610
+      }
+    },
+    "model-full-shape-v1-cpu-torch-b16-t32.tar.gz": {
+      "bytes": 1049773364,
+      "sha256": "c344013b963c9d9a1ec2ed9adbfa49457f707b9dc1f1212766e4e19772d37011",
+      "stat": {
+        "st_ctime_ns": 1793382221314994677,
+        "st_dev": 16777234,
+        "st_ino": 298832168,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793382221314994677,
+        "st_nlink": 1,
+        "st_size": 1049773364
+      }
+    },
+    "model-full-shape-v1-metadata.tar.gz": {
+      "bytes": 109091,
+      "sha256": "1681af8280cda9c100d635ea018fe006a673ad16d4c9b9211744bb79518b7217",
+      "stat": {
+        "st_ctime_ns": 1793382343351496429,
+        "st_dev": 16777234,
+        "st_ino": 298832687,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793382343163796198,
+        "st_nlink": 1,
+        "st_size": 109091
+      }
+    },
+    "model-full-shape-v1-mlx-b1-t32.tar.gz": {
+      "bytes": 1014330520,
+      "sha256": "2e62d4d875f819f78b94a1bbc5599e5b33d2ac137d9f9e7847dbd22e1dfba8b8",
+      "stat": {
+        "st_ctime_ns": 1793382310465196099,
+        "st_dev": 16777234,
+        "st_ino": 298832553,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793382310465196099,
+        "st_nlink": 1,
+        "st_size": 1014330520
+      }
+    },
+    "model-full-shape-v1-mlx-b16-t32.tar.gz": {
+      "bytes": 1049685250,
+      "sha256": "d779cc951dd214dd6aac7e770a4f1357890b502638b87329c146fb6ad3da194f",
+      "stat": {
+        "st_ctime_ns": 1793382340342935879,
+        "st_dev": 16777234,
+        "st_ino": 298832644,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793382340342935879,
+        "st_nlink": 1,
+        "st_size": 1049685250
+      }
+    },
+    "model-full-shape-v1-mps-b1-t32.tar.gz": {
+      "bytes": 1014286695,
+      "sha256": "08cd57ca91dec4331416f2b263a7bf4c0973c21a98a0874296d13ab6e4fd4b9d",
+      "stat": {
+        "st_ctime_ns": 1793382250957755219,
+        "st_dev": 16777234,
+        "st_ino": 298832305,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793382250957755219,
+        "st_nlink": 1,
+        "st_size": 1014286695
+      }
+    },
+    "model-full-shape-v1-mps-b16-t32.tar.gz": {
+      "bytes": 1049651099,
+      "sha256": "c2c4c08ea7c4ee314359039e2e44aabc57fa37e42bba87ce5389fc3ad17c77c4",
+      "stat": {
+        "st_ctime_ns": 1793382280991659004,
+        "st_dev": 16777234,
+        "st_ino": 298832482,
+        "st_mode": 33188,
+        "st_mtime_ns": 1793382280991659004,
+        "st_nlink": 1,
+        "st_size": 1049651099
+      }
+    }
+  },
+  "passed": true,
+  "payload_copied_to_disk": false,
+  "release_after": {
+    "draft": true,
+    "id": 429316980,
+    "metadata_sha256": "814329e508968f71e61f355fbb25d468b4a248337b206cd7fcc105e9f82a8326",
+    "prerelease": true,
+    "tag_name": "transformer-gpu-owned-v4"
+  },
+  "release_before": {
+    "draft": true,
+    "id": 429316980,
+    "metadata_sha256": "814329e508968f71e61f355fbb25d468b4a248337b206cd7fcc105e9f82a8326",
+    "prerelease": true,
+    "tag_name": "transformer-gpu-owned-v4"
+  },
+  "repository": "logannye/arm64-transformer",
+  "schema": "gpu-owned-release-verification-v1",
+  "scope": "Exact owned-release inventory and streamed byte identity; no study qualification",
+  "started_utc": "2026-10-30T18:04:34.791039+00:00",
+  "status": "passed",
+  "tag_name": "transformer-gpu-owned-v4",
+  "verifier_sha256": "7d7b4fd0d18d8f92ae66a5a0c67459d8bad80cbc0d300d6b06efbd9c382dc050"
+}

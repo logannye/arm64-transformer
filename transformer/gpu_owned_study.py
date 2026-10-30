@@ -2,7 +2,9 @@
 
 These CPU-only commands neither import a framework nor create admission operands.
 They deliberately cannot freeze, admit, or run a campaign. The standard-release
-study stays unchanged. Runtime smoke receipts are retained development evidence,
+study stays unchanged. The separate gpu_owned_command dispatcher exposes the
+authenticated formal workflow using this module's immutable selection. Runtime
+smoke receipts are retained development evidence,
 never substitutes for a complete model, framework suite, or admission receipt.
 """
 
@@ -142,6 +144,39 @@ def planned_manifest():
 def validate_plan(plan):
     require(canonical(plan) == canonical(planned_manifest()), "Owned plan contract changed")
     return plan
+
+
+def formal_manifest():
+    """Prospective owned contract consumed by the shared authenticated machinery.
+
+    This is distinct from the historical nonadmitting readiness plan above.
+    Creating it grants no seed access or execution authority.
+    """
+    from transformer.gpu_study_context import OWNED
+
+    result = standard.planned_manifest()
+    result["protocol"] = OWNED.protocol
+    result["admission_seed"] = OWNED.admission_seed
+    result["owned_frameworks"] = {
+        "schema": "gpu-owned-framework-selection-v1",
+        "frameworks": copy.deepcopy(FRAMEWORKS),
+        "runtime_receipt": "owned-runtime.json",
+        "eligibility_receipt": "owned-eligibility.json",
+        "repeatability_contract": OWNED.repeatability_contract,
+        "historical_failure": copy.deepcopy(HISTORICAL_AUDIT),
+        "standard_release_claim": False,
+        "broad_framework_failures_block_eligibility": True,
+    }
+    return result
+
+
+def validate_formal_selection(manifest):
+    expected = formal_manifest()["owned_frameworks"]
+    require(
+        canonical(manifest.get("owned_frameworks")) == canonical(expected),
+        "Owned framework selection changed",
+    )
+    return expected
 
 
 def _stat_identity(value):
