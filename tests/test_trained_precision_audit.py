@@ -73,11 +73,13 @@ def replay(tmp_path):
     return root, output, plan_path, receipt, arrays
 
 
-def run(replay):
+def run(replay, raw_store=None):
     root, output, plan, receipt, _ = replay
     target = output / "result.json"
     target.write_text(json.dumps(receipt))
-    return audit.audit_worker(output, audit.sha256(target), plan, audit.sha256(plan), root)
+    return audit.audit_worker(
+        output, audit.sha256(target), plan, audit.sha256(plan), root, raw_store
+    )
 
 
 def test_valid_raw_evidence_is_separate_from_formal_qualification(replay):
@@ -180,3 +182,52 @@ def test_collection_rejects_missing_or_mixed_shards(replay, change):
         group["workers"][0]["sha256"] = "0" * 64
     with pytest.raises(ValueError):
         collection.audit_group(group, plan, path, audit.sha256(path), root, workers)
+
+
+@pytest.mark.parametrize("mutation", [None, "counter", "selection", "plan"])
+def test_native_dispatch_counts_are_recomputed_from_raw_coverage(replay, mutation):
+    counters = {
+        f"{backend}_{direction}_calls": 0
+        for backend in ("sme", "neon")
+        for direction in ("forward", "backward")
+    }
+    delta = dict(counters, sme_forward_calls=10)
+    native = dict(
+        precision_policy=1,
+        backend=dict(counters, selected_kind=1),
+        backend_after=dict(delta, selected_kind=1),
+        expected_dispatch_delta=delta.copy(),
+    )
+    replay[3]["native"] = native
+    if mutation == "counter":
+        native["backend_after"]["sme_forward_calls"] = 9
+    elif mutation == "selection":
+        native["backend_after"]["selected_kind"] = 0
+    elif mutation == "plan":
+        native["expected_dispatch_delta"]["sme_forward_calls"] = 9
+    if mutation:
+        with pytest.raises(ValueError):
+            run(replay)
+    else:
+        assert run(replay)["native_dispatch_verified"]
+
+
+def test_lossless_archive_is_audited_without_restoring_the_whole_campaign(replay):
+    run(replay)
+    _, output, _, receipt, _ = replay
+    store = output.parent / "compressed-store"
+    spec = importlib.util.spec_from_file_location(
+        "zip_store_test", PATH.with_name("zip_evidence.py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.pack(output / "first.npz", receipt["cases"][0]["raw_sha256"], store, replace=True)
+    assert not (output / "first.npz").exists()
+    result = run(replay, store)
+    assert result["evidence_valid"] and result["numerics_passed"]
+    assert not list(store.glob(".audit-*"))
+    target = next((store / "objects").iterdir())
+    target.write_bytes(b"corrupt")
+    with pytest.raises(ValueError):
+        run(replay, store)
+    assert not list(store.glob(".audit-*"))

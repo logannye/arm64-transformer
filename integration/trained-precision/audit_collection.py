@@ -21,7 +21,7 @@ def implementation(receipt):
     """Fields that must match across shards, including source and binary bytes."""
     native = receipt.get("native", {})
     metal = receipt.get("metal", {})
-    return {
+    identity = {
         key: receipt.get(key)
         for key in (
             "engine",
@@ -42,9 +42,13 @@ def implementation(receipt):
         "metal_library_sha256": metal.get("binary_sha256"),
         "metal_policy_sha256": metal.get("kernel_policy_sha256"),
     }
+    for key in ("framework_candidate", "framework_candidate_policy", "framework_compiled"):
+        if key in receipt:
+            identity[key] = receipt[key]
+    return identity
 
 
-def audit_group(group, plan, plan_path, plan_sha, evidence_root, workers_root):
+def audit_group(group, plan, plan_path, plan_sha, evidence_root, workers_root, raw_store=None):
     identity = group["implementation"]
     expected = [c for c in plan["cases"] if c["width"] == identity["width"]]
     RAW.require(expected and group["workers"], "Empty collection")
@@ -58,7 +62,7 @@ def audit_group(group, plan, plan_path, plan_sha, evidence_root, workers_root):
         receipt = json.loads(receipt_path.read_text())
         RAW.require(implementation(receipt) == identity, "Mixed implementation identity")
         audit = RAW.audit_worker(
-            receipt_path.parent, binding["sha256"], plan_path, plan_sha, evidence_root
+            receipt_path.parent, binding["sha256"], plan_path, plan_sha, evidence_root, raw_store
         )
         audited.append(audit)
         for row, checked in zip(receipt["cases"], audit["cases"], strict=True):
@@ -85,7 +89,9 @@ def audit_group(group, plan, plan_path, plan_sha, evidence_root, workers_root):
     }
 
 
-def audit_collection(manifest_path, manifest_sha, plan_path, plan_sha, evidence_root, workers_root):
+def audit_collection(
+    manifest_path, manifest_sha, plan_path, plan_sha, evidence_root, workers_root, raw_store=None
+):
     RAW.require(RAW.sha256(manifest_path) == manifest_sha, "Collection manifest changed")
     RAW.require(RAW.sha256(plan_path) == plan_sha, "Replay inventory changed")
     manifest = json.loads(Path(manifest_path).read_text())
@@ -105,7 +111,8 @@ def audit_collection(manifest_path, manifest_sha, plan_path, plan_sha, evidence_
         "formal_eligible": False,
         "admission_stream_opened": False,
         "groups": [
-            audit_group(g, plan, plan_path, plan_sha, evidence_root, workers_root) for g in groups
+            audit_group(g, plan, plan_path, plan_sha, evidence_root, workers_root, raw_store)
+            for g in groups
         ],
     }
 
@@ -121,5 +128,6 @@ if __name__ == "__main__":
         "workers-root",
     ):
         parser.add_argument("--" + option, required=True)
+    parser.add_argument("--raw-store")
     args = parser.parse_args()
     print(json.dumps(audit_collection(*vars(args).values()), indent=2))
