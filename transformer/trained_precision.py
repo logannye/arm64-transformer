@@ -541,7 +541,8 @@ def worker(args):
             after_backend = native.backend_identity
             receipt["native"]["backend_after"] = after_backend
             selected = "sme" if before_backend["selected_kind"] == 1 else "neon"
-            count = (5 - bool(receipt["native"]["precision_policy"] & 2)) * 2
+            policy = receipt["native"]["precision_policy"]
+            count = (5 - bool(policy & 2) - bool(policy & 8)) * 2
             forward_calls = count * len(cases) * args.batch_size
             expected_dispatch = {
                 f"{backend}_{direction}_calls": (

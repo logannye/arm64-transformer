@@ -217,3 +217,16 @@ This remains a named diagnostic model candidate using ordinary FP32 framework
 operations, not an ordinary-framework or full-source repair claim. Begin with
 complete forward replay before allocating the larger gradient evidence; retain
 all failures and do not promote a candidate based only on the localized cases.
+
+
+The second-normalization factorial retains the fresh gradient failure for all
+four new policies. Policy 7's successive native prefixes through n2 now preserve
+the FP64 ReLU sign, but its ordinary FF1 projection flips that one gate. Before
+execution, extend native policy bit 8 to FP64 FF1 projection accumulation in both
+forward and backward, using the already checked precise-linear primitive. All
+inputs, outputs and saved state remain FP32. Build policies 8–15, retaining the
+original 0–7 controls; screen the same failing batch before any whole-inventory
+qualification. Default policy 0 and ReLU's equation remain unchanged. Dedicated
+QKV and FF1 precise calls are separately excluded from ordinary dense-kernel
+counters. A passing screen must still pass all 89 historical anchors and 20 fresh
+batches with original tolerances and independent raw evidence checks.

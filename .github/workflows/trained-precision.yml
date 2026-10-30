@@ -9,7 +9,7 @@ permissions:
 jobs:
   native:
     runs-on: macos-26
-    timeout-minutes: 45
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -29,7 +29,7 @@ jobs:
       - name: Build and check each candidate in one reusable build tree
         run: |
           width=$ARM64_TRANSFORMER_WIDTH
-          for policy in 0 1 2 3 4 5 6 7; do
+          for policy in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
             make -C native WIDTH=$width PRECISION=$policy PYTHON=python
             python -m pytest tests/test_native_precision.py -q
             dest=results/precision-build/width-$width/policy-$policy
@@ -49,21 +49,21 @@ jobs:
           name: precision-native-candidates-width-${{ matrix.width }}
           path: results/precision-build/
           retention-days: 30
-      - name: Full model and executable checks for the second-normalization candidate
+      - name: Full model and executable checks for the feed-forward precision candidate
         run: |
           width=$ARM64_TRANSFORMER_WIDTH
-          make -C native WIDTH=$width PRECISION=7 PYTHON=python
+          make -C native WIDTH=$width PRECISION=15 PYTHON=python
           python -m pytest -q
-          dest=results/precision-runtime/width-$width/policy-7
+          dest=results/precision-runtime/width-$width/policy-15
           python -m transformer.validate --output "$dest/auto.json" \
-            --development-precision-policy 7 --runtime --work-dir "$dest/smoke-auto"
+            --development-precision-policy 15 --runtime --work-dir "$dest/smoke-auto"
           ARM64_TRANSFORMER_BACKEND=neon python -m transformer.validate \
-            --output "$dest/neon.json" --development-precision-policy 7 \
+            --output "$dest/neon.json" --development-precision-policy 15 \
             --runtime --work-dir "$dest/smoke-neon"
           supported=$(python -c "import json; print(json.load(open('$dest/auto.json'))['backend']['sme_supported'])")
           if [ "$supported" = 1 ]; then
             ARM64_TRANSFORMER_BACKEND=sme python -m transformer.validate \
-              --output "$dest/sme.json" --development-precision-policy 7 \
+              --output "$dest/sme.json" --development-precision-policy 15 \
               --runtime --work-dir "$dest/smoke-sme"
           fi
       - uses: actions/upload-artifact@v4

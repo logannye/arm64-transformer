@@ -292,9 +292,9 @@ def audit_worker(output, receipt_sha, plan_path, plan_sha, evidence_root, raw_st
             "Native backend changed",
         )
         policy = native["precision_policy"]
-        require(type(policy) is int and policy in range(8), "Unknown native precision policy")
+        require(type(policy) is int and policy in range(16), "Unknown native precision policy")
         backend = "sme" if before["selected_kind"] == 1 else "neon"
-        calls = (5 - bool(policy & 2)) * 2 * batch * len(audited)
+        calls = (5 - bool(policy & 2) - bool(policy & 8)) * 2 * batch * len(audited)
         expected_delta = {
             f"{name}_{direction}_calls": (
                 calls

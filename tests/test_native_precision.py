@@ -123,3 +123,38 @@ def test_second_normalization_candidate_is_wired_in_both_directions(native):
         np.array([spec.CONTEXT, spec.WIDTH], "i4"),
     )
     np.testing.assert_array_equal(workspace_tensor(work, "temp"), dx)
+
+
+def test_first_feedforward_precision_is_wired_in_both_directions(native):
+    if not native.lib.tf_precision_policy() & 8:
+        pytest.skip("First feed-forward refinement is not selected")
+    from transformer.reference import Transformer
+
+    model = Transformer(1729)
+    flat = model.flat_parameters()
+    tokens = np.arange(spec.CONTEXT, dtype="i4")
+    targets = (tokens + 1) % spec.VOCAB
+    work = native.forward(flat, tokens)
+    x = workspace_tensor(work, "n2").copy()
+    weight = model.ff1_weight.detach().numpy().copy()
+    bias = model.ff1_bias.detach().numpy().copy()
+    expected = x.astype("f8") @ weight.astype("f8").T + bias
+    np.testing.assert_array_equal(workspace_tensor(work, "ff1"), expected.astype("f4"))
+    _, gradient = native.backward(flat, tokens, targets, work)
+    dx, dw, db = np.empty_like(x), np.zeros_like(weight), np.zeros_like(bias)
+    native.call(
+        "linear_backward_precise",
+        x,
+        weight,
+        workspace_tensor(work, "dff1"),
+        dx,
+        dw,
+        db,
+        np.array([spec.CONTEXT, spec.WIDTH, spec.HIDDEN], "i4"),
+    )
+    np.testing.assert_array_equal(workspace_tensor(work, "dn2"), dx)
+    for name, expected in (("ff1_weight", dw), ("ff1_bias", db)):
+        start, size = spec.PARAMS[name]
+        np.testing.assert_array_equal(
+            gradient[start : start + size].reshape(expected.shape), expected
+        )
