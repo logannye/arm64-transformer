@@ -99,6 +99,13 @@ def load_module(name, path):
     return module
 
 
+def source_inventory():
+    paths = [*ROOT.glob("transformer/*.py"), *ROOT.glob("native/*.S")]
+    paths += [*ROOT.glob("native/metal/*.mm"), *ROOT.glob("native/metal/*.metal")]
+    paths += [ROOT / "integration/gpu-owned/runtime_probe.py", ROOT / "native/Makefile"]
+    return {str(p.relative_to(ROOT)): digest(p) for p in sorted(paths)}
+
+
 def torch_evaluate(flat, tokens, targets, *, dtype, device="cpu", gradients=False, policy=0):
     import numpy as np
     import torch
@@ -185,17 +192,12 @@ def worker(args):
         plan = json.loads(Path(args.inventory).read_text())
         if plan["schema"] != SCHEMA or plan["formal_eligible"] is not False:
             raise ValueError("Unexpected replay contract")
-        source_paths = sorted([*ROOT.glob("transformer/*.py"), *ROOT.glob("native/*.S")])
-        before = {str(p.relative_to(ROOT)): digest(p) for p in source_paths}
+        before = source_inventory()
         receipt["source_sha256"] = before
         if args.owned_workspace:
-            if (
-                os.environ.get("PYTHONHASHSEED") != "0"
-                or sys.flags.isolated
-                or not sys.flags.no_site
-            ):
+            if not sys.flags.isolated or not sys.flags.no_site or not sys.dont_write_bytecode:
                 raise ValueError(
-                    "Owned development requires canonical Python -P -S -B and hashseed 0"
+                    "Owned development requires the retained bootstrap's Python -I -S -B"
                 )
             runtime = load_module(
                 "precision_runtime", ROOT / "integration/gpu-owned/runtime_probe.py"
@@ -223,6 +225,13 @@ def worker(args):
             "numpy": np.__version__,
             "platform": platform.platform(),
         }
+        if auth is not None:
+            receipt["runtime_origins_before"] = {
+                "numpy": runtime.verify_numpy_origin(np, auth),
+                "torch": runtime.verify_torch_origins(torch, auth),
+            }
+            if args.engine == "mlx":
+                receipt["runtime_origins_before"]["mlx"] = runtime.mlx_probe(auth)
         if Path(sys.modules["transformer"].__file__).resolve().parent != ROOT / "transformer":
             raise ValueError("Wrong project package origin")
         native = None
@@ -243,13 +252,16 @@ def worker(args):
             }
         root = Path(args.evidence_root).resolve(strict=True)
         cases = [case for case in plan["cases"] if case["width"] == args.width]
+        if args.case_offset < 0 or (args.case_limit is not None and args.case_limit <= 0):
+            raise ValueError("Invalid replay slice")
+        cases = cases[args.case_offset :]
         if args.case_limit is not None:
             cases = cases[: args.case_limit]
         if not cases:
             raise ValueError("Empty replay inventory")
         receipt["inventory_sha256"] = args.inventory_sha256
         receipt["expected_cases"] = [c["id"] for c in cases]
-        receipt["full_width_inventory"] = args.case_limit is None
+        receipt["full_width_inventory"] = args.case_limit is None and args.case_offset == 0
         for case in cases:
             checkpoint = checked_file(root, case["checkpoint"], case["checkpoint_sha256"])
             rows_path = checked_file(root, case["rows"], case["rows_sha256"])
@@ -290,6 +302,8 @@ def worker(args):
                         max_length=32,
                         **({"kernel_policy": policy} if args.engine == "metal" else {}),
                     )
+                    if args.engine == "metal":
+                        receipt["metal"] = backend.capabilities()
                     device_batch = backend.upload_inputs(tokens, targets)
 
                 def evaluate():
@@ -383,14 +397,23 @@ def worker(args):
                 ),
                 flush=True,
             )
-        if before != {str(p.relative_to(ROOT)): digest(p) for p in source_paths}:
+        if before != source_inventory():
             raise ValueError("Source changed during execution")
         if digest(args.inventory) != args.inventory_sha256:
             raise ValueError("Inventory changed during execution")
         receipt["complete"] = True
         receipt["passed"] = all(c["passed"] for c in receipt["cases"])
+        if auth is not None:
+            receipt["runtime_origins_after"] = {
+                "numpy": runtime.verify_numpy_origin(np, auth),
+                "torch": runtime.verify_torch_origins(torch, auth),
+            }
+            if args.engine == "mlx":
+                receipt["runtime_origins_after"]["mlx"] = runtime.mlx_probe(auth)
     except BaseException:
         receipt["error"] = traceback.format_exc()
+        receipt["passed"] = False
+        receipt["complete"] = False
     finally:
         if auth is not None:
             try:
@@ -424,6 +447,7 @@ def main():
     run.add_argument("--gradients", action="store_true")
     run.add_argument("--torch-policy", type=int, choices=range(8), default=0)
     run.add_argument("--case-limit", type=int)
+    run.add_argument("--case-offset", type=int, default=0)
     run.add_argument("--output", required=True)
     args = parser.parse_args()
     if args.command == "inventory":

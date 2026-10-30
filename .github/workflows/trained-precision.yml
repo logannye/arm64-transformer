@@ -40,6 +40,24 @@ jobs:
           git rev-parse HEAD > results/precision-build/source-revision.txt
           sw_vers > results/precision-build/platform.txt
           sysctl -n machdep.cpu.brand_string >> results/precision-build/platform.txt
+      - name: Full model and executable checks for the first-LayerNorm candidate
+        run: |
+          for width in 512 1024; do
+            make -C native WIDTH=$width PRECISION=1 PYTHON=python
+            export ARM64_TRANSFORMER_WIDTH=$width
+            python -m pytest -q
+            python -m transformer.validate --output results/precision-build/width-$width/auto.json \
+              --runtime --work-dir results/precision-build/width-$width/smoke-auto
+            ARM64_TRANSFORMER_BACKEND=neon python -m transformer.validate \
+              --output results/precision-build/width-$width/neon.json \
+              --runtime --work-dir results/precision-build/width-$width/smoke-neon
+            supported=$(python -c "import json; print(json.load(open('results/precision-build/width-$width/auto.json'))['backend']['sme_supported'])")
+            if [ "$supported" = 1 ]; then
+              ARM64_TRANSFORMER_BACKEND=sme python -m transformer.validate \
+                --output results/precision-build/width-$width/sme.json \
+                --runtime --work-dir results/precision-build/width-$width/smoke-sme
+            fi
+          done
       - uses: actions/upload-artifact@v4
         if: always()
         with:
