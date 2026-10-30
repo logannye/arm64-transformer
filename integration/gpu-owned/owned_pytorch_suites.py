@@ -243,6 +243,7 @@ def controls(base, policy, cache):
         "LANG",
         "LC_ALL",
         "LC_CTYPE",
+        "__CF_USER_TEXT_ENCODING",
         "USER",
         "LOGNAME",
         "SHELL",

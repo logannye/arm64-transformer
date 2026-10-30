@@ -177,7 +177,7 @@ links. The corrected producer verifies all 146,435 source members, including 21
 symlinks. The failed preparation is preserved. A fresh capture and preparation
 must bind the corrected verifier before device qualification. That build
 addresses retained integration failures, not the MPS trained-attention arithmetic
-failures. The portable MPS evidence producer and archive auditor now have 85
+failures. The portable MPS evidence producer and archive auditor now have 86
 CPU-only checks, plus 25 eligibility checks. They verify retained evidence after
 relocation without reading original paths. No actual runtime or full MPS suite is
 qualified by those tests. Full framework conformance against the new runtime,

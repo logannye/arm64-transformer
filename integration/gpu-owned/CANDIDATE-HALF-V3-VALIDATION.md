@@ -60,7 +60,7 @@ auditor now normalize that format alongside the earlier digest-based manifest.
 They hash each literal link target, reject lexical escapes and substituted files,
 and require live links to resolve within the authenticated source tree. Regular
 file content and modes remain checked. All 146,435 members of the actual source
-tree verify; 85 producer/archive tests pass without a framework import or build.
+tree verify; 86 producer/archive tests pass without a framework import or build.
 The original failed preparation is retained. Fresh capture must bind the corrected
 verifier; this format correction provides no numerical qualification.
 

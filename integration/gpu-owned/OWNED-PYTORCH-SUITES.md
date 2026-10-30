@@ -147,7 +147,7 @@ The driver/reference paths select the already-retained immutable result helpers,
 not another framework implementation. The two external SHA256 arguments must
 come from verified publication/capture evidence.
 
-The 59 producer checks and 26 portable-archive checks pass under the retained
+The 60 producer checks and 26 portable-archive checks pass under the retained
 CPython 3.12 interpreter, including actual fresh-process launcher
 checks, source mutations, cache bounds, native-origin mutations, and unconditional
 interpreter restoration after a test-runner exception. Retained Python import maps
@@ -166,6 +166,9 @@ final path. Initial placeholder materialization occurs before that interval;
 replacements, content changes and metadata changes during hashing are rejected.
 The explicit archive symlink format and the historical digest format are both
 authenticated, with literal link targets bound independently of target contents.
+The sanitized environment preserves macOS's `__CF_USER_TEXT_ENCODING` value,
+which the interpreter otherwise adds on startup. A real fresh-interpreter test
+requires exact environment equality; numerical and compiler controls are unchanged.
 
 Both `prepare` and `run` require the same sanitized environment constructed by
 `controls`, including its exact cache path and selected Ninja search path. The

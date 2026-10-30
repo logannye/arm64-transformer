@@ -263,6 +263,24 @@ class ControlTests(unittest.TestCase):
         with patch.dict(os.environ, self.environment, clear=True):
             M.check_controls(P, self.cache)
 
+    def test_sanitized_environment_survives_real_interpreter_startup_exactly(self):
+        environment = M.controls(os.environ, P, self.cache)
+        actual = json.loads(
+            subprocess.check_output(
+                [
+                    sys.executable,
+                    "-P",
+                    "-S",
+                    "-B",
+                    "-c",
+                    "import json,os;print(json.dumps(dict(os.environ)))",
+                ],
+                env=environment,
+                text=True,
+            )
+        )
+        self.assertEqual(actual, environment)
+
     def test_fallback_override_only_declared_child(self):
         with patch.dict(
             os.environ, {**self.environment, "PYTORCH_ENABLE_MPS_FALLBACK": "1"}, clear=True
