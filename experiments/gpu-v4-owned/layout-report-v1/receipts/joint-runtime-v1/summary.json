@@ -1,0 +1,81 @@
+{
+  "admission_stream_opened": false,
+  "complete": false,
+  "dependency_contract": {
+    "historical_joint_environment_qualified": false,
+    "name": "reuse-mlx-dependencies-with-patched-torch-overlay-v1",
+    "numpy": "2.2.6",
+    "previous_selected_torch_numpy": "1.26.4",
+    "stock_torch_distribution_present_but_shadowed": "2.14.1"
+  },
+  "driver_sha256": "7dfb7b25a3bf1c1b824ce4e35524bd63801ab1d0bc1dc3142b46510a5c92a9b7",
+  "error": "Traceback (most recent call last):\n  File \"/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/runtime_probe.py\", line 591, in run\n    require(\n  File \"/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/runtime_probe.py\", line 83, in require\n    raise RuntimeError(message)\nRuntimeError: Failed worker: torch p0\n",
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "historical_standard_study_unchanged": true,
+  "identities": {
+    "mlx": {
+      "base": "a21f892a6e8e83afb117cef1d1ceae3e82f48c32",
+      "mode": "jit-on",
+      "runtime_manifest_sha256": "97cb2ade3efa1364ed7458e99c41367f6674ee6d199ee2d05ba3934bbadfe200",
+      "variant": "patched"
+    },
+    "torch_cpu": {
+      "runtime_manifest_sha256": "5c5165860d484250101a150917277b8c85506bccc6323b5a3d6d6c28b7d333d5",
+      "source_revision": "71d2a08507ab47dd6b2fa9b66319d17ce2377de4"
+    },
+    "torch_mps": {
+      "runtime_manifest_sha256": "5c5165860d484250101a150917277b8c85506bccc6323b5a3d6d6c28b7d333d5",
+      "source_revision": "71d2a08507ab47dd6b2fa9b66319d17ce2377de4"
+    }
+  },
+  "passed": false,
+  "planned_workers": [
+    {
+      "engine": "torch",
+      "process_index": 0
+    },
+    {
+      "engine": "torch",
+      "process_index": 1
+    },
+    {
+      "engine": "mlx",
+      "process_index": 0
+    },
+    {
+      "engine": "mlx",
+      "process_index": 1
+    }
+  ],
+  "protocol": "gpu-v4-owned-development-v1",
+  "schema": "gpu-owned-joint-runtime-probe-v1",
+  "scope": "Joint import, native origin and dyadic GPU execution; no model qualification or timing",
+  "workers": [
+    {
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/runtime_probe.py",
+        "--workspace",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/joint-runtime-v1/torch-p0",
+        "--worker",
+        "torch",
+        "--process-index",
+        "0",
+        "--expected-driver-sha256",
+        "7dfb7b25a3bf1c1b824ce4e35524bd63801ab1d0bc1dc3142b46510a5c92a9b7"
+      ],
+      "engine": "torch",
+      "passed": false,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/joint-runtime-v1/torch-p0/result.json",
+      "process_index": 0,
+      "returncode": 1,
+      "sha256": "972347482904f3cd8e6993c1f71f86c256aa05898a773d477c66c0c6142708c0"
+    }
+  ]
+}

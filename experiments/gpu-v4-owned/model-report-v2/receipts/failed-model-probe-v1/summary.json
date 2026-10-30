@@ -1,0 +1,385 @@
+{
+  "admission_stream_opened": false,
+  "broad_framework_suite_remains_blocking": true,
+  "common_fixture_checks": [],
+  "complete": false,
+  "error": "Traceback (most recent call last):\n  File \"/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/model_probe.py\", line 652, in run\n    require(child.returncode == 0 and row[\"passed\"], f\"Failed model worker: {cell['id']}\")\n  File \"/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/model_probe.py\", line 49, in require\n    raise RuntimeError(message)\nRuntimeError: Failed model worker: w32-mlx-p0\n",
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "fresh_process_pairs": [],
+  "manifest_sha256": "6ef939461e37660a1c91db60fc038d53dc147d72aadda7ae86d5c38ba8818bfd",
+  "passed": false,
+  "planned_workers": [
+    {
+      "engine": "cpu_torch",
+      "id": "w32-cpu_torch-p0",
+      "process_index": 0,
+      "width": 32
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w32-cpu_torch-p1",
+      "process_index": 1,
+      "width": 32
+    },
+    {
+      "engine": "mps",
+      "id": "w32-mps-p0",
+      "process_index": 0,
+      "width": 32
+    },
+    {
+      "engine": "mps",
+      "id": "w32-mps-p1",
+      "process_index": 1,
+      "width": 32
+    },
+    {
+      "engine": "mlx",
+      "id": "w32-mlx-p0",
+      "process_index": 0,
+      "width": 32
+    },
+    {
+      "engine": "mlx",
+      "id": "w32-mlx-p1",
+      "process_index": 1,
+      "width": 32
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w64-cpu_torch-p0",
+      "process_index": 0,
+      "width": 64
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w64-cpu_torch-p1",
+      "process_index": 1,
+      "width": 64
+    },
+    {
+      "engine": "mps",
+      "id": "w64-mps-p0",
+      "process_index": 0,
+      "width": 64
+    },
+    {
+      "engine": "mps",
+      "id": "w64-mps-p1",
+      "process_index": 1,
+      "width": 64
+    },
+    {
+      "engine": "mlx",
+      "id": "w64-mlx-p0",
+      "process_index": 0,
+      "width": 64
+    },
+    {
+      "engine": "mlx",
+      "id": "w64-mlx-p1",
+      "process_index": 1,
+      "width": 64
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w128-cpu_torch-p0",
+      "process_index": 0,
+      "width": 128
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w128-cpu_torch-p1",
+      "process_index": 1,
+      "width": 128
+    },
+    {
+      "engine": "mps",
+      "id": "w128-mps-p0",
+      "process_index": 0,
+      "width": 128
+    },
+    {
+      "engine": "mps",
+      "id": "w128-mps-p1",
+      "process_index": 1,
+      "width": 128
+    },
+    {
+      "engine": "mlx",
+      "id": "w128-mlx-p0",
+      "process_index": 0,
+      "width": 128
+    },
+    {
+      "engine": "mlx",
+      "id": "w128-mlx-p1",
+      "process_index": 1,
+      "width": 128
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w256-cpu_torch-p0",
+      "process_index": 0,
+      "width": 256
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w256-cpu_torch-p1",
+      "process_index": 1,
+      "width": 256
+    },
+    {
+      "engine": "mps",
+      "id": "w256-mps-p0",
+      "process_index": 0,
+      "width": 256
+    },
+    {
+      "engine": "mps",
+      "id": "w256-mps-p1",
+      "process_index": 1,
+      "width": 256
+    },
+    {
+      "engine": "mlx",
+      "id": "w256-mlx-p0",
+      "process_index": 0,
+      "width": 256
+    },
+    {
+      "engine": "mlx",
+      "id": "w256-mlx-p1",
+      "process_index": 1,
+      "width": 256
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w512-cpu_torch-p0",
+      "process_index": 0,
+      "width": 512
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w512-cpu_torch-p1",
+      "process_index": 1,
+      "width": 512
+    },
+    {
+      "engine": "mps",
+      "id": "w512-mps-p0",
+      "process_index": 0,
+      "width": 512
+    },
+    {
+      "engine": "mps",
+      "id": "w512-mps-p1",
+      "process_index": 1,
+      "width": 512
+    },
+    {
+      "engine": "mlx",
+      "id": "w512-mlx-p0",
+      "process_index": 0,
+      "width": 512
+    },
+    {
+      "engine": "mlx",
+      "id": "w512-mlx-p1",
+      "process_index": 1,
+      "width": 512
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w1024-cpu_torch-p0",
+      "process_index": 0,
+      "width": 1024
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w1024-cpu_torch-p1",
+      "process_index": 1,
+      "width": 1024
+    },
+    {
+      "engine": "mps",
+      "id": "w1024-mps-p0",
+      "process_index": 0,
+      "width": 1024
+    },
+    {
+      "engine": "mps",
+      "id": "w1024-mps-p1",
+      "process_index": 1,
+      "width": 1024
+    },
+    {
+      "engine": "mlx",
+      "id": "w1024-mlx-p0",
+      "process_index": 0,
+      "width": 1024
+    },
+    {
+      "engine": "mlx",
+      "id": "w1024-mlx-p1",
+      "process_index": 1,
+      "width": 1024
+    }
+  ],
+  "protocol": "gpu-v4-owned-model-compatibility-v1",
+  "retained_bytes": 5060323,
+  "schema": "gpu-owned-model-summary-v1",
+  "workers": [
+    {
+      "cell": {
+        "engine": "cpu_torch",
+        "id": "w32-cpu_torch-p0",
+        "process_index": 0,
+        "width": 32
+      },
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/model_probe.py",
+        "worker",
+        "--manifest",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-manifest-v1.json",
+        "--manifest-sha256",
+        "6ef939461e37660a1c91db60fc038d53dc147d72aadda7ae86d5c38ba8818bfd",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-compatibility-v1/w32-cpu_torch-p0",
+        "--worker",
+        "w32-cpu_torch-p0"
+      ],
+      "passed": true,
+      "receipt": {
+        "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-compatibility-v1/w32-cpu_torch-p0/result.json",
+        "sha256": "29fe63e70a85a4864f9c2a3a82d1b888905329cf70d1bd0295d5442c015e8c30"
+      },
+      "returncode": 0
+    },
+    {
+      "cell": {
+        "engine": "cpu_torch",
+        "id": "w32-cpu_torch-p1",
+        "process_index": 1,
+        "width": 32
+      },
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/model_probe.py",
+        "worker",
+        "--manifest",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-manifest-v1.json",
+        "--manifest-sha256",
+        "6ef939461e37660a1c91db60fc038d53dc147d72aadda7ae86d5c38ba8818bfd",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-compatibility-v1/w32-cpu_torch-p1",
+        "--worker",
+        "w32-cpu_torch-p1"
+      ],
+      "passed": true,
+      "receipt": {
+        "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-compatibility-v1/w32-cpu_torch-p1/result.json",
+        "sha256": "4035e53ebf8c7190fd319b15cf5ad053c42e8865ff1359354de2edb9478fefa1"
+      },
+      "returncode": 0
+    },
+    {
+      "cell": {
+        "engine": "mps",
+        "id": "w32-mps-p0",
+        "process_index": 0,
+        "width": 32
+      },
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/model_probe.py",
+        "worker",
+        "--manifest",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-manifest-v1.json",
+        "--manifest-sha256",
+        "6ef939461e37660a1c91db60fc038d53dc147d72aadda7ae86d5c38ba8818bfd",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-compatibility-v1/w32-mps-p0",
+        "--worker",
+        "w32-mps-p0"
+      ],
+      "passed": true,
+      "receipt": {
+        "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-compatibility-v1/w32-mps-p0/result.json",
+        "sha256": "cd53f6ce2182b08635f3bfd2abf591e1a77b727386eafea6ee7476e930fb439b"
+      },
+      "returncode": 0
+    },
+    {
+      "cell": {
+        "engine": "mps",
+        "id": "w32-mps-p1",
+        "process_index": 1,
+        "width": 32
+      },
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/model_probe.py",
+        "worker",
+        "--manifest",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-manifest-v1.json",
+        "--manifest-sha256",
+        "6ef939461e37660a1c91db60fc038d53dc147d72aadda7ae86d5c38ba8818bfd",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-compatibility-v1/w32-mps-p1",
+        "--worker",
+        "w32-mps-p1"
+      ],
+      "passed": true,
+      "receipt": {
+        "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-compatibility-v1/w32-mps-p1/result.json",
+        "sha256": "ff740c8aff50d0189162866bc80d75507f258e2ce51c0bee0d86cb947c35e3f9"
+      },
+      "returncode": 0
+    },
+    {
+      "cell": {
+        "engine": "mlx",
+        "id": "w32-mlx-p0",
+        "process_index": 0,
+        "width": 32
+      },
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/model_probe.py",
+        "worker",
+        "--manifest",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-manifest-v1.json",
+        "--manifest-sha256",
+        "6ef939461e37660a1c91db60fc038d53dc147d72aadda7ae86d5c38ba8818bfd",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-compatibility-v1/w32-mlx-p0",
+        "--worker",
+        "w32-mlx-p0"
+      ],
+      "passed": false,
+      "receipt": {
+        "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/model-compatibility-v1/w32-mlx-p0/result.json",
+        "sha256": "02b7d0a0c57867d0d08ef4171f162e31967695ff214308d65265d29ce8da1589"
+      },
+      "returncode": 1
+    }
+  ]
+}

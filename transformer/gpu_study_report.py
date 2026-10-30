@@ -12,7 +12,6 @@ from pathlib import Path
 from transformer.gpu_study import (
     CPU_REVISION,
     ENGINES,
-    PROTOCOL,
     SEEDS,
     WIDTHS,
     digest,
@@ -106,7 +105,7 @@ def blocked_report(manifest, reasons):
     )
     return {
         "schema": 1,
-        "protocol": PROTOCOL,
+        "protocol": manifest["protocol"],
         "status": "blocked_before_measurement",
         "planned_fits": 180,
         "completed_fits": 0,
@@ -154,7 +153,7 @@ def unfinished_report(manifest, manifest_sha256, campaign_directory):
     unrun = sum(c["status"] in ("pending", "blocked_after_failure") for c in cells)
     return {
         "schema": 1,
-        "protocol": PROTOCOL,
+        "protocol": manifest["protocol"],
         "manifest_sha256": manifest_sha256,
         "status": "measurement_stopped_unqualified",
         "planned_fits": 180,
@@ -243,7 +242,8 @@ def load_authenticated_reports(audit_directory, campaign_directory, manifest_sha
     aggregate = read_json(root / "audit.json")
     ledger = read_json(campaign / "campaign.json")
     require(
-        aggregate.get("manifest_sha256") == ledger.get("manifest_sha256") == manifest_sha256,
+        aggregate.get("manifest_sha256") == ledger.get("manifest_sha256") == manifest_sha256
+        and aggregate.get("protocol") == ledger.get("protocol") == manifest["protocol"],
         "Foreign audit/campaign",
     )
     require(
@@ -280,7 +280,7 @@ def load_authenticated_reports(audit_directory, campaign_directory, manifest_sha
             report.get("cell") == planned and report.get("manifest_sha256") == manifest_sha256,
             "Audit identity changed",
         )
-        info = inspect_cell(planned, campaign / planned["id"], manifest_sha256)
+        info = inspect_cell(planned, campaign / planned["id"], manifest_sha256, manifest=manifest)
         require(
             info["receipt_sha256"]
             == report.get("cell_receipt_sha256")
@@ -293,6 +293,34 @@ def load_authenticated_reports(audit_directory, campaign_directory, manifest_sha
             "Missing replay engine",
         )
         verify_files(replay_root, report["replay_sha256"])
+        from transformer.gpu_study_context import resolve_context
+
+        if resolve_context(manifest).owned:
+            from transformer.gpu_owned_cpu import verify_proof
+
+            expected = {"cpu_torch.npz.owned-cpu-proof.json", "oracle.npz.owned-cpu-proof.json"}
+            require(
+                set(report.get("owned_cpu_replay_proofs", {})) == expected,
+                "Missing owned CPU replay origin proofs",
+            )
+            verify_files(replay_root, report["owned_cpu_replay_proofs"])
+            prefix = f"width-{planned['width']}/seed-{planned['seed']}/"
+            inputs = {
+                name.removeprefix(prefix): sha
+                for name, sha in manifest["bindings"]["inputs"].items()
+                if name.startswith(prefix)
+            }
+            inputs["best.f32"] = digest(campaign / planned["id"] / "best.f32")
+            for engine in ("cpu_torch", "oracle"):
+                name = engine + ".npz"
+                verify_proof(
+                    replay_root / (name + ".owned-cpu-proof.json"),
+                    manifest,
+                    engine=engine,
+                    kind="replay",
+                    output_hashes={name: digest(replay_root / name)},
+                    input_hashes=inputs,
+                )
         arrays = {}
         for engine in (*ENGINES, "oracle"):
             with np.load(replay_root / f"{engine}.npz", allow_pickle=False) as data:
@@ -441,7 +469,7 @@ def summarize(manifest, manifest_sha256, reports, repeats):
     accuracy = all(all(w["fp64_accuracy_passed"].values()) for w in by_width.values())
     return {
         "schema": 1,
-        "protocol": PROTOCOL,
+        "protocol": manifest["protocol"],
         "manifest_sha256": manifest_sha256,
         "status": "qualified"
         if integrity and accuracy

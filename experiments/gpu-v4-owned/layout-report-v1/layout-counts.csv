@@ -1,0 +1,5 @@
+mode,process_index,matrix_cases,ordinary_matrix_failures,control_matrix_failures,guard_failures,convolution_layout_failures,contiguous_convolution_fp64_failures,channels_last_convolution_fp64_failures
+ordinary,0,76,12,0,7,6,6,0
+ordinary,1,76,12,0,7,6,6,0
+metal32_diagnostic,0,76,12,0,7,0,0,0
+metal32_diagnostic,1,76,12,0,7,0,0,0

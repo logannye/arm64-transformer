@@ -1,0 +1,84 @@
+{
+  "schema": "pytorch-owned-half-static-validation-v1",
+  "status": "passed_static_checks_only",
+  "native_compilation": false,
+  "device_numerical_validation": false,
+  "actual_test_collection_executed": false,
+  "hosted_dispatched": false,
+  "candidate_qualified": false,
+  "formal_eligible": false,
+  "admission_stream_opened": false,
+  "checks": {
+    "stdlib_build_mutation_tests": 22,
+    "scalar_regression_tests": 15,
+    "unittest_passed": true,
+    "ruff_check_passed": true,
+    "ruff_format_check_passed": true,
+    "combined_patch_git_apply_check_passed": true,
+    "all_twelve_resulting_source_hashes_match": true,
+    "original_twelve_source_files_unchanged": true,
+    "normalized_existing_test_module_ast_unchanged_except_reviewed_body": true,
+    "prospective_inventory_count": 10357,
+    "original_ids": 10353,
+    "retained_skip_ids": 744,
+    "retained_expected_failure_ids": 382
+  },
+  "source_application_receipt": {
+    "path": "work/gpu-v4-owned/half-build-static-v1/verification.json",
+    "sha256": "4776a977d678ddf9507df0eed08340167daf7163d89d4351d51d97e9a26d5f80"
+  },
+  "files": {
+    "README.md": {
+      "sha256": "d7640d409cab2c3d6e9dbc7c6ecf12b6509fa917f6ac615650c6a6e69f43affb",
+      "bytes": 4186
+    },
+    "changes.patch": {
+      "sha256": "f420b32ab6b285f3f71a4394ce6adffa77bd7e85b9d368f345fba415a6fd3de1",
+      "bytes": 47201
+    },
+    "contract.json": {
+      "sha256": "6bb8ca417313f700242ad0756f8e0df37381ebbb597415600a58d777ab0e3b01",
+      "bytes": 13492
+    },
+    "hosted-constraints.txt": {
+      "sha256": "7c9b1f75aa5fac0701bf7d32a4e5efe174e9cc45871259a7f7f1a70075865190",
+      "bytes": 526
+    },
+    "hosted_build.py": {
+      "sha256": "da8c800f136ff126bd088487fb01ab2d343a06764b8a50e80b125ad1a0fc4469",
+      "bytes": 37865
+    },
+    "requirements-full.txt": {
+      "sha256": "2af1fbabbbc2992823650e93a55b0b2d92a241226bbff2896c1d062fe94f4902",
+      "bytes": 757
+    },
+    "source_static.py": {
+      "sha256": "7bdc30dfe9af6499e4532cbb141c6b8ad2b3acc7aa144ceff2cc9fed7233bc73",
+      "bytes": 5617
+    },
+    "test-inventory.json": {
+      "sha256": "453e770813d31b5f45fe07421d7ab0dbbe9c7fe8ab84bb284097a3ce486511aa",
+      "bytes": 2389983
+    },
+    "test_hosted_build.py": {
+      "sha256": "5db0619152d272edddfe2f71e97e0d173fad02e889312c19a2c36723c3e36e80",
+      "bytes": 15634
+    },
+    "verify_runtime.py": {
+      "sha256": "b30e26ba6436832862ce1e8d7b9ca1a306c281395917395a57ec6762a38055f4",
+      "bytes": 10914
+    }
+  },
+  "workflow": {
+    "path": ".github/workflows/owned-pytorch-half-v1.yml",
+    "sha256": "08d7bb5870cbab7995a93738eab8347668ed8f769cf415af2d0552ec9cc2c09e",
+    "bytes": 2889
+  },
+  "limitations": [
+    "Native C++/Objective-C++/MSL compilation remains unexecuted",
+    "Hosted authoritative upstream spin lint and pinned clang-format19.1.4 remain unexecuted",
+    "Local native formatter21.1.8 is formatting only, not authoritative upstream lint",
+    "Actual full10,357 test collection and device execution remain required",
+    "All previous runtime/model evidence remains bound to its original binary; no adoption"
+  ]
+}

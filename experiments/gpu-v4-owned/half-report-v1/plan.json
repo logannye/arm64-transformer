@@ -1,0 +1,301 @@
+{
+  "admission_stream_opened": false,
+  "cases": [
+    {
+      "cotangent": "zero",
+      "dtype": "float16",
+      "gradient_layout": "contiguous",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "zero",
+      "dtype": "float16",
+      "gradient_layout": "contiguous",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "zero",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "zero",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "ones",
+      "dtype": "float16",
+      "gradient_layout": "contiguous",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "ones",
+      "dtype": "float16",
+      "gradient_layout": "contiguous",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "ones",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "ones",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "uniform",
+      "dtype": "float16",
+      "gradient_layout": "contiguous",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "uniform",
+      "dtype": "float16",
+      "gradient_layout": "contiguous",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "uniform",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "uniform",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "signed",
+      "dtype": "float16",
+      "gradient_layout": "contiguous",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "signed",
+      "dtype": "float16",
+      "gradient_layout": "contiguous",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "signed",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "signed",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "contiguous",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "contiguous",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "zero",
+      "dtype": "float32",
+      "gradient_layout": "contiguous",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "zero",
+      "dtype": "float32",
+      "gradient_layout": "contiguous",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "zero",
+      "dtype": "float32",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "zero",
+      "dtype": "float32",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "ones",
+      "dtype": "float32",
+      "gradient_layout": "contiguous",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "ones",
+      "dtype": "float32",
+      "gradient_layout": "contiguous",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "ones",
+      "dtype": "float32",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "ones",
+      "dtype": "float32",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "uniform",
+      "dtype": "float32",
+      "gradient_layout": "contiguous",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "uniform",
+      "dtype": "float32",
+      "gradient_layout": "contiguous",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "uniform",
+      "dtype": "float32",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "uniform",
+      "dtype": "float32",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "signed",
+      "dtype": "float32",
+      "gradient_layout": "contiguous",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "signed",
+      "dtype": "float32",
+      "gradient_layout": "contiguous",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "signed",
+      "dtype": "float32",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "signed",
+      "dtype": "float32",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "cancellation",
+      "dtype": "float32",
+      "gradient_layout": "contiguous",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "cancellation",
+      "dtype": "float32",
+      "gradient_layout": "contiguous",
+      "input_layout": "strided_offset"
+    },
+    {
+      "cotangent": "cancellation",
+      "dtype": "float32",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous"
+    },
+    {
+      "cotangent": "cancellation",
+      "dtype": "float32",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset"
+    }
+  ],
+  "deterministic_mode_for_diagnosis": false,
+  "deterministic_mode_restore_target": true,
+  "development_seed": 20261103,
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "indices": [
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      1,
+      1
+    ],
+    [
+      0,
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      1,
+      1
+    ]
+  ],
+  "operations": [
+    "combinations",
+    "explicit_index",
+    "index_put_accumulate"
+  ],
+  "processes": 2,
+  "protocol": "gpu-owned-half-index-execution-v1",
+  "replays": 20,
+  "schema": "gpu-owned-half-index-plan-v1",
+  "scope": "Synthetic index-gradient localization; no historical RNG reconstruction, baseline substitution, admission, or timing claim",
+  "sources": {
+    "half_index_diagnostic.py": "1d6b9ef81dbea40dc7645c59cc55658365435020ba8376d145728e46089d49b3",
+    "run_half_diagnostic.py": "ee234c54efb8cb0c4e3f21399d53288ee2c16fa675471b8f777725ad2990298e",
+    "runtime_probe.py": "2156caa15e04d6b6bb942ce128e4571ec397b0e8b911a6ec497402b566887e8f"
+  },
+  "workers": [
+    0,
+    1
+  ]
+}

@@ -11,14 +11,12 @@ import argparse
 import itertools
 import json
 import subprocess
-import sys
 from pathlib import Path
 
 from transformer.gpu_environment import child_environment
 from transformer.gpu_study import (
     ENGINES,
     ENVIRONMENT,
-    PROTOCOL,
     digest,
     disk_preflight,
     policy_path,
@@ -32,6 +30,7 @@ from transformer.gpu_study import (
     verify_files,
     write_new,
 )
+from transformer.gpu_study_context import resolve_context
 
 
 def parameter_count(width):
@@ -114,7 +113,7 @@ def prediction_delta(actual, expected, targets):
     }
 
 
-def inspect_cell(cell, directory, manifest_sha256):
+def inspect_cell(cell, directory, manifest_sha256, *, manifest=None):
     import numpy as np
 
     directory = Path(directory)
@@ -126,6 +125,30 @@ def inspect_cell(cell, directory, manifest_sha256):
     verify_files(directory, receipt.get("artifacts"))
     required = set(required_artifacts(cell["engine"]))
     require(required <= set(receipt["artifacts"]), "Cell omits required artifacts")
+    if resolve_context(manifest).owned and cell["engine"] == "cpu_torch":
+        from transformer.gpu_owned_cpu import verify_proof
+
+        require(
+            "owned-cpu-proof.json" in receipt["artifacts"], "Missing owned CPU provenance proof"
+        )
+        prefix = f"width-{cell['width']}/seed-{cell['seed']}/"
+        expected_inputs = {
+            name.removeprefix(prefix): sha
+            for name, sha in manifest["bindings"]["inputs"].items()
+            if name.startswith(prefix)
+        }
+        verify_proof(
+            directory / "owned-cpu-proof.json",
+            manifest,
+            engine="cpu_torch",
+            kind="fit",
+            output_hashes={
+                name: sha
+                for name, sha in receipt["artifacts"].items()
+                if name != "owned-cpu-proof.json"
+            },
+            input_hashes=expected_inputs,
+        )
     count = parameter_count(cell["width"])
     for name in ("best.f32", "last.f32", "adam_m.f32", "adam_v.f32"):
         state = read_array(directory / name, "<f4", (count,))
@@ -212,14 +235,18 @@ def inspect_cell(cell, directory, manifest_sha256):
     }
 
 
-def replay_engine(engine, roots, width, fixture, checkpoint, output, *, manifest):
+def replay_engine(engine, roots, width, fixture, checkpoint, output, *, manifest, admission=None):
     env = child_environment(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(width))
-    tree = roots["cpu"] if engine.startswith("cpu_") else roots["source"]
-    env["PYTHONPATH"] = python_path(manifest, roots, cpu=engine.startswith("cpu_"))
+    cpu_source = engine.startswith("cpu_") or (
+        resolve_context(manifest).owned and engine == "oracle"
+    )
+    tree = roots["cpu"] if cpu_source else roots["source"]
+    env["PYTHONPATH"] = python_path(manifest, roots, cpu=cpu_source)
     env["ARM64_TRANSFORMER_METAL_POLICY"] = str(policy_path(manifest, roots))
     script = Path(roots["source"]) / "transformer/gpu_study_replay.py"
-    args = [
-        sys.executable,
+    from transformer.gpu_study_context import child_controls, python_command, write_authority
+
+    args = python_command(manifest, output, roots=roots, cpu=cpu_source) + [
         str(script.resolve()),
         "--engine",
         engine,
@@ -230,28 +257,72 @@ def replay_engine(engine, roots, width, fixture, checkpoint, output, *, manifest
         "--output",
         str(Path(output).resolve()),
     ]
+    if resolve_context(manifest).owned and engine in ("cpu_torch", "oracle"):
+        from transformer.gpu_owned_cpu import prepare_command
+
+        args = prepare_command(
+            manifest, roots, engine, "replay", args[-8:], output, admission_receipt=admission
+        )
+    if engine in ("mps", "mlx", "metal"):
+        args += write_authority(manifest, roots, Path(str(output) + ".authority.json"))
     subprocess.run(
-        args, cwd=tree, env=env, check=True, capture_output=True, text=True, timeout=7200
+        args,
+        cwd=tree,
+        env=child_controls(manifest, env),
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=7200,
     )
 
 
 def audit_checkpoint(
-    cell, manifest_sha256, roots, campaign, output, *, replay=replay_engine, manifest=None
+    cell,
+    manifest_sha256,
+    roots,
+    campaign,
+    output,
+    *,
+    replay=replay_engine,
+    manifest=None,
+    admission=None,
 ):
     import numpy as np
 
     directory = Path(campaign) / cell["id"]
     output = Path(output)
     require(not output.exists() and not output.is_symlink(), "Audit output must be fresh")
-    info = inspect_cell(cell, directory, manifest_sha256)
+    info = inspect_cell(cell, directory, manifest_sha256, manifest=manifest)
     fixture = Path(roots["inputs"]) / f"width-{cell['width']}/seed-{cell['seed']}"
     output.mkdir(parents=True)
     arrays = {}
     for engine in (*ENGINES, "oracle"):
         path = output / f"{engine}.npz"
+        extra = {"admission": admission} if resolve_context(manifest).owned else {}
         replay(
-            engine, roots, cell["width"], fixture, directory / "best.f32", path, manifest=manifest
+            engine,
+            roots,
+            cell["width"],
+            fixture,
+            directory / "best.f32",
+            path,
+            manifest=manifest,
+            **extra,
         )
+        if resolve_context(manifest).owned and engine in ("cpu_torch", "oracle"):
+            from transformer.gpu_owned_cpu import verify_proof
+
+            verify_proof(
+                str(path) + ".owned-cpu-proof.json",
+                manifest,
+                engine=engine,
+                kind="replay",
+                output_hashes={path.name: digest(path)},
+                input_hashes={
+                    **{p.name: digest(p) for p in fixture.iterdir() if p.is_file()},
+                    "best.f32": digest(directory / "best.f32"),
+                },
+            )
         with np.load(path, allow_pickle=False) as loaded:
             arrays[engine] = {key: loaded[key] for key in loaded.files}
     numerical, compatibility, oracle, differences = {}, {}, {}, {}
@@ -292,7 +363,7 @@ def audit_checkpoint(
     metrics = quality(info["logits"], read_array(fixture / "test.i32", "<i4", (256, 33))[:, 1:])
     report = {
         "schema": 1,
-        "protocol": PROTOCOL,
+        "protocol": resolve_context(manifest).protocol,
         "cell": cell,
         "manifest_sha256": manifest_sha256,
         "cell_receipt_sha256": info["receipt_sha256"],
@@ -308,6 +379,11 @@ def audit_checkpoint(
         "memory": info["memory"],
         "replay_sha256": {p.name: digest(p) for p in sorted(output.glob("*.npz"))},
     }
+    if resolve_context(manifest).owned:
+        report["owned_cpu_replay_proofs"] = {
+            name: digest(output / name)
+            for name in ("cpu_torch.npz.owned-cpu-proof.json", "oracle.npz.owned-cpu-proof.json")
+        }
     write_new(output / "audit.json", report)
     return report
 
@@ -347,7 +423,8 @@ def audit_campaign(manifest_path, expected_hash, roots, admission, campaign, out
     campaign = Path(campaign)
     ledger = read_json(campaign / "campaign.json")
     require(
-        ledger.get("manifest_sha256") == expected_hash
+        ledger.get("protocol") == manifest["protocol"]
+        and ledger.get("manifest_sha256") == expected_hash
         and ledger.get("status") == "measurement_complete_unaudited",
         "Incomplete or foreign campaign",
     )
@@ -374,7 +451,13 @@ def audit_campaign(manifest_path, expected_hash, roots, admission, campaign, out
             "Campaign receipt changed",
         )
         audit_checkpoint(
-            cell, expected_hash, roots, campaign, output / cell["id"], manifest=manifest
+            cell,
+            expected_hash,
+            roots,
+            campaign,
+            output / cell["id"],
+            manifest=manifest,
+            admission=admission,
         )
         reports.append(
             {
@@ -387,7 +470,7 @@ def audit_campaign(manifest_path, expected_hash, roots, admission, campaign, out
     repeats = repeat_integrity(campaign)
     result = {
         "schema": 1,
-        "protocol": PROTOCOL,
+        "protocol": resolve_context(manifest).protocol,
         "manifest_sha256": expected_hash,
         "campaign_sha256": digest(campaign / "campaign.json"),
         "reports": reports,

@@ -1,0 +1,66 @@
+{
+  "formatter_version": "clang-format version 21.1.8",
+  "formatter_sha256": "0646ca577bb7bcee2e94a1f6e3eac60aaeae3d02999ced4f5ae172e600f366dd",
+  "formatter_record_sha256": "4ba35e00c183f0693ea7676c5be75c5370a05b49d218baef66509def12988400",
+  "style_sha256": "854f53bf751d4c5bdca326d4b17edd3f651b40f32f1639b53100330bee3fc8a4",
+  "authority": "Existing installed formatter RECORD and historical version receipt; not upstream pinned 19.1.4 lint",
+  "native_compilation": false,
+  "files": {
+    "aten/src/ATen/native/IndexingUtils.h": {
+      "before_sha256": "d31ac021e2077761ea8421384d17d84f4ad83f554b6d806350c35c1b63866cb5",
+      "changed": true,
+      "ranges": [
+        "--lines=176:176"
+      ],
+      "after_sha256": "f80c4d74255e4fb61122aa6e951e4242f1129651ef254f18a3a66ac832ef421a"
+    },
+    "aten/src/ATen/native/TensorAdvancedIndexing.cpp": {
+      "before_sha256": "1927f6db9d7052ea2f8f4810f526c4a3a5d6ca8cacfe5eaf10784a9f28928337",
+      "changed": true,
+      "ranges": [
+        "--lines=636:639",
+        "--lines=683:683",
+        "--lines=1018:1022"
+      ],
+      "after_sha256": "5b9ecb298cd20325d310956863376374588a5cb91954b90f2eeefb2f549da799"
+    },
+    "aten/src/ATen/native/TensorAdvancedIndexingUtils.h": {
+      "before_sha256": "f3effd72c72f82b8c28347cb6b64ecbb06d45c68dd5e0502026d1ee99ab4fce0",
+      "changed": true,
+      "ranges": [
+        "--lines=37:37",
+        "--lines=68:72"
+      ],
+      "after_sha256": "f9797ba1146e009ec173acc62dac8f8bf2ad08cd4516ef5bd350519560405bc6"
+    },
+    "aten/src/ATen/native/mps/kernels/Indexing.h": {
+      "before_sha256": "b79813a2f6c08cdd5eb6dfaf53083109d40662595dd2c955e922746e85fac2a3",
+      "changed": false,
+      "ranges": [
+        "--lines=22:32"
+      ],
+      "after_sha256": "b79813a2f6c08cdd5eb6dfaf53083109d40662595dd2c955e922746e85fac2a3"
+    },
+    "aten/src/ATen/native/mps/kernels/Indexing.metal": {
+      "before_sha256": "fc26d026f0857c2717da072d8933848ad38215b6fa13bc09727fb32928dd62d8",
+      "changed": true,
+      "ranges": [
+        "--lines=13:135"
+      ],
+      "after_sha256": "cb1442517a5243ab185f638ac1db0b7b0edc3a5b21f79b839e1a1d941534d92f"
+    },
+    "aten/src/ATen/native/mps/operations/Indexing.mm": {
+      "before_sha256": "22a8d6027664d1d5d1ab638e8658c13e4772576caa2d8c01a69a885afe0a9730",
+      "changed": true,
+      "ranges": [
+        "--lines=2:3",
+        "--lines=34:34",
+        "--lines=148:236",
+        "--lines=254:257",
+        "--lines=685:690",
+        "--lines=1159:1163"
+      ],
+      "after_sha256": "3ed688b52acef54d3429daf500c316574c5e42961d01afd9ed3674cbcb481897"
+    }
+  }
+}

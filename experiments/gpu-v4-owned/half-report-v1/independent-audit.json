@@ -1,0 +1,254 @@
+{
+  "archives_rehashed_and_parsed": 80,
+  "audit_script_sha256": "fb721bcdaeb3870dff1054038fa7f4c6f78c6bcd05fbffa1fe6d7286353920ef",
+  "complete": true,
+  "counts": [
+    {
+      "cases": 40,
+      "cpu_mps_tolerance_failures": 120,
+      "cpu_serial_disagreements": 0,
+      "dual_fp64_disagreements": 0,
+      "nonrepeatable_operation_cases": 0,
+      "process": 0
+    },
+    {
+      "cases": 40,
+      "cpu_mps_tolerance_failures": 120,
+      "cpu_serial_disagreements": 0,
+      "dual_fp64_disagreements": 0,
+      "nonrepeatable_operation_cases": 0,
+      "process": 1
+    }
+  ],
+  "examples": [
+    {
+      "case_index": 16,
+      "cotangent": "cancellation",
+      "cpu": [
+        2048.0,
+        -2046.0
+      ],
+      "dtype": "float16",
+      "fp64": [
+        2049.0,
+        -2046.75
+      ],
+      "gradient_layout": "contiguous",
+      "input_layout": "contiguous",
+      "mps": [
+        2048.0,
+        -2046.0
+      ],
+      "serial_cpu": [
+        2048.0,
+        -2046.0
+      ]
+    },
+    {
+      "case_index": 18,
+      "cotangent": "cancellation",
+      "cpu": [
+        2046.0,
+        -2047.0
+      ],
+      "dtype": "float16",
+      "fp64": [
+        2049.0,
+        -2046.75
+      ],
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous",
+      "mps": [
+        2050.0,
+        -2048.0
+      ],
+      "serial_cpu": [
+        2046.0,
+        -2047.0
+      ]
+    },
+    {
+      "case_index": 36,
+      "cotangent": "cancellation",
+      "cpu": [
+        2049.0,
+        -2046.75
+      ],
+      "dtype": "float32",
+      "fp64": [
+        2049.0,
+        -2046.75
+      ],
+      "gradient_layout": "contiguous",
+      "input_layout": "contiguous",
+      "mps": [
+        2049.0,
+        -2046.75
+      ],
+      "serial_cpu": [
+        2049.0,
+        -2046.75
+      ]
+    },
+    {
+      "case_index": 38,
+      "cotangent": "cancellation",
+      "cpu": [
+        2049.0,
+        -2046.75
+      ],
+      "dtype": "float32",
+      "fp64": [
+        2049.0,
+        -2046.75
+      ],
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous",
+      "mps": [
+        2049.0,
+        -2046.75
+      ],
+      "serial_cpu": [
+        2049.0,
+        -2046.75
+      ]
+    }
+  ],
+  "failing_operation_cases": [
+    {
+      "case_index": 18,
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous",
+      "operation": "combinations",
+      "process": 0
+    },
+    {
+      "case_index": 18,
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous",
+      "operation": "explicit_index",
+      "process": 0
+    },
+    {
+      "case_index": 18,
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous",
+      "operation": "index_put_accumulate",
+      "process": 0
+    },
+    {
+      "case_index": 19,
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset",
+      "operation": "combinations",
+      "process": 0
+    },
+    {
+      "case_index": 19,
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset",
+      "operation": "explicit_index",
+      "process": 0
+    },
+    {
+      "case_index": 19,
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset",
+      "operation": "index_put_accumulate",
+      "process": 0
+    },
+    {
+      "case_index": 18,
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous",
+      "operation": "combinations",
+      "process": 1
+    },
+    {
+      "case_index": 18,
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous",
+      "operation": "explicit_index",
+      "process": 1
+    },
+    {
+      "case_index": 18,
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "contiguous",
+      "operation": "index_put_accumulate",
+      "process": 1
+    },
+    {
+      "case_index": 19,
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset",
+      "operation": "combinations",
+      "process": 1
+    },
+    {
+      "case_index": 19,
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset",
+      "operation": "explicit_index",
+      "process": 1
+    },
+    {
+      "case_index": 19,
+      "cotangent": "cancellation",
+      "dtype": "float16",
+      "gradient_layout": "column_major",
+      "input_layout": "strided_offset",
+      "operation": "index_put_accumulate",
+      "process": 1
+    }
+  ],
+  "formal_eligible": false,
+  "fresh_process_all_retained_raw_array_bytes_equal": true,
+  "integrity_passed": true,
+  "interpretation": [
+    "Declared FP16 cancellation with column-major cotangents fails CPU/MPS compatibility in both fresh processes.",
+    "Both CPU and MPS have half-rounding error against the exact derivative; neither dominates both coordinates.",
+    "Matching serial CPU half accumulation would improve CPU compatibility but would not necessarily improve mathematical accuracy.",
+    "No observed nonrepeatability in these small 20-execution cases does not establish deterministic parallel atomics.",
+    "FP32 cancellation controls match the exact FP64 derivative on these inputs."
+  ],
+  "limits": [
+    "This does not reconstruct the historical OpInfo incoming gradient or clear its failure.",
+    "Ordinary index accumulation was deliberately run with deterministic mode false and restored true.",
+    "No source patch, admission gate, performance measurement, or framework release claim follows.",
+    "Runtime inventory reauthentication is attested by the pinned worker receipts, not repeated by this raw-data audit.",
+    "Guard flags are retained observations; raw backing buffers were not saved for independent guard recomputation."
+  ],
+  "method": "Python standard library only; no framework imports or numerical device work",
+  "plan_sha256": "c5cd2c76385c72b841bbc7d370dd84f0a5c6f75865044e22ec78bf8922bbccf6",
+  "raw_tensors_recomputed_or_compared": 1200,
+  "schema": "gpu-owned-half-index-independent-evidence-audit-v1",
+  "source": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1",
+  "source_summary_sha256": "77a5c232387b9a609115a2f76f9e79a165bfdbd943b60d6dbbd712ef03996db1",
+  "worker_receipt_sha256": [
+    "940f2a830acbf911a03d88b12779ffc1ed3d85abf97af931d7ee27d517506be8",
+    "ada5f65291fce1110f6f5b00dae06875821d5bb1443f2819320470b76dcc388f"
+  ]
+}

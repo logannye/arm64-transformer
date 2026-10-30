@@ -1,0 +1,4440 @@
+{
+  "schema": "gpu-owned-full-shape-evidence-plan-v1",
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "admission_stream_opened": false,
+  "producer_sha256": "07abf58c262b43afa13b43c5fa99c9c9218b11abbd56969cba7bc90a63aa42b6",
+  "archive_utility_sha256": "2a30d78a30cfe75e56bf3a133f7611e0544706c4b1171a40732eb113b0b4ba51",
+  "auditor_sha256": "8ff4565f77e7f535ec72a77eb03fe3b210b9ba60d55f28408810319887c344e8",
+  "maximum_group_bytes_exclusive": 2000000000,
+  "anchors": {
+    "work/gpu-v4-owned/model-full-shape-v1/summary.json": "2995a572d97799a48ca436634ac7959590fff5e2d5904feac2ea8d45790d3df8",
+    "work/gpu-v4-owned/model-full-shape-manifest-v1.json": "1617562aa8cd1e04c358aa5e4261fb72a6fad529472115f1762462c3ed470954",
+    "work/gpu-v4-owned/model-full-shape-array-audit-v1.json": "e7b6498e3180d7bfd038c5adffc4b3f947c54a35a0e9b78bce4c76daeecb038f"
+  },
+  "groups": [
+    {
+      "name": "model-full-shape-v1-cpu-torch-b1-t32",
+      "roots": [
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p1.log"
+      ],
+      "closures": [
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p0/result.json",
+          "sha256": "b84a9b732ab15dac8fb0544755f994bba313b1c404893909baa8a06271ba133a"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p1/result.json",
+          "sha256": "2d660e506393d3e0555b39ea7610ca8ddf02ef93ca9ab4cbf3a36f1a677f827e"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p0/result.json",
+          "sha256": "b4da8fc1ea7292479940537bb94b274b29ad846006b86c210d67c087934be93a"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p1/result.json",
+          "sha256": "8badcf0d19e195d092f8e43501d284a7c841b07a0c7d2ac8cb8f7221d5d81032"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p0/result.json",
+          "sha256": "ab20eb7a9b0ba05ce862c31974256a10b0a961c075be9b8491d44a737c059d68"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p1/result.json",
+          "sha256": "abf3b579bd545a8fd0c1cf2082dc1a097bd39d16cf3534aba9e5587146b86d5d"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p0/result.json",
+          "sha256": "77cca6aa4adc699ae6147d1598a39925bd47068afaa3110c6abae1a051e80abd"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p1/result.json",
+          "sha256": "18c2f9879b2e11cefc1ce1ffbccc567e3f5675766c89833b27154937b3e938dc"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p0/result.json",
+          "sha256": "1be951bad89415e01b54554aba6686ab2fdc276ae55a67eeba0d759e5dbfb489"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p1/result.json",
+          "sha256": "1b01f2d93c57fc9ea1db5f07101ddddeb972b121fa46f68982c4815655659b39"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p0/result.json",
+          "sha256": "88c6be9409258f796806d42dd1a0edc2900e472e68947d1c6c3a73264a82b90d"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p1/result.json",
+          "sha256": "50099f9f0b5c67114cd1aab4285c174cd6029f6f87d246d861036d74e142df1a"
+        }
+      ],
+      "members": [
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p0/checkpoint-step3-logits.npz",
+          "sha256": "f073210aee472b41c0d4c432d3738a529c43f70dd735da2fa8ff931983b8ae4f",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p0/checkpoint-step3.npz",
+          "sha256": "550c09bfb39aff675c7aad51db5347620dd92ffb4fe68c7dd87601aa27519647",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p0/checkpoint-step6.npz",
+          "sha256": "cbb1e099fcbc5ece2616fd52f0c1d1746c617f2885290bb5c50de9681aca9863",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p0/final-logits.npz",
+          "sha256": "4e6fe9f0e7324a5d1af2ef82204224785c79e392a0bc7cbb92214655080ab929",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p0/initial.npz",
+          "sha256": "19360bef12d8c39ce440bdf952db60250125ef15bc5bfe930a4b6225bbaaf47a",
+          "bytes": 34809576,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p0/operands.npz",
+          "sha256": "83492169c44511901a7f0e57a2a9a70b1335778856794dbfdfea66300fb60728",
+          "bytes": 34788860,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p0/oracles.npz",
+          "sha256": "45b21ee8bf2e25912295c6ef779e15de79cae3aca697744515c70d5b9486f443",
+          "bytes": 139228066,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p0/result.json",
+          "sha256": "88c6be9409258f796806d42dd1a0edc2900e472e68947d1c6c3a73264a82b90d",
+          "bytes": 252496,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p1/checkpoint-step3-logits.npz",
+          "sha256": "f073210aee472b41c0d4c432d3738a529c43f70dd735da2fa8ff931983b8ae4f",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p1/checkpoint-step3.npz",
+          "sha256": "550c09bfb39aff675c7aad51db5347620dd92ffb4fe68c7dd87601aa27519647",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p1/checkpoint-step6.npz",
+          "sha256": "cbb1e099fcbc5ece2616fd52f0c1d1746c617f2885290bb5c50de9681aca9863",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p1/final-logits.npz",
+          "sha256": "4e6fe9f0e7324a5d1af2ef82204224785c79e392a0bc7cbb92214655080ab929",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p1/initial.npz",
+          "sha256": "19360bef12d8c39ce440bdf952db60250125ef15bc5bfe930a4b6225bbaaf47a",
+          "bytes": 34809576,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p1/operands.npz",
+          "sha256": "83492169c44511901a7f0e57a2a9a70b1335778856794dbfdfea66300fb60728",
+          "bytes": 34788860,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p1/oracles.npz",
+          "sha256": "45b21ee8bf2e25912295c6ef779e15de79cae3aca697744515c70d5b9486f443",
+          "bytes": 139228066,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-cpu_torch-p1/result.json",
+          "sha256": "50099f9f0b5c67114cd1aab4285c174cd6029f6f87d246d861036d74e142df1a",
+          "bytes": 252496,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p0/checkpoint-step3-logits.npz",
+          "sha256": "6fe44ed3bea80fede1c247c5ad152ab72c46f63acc3a22d0b67af1ff0f3ac127",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p0/checkpoint-step3.npz",
+          "sha256": "eeee767a28c8c34d5ef2dc9113d46ecfb11ddd2078b346e9e14210b40c87cbcb",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p0/checkpoint-step6.npz",
+          "sha256": "0fdaca7838daa306910aa58a7c7c66bf2dbab58bbdd390e9b39c2647005a2a15",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p0/final-logits.npz",
+          "sha256": "dca683d3ada35f0958cef14800428cb19d7ed5de5031de27c319eaba534d45ae",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p0/initial.npz",
+          "sha256": "2870309187768f2c82f6ec8219cbd492667f92f6483ffce8b67e5de604ccad80",
+          "bytes": 700648,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p0/operands.npz",
+          "sha256": "7c90638a2bb6acd2db423fd3c7fb1efb4b6bbe1d09da2c8b7f9d75ca991d3e8a",
+          "bytes": 679932,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p0/oracles.npz",
+          "sha256": "61e811dadc5c644fd5cff8e481bac395fd8c8d3c41ecfb36899bcf6daf848807",
+          "bytes": 2792354,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p0/result.json",
+          "sha256": "ab20eb7a9b0ba05ce862c31974256a10b0a961c075be9b8491d44a737c059d68",
+          "bytes": 251854,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p1/checkpoint-step3-logits.npz",
+          "sha256": "6fe44ed3bea80fede1c247c5ad152ab72c46f63acc3a22d0b67af1ff0f3ac127",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p1/checkpoint-step3.npz",
+          "sha256": "eeee767a28c8c34d5ef2dc9113d46ecfb11ddd2078b346e9e14210b40c87cbcb",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p1/checkpoint-step6.npz",
+          "sha256": "0fdaca7838daa306910aa58a7c7c66bf2dbab58bbdd390e9b39c2647005a2a15",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p1/final-logits.npz",
+          "sha256": "dca683d3ada35f0958cef14800428cb19d7ed5de5031de27c319eaba534d45ae",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p1/initial.npz",
+          "sha256": "2870309187768f2c82f6ec8219cbd492667f92f6483ffce8b67e5de604ccad80",
+          "bytes": 700648,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p1/operands.npz",
+          "sha256": "7c90638a2bb6acd2db423fd3c7fb1efb4b6bbe1d09da2c8b7f9d75ca991d3e8a",
+          "bytes": 679932,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p1/oracles.npz",
+          "sha256": "61e811dadc5c644fd5cff8e481bac395fd8c8d3c41ecfb36899bcf6daf848807",
+          "bytes": 2792354,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-cpu_torch-p1/result.json",
+          "sha256": "abf3b579bd545a8fd0c1cf2082dc1a097bd39d16cf3534aba9e5587146b86d5d",
+          "bytes": 251854,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p0/checkpoint-step3-logits.npz",
+          "sha256": "98cd23312740b0298188ff7168c912f4f370a9889d1b4d3f3342357339f652d1",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p0/checkpoint-step3.npz",
+          "sha256": "d5e62b2ec2039ba085f9f08b422e87d23c1361a224b7d33ef266bba41bf688e4",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p0/checkpoint-step6.npz",
+          "sha256": "e8c1ca0c3c859489034c62c93acbb893be27ea3e387908e1009d9fe6130f02b8",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p0/final-logits.npz",
+          "sha256": "78168223de508ea1dac3cea707ec23dfbcc84fa90fcde7a6fc5517bf10983970",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p0/initial.npz",
+          "sha256": "37defa130b24baec5365bfbe030bc631143ce7656db915c04a7bcd703d8779cc",
+          "bytes": 2427624,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p0/operands.npz",
+          "sha256": "6c76a33d947df2c838acfaaa1854be167e84ff7cc91f1628491c00cbef564d38",
+          "bytes": 2406908,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p0/oracles.npz",
+          "sha256": "7e0ed0c5292abb20881599f70859957600ebdde6e7e1cc8cfe7fe04d728a5a41",
+          "bytes": 9700258,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p0/result.json",
+          "sha256": "77cca6aa4adc699ae6147d1598a39925bd47068afaa3110c6abae1a051e80abd",
+          "bytes": 251834,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p1/checkpoint-step3-logits.npz",
+          "sha256": "98cd23312740b0298188ff7168c912f4f370a9889d1b4d3f3342357339f652d1",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p1/checkpoint-step3.npz",
+          "sha256": "d5e62b2ec2039ba085f9f08b422e87d23c1361a224b7d33ef266bba41bf688e4",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p1/checkpoint-step6.npz",
+          "sha256": "e8c1ca0c3c859489034c62c93acbb893be27ea3e387908e1009d9fe6130f02b8",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p1/final-logits.npz",
+          "sha256": "78168223de508ea1dac3cea707ec23dfbcc84fa90fcde7a6fc5517bf10983970",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p1/initial.npz",
+          "sha256": "37defa130b24baec5365bfbe030bc631143ce7656db915c04a7bcd703d8779cc",
+          "bytes": 2427624,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p1/operands.npz",
+          "sha256": "6c76a33d947df2c838acfaaa1854be167e84ff7cc91f1628491c00cbef564d38",
+          "bytes": 2406908,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p1/oracles.npz",
+          "sha256": "7e0ed0c5292abb20881599f70859957600ebdde6e7e1cc8cfe7fe04d728a5a41",
+          "bytes": 9700258,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-cpu_torch-p1/result.json",
+          "sha256": "18c2f9879b2e11cefc1ce1ffbccc567e3f5675766c89833b27154937b3e938dc",
+          "bytes": 251834,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p0/checkpoint-step3-logits.npz",
+          "sha256": "c9ac9777909a3c8e1badfb770a2f2827cd210e52f927dabffd27b68508d4ef96",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p0/checkpoint-step3.npz",
+          "sha256": "2ea37cbedd2251bc5f030dce32b3705014c652624cc4e091c99937cff35346a2",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p0/checkpoint-step6.npz",
+          "sha256": "a8042cea7c7a7c098f6ac36b5465b348a2fbad2379b7399cbde0aa0755d38938",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p0/final-logits.npz",
+          "sha256": "651e67fafa359242b92fa257722ca0f46b896db08ee3be0cb981d4e5ddb2f15a",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p0/initial.npz",
+          "sha256": "39502667aa521729b282e8e236be5130a2d7555ea91ac31f9efad2b1892bf127",
+          "bytes": 93544,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p0/operands.npz",
+          "sha256": "24f79fc16f03d808a6797c12bcd33a8c9ff0eb6628bfd336f35ad3d6ca8e3a6f",
+          "bytes": 72828,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p0/oracles.npz",
+          "sha256": "43f0620f6fa19090de2ade789fdf47d94ea32a324e10a40a5a0b3db076c7b759",
+          "bytes": 363938,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p0/result.json",
+          "sha256": "b84a9b732ab15dac8fb0544755f994bba313b1c404893909baa8a06271ba133a",
+          "bytes": 251211,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p1/checkpoint-step3-logits.npz",
+          "sha256": "c9ac9777909a3c8e1badfb770a2f2827cd210e52f927dabffd27b68508d4ef96",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p1/checkpoint-step3.npz",
+          "sha256": "2ea37cbedd2251bc5f030dce32b3705014c652624cc4e091c99937cff35346a2",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p1/checkpoint-step6.npz",
+          "sha256": "a8042cea7c7a7c098f6ac36b5465b348a2fbad2379b7399cbde0aa0755d38938",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p1/final-logits.npz",
+          "sha256": "651e67fafa359242b92fa257722ca0f46b896db08ee3be0cb981d4e5ddb2f15a",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p1/initial.npz",
+          "sha256": "39502667aa521729b282e8e236be5130a2d7555ea91ac31f9efad2b1892bf127",
+          "bytes": 93544,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p1/operands.npz",
+          "sha256": "24f79fc16f03d808a6797c12bcd33a8c9ff0eb6628bfd336f35ad3d6ca8e3a6f",
+          "bytes": 72828,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p1/oracles.npz",
+          "sha256": "43f0620f6fa19090de2ade789fdf47d94ea32a324e10a40a5a0b3db076c7b759",
+          "bytes": 363938,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-cpu_torch-p1/result.json",
+          "sha256": "2d660e506393d3e0555b39ea7610ca8ddf02ef93ca9ab4cbf3a36f1a677f827e",
+          "bytes": 251211,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p0/checkpoint-step3-logits.npz",
+          "sha256": "cb9bc53d338ed00017e6f3f5b32502eb26001389586ea2cb071d21976ab2ba02",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p0/checkpoint-step3.npz",
+          "sha256": "8e024d2df61f40b91135c18abecafc6ad038f9e4bef69afedda90f3150039394",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p0/checkpoint-step6.npz",
+          "sha256": "c4542acc8e81840a7f40d549437ccc08500f7ca2e6438191764d7abb897ba3ef",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p0/final-logits.npz",
+          "sha256": "3ceb56f3609beea0ab795cefbb2bf46ba25aa70aa4765a432d676f268d73999c",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p0/initial.npz",
+          "sha256": "1d0660aeb19587d217dce69ca15d3dec421dc4aa6f514ac8d4046bbed603af6e",
+          "bytes": 9027304,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p0/operands.npz",
+          "sha256": "541e0945209254027aefe8e661832bdb3c253d058d5224d146fc3ab0872e87b5",
+          "bytes": 9006588,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p0/oracles.npz",
+          "sha256": "a1aec627663ffa6e76cecf32fd06129d678149c343d43e5f0fbc4913f1c15950",
+          "bytes": 36098978,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p0/result.json",
+          "sha256": "1be951bad89415e01b54554aba6686ab2fdc276ae55a67eeba0d759e5dbfb489",
+          "bytes": 252063,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p1/checkpoint-step3-logits.npz",
+          "sha256": "cb9bc53d338ed00017e6f3f5b32502eb26001389586ea2cb071d21976ab2ba02",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p1/checkpoint-step3.npz",
+          "sha256": "8e024d2df61f40b91135c18abecafc6ad038f9e4bef69afedda90f3150039394",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p1/checkpoint-step6.npz",
+          "sha256": "c4542acc8e81840a7f40d549437ccc08500f7ca2e6438191764d7abb897ba3ef",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p1/final-logits.npz",
+          "sha256": "3ceb56f3609beea0ab795cefbb2bf46ba25aa70aa4765a432d676f268d73999c",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p1/initial.npz",
+          "sha256": "1d0660aeb19587d217dce69ca15d3dec421dc4aa6f514ac8d4046bbed603af6e",
+          "bytes": 9027304,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p1/operands.npz",
+          "sha256": "541e0945209254027aefe8e661832bdb3c253d058d5224d146fc3ab0872e87b5",
+          "bytes": 9006588,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p1/oracles.npz",
+          "sha256": "a1aec627663ffa6e76cecf32fd06129d678149c343d43e5f0fbc4913f1c15950",
+          "bytes": 36098978,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-cpu_torch-p1/result.json",
+          "sha256": "1b01f2d93c57fc9ea1db5f07101ddddeb972b121fa46f68982c4815655659b39",
+          "bytes": 252063,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p0/checkpoint-step3-logits.npz",
+          "sha256": "06c0e7da25bc925680230f2ee37004fb617416a8bcaf28a7cf944221f730b4f0",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p0/checkpoint-step3.npz",
+          "sha256": "006d84fb3119352449ba66931ccc865ba2092dd4c343df0dcc6904f87d8dbe46",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p0/checkpoint-step6.npz",
+          "sha256": "c0bcb659f0e8c30225d3378b3de240e2e6251cc02b92cf1e64c19f0ce61bc31a",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p0/final-logits.npz",
+          "sha256": "602d5d6f99b1211298379f8bc2c6bf293074dde9096499b54b7c184287dc3597",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p0/initial.npz",
+          "sha256": "edfcf1dcd6d5e2339961c9eb86d4875c63c9bedab7372df0baf8e2887451c62f",
+          "bytes": 230376,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p0/operands.npz",
+          "sha256": "b18d42be319e5e290399a05fb2b5db1b28b08adeaf4cbad351da54b6d5f5788a",
+          "bytes": 209660,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p0/oracles.npz",
+          "sha256": "f490e8053965b423b0c0c38c9ae6f4a0d0c4661bb50744f1cd5dbe26f56c4802",
+          "bytes": 911266,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p0/result.json",
+          "sha256": "b4da8fc1ea7292479940537bb94b274b29ad846006b86c210d67c087934be93a",
+          "bytes": 251328,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p1/checkpoint-step3-logits.npz",
+          "sha256": "06c0e7da25bc925680230f2ee37004fb617416a8bcaf28a7cf944221f730b4f0",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p1/checkpoint-step3.npz",
+          "sha256": "006d84fb3119352449ba66931ccc865ba2092dd4c343df0dcc6904f87d8dbe46",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p1/checkpoint-step6.npz",
+          "sha256": "c0bcb659f0e8c30225d3378b3de240e2e6251cc02b92cf1e64c19f0ce61bc31a",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p1/final-logits.npz",
+          "sha256": "602d5d6f99b1211298379f8bc2c6bf293074dde9096499b54b7c184287dc3597",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p1/initial.npz",
+          "sha256": "edfcf1dcd6d5e2339961c9eb86d4875c63c9bedab7372df0baf8e2887451c62f",
+          "bytes": 230376,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p1/operands.npz",
+          "sha256": "b18d42be319e5e290399a05fb2b5db1b28b08adeaf4cbad351da54b6d5f5788a",
+          "bytes": 209660,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p1/oracles.npz",
+          "sha256": "f490e8053965b423b0c0c38c9ae6f4a0d0c4661bb50744f1cd5dbe26f56c4802",
+          "bytes": 911266,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-cpu_torch-p1/result.json",
+          "sha256": "8badcf0d19e195d092f8e43501d284a7c841b07a0c7d2ac8cb8f7221d5d81032",
+          "bytes": 251328,
+          "mode": 420
+        }
+      ]
+    },
+    {
+      "name": "model-full-shape-v1-cpu-torch-b16-t32",
+      "roots": [
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p1.log"
+      ],
+      "closures": [
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p0/result.json",
+          "sha256": "8fb1ff0a70f7397e1a147563fb91eb62980c024b3d728c2ff6506068306e6b99"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p1/result.json",
+          "sha256": "f93bb398d1805f5b8c64d1ce4dbdea08a3b3d793922d059383720cb0580146eb"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p0/result.json",
+          "sha256": "8e4b69c9211edbee11747c50f46bf43da270a19a4622f376b438e37baaabe88d"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p1/result.json",
+          "sha256": "a3d9acacc3d688d72b2aee5c63499014cf4c35ffe2ae47a3dfd10f3074edc9b8"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p0/result.json",
+          "sha256": "617968aaf9dff97443609455a86f591555ef0496c2525ab0b874f51807e4dc32"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p1/result.json",
+          "sha256": "1d696116fe2cf54572412f4076e5d5f9c59940e6a57195d7358389fc6c0caa5a"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p0/result.json",
+          "sha256": "a7530a682b0d235de13d5ae8caac578d861bdcadd9b215d5cfdbdb7b5bdedc8e"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p1/result.json",
+          "sha256": "9f727206a6703017378e673fba0b1212fbbb839527b4f4773b1773d7bd80e7f5"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p0/result.json",
+          "sha256": "5e0b499dd7bf6181693f99cb72c3547e50f49554fe800bf01cc21cab25c85841"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p1/result.json",
+          "sha256": "e708bd1b5fca4f18d7354776bba3fc0521857fa70707cb872b38bc8490df1ac1"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p0/result.json",
+          "sha256": "6514914be5e0c2c4dd026c77c6e6ac7cb443cbf558b49b51a74c65957d5f3a97"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p1/result.json",
+          "sha256": "e2a3761ba5bef013152a2a4bb7e504ad97460ae18bfe467e9ca911e0e89e6a5f"
+        }
+      ],
+      "members": [
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p0/checkpoint-step3-logits.npz",
+          "sha256": "60ee83255ce41d4464582da8d9a5f63e4d4985fecb152e380550e6745d8ecf9a",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p0/checkpoint-step3.npz",
+          "sha256": "74ba8978ecb04cb42cf0d89074b10d6aba2e8c3d9076fb415af4dc18f6aa1bcb",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p0/checkpoint-step6.npz",
+          "sha256": "a90d699861fe2b2508274e2ce01752e866b751da12bed6ba5e9a155c5f436f01",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p0/final-logits.npz",
+          "sha256": "7a480dd6cd8f28641c5c442371f6ad07c7238faa1765dee39181f7f0e5b01d5a",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p0/initial.npz",
+          "sha256": "7f88c356ffd4c5f0a162a5864095dbd555ebdb1a0e15a957956347247c64efdb",
+          "bytes": 35055336,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p0/operands.npz",
+          "sha256": "f33ac4a53cb9b6b4fb64eb88cb4a3bae824cebc28a8f4072331ea76a3536f883",
+          "bytes": 34792700,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p0/oracles.npz",
+          "sha256": "c1db3bb15f20ee5cbbd324fdc6dd2241189d24a330cdf26872ae81d964d18959",
+          "bytes": 140211106,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p0/result.json",
+          "sha256": "6514914be5e0c2c4dd026c77c6e6ac7cb443cbf558b49b51a74c65957d5f3a97",
+          "bytes": 252558,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p1/checkpoint-step3-logits.npz",
+          "sha256": "60ee83255ce41d4464582da8d9a5f63e4d4985fecb152e380550e6745d8ecf9a",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p1/checkpoint-step3.npz",
+          "sha256": "74ba8978ecb04cb42cf0d89074b10d6aba2e8c3d9076fb415af4dc18f6aa1bcb",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p1/checkpoint-step6.npz",
+          "sha256": "a90d699861fe2b2508274e2ce01752e866b751da12bed6ba5e9a155c5f436f01",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p1/final-logits.npz",
+          "sha256": "7a480dd6cd8f28641c5c442371f6ad07c7238faa1765dee39181f7f0e5b01d5a",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p1/initial.npz",
+          "sha256": "7f88c356ffd4c5f0a162a5864095dbd555ebdb1a0e15a957956347247c64efdb",
+          "bytes": 35055336,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p1/operands.npz",
+          "sha256": "f33ac4a53cb9b6b4fb64eb88cb4a3bae824cebc28a8f4072331ea76a3536f883",
+          "bytes": 34792700,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p1/oracles.npz",
+          "sha256": "c1db3bb15f20ee5cbbd324fdc6dd2241189d24a330cdf26872ae81d964d18959",
+          "bytes": 140211106,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-cpu_torch-p1/result.json",
+          "sha256": "e2a3761ba5bef013152a2a4bb7e504ad97460ae18bfe467e9ca911e0e89e6a5f",
+          "bytes": 252558,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p0/checkpoint-step3-logits.npz",
+          "sha256": "797e73050d04db88567485be1708c9284208ea8483596148bafa782edf8fea16",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p0/checkpoint-step3.npz",
+          "sha256": "c21304a4ee85d836f9b6a960dcc98b48d29e88fd098a38a7f8600c23c733f267",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p0/checkpoint-step6.npz",
+          "sha256": "3649c94e5e65992d850c97867ac734d49ec18d103cfb1f31a81809999e8fb5a4",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p0/final-logits.npz",
+          "sha256": "83056ff58b4a4375bd9ff5366f48feeb6d701ad758eb8a31901d8b97f22fed75",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p0/initial.npz",
+          "sha256": "7880a9368d7f42a9f65451a7cfd03e1eb16cf2503c864f5448913e332cfd58a9",
+          "bytes": 946408,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p0/operands.npz",
+          "sha256": "998b9b32930c2f100f40b71a1268bd140d33b3bbd9e85147918a32a9f158e834",
+          "bytes": 683772,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p0/oracles.npz",
+          "sha256": "f320328e50862fb6c747f33cec96b57e99d8bb0f39e570be53b757c60fec8a8a",
+          "bytes": 3775394,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p0/result.json",
+          "sha256": "617968aaf9dff97443609455a86f591555ef0496c2525ab0b874f51807e4dc32",
+          "bytes": 251921,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p1/checkpoint-step3-logits.npz",
+          "sha256": "797e73050d04db88567485be1708c9284208ea8483596148bafa782edf8fea16",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p1/checkpoint-step3.npz",
+          "sha256": "c21304a4ee85d836f9b6a960dcc98b48d29e88fd098a38a7f8600c23c733f267",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p1/checkpoint-step6.npz",
+          "sha256": "3649c94e5e65992d850c97867ac734d49ec18d103cfb1f31a81809999e8fb5a4",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p1/final-logits.npz",
+          "sha256": "83056ff58b4a4375bd9ff5366f48feeb6d701ad758eb8a31901d8b97f22fed75",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p1/initial.npz",
+          "sha256": "7880a9368d7f42a9f65451a7cfd03e1eb16cf2503c864f5448913e332cfd58a9",
+          "bytes": 946408,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p1/operands.npz",
+          "sha256": "998b9b32930c2f100f40b71a1268bd140d33b3bbd9e85147918a32a9f158e834",
+          "bytes": 683772,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p1/oracles.npz",
+          "sha256": "f320328e50862fb6c747f33cec96b57e99d8bb0f39e570be53b757c60fec8a8a",
+          "bytes": 3775394,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-cpu_torch-p1/result.json",
+          "sha256": "1d696116fe2cf54572412f4076e5d5f9c59940e6a57195d7358389fc6c0caa5a",
+          "bytes": 251921,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p0/checkpoint-step3-logits.npz",
+          "sha256": "71d4c09aabf7459cd57141da06ef39de6bff004931dd128cca1a31d280d4ac6b",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p0/checkpoint-step3.npz",
+          "sha256": "36287e480981dfd300121f7ba9136a306615a46b628c1de9773851324c8934c3",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p0/checkpoint-step6.npz",
+          "sha256": "04c6fccca61a63aacee01a4eb91e4278dd4ff0195a45b9317eadd0141d7da5ad",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p0/final-logits.npz",
+          "sha256": "da96cf4639ac1bd9a45dc7e0cb64458fa40ef67891b3c92db5d31ddfc96cc949",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p0/initial.npz",
+          "sha256": "d39ff65f919f5cc663daf611ccd3f261bfb1bd3adb8090a369d8edeab192e86f",
+          "bytes": 2673384,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p0/operands.npz",
+          "sha256": "5329cd5ae59d5451410ed06fcadd4dcf9dd0134bf34bffbcef959078fc67fbb4",
+          "bytes": 2410748,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p0/oracles.npz",
+          "sha256": "b10235106c612b1207e6cd1d363739c14722df053e69b97b44319f30e857a69e",
+          "bytes": 10683298,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p0/result.json",
+          "sha256": "a7530a682b0d235de13d5ae8caac578d861bdcadd9b215d5cfdbdb7b5bdedc8e",
+          "bytes": 251919,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p1/checkpoint-step3-logits.npz",
+          "sha256": "71d4c09aabf7459cd57141da06ef39de6bff004931dd128cca1a31d280d4ac6b",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p1/checkpoint-step3.npz",
+          "sha256": "36287e480981dfd300121f7ba9136a306615a46b628c1de9773851324c8934c3",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p1/checkpoint-step6.npz",
+          "sha256": "04c6fccca61a63aacee01a4eb91e4278dd4ff0195a45b9317eadd0141d7da5ad",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p1/final-logits.npz",
+          "sha256": "da96cf4639ac1bd9a45dc7e0cb64458fa40ef67891b3c92db5d31ddfc96cc949",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p1/initial.npz",
+          "sha256": "d39ff65f919f5cc663daf611ccd3f261bfb1bd3adb8090a369d8edeab192e86f",
+          "bytes": 2673384,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p1/operands.npz",
+          "sha256": "5329cd5ae59d5451410ed06fcadd4dcf9dd0134bf34bffbcef959078fc67fbb4",
+          "bytes": 2410748,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p1/oracles.npz",
+          "sha256": "b10235106c612b1207e6cd1d363739c14722df053e69b97b44319f30e857a69e",
+          "bytes": 10683298,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-cpu_torch-p1/result.json",
+          "sha256": "9f727206a6703017378e673fba0b1212fbbb839527b4f4773b1773d7bd80e7f5",
+          "bytes": 251919,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p0/checkpoint-step3-logits.npz",
+          "sha256": "d8c3792cb9b2226b8262d6cfb07e81fb94413c74d0925464cb038fd47578959d",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p0/checkpoint-step3.npz",
+          "sha256": "e89b839fcccc64dd260b463a97e31a239ca1648a43c5d63d44ceec5164bff80e",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p0/checkpoint-step6.npz",
+          "sha256": "63af0b29c367acd3b82be8c954d2854cafe9eddb44d497ae7921920d8a914f97",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p0/final-logits.npz",
+          "sha256": "25a7655fc79bc575099b99b6f162fd1ae0c5b3fd677618ac07e29d3a35588909",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p0/initial.npz",
+          "sha256": "2ea6d987d64100247a156641b267cd946dda9863af9ea6d510ef1f2c490115ec",
+          "bytes": 339304,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p0/operands.npz",
+          "sha256": "a9d0c0a60592e14bf064e6a49b45122bdb51e3e8e5771b601b7d0fbf100975c0",
+          "bytes": 76668,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p0/oracles.npz",
+          "sha256": "b8b70935a38a705d9f3de759199c80d7e5dfc21a22741478af45ea1ec35fcd58",
+          "bytes": 1346978,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p0/result.json",
+          "sha256": "8fb1ff0a70f7397e1a147563fb91eb62980c024b3d728c2ff6506068306e6b99",
+          "bytes": 251250,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p1/checkpoint-step3-logits.npz",
+          "sha256": "d8c3792cb9b2226b8262d6cfb07e81fb94413c74d0925464cb038fd47578959d",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p1/checkpoint-step3.npz",
+          "sha256": "e89b839fcccc64dd260b463a97e31a239ca1648a43c5d63d44ceec5164bff80e",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p1/checkpoint-step6.npz",
+          "sha256": "63af0b29c367acd3b82be8c954d2854cafe9eddb44d497ae7921920d8a914f97",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p1/final-logits.npz",
+          "sha256": "25a7655fc79bc575099b99b6f162fd1ae0c5b3fd677618ac07e29d3a35588909",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p1/initial.npz",
+          "sha256": "2ea6d987d64100247a156641b267cd946dda9863af9ea6d510ef1f2c490115ec",
+          "bytes": 339304,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p1/operands.npz",
+          "sha256": "a9d0c0a60592e14bf064e6a49b45122bdb51e3e8e5771b601b7d0fbf100975c0",
+          "bytes": 76668,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p1/oracles.npz",
+          "sha256": "b8b70935a38a705d9f3de759199c80d7e5dfc21a22741478af45ea1ec35fcd58",
+          "bytes": 1346978,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-cpu_torch-p1/result.json",
+          "sha256": "f93bb398d1805f5b8c64d1ce4dbdea08a3b3d793922d059383720cb0580146eb",
+          "bytes": 251250,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p0/checkpoint-step3-logits.npz",
+          "sha256": "ea6b76402720364c22160f211a8773fec26dac063b5a5e4ce8a207da4302950b",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p0/checkpoint-step3.npz",
+          "sha256": "ae61156123f5748d356fbdc99c676fb75c4924b1198bbf976a56c85ba89d242e",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p0/checkpoint-step6.npz",
+          "sha256": "60390fe6b94e6ad686e5832d238e68c03d1cb7fb2e1e84103b8c75230d58b800",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p0/final-logits.npz",
+          "sha256": "b83c215ea2e9a16b0b967d68c3ca93b33b5032ff55a8dcca78610efc4721fce9",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p0/initial.npz",
+          "sha256": "5896f880b6e22af5b6406f4b0c1b8a0269500f3b8472b7d58ec16bd5143f7096",
+          "bytes": 9273064,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p0/operands.npz",
+          "sha256": "33932ce2f8b01d52078ba0fb70df9d831983d66c353624cb4e6f0939eb9dd7cc",
+          "bytes": 9010428,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p0/oracles.npz",
+          "sha256": "a3b93224f1136b9b226f74080c16dd3dfba53a1a54ac0cfcedf17c1c0da95e11",
+          "bytes": 37082018,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p0/result.json",
+          "sha256": "5e0b499dd7bf6181693f99cb72c3547e50f49554fe800bf01cc21cab25c85841",
+          "bytes": 252179,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p1/checkpoint-step3-logits.npz",
+          "sha256": "ea6b76402720364c22160f211a8773fec26dac063b5a5e4ce8a207da4302950b",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p1/checkpoint-step3.npz",
+          "sha256": "ae61156123f5748d356fbdc99c676fb75c4924b1198bbf976a56c85ba89d242e",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p1/checkpoint-step6.npz",
+          "sha256": "60390fe6b94e6ad686e5832d238e68c03d1cb7fb2e1e84103b8c75230d58b800",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p1/final-logits.npz",
+          "sha256": "b83c215ea2e9a16b0b967d68c3ca93b33b5032ff55a8dcca78610efc4721fce9",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p1/initial.npz",
+          "sha256": "5896f880b6e22af5b6406f4b0c1b8a0269500f3b8472b7d58ec16bd5143f7096",
+          "bytes": 9273064,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p1/operands.npz",
+          "sha256": "33932ce2f8b01d52078ba0fb70df9d831983d66c353624cb4e6f0939eb9dd7cc",
+          "bytes": 9010428,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p1/oracles.npz",
+          "sha256": "a3b93224f1136b9b226f74080c16dd3dfba53a1a54ac0cfcedf17c1c0da95e11",
+          "bytes": 37082018,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-cpu_torch-p1/result.json",
+          "sha256": "e708bd1b5fca4f18d7354776bba3fc0521857fa70707cb872b38bc8490df1ac1",
+          "bytes": 252179,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p0/checkpoint-step3-logits.npz",
+          "sha256": "565fa19917470fc78b1ee879ea61c887652e03372cdbfb0c11968eb2d168e184",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p0/checkpoint-step3.npz",
+          "sha256": "2fef8eae076c8c64cc6341bcdf5de9aae33d6d2b4614bb34cc914d295d3bab94",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p0/checkpoint-step6.npz",
+          "sha256": "feac1268d2fd3873606b91b6d328c856ac09476b85e54f6a4c23190b2bbfdf7c",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p0/final-logits.npz",
+          "sha256": "f7ba94fbdf32a4afe1b9a5437871e3c6de181f10c70c7f22eb8efcdfa6d3d1bb",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p0/initial.npz",
+          "sha256": "c8efe960283131df0e645498433c226efae5bb406d9b64117a42f906cf90e5d4",
+          "bytes": 476136,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p0/operands.npz",
+          "sha256": "d46d8127de2a002958721f61e32f9a43bd05ed13610ecabb07dabe24bd2c1d42",
+          "bytes": 213500,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p0/oracles.npz",
+          "sha256": "54bddf6b51940f37dda4c93ea5b90e4772ecd4fd7ae33a1e64f1c73d5304ba4b",
+          "bytes": 1894306,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p0/result.json",
+          "sha256": "8e4b69c9211edbee11747c50f46bf43da270a19a4622f376b438e37baaabe88d",
+          "bytes": 251331,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p1/checkpoint-step3-logits.npz",
+          "sha256": "565fa19917470fc78b1ee879ea61c887652e03372cdbfb0c11968eb2d168e184",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p1/checkpoint-step3.npz",
+          "sha256": "2fef8eae076c8c64cc6341bcdf5de9aae33d6d2b4614bb34cc914d295d3bab94",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p1/checkpoint-step6.npz",
+          "sha256": "feac1268d2fd3873606b91b6d328c856ac09476b85e54f6a4c23190b2bbfdf7c",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p1/final-logits.npz",
+          "sha256": "f7ba94fbdf32a4afe1b9a5437871e3c6de181f10c70c7f22eb8efcdfa6d3d1bb",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p1/initial.npz",
+          "sha256": "c8efe960283131df0e645498433c226efae5bb406d9b64117a42f906cf90e5d4",
+          "bytes": 476136,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p1/operands.npz",
+          "sha256": "d46d8127de2a002958721f61e32f9a43bd05ed13610ecabb07dabe24bd2c1d42",
+          "bytes": 213500,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p1/oracles.npz",
+          "sha256": "54bddf6b51940f37dda4c93ea5b90e4772ecd4fd7ae33a1e64f1c73d5304ba4b",
+          "bytes": 1894306,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-cpu_torch-p1/result.json",
+          "sha256": "a3d9acacc3d688d72b2aee5c63499014cf4c35ffe2ae47a3dfd10f3074edc9b8",
+          "bytes": 251331,
+          "mode": 420
+        }
+      ]
+    },
+    {
+      "name": "model-full-shape-v1-mps-b1-t32",
+      "roots": [
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p1.log"
+      ],
+      "closures": [
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p0/result.json",
+          "sha256": "4b4d3cc30dbab756c832e7b346420280e3e44f2ce6f899d0bda722331533fe70"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p1/result.json",
+          "sha256": "a6f42e306172a74dee73274d9b6047260073091f5895df3af46fee828211785c"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p0/result.json",
+          "sha256": "0888ea73d477384144e1f18d2ad01d66e90d30b11acc44ba40a2f0080cd92f79"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p1/result.json",
+          "sha256": "077d486ac4462dcd18eae28b2b1af3a02ba6d619a687b87973feed3c7d15039c"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p0/result.json",
+          "sha256": "2eb43d4577f378569ee335d5b0dcab5b47c71ef5b46ffbc9bbfb00e1e873d67d"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p1/result.json",
+          "sha256": "883cd80729e483442c26809d913d0116b26b465a4ad0d174133db83da553e5e2"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p0/result.json",
+          "sha256": "8980e82ea6a6f7b4a241729318050534a3c008db9b6b6b6b6d7c5209d0116d8c"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p1/result.json",
+          "sha256": "c4bdeb3f841c30a2790aaf40e915a5ad20cfa32fc06cc5be5bce4fb32d60613e"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p0/result.json",
+          "sha256": "30910f58dd3a85244bc61427833507ec9a341c3886c9d1e5da462bed4f989743"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p1/result.json",
+          "sha256": "2b1d91382fcc98e18bcf30fe9f929881e881d6971d51541e57ac2cf6ca8d164d"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p0/result.json",
+          "sha256": "aecffde429a8ce2e32c7dcaace7f0bb04f81775791fda3bbe3eed7f91aa0ded0"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p1/result.json",
+          "sha256": "7cdc0bf36a4afc70ffd6b294275aee6128d04a99d20a98ec82579e6157400f45"
+        }
+      ],
+      "members": [
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p0/checkpoint-step3-logits.npz",
+          "sha256": "88fe945e4ba17b08d73b6620474941c96ab89cc01574e3b04b706b6d42f4eb54",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p0/checkpoint-step3.npz",
+          "sha256": "81803adde5bd1b7f78f17c0ba16cb2830be3e216fba6384c1a286c39b2d05e9a",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p0/checkpoint-step6.npz",
+          "sha256": "42545fabb74662c53647130fa7762d5391bc646b4683fa596115670e7d25f4af",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p0/final-logits.npz",
+          "sha256": "ee11f71ce644db3e110289a2a607f31584d5dd30c920589769b562197562e6af",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p0/initial.npz",
+          "sha256": "77a51e592b9a7d79f0448b7001061fd8218ecc28525f05ca97719f0268d24c43",
+          "bytes": 34809576,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p0/operands.npz",
+          "sha256": "83492169c44511901a7f0e57a2a9a70b1335778856794dbfdfea66300fb60728",
+          "bytes": 34788860,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p0/oracles.npz",
+          "sha256": "45b21ee8bf2e25912295c6ef779e15de79cae3aca697744515c70d5b9486f443",
+          "bytes": 139228066,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p0/result.json",
+          "sha256": "aecffde429a8ce2e32c7dcaace7f0bb04f81775791fda3bbe3eed7f91aa0ded0",
+          "bytes": 253191,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p1/checkpoint-step3-logits.npz",
+          "sha256": "88fe945e4ba17b08d73b6620474941c96ab89cc01574e3b04b706b6d42f4eb54",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p1/checkpoint-step3.npz",
+          "sha256": "81803adde5bd1b7f78f17c0ba16cb2830be3e216fba6384c1a286c39b2d05e9a",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p1/checkpoint-step6.npz",
+          "sha256": "42545fabb74662c53647130fa7762d5391bc646b4683fa596115670e7d25f4af",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p1/final-logits.npz",
+          "sha256": "ee11f71ce644db3e110289a2a607f31584d5dd30c920589769b562197562e6af",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p1/initial.npz",
+          "sha256": "77a51e592b9a7d79f0448b7001061fd8218ecc28525f05ca97719f0268d24c43",
+          "bytes": 34809576,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p1/operands.npz",
+          "sha256": "83492169c44511901a7f0e57a2a9a70b1335778856794dbfdfea66300fb60728",
+          "bytes": 34788860,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p1/oracles.npz",
+          "sha256": "45b21ee8bf2e25912295c6ef779e15de79cae3aca697744515c70d5b9486f443",
+          "bytes": 139228066,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mps-p1/result.json",
+          "sha256": "7cdc0bf36a4afc70ffd6b294275aee6128d04a99d20a98ec82579e6157400f45",
+          "bytes": 253191,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p0/checkpoint-step3-logits.npz",
+          "sha256": "becd3a2f154073043abd0bff330d92291223eb5253c2187087996d905a40441f",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p0/checkpoint-step3.npz",
+          "sha256": "16282934a5dc9a0adf38e46f0b4a913a21b844ff67bd0922d5c34c7c11272b72",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p0/checkpoint-step6.npz",
+          "sha256": "8a6248f2324381b4c36156abb31e2687fec7114c9b664593018170b3163ca3b5",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p0/final-logits.npz",
+          "sha256": "52679310a5f5245b582c683f170a0f9ba8d7dbfb71f25ffa96c9178ab2e32e10",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p0/initial.npz",
+          "sha256": "0edbfd792372db5aff6dd6072317747246aed5cf597c217daa6644d7f883ed8e",
+          "bytes": 700648,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p0/operands.npz",
+          "sha256": "7c90638a2bb6acd2db423fd3c7fb1efb4b6bbe1d09da2c8b7f9d75ca991d3e8a",
+          "bytes": 679932,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p0/oracles.npz",
+          "sha256": "61e811dadc5c644fd5cff8e481bac395fd8c8d3c41ecfb36899bcf6daf848807",
+          "bytes": 2792354,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p0/result.json",
+          "sha256": "2eb43d4577f378569ee335d5b0dcab5b47c71ef5b46ffbc9bbfb00e1e873d67d",
+          "bytes": 252539,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p1/checkpoint-step3-logits.npz",
+          "sha256": "becd3a2f154073043abd0bff330d92291223eb5253c2187087996d905a40441f",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p1/checkpoint-step3.npz",
+          "sha256": "16282934a5dc9a0adf38e46f0b4a913a21b844ff67bd0922d5c34c7c11272b72",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p1/checkpoint-step6.npz",
+          "sha256": "8a6248f2324381b4c36156abb31e2687fec7114c9b664593018170b3163ca3b5",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p1/final-logits.npz",
+          "sha256": "52679310a5f5245b582c683f170a0f9ba8d7dbfb71f25ffa96c9178ab2e32e10",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p1/initial.npz",
+          "sha256": "0edbfd792372db5aff6dd6072317747246aed5cf597c217daa6644d7f883ed8e",
+          "bytes": 700648,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p1/operands.npz",
+          "sha256": "7c90638a2bb6acd2db423fd3c7fb1efb4b6bbe1d09da2c8b7f9d75ca991d3e8a",
+          "bytes": 679932,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p1/oracles.npz",
+          "sha256": "61e811dadc5c644fd5cff8e481bac395fd8c8d3c41ecfb36899bcf6daf848807",
+          "bytes": 2792354,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mps-p1/result.json",
+          "sha256": "883cd80729e483442c26809d913d0116b26b465a4ad0d174133db83da553e5e2",
+          "bytes": 252539,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p0/checkpoint-step3-logits.npz",
+          "sha256": "ff60e096f38ac8204ffdb30a39a2433753f2bc786f9637f154b9cb3a3337eddd",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p0/checkpoint-step3.npz",
+          "sha256": "99fa98f4d7de4282ea4abe04248a0e921b83792ea3493d1ff60e26fdf4603406",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p0/checkpoint-step6.npz",
+          "sha256": "8398d2d1bdfef5f59eb8e3eaf30f47cff0e53bbd35e31b72be4631659082c4f5",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p0/final-logits.npz",
+          "sha256": "a07fc7ddc5f9e1a26869df53daccb72b2655d0acb84331b96e6fee96ece537e1",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p0/initial.npz",
+          "sha256": "201af519a0f523542aa91d298ef2bbc79fb6d001b550fa9ac114c7b7f3bdde8a",
+          "bytes": 2427624,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p0/operands.npz",
+          "sha256": "6c76a33d947df2c838acfaaa1854be167e84ff7cc91f1628491c00cbef564d38",
+          "bytes": 2406908,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p0/oracles.npz",
+          "sha256": "7e0ed0c5292abb20881599f70859957600ebdde6e7e1cc8cfe7fe04d728a5a41",
+          "bytes": 9700258,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p0/result.json",
+          "sha256": "8980e82ea6a6f7b4a241729318050534a3c008db9b6b6b6b6d7c5209d0116d8c",
+          "bytes": 252559,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p1/checkpoint-step3-logits.npz",
+          "sha256": "ff60e096f38ac8204ffdb30a39a2433753f2bc786f9637f154b9cb3a3337eddd",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p1/checkpoint-step3.npz",
+          "sha256": "99fa98f4d7de4282ea4abe04248a0e921b83792ea3493d1ff60e26fdf4603406",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p1/checkpoint-step6.npz",
+          "sha256": "8398d2d1bdfef5f59eb8e3eaf30f47cff0e53bbd35e31b72be4631659082c4f5",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p1/final-logits.npz",
+          "sha256": "a07fc7ddc5f9e1a26869df53daccb72b2655d0acb84331b96e6fee96ece537e1",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p1/initial.npz",
+          "sha256": "201af519a0f523542aa91d298ef2bbc79fb6d001b550fa9ac114c7b7f3bdde8a",
+          "bytes": 2427624,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p1/operands.npz",
+          "sha256": "6c76a33d947df2c838acfaaa1854be167e84ff7cc91f1628491c00cbef564d38",
+          "bytes": 2406908,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p1/oracles.npz",
+          "sha256": "7e0ed0c5292abb20881599f70859957600ebdde6e7e1cc8cfe7fe04d728a5a41",
+          "bytes": 9700258,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mps-p1/result.json",
+          "sha256": "c4bdeb3f841c30a2790aaf40e915a5ad20cfa32fc06cc5be5bce4fb32d60613e",
+          "bytes": 252559,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p0/checkpoint-step3-logits.npz",
+          "sha256": "3ea01798c5a0d3e2a7e6497275f620df4cf6847228184cdb67e6d580d4863c46",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p0/checkpoint-step3.npz",
+          "sha256": "659a9da699fc4b3ca8b211bdc0db1399c75f2a4f06779b73f46bc65fc050c217",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p0/checkpoint-step6.npz",
+          "sha256": "6c6770f8a2b3ffe6e489ed77173b72c04af7dff095f19f249de3ae5c9ac07a21",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p0/final-logits.npz",
+          "sha256": "74f542bf52d16e6130a998b0f431c526ba3ff086646ce00da60d8aac564f3189",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p0/initial.npz",
+          "sha256": "d25a1a99f8241b01a37c23c64ba8563fd91f9a9b8b37bd8951791b4023817847",
+          "bytes": 93544,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p0/operands.npz",
+          "sha256": "24f79fc16f03d808a6797c12bcd33a8c9ff0eb6628bfd336f35ad3d6ca8e3a6f",
+          "bytes": 72828,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p0/oracles.npz",
+          "sha256": "43f0620f6fa19090de2ade789fdf47d94ea32a324e10a40a5a0b3db076c7b759",
+          "bytes": 363938,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p0/result.json",
+          "sha256": "4b4d3cc30dbab756c832e7b346420280e3e44f2ce6f899d0bda722331533fe70",
+          "bytes": 251906,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p1/checkpoint-step3-logits.npz",
+          "sha256": "3ea01798c5a0d3e2a7e6497275f620df4cf6847228184cdb67e6d580d4863c46",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p1/checkpoint-step3.npz",
+          "sha256": "659a9da699fc4b3ca8b211bdc0db1399c75f2a4f06779b73f46bc65fc050c217",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p1/checkpoint-step6.npz",
+          "sha256": "6c6770f8a2b3ffe6e489ed77173b72c04af7dff095f19f249de3ae5c9ac07a21",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p1/final-logits.npz",
+          "sha256": "74f542bf52d16e6130a998b0f431c526ba3ff086646ce00da60d8aac564f3189",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p1/initial.npz",
+          "sha256": "d25a1a99f8241b01a37c23c64ba8563fd91f9a9b8b37bd8951791b4023817847",
+          "bytes": 93544,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p1/operands.npz",
+          "sha256": "24f79fc16f03d808a6797c12bcd33a8c9ff0eb6628bfd336f35ad3d6ca8e3a6f",
+          "bytes": 72828,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p1/oracles.npz",
+          "sha256": "43f0620f6fa19090de2ade789fdf47d94ea32a324e10a40a5a0b3db076c7b759",
+          "bytes": 363938,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mps-p1/result.json",
+          "sha256": "a6f42e306172a74dee73274d9b6047260073091f5895df3af46fee828211785c",
+          "bytes": 251906,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p0/checkpoint-step3-logits.npz",
+          "sha256": "ce290f2c7864b15323e7ac038aec52225fa9babb4ede4a0d564e5599c66c8cca",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p0/checkpoint-step3.npz",
+          "sha256": "c43a446b28f67f2dc0f82ca7b1545cdf34a0bf43e30670f6b8561845e62712a3",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p0/checkpoint-step6.npz",
+          "sha256": "93ceca8132135a59fb8ee21ad263c79e8d2f80df3736919011721ae5a897ce83",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p0/final-logits.npz",
+          "sha256": "ef6605a7fecef5527971e59ae9cf221810926b0b67ae9c5ff4af9823c8bbfa7a",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p0/initial.npz",
+          "sha256": "e202088f8bad5c5e2b1f6821c58ddc90963b81249b5adcf37b363774365ecc57",
+          "bytes": 9027304,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p0/operands.npz",
+          "sha256": "541e0945209254027aefe8e661832bdb3c253d058d5224d146fc3ab0872e87b5",
+          "bytes": 9006588,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p0/oracles.npz",
+          "sha256": "a1aec627663ffa6e76cecf32fd06129d678149c343d43e5f0fbc4913f1c15950",
+          "bytes": 36098978,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p0/result.json",
+          "sha256": "30910f58dd3a85244bc61427833507ec9a341c3886c9d1e5da462bed4f989743",
+          "bytes": 252828,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p1/checkpoint-step3-logits.npz",
+          "sha256": "ce290f2c7864b15323e7ac038aec52225fa9babb4ede4a0d564e5599c66c8cca",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p1/checkpoint-step3.npz",
+          "sha256": "c43a446b28f67f2dc0f82ca7b1545cdf34a0bf43e30670f6b8561845e62712a3",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p1/checkpoint-step6.npz",
+          "sha256": "93ceca8132135a59fb8ee21ad263c79e8d2f80df3736919011721ae5a897ce83",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p1/final-logits.npz",
+          "sha256": "ef6605a7fecef5527971e59ae9cf221810926b0b67ae9c5ff4af9823c8bbfa7a",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p1/initial.npz",
+          "sha256": "e202088f8bad5c5e2b1f6821c58ddc90963b81249b5adcf37b363774365ecc57",
+          "bytes": 9027304,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p1/operands.npz",
+          "sha256": "541e0945209254027aefe8e661832bdb3c253d058d5224d146fc3ab0872e87b5",
+          "bytes": 9006588,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p1/oracles.npz",
+          "sha256": "a1aec627663ffa6e76cecf32fd06129d678149c343d43e5f0fbc4913f1c15950",
+          "bytes": 36098978,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mps-p1/result.json",
+          "sha256": "2b1d91382fcc98e18bcf30fe9f929881e881d6971d51541e57ac2cf6ca8d164d",
+          "bytes": 252828,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p0/checkpoint-step3-logits.npz",
+          "sha256": "e7a2974ff9a20aa8a248b2ab1e8c6f017ba7846b2518a6f0516dd1428bfdff46",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p0/checkpoint-step3.npz",
+          "sha256": "b812509fe5557caa6e71a91002078869a2f98d63af6411b4c9fc6ced685323e0",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p0/checkpoint-step6.npz",
+          "sha256": "cb92ab67a77a86e7ead0f83ced83443793b5b0afce04c8501ee87a74d581e96b",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p0/final-logits.npz",
+          "sha256": "99e8666dbbfdcaa097279ab3e11970ef125f5677eeee74bb726a2b788cc79b20",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p0/initial.npz",
+          "sha256": "367129df695502d98afc71597a6425e25b209ee319595cd64390b0232928a3d1",
+          "bytes": 230376,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p0/operands.npz",
+          "sha256": "b18d42be319e5e290399a05fb2b5db1b28b08adeaf4cbad351da54b6d5f5788a",
+          "bytes": 209660,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p0/oracles.npz",
+          "sha256": "f490e8053965b423b0c0c38c9ae6f4a0d0c4661bb50744f1cd5dbe26f56c4802",
+          "bytes": 911266,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p0/result.json",
+          "sha256": "0888ea73d477384144e1f18d2ad01d66e90d30b11acc44ba40a2f0080cd92f79",
+          "bytes": 252043,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p1/checkpoint-step3-logits.npz",
+          "sha256": "e7a2974ff9a20aa8a248b2ab1e8c6f017ba7846b2518a6f0516dd1428bfdff46",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p1/checkpoint-step3.npz",
+          "sha256": "b812509fe5557caa6e71a91002078869a2f98d63af6411b4c9fc6ced685323e0",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p1/checkpoint-step6.npz",
+          "sha256": "cb92ab67a77a86e7ead0f83ced83443793b5b0afce04c8501ee87a74d581e96b",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p1/final-logits.npz",
+          "sha256": "99e8666dbbfdcaa097279ab3e11970ef125f5677eeee74bb726a2b788cc79b20",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p1/initial.npz",
+          "sha256": "367129df695502d98afc71597a6425e25b209ee319595cd64390b0232928a3d1",
+          "bytes": 230376,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p1/operands.npz",
+          "sha256": "b18d42be319e5e290399a05fb2b5db1b28b08adeaf4cbad351da54b6d5f5788a",
+          "bytes": 209660,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p1/oracles.npz",
+          "sha256": "f490e8053965b423b0c0c38c9ae6f4a0d0c4661bb50744f1cd5dbe26f56c4802",
+          "bytes": 911266,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mps-p1/result.json",
+          "sha256": "077d486ac4462dcd18eae28b2b1af3a02ba6d619a687b87973feed3c7d15039c",
+          "bytes": 252043,
+          "mode": 420
+        }
+      ]
+    },
+    {
+      "name": "model-full-shape-v1-mps-b16-t32",
+      "roots": [
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p1.log"
+      ],
+      "closures": [
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p0/result.json",
+          "sha256": "1ede73795832f31c55a39cf8af66c9a375ced8d8e7988242883806c179110436"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p1/result.json",
+          "sha256": "902f966aff705fe7f1426e5f376f84baab6a427983bd6ea5fa584a2bad4a9a7a"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p0/result.json",
+          "sha256": "d608c69c12a84c0ab6e3489a7da5c5b081ac67c1c86c930878d08144fb25f226"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p1/result.json",
+          "sha256": "5343de979b7921ffe2f3a4fdf729552008805c7f67dd17226aa1b8e7d8b0b933"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p0/result.json",
+          "sha256": "399b05d62f03166d5dcaa91aa8900de95943cb30cfaa381684d40086adec6b16"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p1/result.json",
+          "sha256": "2bf5ae4ee44eefa37b7aeea4e01bb32f6d8ca269ce3fd1f80db69f08b8f59c2e"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p0/result.json",
+          "sha256": "b296e9eed586b02c13eef31e1a227ccf8dc5f6b65ad389b2afe66ba50e13ecf8"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p1/result.json",
+          "sha256": "53505490a6d4df51e24cf95b03d29ce60c55de27bb9be81a9679f2ef86fc87c7"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p0/result.json",
+          "sha256": "9c489d2644a6f8ff197434dd3ace2b04309b1398cc24b76f0ba1bf8c41dae9ec"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p1/result.json",
+          "sha256": "27e04a348346ae61a68cdc773376e833ec69107172c6fef29c63695f71371174"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p0/result.json",
+          "sha256": "b71f200b5e0e64dab013771d816a5eda0e541c3be6b8d7975c8f885da41908d8"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p1/result.json",
+          "sha256": "715284e4b15dff3f33d30dcf743d3a1baeea3c680d081d47baa3b8d6c6d20fcc"
+        }
+      ],
+      "members": [
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p0/checkpoint-step3-logits.npz",
+          "sha256": "bf83f06abe8f601101b53f608a1ed7f03ad61e026ac95bfcae388afd7d730d09",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p0/checkpoint-step3.npz",
+          "sha256": "ba3a97eab2568f2ac9e219f8c7d732505c165213d9dce49b5513741e5969db09",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p0/checkpoint-step6.npz",
+          "sha256": "48cc4f85ab5dd10c2c1a5363ed50d761b55768e009f61816dce79a585a97ab70",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p0/final-logits.npz",
+          "sha256": "0f7d617500ba43f360d415cb149226dde4de41772814fe4570ad2486fff9e19f",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p0/initial.npz",
+          "sha256": "bdb2ea3eaa5bcc2a84d62d26e05729bd00bcc7f2eb6e04fd65d03d534e6d3ee2",
+          "bytes": 35055336,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p0/operands.npz",
+          "sha256": "f33ac4a53cb9b6b4fb64eb88cb4a3bae824cebc28a8f4072331ea76a3536f883",
+          "bytes": 34792700,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p0/oracles.npz",
+          "sha256": "c1db3bb15f20ee5cbbd324fdc6dd2241189d24a330cdf26872ae81d964d18959",
+          "bytes": 140211106,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p0/result.json",
+          "sha256": "b71f200b5e0e64dab013771d816a5eda0e541c3be6b8d7975c8f885da41908d8",
+          "bytes": 253223,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p1/checkpoint-step3-logits.npz",
+          "sha256": "bf83f06abe8f601101b53f608a1ed7f03ad61e026ac95bfcae388afd7d730d09",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p1/checkpoint-step3.npz",
+          "sha256": "ba3a97eab2568f2ac9e219f8c7d732505c165213d9dce49b5513741e5969db09",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p1/checkpoint-step6.npz",
+          "sha256": "48cc4f85ab5dd10c2c1a5363ed50d761b55768e009f61816dce79a585a97ab70",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p1/final-logits.npz",
+          "sha256": "0f7d617500ba43f360d415cb149226dde4de41772814fe4570ad2486fff9e19f",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p1/initial.npz",
+          "sha256": "bdb2ea3eaa5bcc2a84d62d26e05729bd00bcc7f2eb6e04fd65d03d534e6d3ee2",
+          "bytes": 35055336,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p1/operands.npz",
+          "sha256": "f33ac4a53cb9b6b4fb64eb88cb4a3bae824cebc28a8f4072331ea76a3536f883",
+          "bytes": 34792700,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p1/oracles.npz",
+          "sha256": "c1db3bb15f20ee5cbbd324fdc6dd2241189d24a330cdf26872ae81d964d18959",
+          "bytes": 140211106,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mps-p1/result.json",
+          "sha256": "715284e4b15dff3f33d30dcf743d3a1baeea3c680d081d47baa3b8d6c6d20fcc",
+          "bytes": 253223,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p0/checkpoint-step3-logits.npz",
+          "sha256": "7df2778fb2e144099101a75d2be991959f2b71689c48867587bfbcc6738e2a90",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p0/checkpoint-step3.npz",
+          "sha256": "72edb85de2d34c73038a47e6ac6f867d049ebfa6bba36f718e991c336bbe2534",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p0/checkpoint-step6.npz",
+          "sha256": "6b20b20f895ef2a8ad5933950d7a7cd5e7269643076469aca81c7c31c556980f",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p0/final-logits.npz",
+          "sha256": "c1bec37f379b5d817ea5334aa9d23c4c3f63762b79e9fba16ae7e4516affd794",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p0/initial.npz",
+          "sha256": "d699ca91eff5af6e907c4aac7b3112b21daae15c88ce33c56662bcb5e6d36b7b",
+          "bytes": 946408,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p0/operands.npz",
+          "sha256": "998b9b32930c2f100f40b71a1268bd140d33b3bbd9e85147918a32a9f158e834",
+          "bytes": 683772,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p0/oracles.npz",
+          "sha256": "f320328e50862fb6c747f33cec96b57e99d8bb0f39e570be53b757c60fec8a8a",
+          "bytes": 3775394,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p0/result.json",
+          "sha256": "399b05d62f03166d5dcaa91aa8900de95943cb30cfaa381684d40086adec6b16",
+          "bytes": 252596,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p1/checkpoint-step3-logits.npz",
+          "sha256": "7df2778fb2e144099101a75d2be991959f2b71689c48867587bfbcc6738e2a90",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p1/checkpoint-step3.npz",
+          "sha256": "72edb85de2d34c73038a47e6ac6f867d049ebfa6bba36f718e991c336bbe2534",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p1/checkpoint-step6.npz",
+          "sha256": "6b20b20f895ef2a8ad5933950d7a7cd5e7269643076469aca81c7c31c556980f",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p1/final-logits.npz",
+          "sha256": "c1bec37f379b5d817ea5334aa9d23c4c3f63762b79e9fba16ae7e4516affd794",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p1/initial.npz",
+          "sha256": "d699ca91eff5af6e907c4aac7b3112b21daae15c88ce33c56662bcb5e6d36b7b",
+          "bytes": 946408,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p1/operands.npz",
+          "sha256": "998b9b32930c2f100f40b71a1268bd140d33b3bbd9e85147918a32a9f158e834",
+          "bytes": 683772,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p1/oracles.npz",
+          "sha256": "f320328e50862fb6c747f33cec96b57e99d8bb0f39e570be53b757c60fec8a8a",
+          "bytes": 3775394,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mps-p1/result.json",
+          "sha256": "2bf5ae4ee44eefa37b7aeea4e01bb32f6d8ca269ce3fd1f80db69f08b8f59c2e",
+          "bytes": 252596,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p0/checkpoint-step3-logits.npz",
+          "sha256": "b85f34ed0d2a1cf4b768cd6f127d61f6dba916be3a52ac8d6e1445e8642112ca",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p0/checkpoint-step3.npz",
+          "sha256": "8f198296b4874645329a6146703795cb970c00e5f69ab693eb0c538cfa54a991",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p0/checkpoint-step6.npz",
+          "sha256": "23b6b8ad0a9e383c2d16ea6f9b108a48fd77e1ffeadbdaec233de041da5c9613",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p0/final-logits.npz",
+          "sha256": "bc7235a57266937bf9fe1525184c21594efb4946648bd5c40cd71486c25c2606",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p0/initial.npz",
+          "sha256": "3c482287691f98a3b47e419a7181ebcac577166f1ff794fd525a163c85c9f024",
+          "bytes": 2673384,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p0/operands.npz",
+          "sha256": "5329cd5ae59d5451410ed06fcadd4dcf9dd0134bf34bffbcef959078fc67fbb4",
+          "bytes": 2410748,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p0/oracles.npz",
+          "sha256": "b10235106c612b1207e6cd1d363739c14722df053e69b97b44319f30e857a69e",
+          "bytes": 10683298,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p0/result.json",
+          "sha256": "b296e9eed586b02c13eef31e1a227ccf8dc5f6b65ad389b2afe66ba50e13ecf8",
+          "bytes": 252644,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p1/checkpoint-step3-logits.npz",
+          "sha256": "b85f34ed0d2a1cf4b768cd6f127d61f6dba916be3a52ac8d6e1445e8642112ca",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p1/checkpoint-step3.npz",
+          "sha256": "8f198296b4874645329a6146703795cb970c00e5f69ab693eb0c538cfa54a991",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p1/checkpoint-step6.npz",
+          "sha256": "23b6b8ad0a9e383c2d16ea6f9b108a48fd77e1ffeadbdaec233de041da5c9613",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p1/final-logits.npz",
+          "sha256": "bc7235a57266937bf9fe1525184c21594efb4946648bd5c40cd71486c25c2606",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p1/initial.npz",
+          "sha256": "3c482287691f98a3b47e419a7181ebcac577166f1ff794fd525a163c85c9f024",
+          "bytes": 2673384,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p1/operands.npz",
+          "sha256": "5329cd5ae59d5451410ed06fcadd4dcf9dd0134bf34bffbcef959078fc67fbb4",
+          "bytes": 2410748,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p1/oracles.npz",
+          "sha256": "b10235106c612b1207e6cd1d363739c14722df053e69b97b44319f30e857a69e",
+          "bytes": 10683298,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mps-p1/result.json",
+          "sha256": "53505490a6d4df51e24cf95b03d29ce60c55de27bb9be81a9679f2ef86fc87c7",
+          "bytes": 252644,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p0/checkpoint-step3-logits.npz",
+          "sha256": "69709d96f8e950c58ee0514137c8d1cba4037b40778089995787d4f5d64893c2",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p0/checkpoint-step3.npz",
+          "sha256": "a050b198425376ded1db4fbe8ddf99f270eae6d39d476de6e3653e9a7a57b30e",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p0/checkpoint-step6.npz",
+          "sha256": "8376ccfe4527dc3bf010072d22eff7c909ced392b72b3f30a500a59e830ee37e",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p0/final-logits.npz",
+          "sha256": "2241e32e654e3ef972c82701e9dc82def7bb256206679893e6aa55f870f339a0",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p0/initial.npz",
+          "sha256": "04e9836b61cd691b0fab69b253c5dcb941d23f3e7e10ea4a3646076f14b09af1",
+          "bytes": 339304,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p0/operands.npz",
+          "sha256": "a9d0c0a60592e14bf064e6a49b45122bdb51e3e8e5771b601b7d0fbf100975c0",
+          "bytes": 76668,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p0/oracles.npz",
+          "sha256": "b8b70935a38a705d9f3de759199c80d7e5dfc21a22741478af45ea1ec35fcd58",
+          "bytes": 1346978,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p0/result.json",
+          "sha256": "1ede73795832f31c55a39cf8af66c9a375ced8d8e7988242883806c179110436",
+          "bytes": 251965,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p1/checkpoint-step3-logits.npz",
+          "sha256": "69709d96f8e950c58ee0514137c8d1cba4037b40778089995787d4f5d64893c2",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p1/checkpoint-step3.npz",
+          "sha256": "a050b198425376ded1db4fbe8ddf99f270eae6d39d476de6e3653e9a7a57b30e",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p1/checkpoint-step6.npz",
+          "sha256": "8376ccfe4527dc3bf010072d22eff7c909ced392b72b3f30a500a59e830ee37e",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p1/final-logits.npz",
+          "sha256": "2241e32e654e3ef972c82701e9dc82def7bb256206679893e6aa55f870f339a0",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p1/initial.npz",
+          "sha256": "04e9836b61cd691b0fab69b253c5dcb941d23f3e7e10ea4a3646076f14b09af1",
+          "bytes": 339304,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p1/operands.npz",
+          "sha256": "a9d0c0a60592e14bf064e6a49b45122bdb51e3e8e5771b601b7d0fbf100975c0",
+          "bytes": 76668,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p1/oracles.npz",
+          "sha256": "b8b70935a38a705d9f3de759199c80d7e5dfc21a22741478af45ea1ec35fcd58",
+          "bytes": 1346978,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mps-p1/result.json",
+          "sha256": "902f966aff705fe7f1426e5f376f84baab6a427983bd6ea5fa584a2bad4a9a7a",
+          "bytes": 251965,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p0/checkpoint-step3-logits.npz",
+          "sha256": "9cec4a97440c8c97679801d5f3b13a88f695e1be51a9327421a2a696ecc2a103",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p0/checkpoint-step3.npz",
+          "sha256": "07be8f819f8f408491be4888e80f9052fb96760410248a6d0106b03a8c4e0791",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p0/checkpoint-step6.npz",
+          "sha256": "5c55bfde963697cbd9a9093713e2f801d9429c4e7311b625df89dbe1246eb620",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p0/final-logits.npz",
+          "sha256": "3b606826c53d2a2a6111e52fe19cb68802c98c77a3cec7c8a7363a6c10f4d1ce",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p0/initial.npz",
+          "sha256": "6b413ae0528778d26fd80ecdc9480623c0925a2f04eb43d1ba16067ec45601cf",
+          "bytes": 9273064,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p0/operands.npz",
+          "sha256": "33932ce2f8b01d52078ba0fb70df9d831983d66c353624cb4e6f0939eb9dd7cc",
+          "bytes": 9010428,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p0/oracles.npz",
+          "sha256": "a3b93224f1136b9b226f74080c16dd3dfba53a1a54ac0cfcedf17c1c0da95e11",
+          "bytes": 37082018,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p0/result.json",
+          "sha256": "9c489d2644a6f8ff197434dd3ace2b04309b1398cc24b76f0ba1bf8c41dae9ec",
+          "bytes": 252874,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p1/checkpoint-step3-logits.npz",
+          "sha256": "9cec4a97440c8c97679801d5f3b13a88f695e1be51a9327421a2a696ecc2a103",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p1/checkpoint-step3.npz",
+          "sha256": "07be8f819f8f408491be4888e80f9052fb96760410248a6d0106b03a8c4e0791",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p1/checkpoint-step6.npz",
+          "sha256": "5c55bfde963697cbd9a9093713e2f801d9429c4e7311b625df89dbe1246eb620",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p1/final-logits.npz",
+          "sha256": "3b606826c53d2a2a6111e52fe19cb68802c98c77a3cec7c8a7363a6c10f4d1ce",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p1/initial.npz",
+          "sha256": "6b413ae0528778d26fd80ecdc9480623c0925a2f04eb43d1ba16067ec45601cf",
+          "bytes": 9273064,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p1/operands.npz",
+          "sha256": "33932ce2f8b01d52078ba0fb70df9d831983d66c353624cb4e6f0939eb9dd7cc",
+          "bytes": 9010428,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p1/oracles.npz",
+          "sha256": "a3b93224f1136b9b226f74080c16dd3dfba53a1a54ac0cfcedf17c1c0da95e11",
+          "bytes": 37082018,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mps-p1/result.json",
+          "sha256": "27e04a348346ae61a68cdc773376e833ec69107172c6fef29c63695f71371174",
+          "bytes": 252874,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p0/checkpoint-step3-logits.npz",
+          "sha256": "278399e404b9aebabdc3d5601d2c52913135df141e70c994f4648401d063188d",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p0/checkpoint-step3.npz",
+          "sha256": "a7dcc5fc5a659742e5644eaf49c8021665a039abd26af4d795b2d926374ddfee",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p0/checkpoint-step6.npz",
+          "sha256": "c3f45052e2c23cf076c3c99aa0d3f0f39c57d3ecbb103396ef44773db7acf88f",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p0/final-logits.npz",
+          "sha256": "1ad07eb339b328dc710823c39d576dbe79580903c5e8609b33d19d25a04af5c2",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p0/initial.npz",
+          "sha256": "25cfdf44e98165e38235f356fb2eef908cc7b78cdf994126396020a5405e8424",
+          "bytes": 476136,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p0/operands.npz",
+          "sha256": "d46d8127de2a002958721f61e32f9a43bd05ed13610ecabb07dabe24bd2c1d42",
+          "bytes": 213500,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p0/oracles.npz",
+          "sha256": "54bddf6b51940f37dda4c93ea5b90e4772ecd4fd7ae33a1e64f1c73d5304ba4b",
+          "bytes": 1894306,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p0/result.json",
+          "sha256": "d608c69c12a84c0ab6e3489a7da5c5b081ac67c1c86c930878d08144fb25f226",
+          "bytes": 252086,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p1/checkpoint-step3-logits.npz",
+          "sha256": "278399e404b9aebabdc3d5601d2c52913135df141e70c994f4648401d063188d",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p1/checkpoint-step3.npz",
+          "sha256": "a7dcc5fc5a659742e5644eaf49c8021665a039abd26af4d795b2d926374ddfee",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p1/checkpoint-step6.npz",
+          "sha256": "c3f45052e2c23cf076c3c99aa0d3f0f39c57d3ecbb103396ef44773db7acf88f",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p1/final-logits.npz",
+          "sha256": "1ad07eb339b328dc710823c39d576dbe79580903c5e8609b33d19d25a04af5c2",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p1/initial.npz",
+          "sha256": "25cfdf44e98165e38235f356fb2eef908cc7b78cdf994126396020a5405e8424",
+          "bytes": 476136,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p1/operands.npz",
+          "sha256": "d46d8127de2a002958721f61e32f9a43bd05ed13610ecabb07dabe24bd2c1d42",
+          "bytes": 213500,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p1/oracles.npz",
+          "sha256": "54bddf6b51940f37dda4c93ea5b90e4772ecd4fd7ae33a1e64f1c73d5304ba4b",
+          "bytes": 1894306,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mps-p1/result.json",
+          "sha256": "5343de979b7921ffe2f3a4fdf729552008805c7f67dd17226aa1b8e7d8b0b933",
+          "bytes": 252086,
+          "mode": 420
+        }
+      ]
+    },
+    {
+      "name": "model-full-shape-v1-mlx-b1-t32",
+      "roots": [
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p1.log"
+      ],
+      "closures": [
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p0/result.json",
+          "sha256": "424288e8934771263da02546446ec97b407cae091bc8db3487f3b96601bae0bd"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p1/result.json",
+          "sha256": "a349a046c6c550b74698e77cb8ddcec10ca4b607586072246e3d9cf52fc8e166"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p0/result.json",
+          "sha256": "2461ed961ccc635bff6f54af9c48c4d6ca50ec5e87c34fc23fc181e46105f276"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p1/result.json",
+          "sha256": "7e462e7a37ed553a18e5d8c9afafb5b19cd1d265ab3d24736cc12464f750c88d"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p0/result.json",
+          "sha256": "12ec5c5ba5230d5cf29315766e9c4afcbe2fecaae61130cf2d8cb27f3c0378dd"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p1/result.json",
+          "sha256": "2c3911fb2eb95ae7ad063b60dcb5f17dbd0f06018608696e459bb5fc072accc5"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p0/result.json",
+          "sha256": "8432a2b4d874ea147757e51ca9ccb215325d4d183fca048e7bbafe2968dc5a50"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p1/result.json",
+          "sha256": "2fe638636ea8152db2e61cade319a9af47fe9dd784de1ce0c8f38d064a0c8897"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p0/result.json",
+          "sha256": "5631655f8189807c9ce1dd31f60ed408e24f42897fb16057c515b791990ab0eb"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p1/result.json",
+          "sha256": "5aeb5e499580c901a5b5d7d4c1afcee77ceac207f5bd041be99a8c0481b3f3d1"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p0/result.json",
+          "sha256": "906330e0387d4edf55a2cdc44c0b29c085f763f3bce68dfbb82e2aaa3f30b9a1"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p1/result.json",
+          "sha256": "b528e8201124d0800b26f282581ea701c486b17fe73384f0bbbba0df6d91c74b"
+        }
+      ],
+      "members": [
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p0/checkpoint-step3-logits.npz",
+          "sha256": "7d370ac6aa1b88355da616e3e7737061dabb175a0fd2f98808ef347d405eefef",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p0/checkpoint-step3.npz",
+          "sha256": "44a5285834ada7e6a09f1a414898bec6b4d265a73307ace89c586a9f6244ab72",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p0/checkpoint-step6.npz",
+          "sha256": "8d468092278a8ba1060437f2004c30d2d8770a15ebdc2ab80b2960e540aec8ae",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p0/final-logits.npz",
+          "sha256": "c8f4284169cfb58d8a0fea8785b3722dd8f603c3ccd90e168c16e80f63286f21",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p0/initial.npz",
+          "sha256": "6bf9d0a0b8178d0a1fc87513e59a8f65c3ef5fdbaf0883bb7cee5ebb8b9b0b42",
+          "bytes": 34809576,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p0/operands.npz",
+          "sha256": "83492169c44511901a7f0e57a2a9a70b1335778856794dbfdfea66300fb60728",
+          "bytes": 34788860,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p0/oracles.npz",
+          "sha256": "45b21ee8bf2e25912295c6ef779e15de79cae3aca697744515c70d5b9486f443",
+          "bytes": 139228066,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p0/result.json",
+          "sha256": "906330e0387d4edf55a2cdc44c0b29c085f763f3bce68dfbb82e2aaa3f30b9a1",
+          "bytes": 268276,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p1/checkpoint-step3-logits.npz",
+          "sha256": "7d370ac6aa1b88355da616e3e7737061dabb175a0fd2f98808ef347d405eefef",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p1/checkpoint-step3.npz",
+          "sha256": "44a5285834ada7e6a09f1a414898bec6b4d265a73307ace89c586a9f6244ab72",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p1/checkpoint-step6.npz",
+          "sha256": "8d468092278a8ba1060437f2004c30d2d8770a15ebdc2ab80b2960e540aec8ae",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p1/final-logits.npz",
+          "sha256": "c8f4284169cfb58d8a0fea8785b3722dd8f603c3ccd90e168c16e80f63286f21",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p1/initial.npz",
+          "sha256": "6bf9d0a0b8178d0a1fc87513e59a8f65c3ef5fdbaf0883bb7cee5ebb8b9b0b42",
+          "bytes": 34809576,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p1/operands.npz",
+          "sha256": "83492169c44511901a7f0e57a2a9a70b1335778856794dbfdfea66300fb60728",
+          "bytes": 34788860,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p1/oracles.npz",
+          "sha256": "45b21ee8bf2e25912295c6ef779e15de79cae3aca697744515c70d5b9486f443",
+          "bytes": 139228066,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b1-t32-mlx-p1/result.json",
+          "sha256": "b528e8201124d0800b26f282581ea701c486b17fe73384f0bbbba0df6d91c74b",
+          "bytes": 268276,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p0/checkpoint-step3-logits.npz",
+          "sha256": "f577a871b2ce887fb6812c8b6b65456f3204d33797a990cb7e6e79766aa14f9f",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p0/checkpoint-step3.npz",
+          "sha256": "16df12a8a23ac965d121fda77968a5d3caab972928efbfc4c1e06ec3d07c9af5",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p0/checkpoint-step6.npz",
+          "sha256": "6c228438c3e6c4e28a540f772715f3453d7fff0c8baefffa12af1ef18bcb2932",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p0/final-logits.npz",
+          "sha256": "5f65ea8e281ee00fdf54151096f2509353cf817c2b7272a65f5d874bb33f35c2",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p0/initial.npz",
+          "sha256": "c9a32aaf36007d5a5daa39651b8bc74db4905b8f671586698fa5883bf4082d62",
+          "bytes": 700648,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p0/operands.npz",
+          "sha256": "7c90638a2bb6acd2db423fd3c7fb1efb4b6bbe1d09da2c8b7f9d75ca991d3e8a",
+          "bytes": 679932,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p0/oracles.npz",
+          "sha256": "61e811dadc5c644fd5cff8e481bac395fd8c8d3c41ecfb36899bcf6daf848807",
+          "bytes": 2792354,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p0/result.json",
+          "sha256": "12ec5c5ba5230d5cf29315766e9c4afcbe2fecaae61130cf2d8cb27f3c0378dd",
+          "bytes": 267594,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p1/checkpoint-step3-logits.npz",
+          "sha256": "f577a871b2ce887fb6812c8b6b65456f3204d33797a990cb7e6e79766aa14f9f",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p1/checkpoint-step3.npz",
+          "sha256": "16df12a8a23ac965d121fda77968a5d3caab972928efbfc4c1e06ec3d07c9af5",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p1/checkpoint-step6.npz",
+          "sha256": "6c228438c3e6c4e28a540f772715f3453d7fff0c8baefffa12af1ef18bcb2932",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p1/final-logits.npz",
+          "sha256": "5f65ea8e281ee00fdf54151096f2509353cf817c2b7272a65f5d874bb33f35c2",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p1/initial.npz",
+          "sha256": "c9a32aaf36007d5a5daa39651b8bc74db4905b8f671586698fa5883bf4082d62",
+          "bytes": 700648,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p1/operands.npz",
+          "sha256": "7c90638a2bb6acd2db423fd3c7fb1efb4b6bbe1d09da2c8b7f9d75ca991d3e8a",
+          "bytes": 679932,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p1/oracles.npz",
+          "sha256": "61e811dadc5c644fd5cff8e481bac395fd8c8d3c41ecfb36899bcf6daf848807",
+          "bytes": 2792354,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b1-t32-mlx-p1/result.json",
+          "sha256": "2c3911fb2eb95ae7ad063b60dcb5f17dbd0f06018608696e459bb5fc072accc5",
+          "bytes": 267594,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p0/checkpoint-step3-logits.npz",
+          "sha256": "e140b3af54b882e87414294a15b2650312b2c838eb33b6ac59692d01573e6967",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p0/checkpoint-step3.npz",
+          "sha256": "0049ac08c5913daab09db8566ecf2195348b91cf5de7be6c91ebf273fe15554a",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p0/checkpoint-step6.npz",
+          "sha256": "8c546bd90ad87d3102de7ef04c65481160b6ca47bfd5066046bf5ed8fff8ccb9",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p0/final-logits.npz",
+          "sha256": "54cd75a43ec5b753d398ca6996fbb36253db45440b0dfe8e65999680bab752ae",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p0/initial.npz",
+          "sha256": "d29552df27793e4a2dfc818ec7960807c46944810152fa3b790cbe433e72cd31",
+          "bytes": 2427624,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p0/operands.npz",
+          "sha256": "6c76a33d947df2c838acfaaa1854be167e84ff7cc91f1628491c00cbef564d38",
+          "bytes": 2406908,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p0/oracles.npz",
+          "sha256": "7e0ed0c5292abb20881599f70859957600ebdde6e7e1cc8cfe7fe04d728a5a41",
+          "bytes": 9700258,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p0/result.json",
+          "sha256": "8432a2b4d874ea147757e51ca9ccb215325d4d183fca048e7bbafe2968dc5a50",
+          "bytes": 267554,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p1/checkpoint-step3-logits.npz",
+          "sha256": "e140b3af54b882e87414294a15b2650312b2c838eb33b6ac59692d01573e6967",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p1/checkpoint-step3.npz",
+          "sha256": "0049ac08c5913daab09db8566ecf2195348b91cf5de7be6c91ebf273fe15554a",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p1/checkpoint-step6.npz",
+          "sha256": "8c546bd90ad87d3102de7ef04c65481160b6ca47bfd5066046bf5ed8fff8ccb9",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p1/final-logits.npz",
+          "sha256": "54cd75a43ec5b753d398ca6996fbb36253db45440b0dfe8e65999680bab752ae",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p1/initial.npz",
+          "sha256": "d29552df27793e4a2dfc818ec7960807c46944810152fa3b790cbe433e72cd31",
+          "bytes": 2427624,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p1/operands.npz",
+          "sha256": "6c76a33d947df2c838acfaaa1854be167e84ff7cc91f1628491c00cbef564d38",
+          "bytes": 2406908,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p1/oracles.npz",
+          "sha256": "7e0ed0c5292abb20881599f70859957600ebdde6e7e1cc8cfe7fe04d728a5a41",
+          "bytes": 9700258,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b1-t32-mlx-p1/result.json",
+          "sha256": "2fe638636ea8152db2e61cade319a9af47fe9dd784de1ce0c8f38d064a0c8897",
+          "bytes": 267554,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p0/checkpoint-step3-logits.npz",
+          "sha256": "938cb38bc67b3631c1db9a651232922af751930b28d8024d7087723bc5fd2a65",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p0/checkpoint-step3.npz",
+          "sha256": "09fe971d56fdc4fdf9e2e51020d3f1b6b00c0a4ec9ee6bcd9da87c24f4f00679",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p0/checkpoint-step6.npz",
+          "sha256": "293e9dc1d1e51e8960f2bf30bae37722adf5609fa0065c2599998826d6fd001d",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p0/final-logits.npz",
+          "sha256": "d7c1a415a385da71e6c09b131aef44e28a9c325b25c61930b66b6c2cd6fc4a31",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p0/initial.npz",
+          "sha256": "92d38b6b3360e4bd94b116815e26792fd34a73dbc62f66c43cec60bb4912e0aa",
+          "bytes": 93544,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p0/operands.npz",
+          "sha256": "24f79fc16f03d808a6797c12bcd33a8c9ff0eb6628bfd336f35ad3d6ca8e3a6f",
+          "bytes": 72828,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p0/oracles.npz",
+          "sha256": "43f0620f6fa19090de2ade789fdf47d94ea32a324e10a40a5a0b3db076c7b759",
+          "bytes": 363938,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p0/result.json",
+          "sha256": "424288e8934771263da02546446ec97b407cae091bc8db3487f3b96601bae0bd",
+          "bytes": 266951,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p1/checkpoint-step3-logits.npz",
+          "sha256": "938cb38bc67b3631c1db9a651232922af751930b28d8024d7087723bc5fd2a65",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p1/checkpoint-step3.npz",
+          "sha256": "09fe971d56fdc4fdf9e2e51020d3f1b6b00c0a4ec9ee6bcd9da87c24f4f00679",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p1/checkpoint-step6.npz",
+          "sha256": "293e9dc1d1e51e8960f2bf30bae37722adf5609fa0065c2599998826d6fd001d",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p1/final-logits.npz",
+          "sha256": "d7c1a415a385da71e6c09b131aef44e28a9c325b25c61930b66b6c2cd6fc4a31",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p1/initial.npz",
+          "sha256": "92d38b6b3360e4bd94b116815e26792fd34a73dbc62f66c43cec60bb4912e0aa",
+          "bytes": 93544,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p1/operands.npz",
+          "sha256": "24f79fc16f03d808a6797c12bcd33a8c9ff0eb6628bfd336f35ad3d6ca8e3a6f",
+          "bytes": 72828,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p1/oracles.npz",
+          "sha256": "43f0620f6fa19090de2ade789fdf47d94ea32a324e10a40a5a0b3db076c7b759",
+          "bytes": 363938,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b1-t32-mlx-p1/result.json",
+          "sha256": "a349a046c6c550b74698e77cb8ddcec10ca4b607586072246e3d9cf52fc8e166",
+          "bytes": 266951,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p0/checkpoint-step3-logits.npz",
+          "sha256": "e3da4904f8839000759c4bab76ade283bd8261e23fa2ed5bb9f9b5fe859567c7",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p0/checkpoint-step3.npz",
+          "sha256": "d271e3ebb8570ff12b0d89f698a994b582d190473dff03efdf03fd6823b89477",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p0/checkpoint-step6.npz",
+          "sha256": "3a88a95879c806f43be88777c563c23dd449b9512f0e9c811f305d63addf3702",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p0/final-logits.npz",
+          "sha256": "2de76c903bb5c826996083a7037e2cdce75b64f239255b0cce4b7c483d1c7cbb",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p0/initial.npz",
+          "sha256": "ed880204b0f4b634b1a1db818340b050e9e3f47c95b395240931a110e05638c3",
+          "bytes": 9027304,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p0/operands.npz",
+          "sha256": "541e0945209254027aefe8e661832bdb3c253d058d5224d146fc3ab0872e87b5",
+          "bytes": 9006588,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p0/oracles.npz",
+          "sha256": "a1aec627663ffa6e76cecf32fd06129d678149c343d43e5f0fbc4913f1c15950",
+          "bytes": 36098978,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p0/result.json",
+          "sha256": "5631655f8189807c9ce1dd31f60ed408e24f42897fb16057c515b791990ab0eb",
+          "bytes": 267903,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p1/checkpoint-step3-logits.npz",
+          "sha256": "e3da4904f8839000759c4bab76ade283bd8261e23fa2ed5bb9f9b5fe859567c7",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p1/checkpoint-step3.npz",
+          "sha256": "d271e3ebb8570ff12b0d89f698a994b582d190473dff03efdf03fd6823b89477",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p1/checkpoint-step6.npz",
+          "sha256": "3a88a95879c806f43be88777c563c23dd449b9512f0e9c811f305d63addf3702",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p1/final-logits.npz",
+          "sha256": "2de76c903bb5c826996083a7037e2cdce75b64f239255b0cce4b7c483d1c7cbb",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p1/initial.npz",
+          "sha256": "ed880204b0f4b634b1a1db818340b050e9e3f47c95b395240931a110e05638c3",
+          "bytes": 9027304,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p1/operands.npz",
+          "sha256": "541e0945209254027aefe8e661832bdb3c253d058d5224d146fc3ab0872e87b5",
+          "bytes": 9006588,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p1/oracles.npz",
+          "sha256": "a1aec627663ffa6e76cecf32fd06129d678149c343d43e5f0fbc4913f1c15950",
+          "bytes": 36098978,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b1-t32-mlx-p1/result.json",
+          "sha256": "5aeb5e499580c901a5b5d7d4c1afcee77ceac207f5bd041be99a8c0481b3f3d1",
+          "bytes": 267903,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p0/checkpoint-step3-logits.npz",
+          "sha256": "73c653597a086e5c805dbf4357ed9a2e041ad1d8e9d6a6ba56ce141dd92ec4aa",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p0/checkpoint-step3.npz",
+          "sha256": "9f68a4ab3142b716a9b02ccd2f6bd57a6e86e8b90c487228bcabbf14fc2fddaa",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p0/checkpoint-step6.npz",
+          "sha256": "078af3a76056664dbe1a505621966d300b49ae72ce1e067dd505c2c65ff8fe3d",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p0/final-logits.npz",
+          "sha256": "e81d86e715b05dbb8103a61c06a3bc30b86a7a779e8785b93717a4f99bf1f685",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p0/initial.npz",
+          "sha256": "671e34f0de25879ec12ceeea399241e9cc0fd4f55be2f8e99248d9b709dad7b4",
+          "bytes": 230376,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p0/operands.npz",
+          "sha256": "b18d42be319e5e290399a05fb2b5db1b28b08adeaf4cbad351da54b6d5f5788a",
+          "bytes": 209660,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p0/oracles.npz",
+          "sha256": "f490e8053965b423b0c0c38c9ae6f4a0d0c4661bb50744f1cd5dbe26f56c4802",
+          "bytes": 911266,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p0/result.json",
+          "sha256": "2461ed961ccc635bff6f54af9c48c4d6ca50ec5e87c34fc23fc181e46105f276",
+          "bytes": 267088,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p1/checkpoint-step3-logits.npz",
+          "sha256": "73c653597a086e5c805dbf4357ed9a2e041ad1d8e9d6a6ba56ce141dd92ec4aa",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p1/checkpoint-step3.npz",
+          "sha256": "9f68a4ab3142b716a9b02ccd2f6bd57a6e86e8b90c487228bcabbf14fc2fddaa",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p1/checkpoint-step6.npz",
+          "sha256": "078af3a76056664dbe1a505621966d300b49ae72ce1e067dd505c2c65ff8fe3d",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p1/final-logits.npz",
+          "sha256": "e81d86e715b05dbb8103a61c06a3bc30b86a7a779e8785b93717a4f99bf1f685",
+          "bytes": 16650,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p1/initial.npz",
+          "sha256": "671e34f0de25879ec12ceeea399241e9cc0fd4f55be2f8e99248d9b709dad7b4",
+          "bytes": 230376,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p1/operands.npz",
+          "sha256": "b18d42be319e5e290399a05fb2b5db1b28b08adeaf4cbad351da54b6d5f5788a",
+          "bytes": 209660,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p1/oracles.npz",
+          "sha256": "f490e8053965b423b0c0c38c9ae6f4a0d0c4661bb50744f1cd5dbe26f56c4802",
+          "bytes": 911266,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b1-t32-mlx-p1/result.json",
+          "sha256": "7e462e7a37ed553a18e5d8c9afafb5b19cd1d265ab3d24736cc12464f750c88d",
+          "bytes": 267088,
+          "mode": 420
+        }
+      ]
+    },
+    {
+      "name": "model-full-shape-v1-mlx-b16-t32",
+      "roots": [
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p1.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p0",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p0.log",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p1",
+        "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p1.log"
+      ],
+      "closures": [
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p0/result.json",
+          "sha256": "a84d125209d6f0fa2e27f26940266fb8211493e5defa5f7f719b8143b1287df4"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p1/result.json",
+          "sha256": "ffe79079655c640febb2b3d4c1b43f455a9db58b75850a5e29b3043ca2a8f745"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p0/result.json",
+          "sha256": "92b9c7e3f5a063df154266fd99ee2c776122a43ad67b177080e0011d59a37863"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p1/result.json",
+          "sha256": "b740b8d8ee3cc7009c315a912b122f3cf55b6330db7ee9fde9aca7e730326260"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p0/result.json",
+          "sha256": "b035f440db2742509fed8e2d40e57747ad359ed4d4f4e32389e81034d2df3e45"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p1/result.json",
+          "sha256": "d67786fc409abb92834cae16a674717a1b808d17d310520f1b079058a188c29d"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p0/result.json",
+          "sha256": "34fb42a22578c7e6101b63442bbff3b3078eedcc929f676d4abd31df4b5d685c"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p1/result.json",
+          "sha256": "50685350c396de53da7404ba53245df62a4fe6032308864a59a3dde4e093adec"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p0/result.json",
+          "sha256": "3635f97b2fc99552d4c5ea2c906d5e9a72169290b7f213109b403fad17fd7c97"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p1/result.json",
+          "sha256": "949bccc6479be2a5fa2fa50cf996ce541e807443f35df79829d759e1af0f8b77"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p0/result.json",
+          "sha256": "8457b2fb43bae37be48cf637ce8f289e9ad084fadd9f820c23336720d6540814"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p1/result.json",
+          "sha256": "252039b0dc3a77f6e3ac54c0cc7746c5d5813a14d43af8a7897c862cbc1df72f"
+        }
+      ],
+      "members": [
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p0/checkpoint-step3-logits.npz",
+          "sha256": "b42a8bb12cc0143dcc12613eae039f7bd0ad814ab1e3bd3582727921fce38e3b",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p0/checkpoint-step3.npz",
+          "sha256": "75f7d450362607da8bd19cc24f3477735825750e10e3ae1daa8f1801c2c49e18",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p0/checkpoint-step6.npz",
+          "sha256": "91f5e15c1b0957dc9cf26b4a5e14dacf2b5def84a893f68abc2104a16b58b49d",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p0/final-logits.npz",
+          "sha256": "d693cb67da9acd0308a7a94497b2add2c8bacbacea254b184c15e717cd0b98a9",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p0/initial.npz",
+          "sha256": "3db61b3cdbb5c6786fdcfe03bf6dbe172d292f8d4a8e4a87172fac9204e179eb",
+          "bytes": 35055336,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p0/operands.npz",
+          "sha256": "f33ac4a53cb9b6b4fb64eb88cb4a3bae824cebc28a8f4072331ea76a3536f883",
+          "bytes": 34792700,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p0/oracles.npz",
+          "sha256": "c1db3bb15f20ee5cbbd324fdc6dd2241189d24a330cdf26872ae81d964d18959",
+          "bytes": 140211106,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p0/result.json",
+          "sha256": "8457b2fb43bae37be48cf637ce8f289e9ad084fadd9f820c23336720d6540814",
+          "bytes": 268338,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p1/checkpoint-step3-logits.npz",
+          "sha256": "b42a8bb12cc0143dcc12613eae039f7bd0ad814ab1e3bd3582727921fce38e3b",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p1/checkpoint-step3.npz",
+          "sha256": "75f7d450362607da8bd19cc24f3477735825750e10e3ae1daa8f1801c2c49e18",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p1/checkpoint-step6.npz",
+          "sha256": "91f5e15c1b0957dc9cf26b4a5e14dacf2b5def84a893f68abc2104a16b58b49d",
+          "bytes": 104364510,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p1/final-logits.npz",
+          "sha256": "d693cb67da9acd0308a7a94497b2add2c8bacbacea254b184c15e717cd0b98a9",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p1/initial.npz",
+          "sha256": "3db61b3cdbb5c6786fdcfe03bf6dbe172d292f8d4a8e4a87172fac9204e179eb",
+          "bytes": 35055336,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p1/operands.npz",
+          "sha256": "f33ac4a53cb9b6b4fb64eb88cb4a3bae824cebc28a8f4072331ea76a3536f883",
+          "bytes": 34792700,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p1/oracles.npz",
+          "sha256": "c1db3bb15f20ee5cbbd324fdc6dd2241189d24a330cdf26872ae81d964d18959",
+          "bytes": 140211106,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w1024-b16-t32-mlx-p1/result.json",
+          "sha256": "252039b0dc3a77f6e3ac54c0cc7746c5d5813a14d43af8a7897c862cbc1df72f",
+          "bytes": 268338,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p0/checkpoint-step3-logits.npz",
+          "sha256": "16c2e84f813c9da4575aea36ce37c713d4cebc4870b0f0825377ce2fe2a775f9",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p0/checkpoint-step3.npz",
+          "sha256": "614d8be0691829a1ce76bdfdbe316a0f7ff1a01b3e4cb8b270295ce2cca36909",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p0/checkpoint-step6.npz",
+          "sha256": "b6ef610a7115637d6000cae3d29ea4f9b5198c53695baa5ada7a64b6f1ab7920",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p0/final-logits.npz",
+          "sha256": "6460b5a9db9ae38e2e6459b003f6c675c992d055dc46f6086d19f2b937d4facb",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p0/initial.npz",
+          "sha256": "18e4e2d043e8f50fc2ee8866757491c7a8af769af825b9f7dc12937610c703f0",
+          "bytes": 946408,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p0/operands.npz",
+          "sha256": "998b9b32930c2f100f40b71a1268bd140d33b3bbd9e85147918a32a9f158e834",
+          "bytes": 683772,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p0/oracles.npz",
+          "sha256": "f320328e50862fb6c747f33cec96b57e99d8bb0f39e570be53b757c60fec8a8a",
+          "bytes": 3775394,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p0/result.json",
+          "sha256": "b035f440db2742509fed8e2d40e57747ad359ed4d4f4e32389e81034d2df3e45",
+          "bytes": 267601,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p1/checkpoint-step3-logits.npz",
+          "sha256": "16c2e84f813c9da4575aea36ce37c713d4cebc4870b0f0825377ce2fe2a775f9",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p1/checkpoint-step3.npz",
+          "sha256": "614d8be0691829a1ce76bdfdbe316a0f7ff1a01b3e4cb8b270295ce2cca36909",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p1/checkpoint-step6.npz",
+          "sha256": "b6ef610a7115637d6000cae3d29ea4f9b5198c53695baa5ada7a64b6f1ab7920",
+          "bytes": 2037726,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p1/final-logits.npz",
+          "sha256": "6460b5a9db9ae38e2e6459b003f6c675c992d055dc46f6086d19f2b937d4facb",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p1/initial.npz",
+          "sha256": "18e4e2d043e8f50fc2ee8866757491c7a8af769af825b9f7dc12937610c703f0",
+          "bytes": 946408,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p1/operands.npz",
+          "sha256": "998b9b32930c2f100f40b71a1268bd140d33b3bbd9e85147918a32a9f158e834",
+          "bytes": 683772,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p1/oracles.npz",
+          "sha256": "f320328e50862fb6c747f33cec96b57e99d8bb0f39e570be53b757c60fec8a8a",
+          "bytes": 3775394,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w128-b16-t32-mlx-p1/result.json",
+          "sha256": "d67786fc409abb92834cae16a674717a1b808d17d310520f1b079058a188c29d",
+          "bytes": 267601,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p0/checkpoint-step3-logits.npz",
+          "sha256": "b6e1f9bb5ded87b840ac12059a42c38b06e8b72957909322929ff7a6952fa5ae",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p0/checkpoint-step3.npz",
+          "sha256": "fd92b3292a5351bf2087f65e5d4bd4d7b756696a5d2fdcf6cdcf81cc7933c720",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p0/checkpoint-step6.npz",
+          "sha256": "04c5ae548a0271191e2a53077dd187b8271051e60a9b08fb838fd597e2c9eaa9",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p0/final-logits.npz",
+          "sha256": "6ed2df02cfdf8c91edf68f2796c9c2e244a8f06aceea80a906f6794acedce7a2",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p0/initial.npz",
+          "sha256": "d29381ea4ad635c941078d0a0cb6d7175551a75937487942ca2166756034e2d4",
+          "bytes": 2673384,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p0/operands.npz",
+          "sha256": "5329cd5ae59d5451410ed06fcadd4dcf9dd0134bf34bffbcef959078fc67fbb4",
+          "bytes": 2410748,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p0/oracles.npz",
+          "sha256": "b10235106c612b1207e6cd1d363739c14722df053e69b97b44319f30e857a69e",
+          "bytes": 10683298,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p0/result.json",
+          "sha256": "34fb42a22578c7e6101b63442bbff3b3078eedcc929f676d4abd31df4b5d685c",
+          "bytes": 267659,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p1/checkpoint-step3-logits.npz",
+          "sha256": "b6e1f9bb5ded87b840ac12059a42c38b06e8b72957909322929ff7a6952fa5ae",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p1/checkpoint-step3.npz",
+          "sha256": "fd92b3292a5351bf2087f65e5d4bd4d7b756696a5d2fdcf6cdcf81cc7933c720",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p1/checkpoint-step6.npz",
+          "sha256": "04c5ae548a0271191e2a53077dd187b8271051e60a9b08fb838fd597e2c9eaa9",
+          "bytes": 7218654,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p1/final-logits.npz",
+          "sha256": "6ed2df02cfdf8c91edf68f2796c9c2e244a8f06aceea80a906f6794acedce7a2",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p1/initial.npz",
+          "sha256": "d29381ea4ad635c941078d0a0cb6d7175551a75937487942ca2166756034e2d4",
+          "bytes": 2673384,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p1/operands.npz",
+          "sha256": "5329cd5ae59d5451410ed06fcadd4dcf9dd0134bf34bffbcef959078fc67fbb4",
+          "bytes": 2410748,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p1/oracles.npz",
+          "sha256": "b10235106c612b1207e6cd1d363739c14722df053e69b97b44319f30e857a69e",
+          "bytes": 10683298,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w256-b16-t32-mlx-p1/result.json",
+          "sha256": "50685350c396de53da7404ba53245df62a4fe6032308864a59a3dde4e093adec",
+          "bytes": 267659,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p0/checkpoint-step3-logits.npz",
+          "sha256": "d3746a06174ab159301494aaf69ce0abe5122e89dddda61be2b7e07b810ebd71",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p0/checkpoint-step3.npz",
+          "sha256": "fafbc693b8909d0e2f59c237751c99bd68498368264f4e05c1b781b108dec960",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p0/checkpoint-step6.npz",
+          "sha256": "bfbd43ab328f76a9238d4a0e5143ef8566057938e1dfd5ee41d5089fda6ca7bc",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p0/final-logits.npz",
+          "sha256": "750db8671d8cc743b5d7f496408bc0db41e7aa60eae1d91dbbbffcbdb2065447",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p0/initial.npz",
+          "sha256": "cbd170a00e88ffbfa6e42c41fd25066d941d022c0e94da9d55c8ca1dbd461f4a",
+          "bytes": 339304,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p0/operands.npz",
+          "sha256": "a9d0c0a60592e14bf064e6a49b45122bdb51e3e8e5771b601b7d0fbf100975c0",
+          "bytes": 76668,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p0/oracles.npz",
+          "sha256": "b8b70935a38a705d9f3de759199c80d7e5dfc21a22741478af45ea1ec35fcd58",
+          "bytes": 1346978,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p0/result.json",
+          "sha256": "a84d125209d6f0fa2e27f26940266fb8211493e5defa5f7f719b8143b1287df4",
+          "bytes": 267030,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p1/checkpoint-step3-logits.npz",
+          "sha256": "d3746a06174ab159301494aaf69ce0abe5122e89dddda61be2b7e07b810ebd71",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p1/checkpoint-step3.npz",
+          "sha256": "fafbc693b8909d0e2f59c237751c99bd68498368264f4e05c1b781b108dec960",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p1/checkpoint-step6.npz",
+          "sha256": "bfbd43ab328f76a9238d4a0e5143ef8566057938e1dfd5ee41d5089fda6ca7bc",
+          "bytes": 216414,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p1/final-logits.npz",
+          "sha256": "750db8671d8cc743b5d7f496408bc0db41e7aa60eae1d91dbbbffcbdb2065447",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p1/initial.npz",
+          "sha256": "cbd170a00e88ffbfa6e42c41fd25066d941d022c0e94da9d55c8ca1dbd461f4a",
+          "bytes": 339304,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p1/operands.npz",
+          "sha256": "a9d0c0a60592e14bf064e6a49b45122bdb51e3e8e5771b601b7d0fbf100975c0",
+          "bytes": 76668,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p1/oracles.npz",
+          "sha256": "b8b70935a38a705d9f3de759199c80d7e5dfc21a22741478af45ea1ec35fcd58",
+          "bytes": 1346978,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w32-b16-t32-mlx-p1/result.json",
+          "sha256": "ffe79079655c640febb2b3d4c1b43f455a9db58b75850a5e29b3043ca2a8f745",
+          "bytes": 267030,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p0/checkpoint-step3-logits.npz",
+          "sha256": "319159e64b3b357b0f0a700ea279a534959636ea906d9b7659f65f3d9c286f9f",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p0/checkpoint-step3.npz",
+          "sha256": "73ffaa2e72fd5c8f4a33b2c432286a87abceb370c3735c3c4307304c9e60c67c",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p0/checkpoint-step6.npz",
+          "sha256": "5e7bbb8d5ae55d81fb97b160a5a6ebd3dbb6329ab9fceca07c40066da42c6703",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p0/final-logits.npz",
+          "sha256": "9bd07684d8360973e482fc4fe9ac43db5bc024238dff634e39c1727237f24a74",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p0/initial.npz",
+          "sha256": "727d25e20ba4a1e2b126d0e2b5ead54c32a27fe487b3cd3c0d507e386d0df0ca",
+          "bytes": 9273064,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p0/operands.npz",
+          "sha256": "33932ce2f8b01d52078ba0fb70df9d831983d66c353624cb4e6f0939eb9dd7cc",
+          "bytes": 9010428,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p0/oracles.npz",
+          "sha256": "a3b93224f1136b9b226f74080c16dd3dfba53a1a54ac0cfcedf17c1c0da95e11",
+          "bytes": 37082018,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p0/result.json",
+          "sha256": "3635f97b2fc99552d4c5ea2c906d5e9a72169290b7f213109b403fad17fd7c97",
+          "bytes": 267949,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p1/checkpoint-step3-logits.npz",
+          "sha256": "319159e64b3b357b0f0a700ea279a534959636ea906d9b7659f65f3d9c286f9f",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p1/checkpoint-step3.npz",
+          "sha256": "73ffaa2e72fd5c8f4a33b2c432286a87abceb370c3735c3c4307304c9e60c67c",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p1/checkpoint-step6.npz",
+          "sha256": "5e7bbb8d5ae55d81fb97b160a5a6ebd3dbb6329ab9fceca07c40066da42c6703",
+          "bytes": 27017694,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p1/final-logits.npz",
+          "sha256": "9bd07684d8360973e482fc4fe9ac43db5bc024238dff634e39c1727237f24a74",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p1/initial.npz",
+          "sha256": "727d25e20ba4a1e2b126d0e2b5ead54c32a27fe487b3cd3c0d507e386d0df0ca",
+          "bytes": 9273064,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p1/operands.npz",
+          "sha256": "33932ce2f8b01d52078ba0fb70df9d831983d66c353624cb4e6f0939eb9dd7cc",
+          "bytes": 9010428,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p1/oracles.npz",
+          "sha256": "a3b93224f1136b9b226f74080c16dd3dfba53a1a54ac0cfcedf17c1c0da95e11",
+          "bytes": 37082018,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w512-b16-t32-mlx-p1/result.json",
+          "sha256": "949bccc6479be2a5fa2fa50cf996ce541e807443f35df79829d759e1af0f8b77",
+          "bytes": 267949,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p0.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p0/checkpoint-step3-logits.npz",
+          "sha256": "5d0db3863fbbec14f234c5511ccdb07fdd64f02955bc6445f1a83b44db34dd64",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p0/checkpoint-step3.npz",
+          "sha256": "1f76c33875117c8fdb228390a05a1b363735504f634577f1015c16b0792c7f2a",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p0/checkpoint-step6.npz",
+          "sha256": "cb61f7635d997b724312f426d89add3cc6f3cc239c7ed5b21eab64c9542bbb22",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p0/final-logits.npz",
+          "sha256": "216b74a077dd475b1df5053e65ee095fb55e793e5fb896ed57aa120560ac380f",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p0/initial.npz",
+          "sha256": "c9b1f033e98c0f9ab9705c13795eb4f8a1c2e19fee37758274c42f3dcf5cbdc2",
+          "bytes": 476136,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p0/operands.npz",
+          "sha256": "d46d8127de2a002958721f61e32f9a43bd05ed13610ecabb07dabe24bd2c1d42",
+          "bytes": 213500,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p0/oracles.npz",
+          "sha256": "54bddf6b51940f37dda4c93ea5b90e4772ecd4fd7ae33a1e64f1c73d5304ba4b",
+          "bytes": 1894306,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p0/result.json",
+          "sha256": "92b9c7e3f5a063df154266fd99ee2c776122a43ad67b177080e0011d59a37863",
+          "bytes": 267141,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p1.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p1/checkpoint-step3-logits.npz",
+          "sha256": "5d0db3863fbbec14f234c5511ccdb07fdd64f02955bc6445f1a83b44db34dd64",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p1/checkpoint-step3.npz",
+          "sha256": "1f76c33875117c8fdb228390a05a1b363735504f634577f1015c16b0792c7f2a",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p1/checkpoint-step6.npz",
+          "sha256": "cb61f7635d997b724312f426d89add3cc6f3cc239c7ed5b21eab64c9542bbb22",
+          "bytes": 626910,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p1/final-logits.npz",
+          "sha256": "216b74a077dd475b1df5053e65ee095fb55e793e5fb896ed57aa120560ac380f",
+          "bytes": 262410,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p1/initial.npz",
+          "sha256": "c9b1f033e98c0f9ab9705c13795eb4f8a1c2e19fee37758274c42f3dcf5cbdc2",
+          "bytes": 476136,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p1/operands.npz",
+          "sha256": "d46d8127de2a002958721f61e32f9a43bd05ed13610ecabb07dabe24bd2c1d42",
+          "bytes": 213500,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p1/oracles.npz",
+          "sha256": "54bddf6b51940f37dda4c93ea5b90e4772ecd4fd7ae33a1e64f1c73d5304ba4b",
+          "bytes": 1894306,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/w64-b16-t32-mlx-p1/result.json",
+          "sha256": "b740b8d8ee3cc7009c315a912b122f3cf55b6330db7ee9fde9aca7e730326260",
+          "bytes": 267141,
+          "mode": 420
+        }
+      ]
+    },
+    {
+      "name": "model-full-shape-v1-metadata",
+      "roots": [
+        "work/gpu-v4-owned/model-full-shape-v1/summary.json",
+        "work/gpu-v4-owned/model-full-shape-manifest-v1.json",
+        "work/gpu-v4-owned/model-full-shape-array-audit-v1.json"
+      ],
+      "closures": [
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/summary.json",
+          "sha256": "2995a572d97799a48ca436634ac7959590fff5e2d5904feac2ea8d45790d3df8"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-manifest-v1.json",
+          "sha256": "1617562aa8cd1e04c358aa5e4261fb72a6fad529472115f1762462c3ed470954"
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-array-audit-v1.json",
+          "sha256": "e7b6498e3180d7bfd038c5adffc4b3f947c54a35a0e9b78bce4c76daeecb038f"
+        }
+      ],
+      "members": [
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-array-audit-v1.json",
+          "sha256": "e7b6498e3180d7bfd038c5adffc4b3f947c54a35a0e9b78bce4c76daeecb038f",
+          "bytes": 1402578,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-manifest-v1.json",
+          "sha256": "1617562aa8cd1e04c358aa5e4261fb72a6fad529472115f1762462c3ed470954",
+          "bytes": 14375,
+          "mode": 420
+        },
+        {
+          "path": "work/gpu-v4-owned/model-full-shape-v1/summary.json",
+          "sha256": "2995a572d97799a48ca436634ac7959590fff5e2d5904feac2ea8d45790d3df8",
+          "bytes": 134937,
+          "mode": 420
+        }
+      ]
+    }
+  ],
+  "coverage": {
+    "files": 651,
+    "raw_archives": 504,
+    "bytes": 6882696502
+  },
+  "scope": "Closed B1/T32 and B16/T32 development evidence; prior failures remain preserved separately",
+  "runtime_and_source_payloads": "Referenced identities only; final source archive is separate"
+}

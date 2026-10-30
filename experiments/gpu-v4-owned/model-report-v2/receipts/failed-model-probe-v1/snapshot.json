@@ -1,0 +1,31 @@
+{
+  "schema": "owned-model-failed-probe-snapshot-v1",
+  "source_commit": "c68646417263fd1d02aa42ed7989b4cb50fb02f0",
+  "reason": "Capability metadata absent from full-source MLX bundle; original failed attempt stays failed",
+  "files": [
+    {
+      "original": "outputs/arm64-transformer/integration/gpu-owned/model_probe.py",
+      "copy": "model_probe.py",
+      "bytes": 28423,
+      "sha256": "8ec1a35d1a0ac41c8a88e73c66e1e7b79d2537d07e4fa28ade69519161dde25d"
+    },
+    {
+      "original": "outputs/arm64-transformer/integration/gpu-owned/test_model_probe.py",
+      "copy": "test_model_probe.py",
+      "bytes": 9107,
+      "sha256": "2717af755c4140c55e66c54dd32f9cd74339617277efb4bc315b89c9a253aa21"
+    },
+    {
+      "original": "work/gpu-v4-owned/model-manifest-v1.json",
+      "copy": "model-manifest-v1.json",
+      "bytes": 6820,
+      "sha256": "6ef939461e37660a1c91db60fc038d53dc147d72aadda7ae86d5c38ba8818bfd"
+    },
+    {
+      "original": "work/gpu-v4-owned/model-compatibility-v1/summary.json",
+      "copy": "summary.json",
+      "bytes": 10898,
+      "sha256": "0a3a5c50acb3f8265f9b14944c4248319aaf1dbe2572ddf540d8fdad8caa272b"
+    }
+  ]
+}

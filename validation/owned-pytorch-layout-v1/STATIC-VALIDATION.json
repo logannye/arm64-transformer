@@ -1,0 +1,57 @@
+{
+  "schema": "pytorch-owned-layout-static-validation-v1",
+  "status": "passed_static_checks_only",
+  "native_compilation": false,
+  "device_numerical_validation": false,
+  "hosted_dispatched": false,
+  "candidate_qualified": false,
+  "checks": {
+    "stdlib_unittest_functions": 15,
+    "unittest_passed": true,
+    "ruff_check_passed": true,
+    "ruff_format_check_passed": true,
+    "combined_patch_git_apply_check_passed": true,
+    "all_six_resulting_source_hashes_match": true,
+    "original_checkout_unchanged": true
+  },
+  "files": {
+    "README.md": {
+      "bytes": 3260,
+      "sha256": "4b451d74fd433d288814bf0903276bb4335eafe49cd76f05faf9beca13b8c223"
+    },
+    "changes.patch": {
+      "bytes": 23905,
+      "sha256": "20217d45f06abbb07d5eda78da6e5b24fbdbd743448c5f8e2b87581c96168edb"
+    },
+    "contract.json": {
+      "bytes": 10352,
+      "sha256": "68822f52a0c5932141cf60a0ac8ab858ce90dd5dbdc3052f364234303c6964ab"
+    },
+    "hosted-constraints.txt": {
+      "bytes": 526,
+      "sha256": "7c9b1f75aa5fac0701bf7d32a4e5efe174e9cc45871259a7f7f1a70075865190"
+    },
+    "hosted_build.py": {
+      "bytes": 33433,
+      "sha256": "b48ca14933ac32f204f931b96e86b52c6379be3337154c00b417b2ec46ee5a87"
+    },
+    "requirements-full.txt": {
+      "bytes": 757,
+      "sha256": "2af1fbabbbc2992823650e93a55b0b2d92a241226bbff2896c1d062fe94f4902"
+    },
+    "test_hosted_build.py": {
+      "bytes": 10265,
+      "sha256": "a51b21a66728ec0638c4ee7ad157dc53fdaae7fbe30023c875c6a84ea1ce2a0f"
+    },
+    "verify_runtime.py": {
+      "bytes": 10914,
+      "sha256": "b30e26ba6436832862ce1e8d7b9ca1a306c281395917395a57ec6762a38055f4"
+    }
+  },
+  "workflow": {
+    "path": ".github/workflows/owned-pytorch-layout-v1.yml",
+    "bytes": 2585,
+    "sha256": "35e555fc968303ca2047c34363fc475a54831e825ff385db7946cfbaca51349e"
+  },
+  "scope": "Static check record from preparation, not an authenticated hosted or admission receipt; altered helper bytes require revalidation."
+}

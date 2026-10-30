@@ -11,11 +11,12 @@ import argparse
 import runpy
 import struct
 import subprocess
-import sys
 from pathlib import Path
 
 
-def run_cpu_operation(engine, manifest, roots, operand_file, output_file, *, width):
+def run_cpu_operation(
+    engine, manifest, roots, operand_file, output_file, *, width, expected_rejection=None
+):
     from transformer.gpu_environment import child_environment
     from transformer.gpu_study import ENVIRONMENT, python_path, require, verify_bindings
 
@@ -24,8 +25,9 @@ def run_cpu_operation(engine, manifest, roots, operand_file, output_file, *, wid
     require(not Path(output_file).exists(), "CPU bridge output collision")
     env = child_environment(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(width))
     env["PYTHONPATH"] = python_path(manifest, roots, cpu=True)
-    command = [
-        sys.executable,
+    from transformer.gpu_study_context import child_controls, python_command, resolve_context
+
+    command = python_command(manifest, output_file, roots=roots, cpu=True) + [
         str((Path(roots["source"]) / "transformer/gpu_study_cpu_admission.py").resolve()),
         "--engine",
         engine,
@@ -34,10 +36,44 @@ def run_cpu_operation(engine, manifest, roots, operand_file, output_file, *, wid
         "--output",
         str(Path(output_file).resolve()),
     ]
+    if resolve_context(manifest).owned and engine == "cpu_torch":
+        from transformer.gpu_owned_cpu import prepare_command
+
+        command = prepare_command(
+            manifest,
+            roots,
+            engine,
+            "admission",
+            command[-6:],
+            output_file,
+            expected_rejection=expected_rejection,
+        )
     subprocess.run(
-        command, cwd=roots["cpu"], env=env, capture_output=True, text=True, check=True, timeout=1800
+        command,
+        cwd=roots["cpu"],
+        env=child_controls(manifest, env),
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=1800,
     )
     verify_bindings(manifest, roots)
+    if resolve_context(manifest).owned and engine == "cpu_torch":
+        from transformer.gpu_owned_cpu import digest, verify_proof
+
+        verify_proof(
+            str(output_file) + ".owned-cpu-proof.json",
+            manifest,
+            engine=engine,
+            kind="admission",
+            output_hashes={}
+            if expected_rejection
+            else {Path(output_file).name: digest(output_file)},
+            input_hashes={Path(operand_file).name: digest(operand_file)},
+            expected_rejection=expected_rejection,
+        )
+        if expected_rejection is not None:
+            raise ValueError(expected_rejection)
 
 
 def execute(engine, operand_file, output_file):
@@ -281,7 +317,9 @@ def run_cpu_checkpoint_tie(engine, manifest, roots, output_directory, *, width):
     output = Path(output_directory)
     require(not output.exists() and not output.is_symlink(), "CPU tie output collision")
     fixture, run = output / "fixture", output / "run"
-    _write_tie_fixture(fixture, width, 20261104)
+    from transformer.gpu_study_context import child_controls, python_command, resolve_context
+
+    _write_tie_fixture(fixture, width, resolve_context(manifest).admission_seed)
     # Each target ID appears exactly four times in the B16/T32 batch. The head bias
     # gradient sums exact binary fractions to zero; all other paths are zero.
     env = child_environment(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(width))
@@ -290,17 +328,39 @@ def run_cpu_checkpoint_tie(engine, manifest, roots, output_directory, *, width):
     command = (
         [str(cpu / f"native/build/width-{width}/transformer-arm64")]
         if engine == "cpu_arm64"
-        else [sys.executable, "-m", "transformer.python_train"]
+        else python_command(manifest, run, roots=roots, cpu=True)
+        + ["-m", "transformer.python_train"]
     )
+    arguments = [str(fixture.resolve()), str(run.resolve())]
+    if resolve_context(manifest).owned and engine == "cpu_torch":
+        from transformer.gpu_owned_cpu import prepare_command
+
+        command = prepare_command(manifest, roots, engine, "tie", arguments, run)
+        arguments = []
     subprocess.run(
-        command + [str(fixture.resolve()), str(run.resolve())],
+        command + arguments,
         cwd=cpu,
-        env=env,
+        env=child_controls(manifest, env),
         capture_output=True,
         text=True,
         check=True,
         timeout=1800,
     )
+    if resolve_context(manifest).owned and engine == "cpu_torch":
+        from transformer.gpu_owned_cpu import verify_proof
+
+        verify_proof(
+            run / "owned-cpu-proof.json",
+            manifest,
+            engine=engine,
+            kind="tie",
+            output_hashes={
+                p.name: digest(p)
+                for p in run.iterdir()
+                if p.is_file() and p.name != "owned-cpu-proof.json"
+            },
+            input_hashes={p.name: digest(p) for p in fixture.iterdir() if p.is_file()},
+        )
     history = read_array(run / "history.f64", "<f8", (2, 3))
     performance = read_array(run / "performance.f64", "<f8", (8,))
     state_zero = [

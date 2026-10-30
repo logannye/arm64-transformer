@@ -1,0 +1,45 @@
+{
+  "schema": "gpu-owned-model-report-provenance-v1",
+  "formal_eligible": false,
+  "anchors": {
+    "work/gpu-v4-owned/model-compatibility-v2/summary.json": "1b72abdfa347c7877ad930c7b4c9721c1f61a2dc1b07f9de3244221959f98f4e",
+    "work/gpu-v4-owned/model-manifest-v2.json": "06c29116993f0adbaa2bfb6f5f04b79de152345c3549cfaf466c17a9f2e32a86",
+    "work/gpu-v4-owned/model-array-audit-v1.json": "13588eb731711a0ddd299643f0f29dd187238273357fbfbb5e9c57244516e8e0"
+  },
+  "producer_sha256": "cf96e888550a4cdf00abab9ed3f5f13cceb57d64822c1f587346759fd13980a0",
+  "matplotlib": "3.11.2",
+  "rows": 18,
+  "generated": [
+    {
+      "path": "accuracy.csv",
+      "sha256": "a3e679e64605d190ec697093c4988aa130139605b3d60a8480853d28a23b90e9",
+      "bytes": 2691,
+      "mode": 420
+    },
+    {
+      "path": "initial-fp64-errors.png",
+      "sha256": "7bfabdeb43b1c48d85e97dbc04a15e5b9b1289825fd116f7ba24fb54760c728f",
+      "bytes": 223028,
+      "mode": 420
+    },
+    {
+      "path": "initial-fp64-errors.svg",
+      "sha256": "2270ad89d7204c817c2b38d69e4451a80ad54ea36a4b0484b3eeff3f72aa2c3e",
+      "bytes": 32717,
+      "mode": 420
+    },
+    {
+      "path": "receipt-catalog.json",
+      "sha256": "40f2b94c047f3f8f9b58a4df74c43da98d2d6e670d23aa3e340129dbc6e3ce73",
+      "bytes": 14606,
+      "mode": 420
+    }
+  ],
+  "limits": [
+    "B3/T3 synthetic development only; not the B16/T32 training or B1/T32 inference task",
+    "Other initial replays, intermediate steps and warmup restoration have authenticated execution-time hash records, not separately retained raw arrays",
+    "Step-3 checkpoint predictions are checked by execution-time hashes only; raw logits are retained for step 6",
+    "Post-training accuracy versus FP64, complete framework integration and formal admission remain unchecked here",
+    "Runtime provenance is retained execution evidence, not reauthenticated by this array-only audit"
+  ]
+}

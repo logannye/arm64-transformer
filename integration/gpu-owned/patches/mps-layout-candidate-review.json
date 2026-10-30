@@ -1,0 +1,52 @@
+{
+  "schema": "gpu-owned-mps-layout-candidate-review-v1",
+  "status": "static_apply_pass_not_compiled",
+  "selected_as_study_baseline": false,
+  "base_revision": "71d2a08507ab47dd6b2fa9b66319d17ce2377de4",
+  "starting_embedding_patch_sha256": "3834dca844ea3de6b40467ce214b99bce83fa06dae2bc454623516dafc0fdd71",
+  "candidate_patch_sha256": "4e9c501353522821773cf8eafc92386b142ba24edca39a4d5a4c61cb68bc59a7",
+  "files": [
+    {
+      "path": "aten/src/ATen/native/mps/operations/Matmul.mm",
+      "before_sha256": "c0446d315b6914e9f5bca70339c81f4c267ed5c3c6ffca536e2c287efc015570",
+      "after_sha256": "8cfac720468f10145bce549e97071a89a983fc4c8a0cce6b14e8c0aae5bedcc1"
+    },
+    {
+      "path": "aten/src/ATen/native/mps/operations/Convolution.mm",
+      "before_sha256": "95749bfffbad7687070b02a448c9b5b9a033b42c691f62a46aa28dba36f1b960",
+      "after_sha256": "ba4df4baa3aa61d0edb3f5ec8e0033ecd983dfac3925655fb51eb01cfcfa775f"
+    }
+  ],
+  "checks": {
+    "original_source_unchanged": true,
+    "two_file_fixture_apply_check": true,
+    "applied_fixture_exact": true,
+    "numerical_validation": false,
+    "native_compilation": false,
+    "broad_suite_pass": false
+  },
+  "commands": [
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "<candidate-patch>"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "<candidate-patch>"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "scope": "Two version/layout guards only. No tests, tolerances, numerical kernels or embedding patch bytes changed. Candidate retained for development; no admission evidence."
+}

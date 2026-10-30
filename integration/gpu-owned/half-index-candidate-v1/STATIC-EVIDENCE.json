@@ -1,0 +1,26 @@
+{
+  "device_numerics_validated": false,
+  "formal_eligible": false,
+  "formatting_report_sha256": "b07146583facf0db8c58f3c9838a046cc260d26304b9e8647d83e520c72cf8a1",
+  "independent_source_review": "No further static blocker after scope guards, documentation, existing-test and host ABI repairs; compiler/device gates remain required.",
+  "native_compiled": false,
+  "new_method_names": [
+    "TestMPS.test_index_put_half_ordered_layouts_and_chunks",
+    "TestMPS.test_index_put_half_ordered_multiple_index_strides",
+    "TestMPS.test_index_put_half_ordered_repeated_index_backward",
+    "TestMPS.test_index_put_half_ordered_storage_words_and_tail"
+  ],
+  "old_method_names_preserved": true,
+  "patch_sha256": "e071e76328c47e0666ef9013a5878d130289c1ce5ee677f1dea8608207161bb1",
+  "python_lint_status": "passed",
+  "scalar_test_count": 15,
+  "scalar_test_status": "passed",
+  "schema": "gpu-owned-half-candidate-static-evidence-v3",
+  "source_helpers": {
+    "reference.py": "ae9681ec08a07f0a7fff0eb80038793987edea6d251ff97ef8f30aa4dc31cf91",
+    "test_reference.py": "1ba60200b6a9f01a43288126c37b58cb5742a67553b7cdaa09d65be0a3418c50",
+    "verify_patch.py": "4f00e70b7c9f9b72571d3fd67e8d47f977d88cd720b6de1fb4423d7f0bb8df1f"
+  },
+  "static_application_receipt_sha256": "fcf306b3063a925dd809bc579015e49fe719eccf00649762b2926273738a31fb",
+  "superseded_revision_preserved": "work/gpu-v4-owned/half-index-candidate-v1/revision-2"
+}

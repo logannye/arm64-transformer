@@ -1,0 +1,20 @@
+# Direct build/test tool versions copied from the pinned upstream CI requirements.
+# Transitive wheels are resolved once, hashed, and installed from the retained
+# wheelhouse. The run records a complete freeze before compilation.
+pip==26.2.2
+setuptools==78.1.1
+scikit-build-core==1.1.1
+cmake==3.31.6
+ninja==1.13.0
+numpy==1.26.4
+packaging==24.2
+pyyaml==6.0.3
+typing-extensions==4.15.0
+spin==0.17
+lintrunner==0.13.0
+expecttest==0.3.0
+hypothesis==6.56.4
+pytest==7.3.2
+pytest-xdist==3.3.1
+pytest-subtests==0.13.1
+filelock==3.20.3
