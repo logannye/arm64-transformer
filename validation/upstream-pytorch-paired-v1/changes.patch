@@ -1,0 +1,400 @@
+diff --git a/aten/src/ATen/native/mps/kernels/Embedding.metal b/aten/src/ATen/native/mps/kernels/Embedding.metal
+index 298f74977bf7ca6c6b97fd75453dccb0c2c75fbc..f3b3065010d9959bb6b4387ce967c6de54facf67 100644
+--- a/aten/src/ATen/native/mps/kernels/Embedding.metal
++++ b/aten/src/ATen/native/mps/kernels/Embedding.metal
+@@ -1,5 +1,6 @@
+ #include <ATen/native/mps/kernels/Embedding.h>
+ #include <c10/metal/atomic.h>
++#include <c10/metal/error.h>
+ #include <c10/metal/utils.h>
+ #include <metal_stdlib>
+ 
+@@ -83,6 +84,73 @@ kernel void embedding_dense_backward(
+       grad_val);
+ }
+ 
++// Each segment leader is the sole writer of its weight row. The stable GPU
++// sort preserves the logical input order inside the segment. The reduction
++// is serial in that order, including for heavily repeated indices; parallelism
++// comes from independent rows and features, without floating-point atomics.
++template <typename T, typename I, typename O>
++kernel void embedding_dense_backward_deterministic(
++    device const T* grad [[buffer(0)]],
++    device const I* sorted_indices [[buffer(1)]],
++    device const long* original_positions [[buffer(2)]],
++    device float* grad_weight [[buffer(3)]],
++    constant EmbeddingDenseBackwardParams<uint32_t>& params [[buffer(4)]],
++    constant uint2& sizes [[buffer(5)]],
++    device ErrorMessages* error_buf [[buffer(6)]],
++    uint tid [[thread_position_in_grid]]) {
++  const uint feature = tid % params.feature_size;
++  const uint start = tid / params.feature_size;
++  const long weight = static_cast<long>(sorted_indices[start]);
++  if (weight == params.padding_idx ||
++      (start > 0 && sorted_indices[start - 1] == weight)) {
++    return;
++  }
++  if (weight < 0 || weight >= sizes.y) {
++    if (feature == 0) {
++      TORCH_REPORT_ERROR(
++          error_buf,
++          "embedding_dense_backward: index ",
++          weight,
++          " is out of bounds for number of embeddings ",
++          sizes.y);
++    }
++    return;
++  }
++
++  // Find the end of this run without walking it a second time when frequency
++  // scaling is enabled. All positions in [start, end) have the same weight.
++  uint lo = start + 1;
++  uint hi = sizes.x;
++  while (lo < hi) {
++    const uint mid = lo + (hi - lo) / 2;
++    if (sorted_indices[mid] == weight) {
++      lo = mid + 1;
++    } else {
++      hi = mid;
++    }
++  }
++  const uint end = lo;
++  const float count = static_cast<float>(end - start);
++  float sum = 0;
++  for (uint row = start; row < end; ++row) {
++    O grad_outer_offset = 0;
++    O unused_indices_offset = 0;
++    resolve_outer_offsets<O>(
++        static_cast<uint>(original_positions[row]),
++        params,
++        grad_outer_offset,
++        unused_indices_offset);
++    const O offset = grad_outer_offset +
++        static_cast<O>(feature) * params.grad_feature_stride;
++    float value = static_cast<float>(grad[offset]);
++    if (params.scale_grad_by_freq) {
++      value /= count;
++    }
++    sum += value;
++  }
++  grad_weight[weight * params.feature_size + feature] = sum;
++}
++
+ #define REGISTER_EMBEDDING_DENSE_BACKWARD_COUNT(I, O, OSUFFIX)               \
+   template [[host_name("embedding_dense_backward_count_" #I "_" #OSUFFIX)]]  \
+   kernel void embedding_dense_backward_count<I, O>(                          \
+@@ -90,7 +158,6 @@ kernel void embedding_dense_backward(
+       device atomic_uint* counts [[buffer(1)]],                              \
+       constant EmbeddingDenseBackwardParams<uint32_t>& params [[buffer(2)]], \
+       uint tid [[thread_position_in_grid]])
+-
+ #define REGISTER_EMBEDDING_DENSE_BACKWARD(T, I, O, OSUFFIX)                  \
+   template [[host_name("embedding_dense_backward_" #T "_" #I "_" #OSUFFIX)]] \
+   kernel void embedding_dense_backward<T, I, O>(                             \
+@@ -99,6 +166,17 @@ kernel void embedding_dense_backward(
+       constant uint* counts [[buffer(2)]],                                   \
+       device AtomicType_t<float>* grad_weight [[buffer(3)]],                 \
+       constant EmbeddingDenseBackwardParams<uint32_t>& params [[buffer(4)]], \
++      uint tid [[thread_position_in_grid]]);                                 \
++  template [[host_name("embedding_dense_backward_deterministic_" #T "_" #I   \
++                       "_" #OSUFFIX)]]                                       \
++  kernel void embedding_dense_backward_deterministic<T, I, O>(               \
++      device const T* grad [[buffer(0)]],                                    \
++      device const I* sorted_indices [[buffer(1)]],                          \
++      device const long* original_positions [[buffer(2)]],                   \
++      device float* grad_weight [[buffer(3)]],                               \
++      constant EmbeddingDenseBackwardParams<uint32_t>& params [[buffer(4)]], \
++      constant uint2& sizes [[buffer(5)]],                                   \
++      device ErrorMessages* error_buf [[buffer(6)]],                         \
+       uint tid [[thread_position_in_grid]])
+ 
+ REGISTER_EMBEDDING_DENSE_BACKWARD_COUNT(int, uint, 32);
+diff --git a/aten/src/ATen/native/mps/operations/Embedding.mm b/aten/src/ATen/native/mps/operations/Embedding.mm
+index 6fa245a5af879d3763af7fc12b341b6a363707b2..f431931309786385c2c89af30ad7991a1d695dcb 100644
+--- a/aten/src/ATen/native/mps/operations/Embedding.mm
++++ b/aten/src/ATen/native/mps/operations/Embedding.mm
+@@ -13,6 +13,7 @@
+ #include <ATen/NativeFunctions.h>
+ #else
+ #include <ATen/ops/embedding_dense_backward_native.h>
++#include <ATen/ops/sort.h>
+ #include <ATen/ops/zeros.h>
+ #endif
+ 
+@@ -31,10 +32,6 @@ Tensor embedding_dense_backward_mps(const Tensor& grad_,
+                                     bool scale_grad_by_freq) {
+   using namespace at::native::mps;
+ 
+-  // See Note [Writing Nondeterministic Operations]
+-  // Nondeterministic due to atomic_add
+-  at::globalContext().alertNotDeterministic("embedding_dense_backward_mps");
+-
+   auto indices_arg = TensorArg(indices, "indices", 2);
+   checkScalarTypes("embedding_backward", indices_arg, {kLong, kInt});
+   auto grad_arg = TensorArg(grad_, "grad", 1);
+@@ -83,6 +80,36 @@ Tensor embedding_dense_backward_mps(const Tensor& grad_,
+   const auto use_32bit_offsets = at::native::canUse32BitIndexMath(grad_) && at::native::canUse32BitIndexMath(indices);
+   const auto offset_suffix = use_32bit_offsets ? "32" : "64";
+ 
++  if (at::globalContext().deterministicAlgorithms()) {
++    // Stable sorting keeps contributions to each weight in their original
++    // logical input order. A single thread owns each weight/feature pair, so
++    // neither scheduling nor floating-point atomics affect the reduction.
++    auto sorted = at::sort(indices.reshape({-1}), /*stable=*/true, /*dim=*/0, /*descending=*/false);
++    const auto sorted_indices = std::get<0>(sorted);
++    const auto original_positions = std::get<1>(sorted);
++    auto stream = at::mps::getCurrentMPSStream();
++    dispatch_sync_with_rethrow(stream->queue(), ^() {
++      @autoreleasepool {
++        auto encoder = stream->commandEncoder();
++        auto pso = lib.getPipelineStateForFunc(fmt::format("embedding_dense_backward_deterministic_{}_{}_{}",
++                                                           scalarToMetalTypeString(grad_),
++                                                           scalarToMetalTypeString(indices),
++                                                           offset_suffix));
++        [encoder setComputePipelineState:pso];
++        mtl_setArgs(encoder,
++                    grad_,
++                    sorted_indices,
++                    original_positions,
++                    grad_weight_acc,
++                    params,
++                    std::array<uint32_t, 2>{static_cast<uint32_t>(num_indices), static_cast<uint32_t>(num_weights)},
++                    stream->getErrorBuffer());
++        mtl_dispatch1DJob(encoder, pso, num_indices * D);
++      }
++    });
++    return low_prec ? grad_weight_acc.to(grad_.scalar_type()) : grad_weight_acc;
++  }
++
+   Tensor counts;
+   if (scale_grad_by_freq) {
+     counts = at::zeros({num_weights}, indices.options().dtype(kUInt32));
+diff --git a/test/test_mps.py b/test/test_mps.py
+index 565e6275edb5fe0055172a307a29a08f5b5942bc..eb066bf593fedb738b3be5233a0d6d5c46c1d217 100644
+--- a/test/test_mps.py
++++ b/test/test_mps.py
+@@ -49,6 +49,7 @@ import torch
+ import torch.utils._pytree as pytree
+ from itertools import product
+ from torch.testing._internal.common_utils import (
++    DeterministicGuard,
+     IS_MACOS,
+ )
+ 
+@@ -8531,6 +8532,147 @@ class TestMPS(TestCaseMPS):
+                 return w.grad.cpu()
+             self.assertEqual(run("mps"), run("cpu"), msg=name)
+ 
++    def _assert_embedding_grad_bits(self, actual, expected):
++        self.assertEqual(actual.dtype, expected.dtype)
++        self.assertEqual(actual.shape, expected.shape)
++        self.assertTrue(torch.equal(actual.contiguous().view(torch.uint8), expected.contiguous().view(torch.uint8)))
++
++    @parametrize("dtype", [torch.float32, torch.float16, torch.bfloat16])
++    @parametrize("idx_dtype", [torch.int32, torch.int64])
++    @parametrize("padding_idx", [None, 0, -1])
++    @parametrize("scale_grad_by_freq", [False, True])
++    def test_embedding_dense_backward_deterministic(self, dtype, idx_dtype, padding_idx, scale_grad_by_freq):
++        num_weights, features = 19, 37
++        generator = torch.Generator().manual_seed(1234)
++        indices = torch.randint(num_weights, (13, 19), generator=generator, dtype=idx_dtype)
++        grad = torch.randn(13, 19, features, generator=generator).to(dtype)
++        # Independent FP64 reduction of the actual, possibly quantized inputs.
++        # Repeatability alone would also accept a consistently incorrect result.
++        expected = torch.zeros(num_weights, features, dtype=torch.float64)
++        flat_indices, flat_grad = indices.flatten(), grad.double().reshape(-1, features)
++        padding = -1 if padding_idx is None else padding_idx % num_weights
++        for row in range(num_weights):
++            if row != padding:
++                selected = flat_grad[flat_indices == row]
++                expected[row] = selected.sum(0)
++                if scale_grad_by_freq and selected.size(0):
++                    expected[row] /= selected.size(0)
++
++        weight = torch.zeros(num_weights, features, device="mps", dtype=dtype, requires_grad=True)
++        indices, grad = indices.to("mps"), grad.to("mps")
++        with DeterministicGuard(True), warnings.catch_warnings(record=True) as caught:
++            first = None
++            for _ in range(5):
++                weight.grad = None
++                F.embedding(indices, weight, padding_idx=padding_idx,
++                            scale_grad_by_freq=scale_grad_by_freq).backward(grad)
++                actual = weight.grad.cpu()
++                if first is None:
++                    first = actual
++                else:
++                    self._assert_embedding_grad_bits(actual, first)
++            self.assertFalse(caught)
++        atol, rtol = {torch.float32: (2e-5, 2e-6), torch.float16: (1e-3, 5e-4),
++                      torch.bfloat16: (1e-2, 4e-3)}[dtype]
++        self.assertEqual(first.double(), expected, atol=atol, rtol=rtol)
++        if padding != -1:
++            self.assertEqual(first[padding], torch.zeros(features, dtype=dtype), atol=0, rtol=0)
++
++    @parametrize("idx_dtype", [torch.int32, torch.int64])
++    @parametrize("num_indices", [4097, 65537])
++    @parametrize("all_identical", [False, True])
++    def test_embedding_dense_backward_deterministic_large(self, idx_dtype, num_indices, all_identical):
++        # Exercise multi-block stable merge/radix sorts, long duplicate runs,
++        # feature tails, cancellation, and rows absent from the input. Dyadic
++        # values keep the FP64 reference exactly representable in FP32.
++        positions = torch.arange(num_indices)
++        indices = (positions % 7 if not all_identical else torch.zeros_like(positions)).to(idx_dtype)
++        values = torch.tensor([1024., 0.0625, -1024., -0.0625])
++        grad = values[positions % 4, None].expand(-1, 7).contiguous()
++        expected = torch.zeros(11, 7, dtype=torch.float64)
++        for row in range(11):
++            expected[row] = grad[indices == row].double().sum(0)
++        indices, grad = indices.to("mps"), grad.to("mps")
++        with DeterministicGuard(True):
++            first = torch.ops.aten.embedding_dense_backward(grad, indices, 11, -1, False).cpu()
++            for _ in range(3):
++                actual = torch.ops.aten.embedding_dense_backward(grad, indices, 11, -1, False).cpu()
++                self._assert_embedding_grad_bits(actual, first)
++        self.assertEqual(first.double(), expected, atol=0, rtol=0)
++
++    @parametrize("dtype", [torch.float32, torch.float16, torch.bfloat16])
++    @parametrize("idx_dtype", [torch.int32, torch.int64])
++    def test_embedding_dense_backward_deterministic_layouts(self, dtype, idx_dtype):
++        def strided(t):
++            # Nonzero storage offset and stride > 1, including the feature axis.
++            storage = torch.empty(tuple(2 * size + 1 for size in t.shape), dtype=t.dtype, device=t.device)
++            view = storage[tuple(slice(1, None, 2) for _ in t.shape)]
++            view.copy_(t)
++            return view
++
++        def layouts(indices, grad):
++            yield indices, grad
++            yield indices.t(), grad.transpose(0, 1)
++            yield strided(indices), strided(grad)
++            yield indices[:, :1].expand(-1, 9), grad[:, :1].expand(-1, 9, -1)
++
++        indices = (torch.arange(27).reshape(3, 9) % 5).to(dtype=idx_dtype, device="mps")
++        grad = (torch.arange(3 * 9 * 33).reshape(3, 9, 33) % 17 - 8).to(dtype=dtype, device="mps")
++        with DeterministicGuard(True, warn_only=True), warnings.catch_warnings(record=True) as caught:
++            warnings.simplefilter("always")
++            for ids, upstream in layouts(indices, grad):
++                flat_ids = ids.cpu().flatten()
++                flat_grad = upstream.cpu().double().reshape(-1, 33)
++                expected = torch.zeros(7, 33, dtype=torch.float64)
++                for row in range(1, 7):
++                    selected = flat_grad[flat_ids == row]
++                    if selected.size(0):
++                        expected[row] = selected.mean(0)
++                first = torch.ops.aten.embedding_dense_backward(upstream, ids, 7, 0, True).cpu()
++                for _ in range(3):
++                    actual = torch.ops.aten.embedding_dense_backward(upstream, ids, 7, 0, True).cpu()
++                    self._assert_embedding_grad_bits(actual, first)
++                atol, rtol = {torch.float32: (2e-6, 2e-6), torch.float16: (2e-4, 5e-4),
++                              torch.bfloat16: (2e-3, 4e-3)}[dtype]
++                self.assertEqual(first.double(), expected, atol=atol, rtol=rtol)
++            self.assertFalse(caught)
++
++    def test_embedding_dense_backward_deterministic_empty_and_scalar(self):
++        with DeterministicGuard(True):
++            for shape, num_weights, features in [((), 5, 3), ((0,), 5, 3), ((2, 0), 0, 3), ((3,), 5, 0)]:
++                indices = torch.zeros(shape, device="mps", dtype=torch.int64)
++                grad = torch.ones((*shape, features), device="mps")
++                for padding in [-1, 0]:
++                    actual = torch.ops.aten.embedding_dense_backward(grad, indices, num_weights, padding, True).cpu()
++                    expected = torch.zeros(num_weights, features)
++                    if shape == () and padding == -1:
++                        expected[0] = 1
++                    self.assertEqual(actual, expected, atol=0, rtol=0)
++            # Every index is padding, so no reduction may write to the output.
++            indices = torch.full((257,), 3, device="mps", dtype=torch.int32)
++            grad = torch.ones(257, 33, device="mps")
++            actual = torch.ops.aten.embedding_dense_backward(grad, indices, 5, 3, True).cpu()
++            self.assertEqual(actual, torch.zeros(5, 33), atol=0, rtol=0)
++
++    @serialTest()
++    @largeTensorTest("5GB", device="mps")
++    @largeMPSBufferTest(2 * ((1 << 31) + 3), device="mps")
++    def test_embedding_dense_backward_deterministic_64bit_offsets(self):
++        # Only six logical gradients, but the second row is above INT32_MAX.
++        # This selects the ulong-offset kernel without a huge sort/workspace.
++        stride = 1 << 31
++        storage = torch.empty(stride + 3, dtype=torch.float16, device="mps")
++        storage[:3].copy_(torch.tensor([1., 2., 3.], device="mps"))
++        storage[stride:].copy_(torch.tensor([4., 5., 6.], device="mps"))
++        grad = storage.as_strided((2, 3), (stride, 1))
++        indices = torch.tensor([1, 1], device="mps")
++        with DeterministicGuard(True):
++            first = torch.ops.aten.embedding_dense_backward(grad, indices, 3, -1, True).cpu()
++            actual = torch.ops.aten.embedding_dense_backward(grad, indices, 3, -1, True).cpu()
++        self._assert_embedding_grad_bits(actual, first)
++        expected = torch.tensor([[0., 0., 0.], [2.5, 3.5, 4.5], [0., 0., 0.]], dtype=torch.float16)
++        self.assertEqual(first, expected, atol=0, rtol=0)
++
+     # Test pytorch gather
+     # Test pytorch gather
+     def test_gather_scalar(self):
+@@ -13942,11 +14084,9 @@ class TestAdvancedIndexing(TestCaseMPS):
+ 
+ class TestNondeterministic(TestCaseMPS):
+     def _case_embedding_dense_backward(self, device):
+-        weight = torch.randn(10, 3, device=device, requires_grad=True)
+         idx = torch.tensor([1, 2, 3, 1], device=device)
+-        res = F.embedding(idx, weight)
+-        grad = torch.ones_like(res)
+-        return lambda: res.backward(grad)
++        grad = torch.randn(4, 3, device=device)
++        return lambda: torch.ops.aten.embedding_dense_backward(grad, idx, 10, -1, False)
+ 
+     def _case_embedding_bag_dense_backward(self, device):
+         weight = torch.randn(10, 3, device=device, requires_grad=True)
+@@ -14165,9 +14305,6 @@ class TestNondeterministic(TestCaseMPS):
+     # builder method must return a callable which, when called, will exercise
+     # the nondeterministic alert.
+     ALERT_CASES = {
+-        "embedding_dense_backward": (
+-            _case_embedding_dense_backward, "embedding_dense_backward_mps"
+-        ),
+         "embedding_bag_dense_backward": (
+             _case_embedding_bag_dense_backward, "_embedding_bag_dense_backward_mps"
+         ),
+@@ -14194,6 +14331,7 @@ class TestNondeterministic(TestCaseMPS):
+     # callable which, when called, will exercise the alternative deterministic
+     # implementation of the operator when `use_deterministic_algorithms(True)`.
+     DETERMINISTIC_CASES = {
++        "embedding_dense_backward": _case_embedding_dense_backward,
+         "max_pool3d_backward": _case_max_pool3d_backward,
+         "adaptive_max_pool2d_backward": _case_adaptive_max_pool2d_backward,
+         "grid_sampler_2d_backward": _case_grid_sampler_2d_backward,
+@@ -15367,6 +15505,15 @@ class TestConsistency(TestCaseMPS):
+ class TestErrorInputs(TestCase):
+     _ignore_not_implemented_error = True
+ 
++    def test_embedding_dense_backward_deterministic_out_of_bounds(self, device):
++        with DeterministicGuard(True):
++            for bad_index in [-2, 4]:
++                indices = torch.tensor([0, bad_index, 0], device=device)
++                grad = torch.ones(3, 7, device=device)
++                with self.assertRaisesRegex(torch.AcceleratorError, "embedding_dense_backward: index .* out of bounds"):
++                    torch.ops.aten.embedding_dense_backward(grad, indices, 4, -1, False)
++                    torch.mps.synchronize()
++
+     def test_index_put_out_of_bounds(self, device):
+         x = torch.rand(10, 1, 10, device=device)
+         with self.assertRaises(torch.AcceleratorError):
+diff --git a/torch/__init__.py b/torch/__init__.py
+index fd6b7988e329217919c97a90e66436bb753473ee..6e742e137ae7f219706460db32728fa15cd8fbb7 100644
+--- a/torch/__init__.py
++++ b/torch/__init__.py
+@@ -1822,7 +1822,7 @@ def use_deterministic_algorithms(
+         * :func:`torch.Tensor.scatter` when `src` type is Tensor and called on CUDA tensor
+         * :func:`torch.Tensor.scatter_reduce` when ``reduce='sum'`` or ``reduce='mean'`` and called on CUDA tensor
+         * :class:`torch.nn.MaxPool3d` when attempting to differentiate a CUDA tensor
+-        * :class:`torch.nn.Embedding` when attempting to differentiate a CUDA tensor
++        * :class:`torch.nn.Embedding` when attempting to differentiate a CUDA or MPS tensor
+         * :func:`torch.Tensor.scatter_reduce` when called on MPS tensor
+         * :func:`torch.Tensor.index_reduce` with ``reduce='prod'\'mean'``
+           when called on an MPS tensor with floating or complex dtype
+@@ -1870,7 +1870,6 @@ def use_deterministic_algorithms(
+         * :func:`torch.Tensor.index_put` with ``accumulate=True`` when called on
+           an MPS tensor with floating or complex dtype
+         * :func:`torch.kthvalue` when called on an MPS tensor
+-        * :class:`torch.nn.Embedding` when attempting to differentiate an MPS tensor
+         * :class:`torch.nn.EmbeddingBag` when attempting to differentiate an MPS tensor
+         * :func:`torch.Tensor.resize_` when called with a quantized tensor
+ 
