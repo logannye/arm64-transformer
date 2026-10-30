@@ -1,0 +1,2 @@
+/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/mps_layout_diagnostic.py:139: UserWarning: MPS mm implementation has a known issue with this shape, dtype and slice. Dispatching to metal implementation instead. This may impact performance. (Triggered internally at /Users/runner/work/arm64-transformer/arm64-transformer/pytorch-source/aten/src/ATen/native/mps/operations/Matmul.mm:615.)
+  function(*operands, out=actual)

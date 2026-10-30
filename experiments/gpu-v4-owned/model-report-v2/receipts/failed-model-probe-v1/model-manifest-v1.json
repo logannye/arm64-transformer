@@ -1,0 +1,273 @@
+{
+  "admission_stream_opened": false,
+  "cells": [
+    {
+      "engine": "cpu_torch",
+      "id": "w32-cpu_torch-p0",
+      "process_index": 0,
+      "width": 32
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w32-cpu_torch-p1",
+      "process_index": 1,
+      "width": 32
+    },
+    {
+      "engine": "mps",
+      "id": "w32-mps-p0",
+      "process_index": 0,
+      "width": 32
+    },
+    {
+      "engine": "mps",
+      "id": "w32-mps-p1",
+      "process_index": 1,
+      "width": 32
+    },
+    {
+      "engine": "mlx",
+      "id": "w32-mlx-p0",
+      "process_index": 0,
+      "width": 32
+    },
+    {
+      "engine": "mlx",
+      "id": "w32-mlx-p1",
+      "process_index": 1,
+      "width": 32
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w64-cpu_torch-p0",
+      "process_index": 0,
+      "width": 64
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w64-cpu_torch-p1",
+      "process_index": 1,
+      "width": 64
+    },
+    {
+      "engine": "mps",
+      "id": "w64-mps-p0",
+      "process_index": 0,
+      "width": 64
+    },
+    {
+      "engine": "mps",
+      "id": "w64-mps-p1",
+      "process_index": 1,
+      "width": 64
+    },
+    {
+      "engine": "mlx",
+      "id": "w64-mlx-p0",
+      "process_index": 0,
+      "width": 64
+    },
+    {
+      "engine": "mlx",
+      "id": "w64-mlx-p1",
+      "process_index": 1,
+      "width": 64
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w128-cpu_torch-p0",
+      "process_index": 0,
+      "width": 128
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w128-cpu_torch-p1",
+      "process_index": 1,
+      "width": 128
+    },
+    {
+      "engine": "mps",
+      "id": "w128-mps-p0",
+      "process_index": 0,
+      "width": 128
+    },
+    {
+      "engine": "mps",
+      "id": "w128-mps-p1",
+      "process_index": 1,
+      "width": 128
+    },
+    {
+      "engine": "mlx",
+      "id": "w128-mlx-p0",
+      "process_index": 0,
+      "width": 128
+    },
+    {
+      "engine": "mlx",
+      "id": "w128-mlx-p1",
+      "process_index": 1,
+      "width": 128
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w256-cpu_torch-p0",
+      "process_index": 0,
+      "width": 256
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w256-cpu_torch-p1",
+      "process_index": 1,
+      "width": 256
+    },
+    {
+      "engine": "mps",
+      "id": "w256-mps-p0",
+      "process_index": 0,
+      "width": 256
+    },
+    {
+      "engine": "mps",
+      "id": "w256-mps-p1",
+      "process_index": 1,
+      "width": 256
+    },
+    {
+      "engine": "mlx",
+      "id": "w256-mlx-p0",
+      "process_index": 0,
+      "width": 256
+    },
+    {
+      "engine": "mlx",
+      "id": "w256-mlx-p1",
+      "process_index": 1,
+      "width": 256
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w512-cpu_torch-p0",
+      "process_index": 0,
+      "width": 512
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w512-cpu_torch-p1",
+      "process_index": 1,
+      "width": 512
+    },
+    {
+      "engine": "mps",
+      "id": "w512-mps-p0",
+      "process_index": 0,
+      "width": 512
+    },
+    {
+      "engine": "mps",
+      "id": "w512-mps-p1",
+      "process_index": 1,
+      "width": 512
+    },
+    {
+      "engine": "mlx",
+      "id": "w512-mlx-p0",
+      "process_index": 0,
+      "width": 512
+    },
+    {
+      "engine": "mlx",
+      "id": "w512-mlx-p1",
+      "process_index": 1,
+      "width": 512
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w1024-cpu_torch-p0",
+      "process_index": 0,
+      "width": 1024
+    },
+    {
+      "engine": "cpu_torch",
+      "id": "w1024-cpu_torch-p1",
+      "process_index": 1,
+      "width": 1024
+    },
+    {
+      "engine": "mps",
+      "id": "w1024-mps-p0",
+      "process_index": 0,
+      "width": 1024
+    },
+    {
+      "engine": "mps",
+      "id": "w1024-mps-p1",
+      "process_index": 1,
+      "width": 1024
+    },
+    {
+      "engine": "mlx",
+      "id": "w1024-mlx-p0",
+      "process_index": 0,
+      "width": 1024
+    },
+    {
+      "engine": "mlx",
+      "id": "w1024-mlx-p1",
+      "process_index": 1,
+      "width": 1024
+    }
+  ],
+  "development_seed": 20261103,
+  "fixture_seed_formula": "20261103 + width",
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "initial_replays": 10,
+  "limits": [
+    "B3/T3 synthetic development coverage only; B1/T32 and B16/T32 are untested here.",
+    "FP64 covers the initial state; trained states need separate accuracy audits.",
+    "This probe does not exercise native CPU or custom Metal.",
+    "Framework broad-suite failures remain blocking; no formal admission or timing claim."
+  ],
+  "max_evidence_bytes": 6442450944,
+  "planned_workers": 36,
+  "protocol": "gpu-v4-owned-model-compatibility-v1",
+  "retention": "Raw initial/oracle arrays and first trajectory step-3/6 states; intermediate steps and second trajectory retain fingerprints and exact in-memory byte comparisons. Every failure remains visible.",
+  "schema": "gpu-owned-model-plan-v1",
+  "shape": [
+    3,
+    3
+  ],
+  "source_files": {
+    "outputs/arm64-transformer/integration/gpu-owned/model_probe.py": "8ec1a35d1a0ac41c8a88e73c66e1e7b79d2537d07e4fa28ade69519161dde25d",
+    "outputs/arm64-transformer/integration/gpu-owned/runtime_probe.py": "2156caa15e04d6b6bb942ce128e4571ec397b0e8b911a6ec497402b566887e8f",
+    "outputs/arm64-transformer/transformer/__init__.py": "244cb1464fb34db5400859f205e239acabe2965dd81edb74f5c2ce76c144a7c7",
+    "outputs/arm64-transformer/transformer/gpu_environment.py": "128fac4a81e1d1d472f3f34839f03f8531b7f47e653d10a23d57610642fc4277",
+    "outputs/arm64-transformer/transformer/gpu_mlx.py": "540927cb3b34dda7c884d5495ae3b14f3b31cdfc8cc07f95e68786e8501d756c",
+    "outputs/arm64-transformer/transformer/gpu_mlx_compile.py": "6029935a51aeb76707828270b430dc7f4f5374276b96c574de847c30c79ffa6d",
+    "outputs/arm64-transformer/transformer/gpu_mps.py": "715e2727588df9f48c33e38185a6ec2196b8c662cb69f6a94fe98681056ff1ca",
+    "outputs/arm64-transformer/transformer/gpu_repeatability.py": "54372951833e053830f2d6e0cb27786a5ab4b11184a9e4f15057bbba886f7965",
+    "outputs/arm64-transformer/transformer/reference.py": "54a20341c9e96196961fd6770ebeda8052b9378f20f9f4934e2781e78d11b19f",
+    "outputs/arm64-transformer/transformer/spec.py": "b36d58ee1494399175016a59c0becc9d37597d05241969791fb7ca2234e2f1e3",
+    "work/upstream-integration-v2/mlx/fp64_full_model_v2.py": "bf96104c02f7d4eea3eaf99f74ac3db8f32710a14b0dffa003d9784a9cc9d3d2"
+  },
+  "source_sha256": "644dd0f67d60cc0ecf55e3ca47544ddadc85e03992c95ec56e9e77a105f6498c",
+  "tolerances": {
+    "forward": [
+      2e-05,
+      0.0002
+    ],
+    "gradient": [
+      3e-05,
+      0.003
+    ],
+    "oracle": [
+      1e-10,
+      1e-10
+    ]
+  },
+  "training_steps": 6,
+  "trajectories_per_worker": 2,
+  "warmup_steps": 2,
+  "workspace": "/Users/logannye/Documents/Codex/2026-10-28/we-x20"
+}

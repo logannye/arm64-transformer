@@ -1,15 +1,16 @@
 # Candidate repairs for the retained broad MPS failures
 
-This is a source diagnosis and an **uncompiled candidate**, not a qualification
-result. The earlier broad suite remains failed: 25 failures and two errors. All
+This combines source diagnosis, fresh development controls and a **candidate
+without a passing native validation receipt**, not a qualification result.
+The earlier broad suite remains failed: 25 failures and two errors. All
 27 IDs also fail in the separate matched pristine/patched control. The new owned
 study keeps these failures blocking. No test is removed, skipped or relaxed.
 
 The reviewed source is the retained formatted embedding-patch checkout on
 PyTorch base `71d2a08507ab47dd6b2fa9b66319d17ce2377de4`. The device environment
 under investigation is macOS 26.2, build 25C56, on the M4 Max. Assertions below
-separate source facts from proposed explanations. Fresh device diagnostics and
-a newly compiled framework are needed to establish a repair.
+separate source facts from proposed explanations. The fresh device controls
+below localize the failures; a rebuilt framework still has to establish a repair.
 
 ## Strided matrix outputs: an inconsistent version guard
 
@@ -74,6 +75,50 @@ operands under ordinary versus MPP-disabled execution can localize the problem
 without rebuilding. Such a process must be labeled a diagnostic configuration;
 it cannot silently replace the declared study runtime or qualify this patch.
 
+## Fresh layout controls and independent saved-array audit
+
+The closed `layout-diagnostic-v1` run used the retained embedding-patched
+framework, two ordinary fresh processes and two Metal 3.2 diagnostic processes.
+Each process ran 76 matrix cases and six Conv3d cases using development seed
+`20261103`. All four execution-integrity/postflight checks passed; no admission
+operands or formal fits were used.
+
+| Check | Ordinary, each process | Metal 3.2 diagnostic, each process |
+|---|---:|---:|
+| Strided matrix output failures / cases | 12/76 | 12/76 |
+| Contiguous GPU temporary then strided copy failures / cases | 0/76 | 0/76 |
+| Matrix output guard failures / cases | 7/76 | 7/76 |
+| NCDHW Conv3d failures against saved CPU FP64 / cases | 6/6 | 0/6 |
+| Channels-last Conv3d failures against saved CPU FP64 / cases | 0/6 | 0/6 |
+
+Thus the channels-last/contiguous discrepancy comes from the **contiguous**
+output in these controlled shapes. Disabling MPP selection removes the six
+observed convolution failures but leaves all matrix failures and guard failures
+unchanged. The contiguous-GPU-temporary control preserves both the matrix
+answer and output guards. Together these results support the two separate
+dispatch changes; they do not validate the candidate compiled implementation or
+establish whether the MPP defect lies in source arithmetic, compilation or the
+OS runtime. The transposed-convolution backward hypothesis still needs its
+original failing tests rerun on the rebuilt candidate.
+
+The independent NumPy-only auditor authenticated all 328 NPZ archives,
+recomputed all 680 recorded comparisons, checked guards and recorded layout and
+dtype metadata, and verified that the 82 operand/reference sets were byte-equal
+across all four workers. It checks saved logical array values; physical GPU
+strides and execution provenance are retained metadata, not independently
+measured again. Matrix references are same-dtype PyTorch CPU, not independent
+FP64. Convolution references are saved PyTorch CPU FP64 results, not an
+independent equation newly evaluated by the auditor.
+
+The diagnostic tolerances remain explicit in every case: matrix FP32 absolute
+and relative `1e-4`, FP16/BF16 `1e-2`; convolution FP32 `1e-5`/`1e-5`, FP16
+`1e-3`/`1e-3`, BF16 `1e-3`/`1.6e-2`. They do not replace the study's unchanged
+admission tolerances. See the [figure and complete evidence](../../experiments/gpu-v4-owned/README.md#what-the-independent-development-checks-found),
+[raw-array audit](../../experiments/gpu-v4-owned/layout-report-v1/array-audit.json),
+and [receipt catalog](../../experiments/gpu-v4-owned/layout-report-v1/receipt-catalog.json).
+The original layout summary SHA-256 is
+`08f98e4ea6adf7b1257d6dcf598205fd0414333d5f286c3177f64b6f81ad6f48`.
+
 ## Half-precision combinations: a separate accumulation problem
 
 The remaining failure is
@@ -89,16 +134,85 @@ each update into a half value. CPU uses serial half additions in
 defined serial order on CPU and a schedule-dependent atomic order on MPS.
 
 That is a concrete source-level order/rounding difference, but it does not prove
-the cause of this exact retained mismatch. A focused diagnostic should retain
-the full incoming cotangent, compare many exact repeats, reconstruct the CPU
-iteration order and compare both engines with FP64 equations. A stable grouped
-or serial single-writer reference is a repair candidate. Simply promoting to
-FP32 does not guarantee agreement with CPU's sequential half-rounded answer;
-the numerical and compatibility checks must remain separate.
+the cause of this exact retained mismatch. The new
+[focused diagnostic and independent raw-array audit](../../experiments/gpu-v4-owned/half-report-v1/README.md)
+retain 40 cases in each of two fresh processes, with 20 repeats of three ordinary
+operations per device. All 80 raw archives authenticate; all saved arrays agree
+exactly between processes. CPU agrees with the reconstructed per-addition
+rounded iterator order. No within-process difference is observed in these small
+cases; that does not establish general determinism for atomic accumulation.
+
+The cancellation example makes the distinction concrete:
+
+| FP16 incoming-gradient layout | Exact FP64 derivative | CPU | MPS |
+|---|---|---|---|
+| Row-major | `[2049, -2046.75]` | `[2048, -2046]` | `[2048, -2046]` |
+| Column-major | `[2049, -2046.75]` | `[2046, -2047]` | `[2050, -2048]` |
+
+FP32 controls equal the exact derivative in both layouts. The column-major FP16
+cases fail the original CPU/MPS tolerance on both input layouts and all three
+operations: 120 failed comparisons per process. Both engines have half-rounding
+error, and neither dominates both coordinates. Serializing to CPU order may
+improve compatibility while worsening one coordinate's mathematical accuracy;
+promoting accumulation may improve accuracy without reproducing CPU's answer.
+The two requirements must remain separate.
+
+For this one-index example, `AdvancedIndex` does not perform its GPU-specific
+index-contiguity conversion: that conversion requires at least two index
+tensors with differing strides. `make_index_put_iterator` adds the restrided
+zero-stride destination, then incoming values, then indices. CPU and MPS share
+that iterator construction. The first nonzero value strides select row-major
+or column-major order; Metal's `pos_from_thread_index` uses the same fastest
+dimension first. The parallel atomic kernel does not promise that thread-index
+order is the order in which duplicate additions complete. A contiguous-copy
+explanation is therefore unnecessary for the observed difference.
+
+A general compatible repair would compute each update's physical destination
+and original CPU-iterator ordinal, stable-sort by destination while preserving
+that ordinal, and assign one writer to each group. The writer starts from the
+existing destination value and rounds after each addition in the stored dtype.
+Parallelism remains across independent destinations. For multiple differently
+strided indices, the CPU permutation must be retained before GPU-specific
+contiguous normalization; sorting by logical row order alone is insufficient.
+Packed-half storage, odd offsets, negative aliases, broadcast values, duplicate
+destinations across partitions and asynchronous bounds errors require explicit
+coverage. The existing recursive 32-bit dispatch also drops its `serial` flag;
+a serial candidate must preserve both that flag and global update order across
+partitions. These are design requirements, not a selected implementation.
+
+Regressions must cover FP16/BF16/FP32, positive and cancellation-heavy values,
+initial nonzero destinations, single/multiple indices, both value layouts,
+strided/offset outputs, negative and invalid indices, empty/tail cases, duplicate
+runs across tile boundaries, packed-half neighbors, and same/fresh-process
+repeats. Compare mathematical accuracy with independent FP64 equations separately
+from CPU compatibility, retain the unchanged original broad suite, and measure
+the complete cost of sorting and hot-destination serialization. A special branch
+for this test shape or relaxed tolerance would not establish a general repair.
+
+The original failing cotangent is not recoverable from retained evidence. The
+81 historical state snapshots record deterministic/autocast/default settings,
+thread counts and operator libraries, not RNG state or gradient arrays. The
+upstream sample iterator reseeds by test-function identity and the test draws
+CPU FP64 `rand_like` cotangents before conversion, so a source-based
+reconstruction is possible in principle. It would need independent verification
+and must not be represented as the original saved tensor. This diagnostic uses
+new declared cotangents and does not clear the historical failure.
 
 The current layout patch **does not address this case**. Even if it fixes the
 other 26 cases, it cannot establish a passing broad suite by itself. No new
 low-precision accumulation implementation is selected in this note.
+
+An [uncompiled general FP16 candidate](half-index-candidate-v1/README.md) now
+implements that design prospectively: preserved CPU iterator ordering, full
+64-bit destination/ordinal keys, consecutive global chunks, stable integer
+sorting and one writer per packed storage word. It uses at most 2 MiB of numeric
+scratch. Explicit guards preserve strict `index_add_` and `put_` rejection and
+warn-only diagnostics; direct `index_put_` support does not qualify those separate
+public operations. The eight-file patch applies to an isolated source copy,
+15 scalar/ABI/negative controls pass, and original test-method names are retained
+with four new native methods. Native compilation, real-device tests, the complete
+broad suite and performance remain unvalidated. These static results do not
+clear any gate or replace a framework runtime.
 
 ## Validation before adopting any repair
 
@@ -121,7 +235,7 @@ Before selecting the repaired runtime:
 4. Revalidate PyTorch CPU and MPS together under that exact distribution, then
    complete the new study's remaining prerequisite and admission checks.
 
-A small hosted framework patch is worth testing once the focused diagnostics
+A small hosted framework patch is worth testing: the focused diagnostics now
 support these dispatch explanations. It has a narrow change surface and reuses
 existing GPU implementations. It has no demonstrated speed benefit and must
 not be presented as validated before the rebuilt device checks pass.

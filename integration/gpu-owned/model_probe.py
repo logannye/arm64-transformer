@@ -9,7 +9,9 @@ from __future__ import annotations
 
 import argparse
 import ast
+import copy
 import hashlib
+import importlib.metadata
 import importlib.util
 import json
 import math
@@ -20,7 +22,7 @@ import sys
 import traceback
 from pathlib import Path
 
-PROTOCOL = "gpu-v4-owned-model-compatibility-v1"
+PROTOCOL = "gpu-v4-owned-model-compatibility-v2"
 WIDTHS = (32, 64, 128, 256, 512, 1024)
 ENGINES = ("cpu_torch", "mps", "mlx")
 SEED = 20261103
@@ -90,7 +92,7 @@ def load_module(name, path):
 
 def contract():
     return {
-        "schema": "gpu-owned-model-plan-v1",
+        "schema": "gpu-owned-model-plan-v2",
         "protocol": PROTOCOL,
         "development_seed": SEED,
         "fixture_seed_formula": "20261103 + width",
@@ -366,7 +368,120 @@ def numpy_oracle(workspace, np):
     return namespace["numpy_full_model"]
 
 
-def execute_model(cell, workspace, output, progress):
+def owned_mlx_capabilities(backend, auth, proof, runtime):
+    """Describe the authenticated source build without manufacturing wheel metadata.
+
+    This only reads provenance, device information, and existing state dtypes.
+    Model construction, compilation, operations, optimizer, and lifecycle remain
+    the production Backend implementation. This receipt cannot admit a study.
+    """
+    require(
+        type(backend).__module__ == "transformer.gpu_mlx" and type(backend).__name__ == "Backend",
+        "Expected unchanged production MLX Backend",
+    )
+    module = sys.modules.get("transformer.gpu_mlx")
+    require(module is not None and hasattr(module, "mx"), "Missing loaded MLX adapter")
+    identity = auth.get("identities", {}).get("mlx", {})
+    require(
+        identity
+        == {
+            "runtime_manifest_sha256": runtime.MLX_MANIFEST_SHA,
+            "base": runtime.MLX_BASE,
+            "mode": "jit-on",
+            "variant": "patched",
+        },
+        "Unverified owned MLX identity",
+    )
+    bundle = Path(auth["workspace"]) / runtime.MLX_BUNDLE
+    manifest = str(bundle / "MANIFEST.json")
+    require(
+        auth.get("files", {}).get(manifest, {}).get("sha256") == runtime.MLX_MANIFEST_SHA,
+        "Missing authenticated MLX manifest bytes",
+    )
+    expected_core = bundle / "runtime/python/mlx/core.cpython-312-darwin.so"
+    require(proof.get("core") == str(expected_core), "MLX core origin proof differs")
+    native = proof.get("native_libraries", [])
+    require(bool(native), "Missing MLX native-library proof")
+    for name in native:
+        path = Path(name)
+        require(path.is_relative_to(bundle), "Foreign MLX native library in proof")
+        require(
+            path.relative_to(bundle).as_posix() in auth.get("trees", {}).get(str(bundle), {}),
+            "MLX native proof is outside authenticated file inventory",
+        )
+    own_probe = backend._compilation_probe
+    runtime.compilation_graph_identity(own_probe)
+    runtime.compilation_graph_identity(proof.get("compilation", {}))
+    require(
+        own_probe.get("status") == "passed"
+        and own_probe.get("device") == "gpu"
+        and own_probe.get("compiled_primitive_present") is True
+        and own_probe.get("python_trace_count") == 1
+        and own_probe.get("executions") == 4
+        and own_probe.get("shape") == [257]
+        and own_probe.get("dtype") == "float32"
+        and own_probe.get("mode_override_used") is False
+        and own_probe.get("observations") == proof["compilation"].get("observations")
+        and len(own_probe.get("observations", [])) == 4,
+        "Missing actual backend compilation proof",
+    )
+    mx = module.mx
+    require(str(mx.__file__) == str(expected_core), "Loaded MLX core differs from its proof")
+    for name in module.PARAM_SHAPES:
+        require(backend.model[name].dtype == mx.float32, "MLX parameter storage is not FP32")
+        for moment in ("m", "v"):
+            require(
+                backend.optimizer.state[name][moment].dtype == mx.float32,
+                "MLX optimizer moment storage is not FP32",
+            )
+    metadata = {}
+    for name in ("mlx", "mlx-metal"):
+        try:
+            distribution = importlib.metadata.distribution(name)
+        except importlib.metadata.PackageNotFoundError:
+            metadata[name] = {"present": False, "version": None}
+        else:
+            metadata[name] = {
+                "present": True,
+                "version": distribution.version,
+                "used_as_runtime_authority": False,
+            }
+    return {
+        "backend": "mlx",
+        "baseline_class": "project_maintained_full_source_build",
+        "implementation": "project-maintained compiled MLX using unchanged project adapter",
+        "standard_release_claim": False,
+        "formal_eligible": False,
+        "source_revision": runtime.MLX_BASE,
+        "patches": copy.deepcopy(runtime.MLX_PATCHES),
+        "runtime_manifest_sha256": runtime.MLX_MANIFEST_SHA,
+        "native_core_version": getattr(mx, "__version__", None),
+        "version_authority": "pinned source revision and authenticated native manifest",
+        "distribution_metadata": metadata,
+        "device": str(mx.gpu),
+        "device_info": mx.device_info(),
+        "core": str(expected_core),
+        "native_libraries": copy.deepcopy(native),
+        "storage_dtype": "float32",
+        "cpu_tensor_fallback": False,
+        "compiled": True,
+        "compilation_probe": copy.deepcopy(own_probe),
+        "adam": {
+            "lr": module.LR,
+            "betas": [0.9, 0.999],
+            "eps": 1e-8,
+            "bias_correction": True,
+            "configuration_authority": "bound production adapter",
+        },
+        "framework_controls": {
+            name: os.environ.get(name)
+            for name in ("MLX_ENABLE_TF32", "MLX_DISABLE_COMPILE", "MLX_SDPA_VJP_FALLBACK")
+        },
+        "repeatability_note": "Exact model replay is separate; metadata cannot qualify a gate",
+    }
+
+
+def execute_model(cell, workspace, output, progress, auth, runtime):
     import numpy as np
     import torch
 
@@ -418,7 +533,22 @@ def execute_model(cell, workspace, output, progress):
             initial
         )
     try:
-        progress["capabilities"] = backend.capabilities()
+        if cell["engine"] == "mlx":
+            progress["capabilities"] = owned_mlx_capabilities(
+                backend, auth, progress["runtime_before_model"]["mlx"], runtime
+            )
+        else:
+            progress["capabilities"] = {
+                "baseline_class": "project_maintained_full_source_build",
+                "standard_release_claim": False,
+                "formal_eligible": False,
+                "source_identity": copy.deepcopy(
+                    auth["identities"][
+                        "torch_cpu" if cell["engine"] == "cpu_torch" else "torch_mps"
+                    ]
+                ),
+                "reused_adapter_capabilities": backend.capabilities(),
+            }
         batch = backend.upload_inputs(tokens, targets)
         original = backend.export_state()
         first = None
@@ -547,7 +677,7 @@ def worker(args):
     output = runtime.checked_output(workspace, args.output)
     output.mkdir(parents=True, exist_ok=False)
     result = {
-        "schema": "gpu-owned-model-worker-v1",
+        "schema": "gpu-owned-model-worker-v2",
         "protocol": PROTOCOL,
         "cell": cell,
         "complete": False,
@@ -567,7 +697,7 @@ def worker(args):
         result["runtime_before_model"] = verify_engine_runtime(
             runtime, auth, cell["engine"], np, torch
         )
-        execute_model(cell, workspace, output, result)
+        execute_model(cell, workspace, output, result, auth, runtime)
         result["runtime_after_model"] = verify_engine_runtime(
             runtime, auth, cell["engine"], np, torch
         )
@@ -601,7 +731,7 @@ def run(args):
     )
     output.mkdir(parents=True, exist_ok=False)
     result = {
-        "schema": "gpu-owned-model-summary-v1",
+        "schema": "gpu-owned-model-summary-v2",
         "protocol": PROTOCOL,
         "manifest_sha256": args.manifest_sha256,
         "planned_workers": manifest["cells"],

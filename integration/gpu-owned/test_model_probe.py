@@ -1,5 +1,6 @@
 """Static negative controls; imports no tensor framework and executes no model."""
 
+import copy
 import hashlib
 import importlib.util
 import json
@@ -207,6 +208,121 @@ class LoadedRuntimeControls(unittest.TestCase):
                 "mlx", probe.verify_engine_runtime(runtime, {}, engine, object(), object())
             )
         self.assertEqual(len(calls), 1)
+
+
+class OwnedSourceCapabilities(unittest.TestCase):
+    def setUp(self):
+        self.runtime = probe.load_module("owned_capability_test_runtime", HERE / "runtime_probe.py")
+        self.bundle = Path("/workspace") / self.runtime.MLX_BUNDLE
+        self.core = self.bundle / "runtime/python/mlx/core.cpython-312-darwin.so"
+        graph = self.runtime.COMPILED_GRAPH.replace("NODE", "123456")
+        compilation = {
+            "status": "passed",
+            "device": "gpu",
+            "compiled_primitive_present": True,
+            "python_trace_count": 1,
+            "executions": 4,
+            "shape": [257],
+            "dtype": "float32",
+            "mode_override_used": False,
+            "graph_dot": graph,
+            "graph_sha256": hashlib.sha256(graph.encode()).hexdigest(),
+            "observations": [{"index": i, "fp32_sha256": str(i) * 64} for i in range(4)],
+        }
+        model_class = type("Backend", (), {"__module__": "transformer.gpu_mlx"})
+        self.backend = model_class()
+        self.backend._compilation_probe = compilation
+        self.backend.model = {"token": SimpleNamespace(dtype="float32")}
+        self.backend.optimizer = SimpleNamespace(
+            state={
+                "token": {
+                    "m": SimpleNamespace(dtype="float32"),
+                    "v": SimpleNamespace(dtype="float32"),
+                }
+            }
+        )
+        self.module = SimpleNamespace(
+            mx=SimpleNamespace(
+                __file__=str(self.core),
+                __version__=None,
+                float32="float32",
+                gpu="gpu",
+                device_info=lambda: {"name": "test device"},
+            ),
+            PARAM_SHAPES={"token": (128, 32)},
+            LR=0.001,
+        )
+        self.auth = {
+            "workspace": "/workspace",
+            "identities": {
+                "mlx": {
+                    "base": self.runtime.MLX_BASE,
+                    "mode": "jit-on",
+                    "variant": "patched",
+                    "runtime_manifest_sha256": self.runtime.MLX_MANIFEST_SHA,
+                }
+            },
+            "files": {
+                str(self.bundle / "MANIFEST.json"): {"sha256": self.runtime.MLX_MANIFEST_SHA}
+            },
+            "trees": {str(self.bundle): {self.core.relative_to(self.bundle).as_posix(): {}}},
+        }
+        self.proof = {
+            "core": str(self.core),
+            "native_libraries": [str(self.core)],
+            "compilation": copy.deepcopy(compilation),
+        }
+        self.metadata = patch.object(
+            probe.importlib.metadata,
+            "distribution",
+            side_effect=probe.importlib.metadata.PackageNotFoundError,
+        )
+        self.metadata.start()
+        self.modules = patch.dict(probe.sys.modules, {"transformer.gpu_mlx": self.module})
+        self.modules.start()
+
+    def tearDown(self):
+        self.modules.stop()
+        self.metadata.stop()
+
+    def capabilities(self):
+        return probe.owned_mlx_capabilities(self.backend, self.auth, self.proof, self.runtime)
+
+    def test_missing_wheel_metadata_is_explicit_and_not_a_runtime_error(self):
+        result = self.capabilities()
+        self.assertEqual(result["source_revision"], self.runtime.MLX_BASE)
+        self.assertEqual(result["runtime_manifest_sha256"], self.runtime.MLX_MANIFEST_SHA)
+        self.assertFalse(result["standard_release_claim"])
+        self.assertFalse(result["formal_eligible"])
+        for metadata in result["distribution_metadata"].values():
+            self.assertFalse(metadata["present"])
+            self.assertIsNone(metadata["version"])
+        self.assertIsNone(result["native_core_version"])
+
+    def test_boolean_pass_without_native_and_compilation_evidence_rejected(self):
+        self.backend._compilation_probe = {"status": "passed", "compiled": True}
+        with self.assertRaisesRegex(RuntimeError, "raw compiled graph"):
+            self.capabilities()
+
+    def test_unbound_or_changed_runtime_manifest_rejected(self):
+        self.auth["files"].clear()
+        with self.assertRaisesRegex(RuntimeError, "authenticated MLX manifest"):
+            self.capabilities()
+
+    def test_native_library_outside_authenticated_inventory_rejected(self):
+        self.proof["native_libraries"].append(str(self.bundle / "unrecorded.dylib"))
+        with self.assertRaisesRegex(RuntimeError, "outside authenticated"):
+            self.capabilities()
+
+    def test_changed_source_identity_rejected(self):
+        self.auth["identities"]["mlx"]["base"] = "0" * 40
+        with self.assertRaisesRegex(RuntimeError, "Unverified owned MLX"):
+            self.capabilities()
+
+    def test_non_fp32_stored_moment_rejected(self):
+        self.backend.optimizer.state["token"]["m"].dtype = "float16"
+        with self.assertRaisesRegex(RuntimeError, "moment storage"):
+            self.capabilities()
 
 
 if __name__ == "__main__":

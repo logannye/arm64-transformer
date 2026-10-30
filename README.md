@@ -4,7 +4,7 @@
 
 **A transformer’s equations do not determine how efficiently a machine executes
 it.** This project asks what changes when we design the computation around the
-hardware: handwritten ARM64 CPU assembly, custom Metal GPU kernels, and standard
+hardware: handwritten ARM64 CPU assembly, custom Metal GPU kernels, and
 PyTorch and MLX comparison implementations. Each engine includes forward,
 backward and Adam. Numerical accuracy and exact repeatability are explicit gates.
 
@@ -159,27 +159,42 @@ both widths. These limitations remain unresolved. The
 quality, memory and prediction-level errors. Historical CPU measurements are
 separate from the new GPU development experiments.
 
-## Why the full CPU/GPU study remains closed
+## Completing the CPU/GPU comparison independently
 
-**0 of 180 planned fits have run.** Corrected-control checks find nonrepeatable
-training in installed PyTorch MPS 2.14.1 and MLX 0.32.4 at every width; wide MLX
-attention-backward cases also fail execution. Private patched builds do not
-replace the required standard baselines.
+The [current study](experiments/gpu-v4-owned/README.md) uses pinned,
+**project-maintained full-source PyTorch and MLX builds**. We can repair and
+validate those frameworks ourselves, without an upstream submission or release.
+The comparison will name the patched baselines explicitly. Accuracy, exact
+training repeatability, the matched workload and the full checkpoint audit
+remain required.
 
-Supported standard releases must pass fresh baseline checks, followed by
-identity-bound admission under the unchanged accuracy and exact-repeatability
-gates. Fresh CPU anchors, all 180 fits and the full checkpoint audit remain
-unexecuted. Reserved admission stream `20261104` is unopened. The
-[formal-study guide](experiments/gpu-v2/FORMAL-STUDY.md) describes the machinery;
+The first combined-runtime model check passes at all six widths: 36 fresh
+processes reproduce initial logits, loss and every gradient within the frozen
+FP64 limits, and replay six training updates and checkpoint reloads exactly.
+An independent audit verifies all 216 saved array archives. These are short
+**B3/T3 development checks**, not timing results or full-workload qualification.
+See the [model report](experiments/gpu-v4-owned/model-report-v2/README.md).
+
+We also isolated two broader MPS problems. Strided matrix outputs can overwrite
+guards; a contiguous GPU temporary restores correct values and intact guards.
+Some Conv3d layouts fail in the selected MPP path while the existing SIMD path
+passes. A separate FP16 indexing diagnostic exposes accumulation-order rounding
+differences. Matching CPU order and improving FP64 accuracy are distinct goals.
+The [diagnostics and repair notes](integration/gpu-owned/MPS-REPAIR-NOTES.md)
+retain raw evidence and distinguish source candidates from validated fixes.
+
+**The new study is still at 0 of 180 fits.** The retained broad MPS failures
+remain blocking. Rebuilt frameworks must pass integration and full-workload
+checks before identity-bound admission, fresh CPU anchors, formal fits and the
+checkpoint audit. Reserved owned-study stream `20261108` remains unopened.
+
+The original **standard-release** study is also unchanged at 0 of 180, with
+stream `20261104` unopened. Installed MPS 2.14.1 and MLX 0.32.4 fail exact
+training replay under the corrected controls; wide MLX attention-backward cases
+also fail execution. Our maintained builds do not qualify those standard
+packages. The [formal-study guide](experiments/gpu-v2/FORMAL-STUDY.md) and
 [configuration corrections](experiments/gpu-compile-control-v1/CORRECTION.md)
-preserve the narrower scope of older diagnostics.
-
-An [independent study](experiments/gpu-v4-owned/README.md) now permits pinned,
-project-maintained full-source PyTorch and MLX builds. This route requires no
-upstream submission or release, while preserving accuracy, exact repeatability
-and matched-workload gates. Its eventual claims will explicitly name the patched
-baselines. It is in development: the retained broad MPS failures remain blocking,
-and neither study has started formal fits.
+retain that separate contract and its failures.
 
 ## Reproduce and inspect
 

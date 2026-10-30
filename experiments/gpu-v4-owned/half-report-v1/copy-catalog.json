@@ -1,0 +1,77 @@
+{
+  "admission_stream_opened": false,
+  "copies": [
+    {
+      "bytes": 7010,
+      "copy": "independent-audit.json",
+      "sha256": "74f316b2e50d737494fd1add73b87f38c0d69b490aee490b1d169c5ec5c28b30",
+      "source": "work/gpu-v4-owned/half-index-independent-audit-v1.json"
+    },
+    {
+      "bytes": 11760,
+      "copy": "independent-audit.py.txt",
+      "sha256": "fb721bcdaeb3870dff1054038fa7f4c6f78c6bcd05fbffa1fe6d7286353920ef",
+      "source": "work/gpu-v4-owned/half-index-audit-v1.py"
+    },
+    {
+      "bytes": 3263,
+      "copy": "execution-summary.json",
+      "sha256": "77a5c232387b9a609115a2f76f9e79a165bfdbd943b60d6dbbd712ef03996db1",
+      "source": "work/gpu-v4-owned/half-index-v1/summary.json"
+    },
+    {
+      "bytes": 7010,
+      "copy": "plan.json",
+      "sha256": "c5cd2c76385c72b841bbc7d370dd84f0a5c6f75865044e22ec78bf8922bbccf6",
+      "source": "work/gpu-v4-owned/half-index-v1/plan.json"
+    },
+    {
+      "bytes": 26780,
+      "copy": "workers/p0.json",
+      "sha256": "940f2a830acbf911a03d88b12779ffc1ed3d85abf97af931d7ee27d517506be8",
+      "source": "work/gpu-v4-owned/half-index-v1/p0/result.json"
+    },
+    {
+      "bytes": 26780,
+      "copy": "workers/p1.json",
+      "sha256": "ada5f65291fce1110f6f5b00dae06875821d5bb1443f2819320470b76dcc388f",
+      "source": "work/gpu-v4-owned/half-index-v1/p1/result.json"
+    }
+  ],
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "original_bytes_preserved": true,
+  "original_full_case_summaries": [
+    {
+      "bytes": 1561226,
+      "sha256": "72a7a32e3321f503163e57efdd13f1b7ed3355be11edd5689a56eb6faecc3014",
+      "source": "work/gpu-v4-owned/half-index-v1/p0/cases/summary.json"
+    },
+    {
+      "bytes": 1561226,
+      "sha256": "72a7a32e3321f503163e57efdd13f1b7ed3355be11edd5689a56eb6faecc3014",
+      "source": "work/gpu-v4-owned/half-index-v1/p1/cases/summary.json"
+    }
+  ],
+  "schema": "gpu-owned-half-report-copy-catalog-v1",
+  "scope": "Compact exact copies of existing diagnostic receipts and independent raw-data audit. Raw NPZ and full case summaries remain in the separate development evidence archive.",
+  "source_inspection": {
+    "base": "71d2a08507ab47dd6b2fa9b66319d17ce2377de4",
+    "files_sha256": {
+      "aten/src/ATen/TensorIterator.cpp": "a71a7ec9ba0532bf1380aa8ebc92975e4acb31414cd4b8eeeba650afe9e4490c",
+      "aten/src/ATen/native/TensorAdvancedIndexing.cpp": "32f6970bb91e5114badcf69f62d36bc23af5fe5976ed0b5fa4fce23e0916c135",
+      "aten/src/ATen/native/TensorAdvancedIndexingUtils.h": "0f1f6efaaa5b794777b339ab0542b58b2b8f407d940fbd2f367de25605c2a604",
+      "aten/src/ATen/native/cpu/IndexKernel.cpp": "e41bf8bd9c66e7fe65b84886c54af82bea79295bc12fb9cfa6d381073b22b31a",
+      "aten/src/ATen/native/cpu/IndexKernelUtils.h": "c30d0e20c8cc02147878958b13f4abf6f0454c823a69a8a1e3fae63db334b50b",
+      "aten/src/ATen/native/mps/kernels/Indexing.metal": "283362996d9c86188510dc5be2e522de9bc59ebea448ecff5b46bd2c4233ff58",
+      "aten/src/ATen/native/mps/operations/Indexing.mm": "ae9ce032e96856e1161f140829e06986ef7776015f3105c6685b8d2bfd411b15",
+      "c10/metal/atomic.h": "ae4c8a6d92d314178b3046f8e66d333d267121987354be39a02efea68fa0067b",
+      "c10/metal/indexing.h": "c3cdac6ad3bb29a99f972c566aa4a175600b124f70721a1a6b2a7ffb3f23b4cc",
+      "test/test_mps.py": "7345b6e229aed240921460a3b598ffd1a47148ab4816aead0d405539a154a396",
+      "torch/testing/_internal/common_device_type.py": "6195a9c45fe2d01c8265d4b07c2541ad310a1de761743729c6f9498104fdaefb",
+      "torch/testing/_internal/common_methods_invocations.py": "c22420462223afd7acb19fe5f2613b4533fe9f620d94c27910fa3ae2351d8c51",
+      "torch/testing/_internal/common_utils.py": "c0c531fa3932be0937f4623f3e8077587bef76a99a241e40b94726635e198b22"
+    },
+    "root": "work/upstream-integration-v2/pytorch/formatted-source-v2"
+  }
+}

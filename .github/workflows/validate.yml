@@ -24,12 +24,18 @@ jobs:
       - run: >-
           python -m pip install --only-binary=:all: -e '.[dev,report]'
       - run: ruff check . && ruff format --check .
-      - name: Framework and owned-runtime regression checks (stdlib only)
+      - name: CPU-only framework and owned-runtime regression checks
         run: |
           python -I -S -B -m unittest discover -s validation/upstream-pytorch-pristine-v1 -p 'test_*.py'
           python -I -S -B -m unittest discover -s validation/upstream-pytorch-paired-v1 -p 'test_*.py'
           python -I -S -B -m unittest discover -s validation/owned-pytorch-layout-v1 -p 'test_*.py'
-          python -I -S -B -m unittest discover -s integration/gpu-owned -p 'test_*.py'
+          python -I -S -B -m unittest discover -s validation/owned-pytorch-half-v1 -p 'test_*.py'
+          # Keep import-isolation checks in fresh processes. Array-audit tests
+          # use installed NumPy; no test here executes a GPU framework.
+          for test_file in integration/gpu-owned/test_*.py; do
+            python -I -B -m unittest discover -s integration/gpu-owned -p "$(basename "$test_file")"
+          done
+          python -I -S -B -m unittest discover -s integration/gpu-owned/half-index-candidate-v1 -p 'test_*.py'
       - name: Reference checks at every model width
         run: |
           for width in 32 64 128 256 512 1024; do

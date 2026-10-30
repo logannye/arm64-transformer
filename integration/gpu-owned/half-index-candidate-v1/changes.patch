@@ -1,0 +1,520 @@
+--- a/aten/src/ATen/native/IndexingUtils.h
++++ b/aten/src/ATen/native/IndexingUtils.h
+@@ -173,6 +173,10 @@
+ 
+ struct AdvancedIndex {
+   AdvancedIndex(const Tensor& src, TensorList indices);
++  AdvancedIndex(
++      const Tensor& src,
++      TensorList indices,
++      bool normalize_index_strides);
+ 
+   Tensor src;
+   std::vector<Tensor> indices;
+--- a/aten/src/ATen/native/TensorAdvancedIndexing.cpp
++++ b/aten/src/ATen/native/TensorAdvancedIndexing.cpp
+@@ -633,7 +633,13 @@
+   return index.reshape(shape);
+ }
+ 
+-AdvancedIndex::AdvancedIndex(const Tensor& src, TensorList indices_list) {
++AdvancedIndex::AdvancedIndex(const Tensor& src, TensorList indices_list)
++    : AdvancedIndex(src, indices_list, true) {}
++
++AdvancedIndex::AdvancedIndex(
++    const Tensor& src,
++    TensorList indices_list,
++    bool normalize_index_strides) {
+   int64_t element_size_bytes = src.element_size();
+   int64_t dims_before = 0, dims_after = 0, dims_indexed = 0;
+   IntArrayRef replacement_shape;
+@@ -677,7 +683,7 @@
+ 
+   // For CUDA/MPS/XPU tensors, force all index tensors to have the same striding
+   // to simplify the CUDA/MPS/XPU kernel.
+-  if (indices.size() >= 2 &&
++  if (normalize_index_strides && indices.size() >= 2 &&
+       (this->src.device().type() == kCUDA ||
+        this->src.device().type() == kMPS ||
+        this->src.device().type() == kXPU)) {
+@@ -1012,7 +1018,12 @@
+     return self;
+   }
+ 
+-  auto info = make_info(self, indices);
++  // The ordered MPS FP16 path accepts individual index strides and must retain
++  // the same iterator permutation as CPU, before GPU-specific normalization.
++  const bool normalize_index_strides =
++      !(self.device().type() == kMPS && accumulate &&
++        self.scalar_type() == kHalf);
++  auto info = make_info(self, indices, normalize_index_strides);
+   auto iter = make_index_put_iterator(info, value_);
+   index_put_stub(
+       iter.device_type(),
+--- a/aten/src/ATen/native/TensorAdvancedIndexingUtils.h
++++ b/aten/src/ATen/native/TensorAdvancedIndexingUtils.h
+@@ -34,7 +34,10 @@
+   return at::indexing::impl::canDispatchToMaskedFill(self, indices);
+ }
+ 
+-inline AdvancedIndex make_info(Tensor self, IOptTensorListRef orig) {
++inline AdvancedIndex make_info(
++    Tensor self,
++    IOptTensorListRef orig,
++    bool normalize_index_strides) {
+   checkIndexTensorTypes(orig, /*allow_int*/ true);
+   // first expand BoolTensor (masks) or ByteTensor (masks) into 1 or more
+   // LongTensors
+@@ -65,7 +68,11 @@
+     }
+   }
+ 
+-  return AdvancedIndex(self, indices);
++  return AdvancedIndex(self, indices, normalize_index_strides);
++}
++
++inline AdvancedIndex make_info(Tensor self, IOptTensorListRef orig) {
++  return make_info(std::move(self), orig, true);
+ }
+ 
+ } // namespace at::native
+--- a/aten/src/ATen/native/mps/kernels/Indexing.h
++++ b/aten/src/ATen/native/mps/kernels/Indexing.h
+@@ -19,3 +19,14 @@
+   uint32_t out_dim_size;
+   uint32_t index_stride;
+ };
++
++// Shared host/Metal ABI for the bounded ordered FP16 accumulation candidate.
++struct IndexPutHalfParams {
++  uint32_t ndim;
++  uint32_t nindices;
++  uint32_t count;
++  uint32_t merge_width;
++  uint64_t chunk_begin;
++  uint64_t output_base_offset;
++  uint64_t output_storage_bytes;
++};
+--- a/aten/src/ATen/native/mps/kernels/Indexing.metal
++++ b/aten/src/ATen/native/mps/kernels/Indexing.metal
+@@ -10,6 +10,139 @@
+ struct IndexAB {
+   device const int64_t* indexArray;
+ };
++
++// The keys retain all 64 bits of the physical storage byte offset and the
++// original (unsplit) TensorIterator ordinal. Invalid indices keep a sentinel
++// key, report the existing asynchronous error, and never write output storage.
++kernel void index_put_half_keys(
++    device ulong2* pairs,
++    constant IndexAB* indices,
++    constant int64_t* sizes,
++    constant int64_t* output_strides,
++    constant int64_t* index_iteration_strides,
++    constant int64_t* index_sizes,
++    constant int64_t* indexed_output_strides,
++    constant IndexPutHalfParams& params,
++    device ErrorMessages* error_buffer,
++    uint tid [[thread_position_in_grid]]) {
++  if (tid >= params.count) {
++    return;
++  }
++  const ulong ordinal = params.chunk_begin + tid;
++  ulong position[max_ndim];
++  pos_from_thread_index(ordinal, position, sizes, params.ndim);
++  ulong destination = params.output_base_offset;
++  for (uint dim = 0; dim < params.ndim; ++dim) {
++    destination += position[dim] * ulong(output_strides[dim]);
++  }
++  for (uint index = 0; index < params.nindices; ++index) {
++    ulong offset = 0;
++    for (uint dim = 0; dim < params.ndim; ++dim) {
++      offset += position[dim] *
++          ulong(index_iteration_strides[index * params.ndim + dim]);
++    }
++    long value = indices[index].indexArray[offset / sizeof(long)];
++    const long size = index_sizes[index];
++    if (value < -size || value >= size) {
++      TORCH_REPORT_ERROR(
++          error_buffer,
++          "index ",
++          value,
++          " is out of bounds for dimension ",
++          index,
++          " with size ",
++          size);
++      pairs[tid] = ulong2(~ulong(0), ordinal);
++      return;
++    }
++    if (value < 0) {
++      value += size;
++    }
++    destination += ulong(value) * ulong(indexed_output_strides[index]);
++  }
++  if (params.output_storage_bytes < sizeof(half) ||
++      destination > params.output_storage_bytes - sizeof(half) ||
++      destination % sizeof(half) != 0) {
++    TORCH_REPORT_ERROR(
++        error_buffer, "MPS index_put: destination outside FP16 storage");
++    pairs[tid] = ulong2(~ulong(0), ordinal);
++    return;
++  }
++  pairs[tid] = ulong2(destination, ordinal);
++}
++
++inline bool index_put_half_pair_less(ulong2 left, ulong2 right) {
++  return left.x < right.x || (left.x == right.x && left.y < right.y);
++}
++
++// Each pair finds its unique merged rank in the opposite sorted run. The
++// original ordinal resolves equal-destination ties, making the result stable.
++kernel void index_put_half_merge(
++    device const ulong2* input,
++    device ulong2* output,
++    constant IndexPutHalfParams& params,
++    uint tid [[thread_position_in_grid]]) {
++  if (tid >= params.count) {
++    return;
++  }
++  const uint width = params.merge_width;
++  const uint start = (tid / (2 * width)) * (2 * width);
++  const uint middle = min(start + width, params.count);
++  const uint end = min(start + 2 * width, params.count);
++  const bool left = tid < middle;
++  const uint own_start = left ? start : middle;
++  const uint other_start = left ? middle : start;
++  uint lo = other_start;
++  uint hi = left ? end : middle;
++  const ulong2 value = input[tid];
++  while (lo < hi) {
++    const uint mid = lo + (hi - lo) / 2;
++    if (index_put_half_pair_less(input[mid], value)) {
++      lo = mid + 1;
++    } else {
++      hi = mid;
++    }
++  }
++  output[start + (tid - own_start) + (lo - other_start)] = value;
++}
++
++// One writer owns the entire aligned storage word, processing only the one or
++// two half lanes that have updates. This avoids packed-half writer races
++// without atomic arithmetic or a 32-bit load beyond an odd logical-storage
++// tail.
++kernel void index_put_half_reduce(
++    device half* output,
++    device const half* input,
++    device const ulong2* sorted,
++    constant int64_t* sizes,
++    constant int64_t* input_strides,
++    constant IndexPutHalfParams& params,
++    uint tid [[thread_position_in_grid]]) {
++  if (tid >= params.count || sorted[tid].x == ~ulong(0)) {
++    return;
++  }
++  const ulong word = sorted[tid].x / sizeof(uint);
++  if (tid > 0 && sorted[tid - 1].x / sizeof(uint) == word) {
++    return;
++  }
++  uint cursor = tid;
++  while (cursor < params.count && sorted[cursor].x / sizeof(uint) == word) {
++    const ulong destination = sorted[cursor].x;
++    // The volatile stored half forces a rounding boundary after every add.
++    volatile half sum = output[destination / sizeof(half)];
++    do {
++      ulong position[max_ndim];
++      pos_from_thread_index(sorted[cursor].y, position, sizes, params.ndim);
++      ulong input_offset = 0;
++      for (uint dim = 0; dim < params.ndim; ++dim) {
++        input_offset += position[dim] * ulong(input_strides[dim]);
++      }
++      sum = half(float(sum) + float(input[input_offset / sizeof(half)]));
++      ++cursor;
++    } while (cursor < params.count && sorted[cursor].x == destination);
++    output[destination / sizeof(half)] = sum;
++  }
++}
+ 
+ uint3 index_get_offsets(
+     constant int64_t* sizes,
+--- a/aten/src/ATen/native/mps/operations/Indexing.mm
++++ b/aten/src/ATen/native/mps/operations/Indexing.mm
+@@ -1,4 +1,6 @@
+ //  Copyright © 2022 Apple Inc.
++#include <algorithm>
++#include <cstddef>
+ #include <limits>
+ #define TORCH_ASSERT_ONLY_METHOD_OPERATORS
+ #include <ATen/Dispatch_v2.h>
+@@ -29,6 +31,7 @@
+ #include <ATen/NativeFunctions.h>
+ #else
+ #include <ATen/native/IndexKernel.h>
++#include <ATen/ops/empty.h>
+ #include <ATen/ops/index.h>
+ #include <ATen/ops/index_add_native.h>
+ #include <ATen/ops/index_copy_native.h>
+@@ -142,6 +145,93 @@
+   });
+ }
+ 
++static_assert(sizeof(IndexPutHalfParams) == 40);
++static_assert(alignof(IndexPutHalfParams) == 8);
++static_assert(offsetof(IndexPutHalfParams, chunk_begin) == 16);
++static_assert(offsetof(IndexPutHalfParams, output_base_offset) == 24);
++static_assert(offsetof(IndexPutHalfParams, output_storage_bytes) == 32);
++
++// FP16 accumulation preserves the CPU iterator's per-addition rounding order.
++// Keep the complete iterator: with_32bit_indexing() partitions dimensions and
++// does not define the required global ordinal order. Two fixed scratch buffers
++// are reused across consecutive global-ordinal chunks; no tensor data visits CPU.
++static void index_put_accumulate_half_ordered(TensorIterator& iter, IntArrayRef index_size, IntArrayRef index_stride) {
++  validateInputData(iter, index_size, index_stride, "index_put_accumulate_half_ordered");
++  if (iter.numel() == 0) {
++    return;
++  }
++  TORCH_CHECK(iter.ndim() <= c10::metal::max_ndim, "MPS index_put: too many iterator dimensions");
++  constexpr int64_t chunk_limit = 65536;
++  const auto capacity = std::min(iter.numel(), chunk_limit);
++  // Each row is (full 64-bit storage byte offset, global iterator ordinal).
++  // 2 buffers * 2 uint64 words * 65536 rows = 2 MiB maximum payload.
++  auto scratch_a = at::empty({capacity, 2}, iter.tensor_base(0).options().dtype(kLong));
++  auto scratch_b = at::empty({capacity, 2}, scratch_a.options());
++  auto stream = getCurrentMPSStream();
++  dispatch_sync_with_rethrow(stream->queue(), ^() {
++    @autoreleasepool {
++      auto encoder = stream->commandEncoder();
++      auto keys_pso = lib.getPipelineStateForFunc("index_put_half_keys");
++      auto merge_pso = lib.getPipelineStateForFunc("index_put_half_merge");
++      auto reduce_pso = lib.getPipelineStateForFunc("index_put_half_reduce");
++      std::vector<uint64_t> index_addresses;
++      std::vector<int64_t> index_iteration_strides;
++      for (const auto index : c10::irange(index_size.size())) {
++        const auto tensor_number = index + 2;
++        const auto& tensor = iter.tensor_base(tensor_number);
++        TORCH_CHECK(tensor.scalar_type() == kLong, "MPS index_put: indices must be int64");
++        index_addresses.push_back(getMTLBufferStorage(tensor).gpuAddress + iter_tensor_offset(iter, tensor_number));
++        const auto strides = iter.strides(tensor_number);
++        index_iteration_strides.insert(index_iteration_strides.end(), strides.begin(), strides.end());
++        [encoder useResource:getMTLBufferStorage(tensor) usage:MTLResourceUsageRead];
++      }
++      IndexPutHalfParams params{};
++      params.ndim = static_cast<uint32_t>(iter.ndim());
++      params.nindices = static_cast<uint32_t>(index_size.size());
++      params.output_base_offset = iter_tensor_offset(iter, 0);
++      params.output_storage_bytes = iter.tensor_base(0).storage().nbytes();
++      for (int64_t begin = 0; begin < iter.numel();) {
++        params.chunk_begin = static_cast<uint64_t>(begin);
++        params.count = static_cast<uint32_t>(std::min(chunk_limit, iter.numel() - begin));
++        params.merge_width = 0;
++        [encoder setComputePipelineState:keys_pso];
++        mtl_setArgs(encoder,
++                    scratch_a,
++                    index_addresses,
++                    iter.shape(),
++                    iter.strides(0),
++                    index_iteration_strides,
++                    index_size,
++                    index_stride,
++                    params,
++                    stream->getErrorBuffer());
++        mtl_dispatch1DJob(encoder, keys_pso, params.count);
++        [encoder memoryBarrierWithScope:MTLBarrierScopeBuffers];
++        auto read = scratch_a;
++        auto write = scratch_b;
++        // Stable integer merge by (destination, original ordinal). Scratch is
++        // reused, including by later chunks, only after explicit GPU barriers.
++        for (uint32_t width = 1; width < params.count; width *= 2) {
++          params.merge_width = width;
++          [encoder setComputePipelineState:merge_pso];
++          mtl_setArgs(encoder, read, write, params);
++          mtl_dispatch1DJob(encoder, merge_pso, params.count);
++          [encoder memoryBarrierWithScope:MTLBarrierScopeBuffers];
++          std::swap(read, write);
++        }
++        [encoder setComputePipelineState:reduce_pso];
++        // Bind the storage base, not a potentially two-byte-aligned tensor view.
++        [encoder setBuffer:getMTLBufferStorage(iter.tensor_base(0)) offset:0 atIndex:0];
++        [encoder setBuffer:getMTLBufferStorage(iter.tensor_base(1)) offset:iter_tensor_offset(iter, 1) atIndex:1];
++        mtl_setArgs<2>(encoder, read, iter.shape(), iter.strides(1), params);
++        mtl_dispatch1DJob(encoder, reduce_pso, params.count);
++        [encoder memoryBarrierWithScope:MTLBarrierScopeBuffers];
++        begin += params.count;
++      }
++    }
++  });
++}
++
+ static void index_kernel_mps(TensorIteratorBase& iter, IntArrayRef index_size, IntArrayRef index_stride) {
+   validateInputData(iter, index_size, index_stride, "index.Tensor_out");
+   dispatch_index_kernel(
+@@ -159,6 +249,10 @@
+       // duplicate indices race on the result. Integer adds are associative
+       // and remain deterministic
+       const auto dtype = iter.tensor_base(0).scalar_type();
++      if (dtype == kHalf) {
++        index_put_accumulate_half_ordered(iter, index_size, index_stride);
++        return;
++      }
+       if (at::isFloatingType(dtype) || at::isComplexType(dtype)) {
+         at::globalContext().alertNotDeterministic("index_put_with_accumulate_mps");
+       }
+@@ -586,6 +680,12 @@
+   // accumulation order is non-deterministic. Fall back to index_put_ with
+   // accumulate=true when deterministic algorithms are requested.
+   if (globalContext().deterministicAlgorithms()) {
++    // Ordered FP16 index_put does not qualify this separate index_add fallback.
++    // In particular, index_add rejects negative indices that index_put accepts.
++    // Preserve the previous strict rejection and warn-only diagnostic.
++    if (result.scalar_type() == kHalf) {
++      at::globalContext().alertNotDeterministic("index_put_with_accumulate_mps");
++    }
+     torch::List<std::optional<Tensor>> indices;
+     indices.reserve(dim + 1);
+     for (const auto i : c10::irange(dim)) {
+@@ -1054,6 +1154,11 @@
+ }
+ 
+ static void put_kernel_mps(TensorIterator& iter, const TensorBase& self_base, const bool accumulate) {
++  // This separate public operation is not qualified by ordered index_put.
++  // Preserve its prior strict rejection and warn-only diagnostic for FP16.
++  if (accumulate && self_base.scalar_type() == kHalf && globalContext().deterministicAlgorithms()) {
++    at::globalContext().alertNotDeterministic("index_put_with_accumulate_mps");
++  }
+   // The generic native::put_ builds `iter` with source and the reshaped index
+   // as its two inputs. put_ addresses self by its logical (C-contiguous) flat
+   // position, so recover those tensors and reuse the index_put_ MPS kernels by
+--- a/test/test_mps.py
++++ b/test/test_mps.py
+@@ -757,6 +757,76 @@
+ 
+ 
+ class TestMPS(TestCaseMPS):
++    def test_index_put_half_ordered_layouts_and_chunks(self):
++        previous = torch.are_deterministic_algorithms_enabled()
++        warn_only = torch.is_deterministic_algorithms_warn_only_enabled()
++        try:
++            for deterministic in (False, True):
++                torch.use_deterministic_algorithms(deterministic)
++                for count in (0, 1, 3, 17, 65535, 65536, 65537, 131075):
++                    indices = torch.arange(count, dtype=torch.int64) % 3
++                    indices[1::5] -= 3  # Negative aliases retain their original positions.
++                    values = torch.tensor([2048., 1., -2048., .5, -.5], dtype=torch.float16).repeat((count + 4) // 5)[:count]
++                    initial = torch.tensor([-.0, .5, -1.], dtype=torch.float16)
++                    expected = initial.clone().index_put_((indices,), values, accumulate=True)
++                    gpu_indices, gpu_values = indices.to("mps"), values.to("mps")
++                    first = None
++                    for _ in range(3):
++                        actual = initial.to("mps").index_put_((gpu_indices,), gpu_values, accumulate=True).cpu()
++                        self.assertEqual(actual.view(torch.int16), expected.view(torch.int16), atol=0, rtol=0)
++                        if first is not None:
++                            self.assertEqual(actual.view(torch.int16), first, atol=0, rtol=0)
++                        first = actual.view(torch.int16).clone()
++        finally:
++            torch.use_deterministic_algorithms(previous, warn_only=warn_only)
++
++    def test_index_put_half_ordered_multiple_index_strides(self):
++        # Broadcast values leave iterator ordering to the index operands.
++        # Normalizing these distinct strides before constructing the iterator
++        # would choose a different CPU accumulation order.
++        rows = torch.tensor([[0, 1], [1, 0], [0, 1]], dtype=torch.int64).t()
++        columns = torch.tensor([[0, 1, 0], [1, 0, 1]], dtype=torch.int64)
++        for value in (torch.tensor(0.1, dtype=torch.float16),
++                      torch.tensor([[2048., 1., -2048.]], dtype=torch.float16),
++                      torch.tensor([[2048., 1., -2048.], [.5, -.5, 1.]], dtype=torch.float16),
++                      torch.tensor([[2048., .5], [1., -.5], [-2048., 1.]], dtype=torch.float16).t()):
++            initial = torch.tensor([[.5, -.0], [1., -1.]], dtype=torch.float16)
++            expected = initial.clone().index_put_((rows, columns), value, accumulate=True)
++            gpu_rows, gpu_columns, gpu_value = rows.to("mps"), columns.to("mps"), value.to("mps")
++            self.assertEqual(gpu_rows.stride(), rows.stride())
++            self.assertEqual(gpu_columns.stride(), columns.stride())
++            actual = initial.to("mps").index_put_((gpu_rows, gpu_columns), gpu_value, accumulate=True).cpu()
++            self.assertEqual(actual.view(torch.int16), expected.view(torch.int16), atol=0, rtol=0)
++
++    def test_index_put_half_ordered_storage_words_and_tail(self):
++        for length in (1, 2, 3, 7):
++            for offset in range(length):
++                initial = torch.full((length,), -0., dtype=torch.float16)
++                values = torch.tensor([2.**-24, -2.**-24, .5, -.5], dtype=torch.float16)
++                indices = torch.zeros(4, dtype=torch.int64)
++                cpu, gpu = initial.clone(), initial.to("mps")
++                cpu[offset:offset + 1].index_put_((indices,), values, accumulate=True)
++                gpu[offset:offset + 1].index_put_((indices.to("mps"),), values.to("mps"), accumulate=True)
++                self.assertEqual(gpu.cpu().view(torch.int16), cpu.view(torch.int16), atol=0, rtol=0)
++        # Two lanes in one storage word and sparse views over guard elements.
++        initial = torch.tensor([7., -.0, 7., .5, 7., -1., 7.], dtype=torch.float16)
++        indices = torch.tensor([0, 1, 2, 1, 0, 2, -1], dtype=torch.int64)
++        values = torch.tensor([2048., .5, 1., -.5, -2048., -.5, .125], dtype=torch.float16)
++        cpu, gpu = initial.clone(), initial.to("mps")
++        cpu[1:6:2].index_put_((indices,), values, accumulate=True)
++        gpu[1:6:2].index_put_((indices.to("mps"),), values.to("mps"), accumulate=True)
++        self.assertEqual(gpu.cpu().view(torch.int16), cpu.view(torch.int16), atol=0, rtol=0)
++
++    def test_index_put_half_ordered_repeated_index_backward(self):
++        index = torch.tensor([[0, 0, 1], [0, 1, 1]], dtype=torch.int64)
++        for incoming in (torch.tensor([[2048., 1., .5], [-2048., -.5, 1.]], dtype=torch.float16),
++                         torch.tensor([[2048., -2048.], [1., -.5], [.5, 1.]], dtype=torch.float16).t()):
++            cpu = torch.tensor([-.75, .5], dtype=torch.float16, requires_grad=True)
++            gpu = cpu.detach().to("mps").requires_grad_(True)
++            expected, = torch.autograd.grad(cpu[index], cpu, incoming)
++            actual, = torch.autograd.grad(gpu[index.to("mps")], gpu, incoming.to("mps"))
++            self.assertEqual(actual.cpu().view(torch.int16), expected.view(torch.int16), atol=0, rtol=0)
++
+     def ulpAssertAllClose(self, output, reference, n_ulps):
+         """
+         Wrapper for element-wise tolerances with known
+@@ -14024,10 +14094,32 @@
+         src = torch.arange(idx.numel(), device=device, dtype=dtype)
+         try:
+             torch.use_deterministic_algorithms(True)
+-            with self.assertRaisesRegex(RuntimeError, "does not have a deterministic implementation"):
+-                t.index_put_((idx,), src, accumulate=True)
++            if dtype == torch.float16:
++                expected = torch.tensor([1., 2., 12.], dtype=dtype)
++                first = None
++                for _ in range(10):
++                    actual = torch.zeros_like(t).index_put_((idx,), src, accumulate=True).cpu()
++                    self.assertEqual(actual.view(torch.int16), expected.view(torch.int16), atol=0, rtol=0)
++                    if first is not None:
++                        self.assertEqual(actual.view(torch.int16), first, atol=0, rtol=0)
++                    first = actual.view(torch.int16).clone()
++            else:
++                with self.assertRaisesRegex(RuntimeError, "does not have a deterministic implementation"):
++                    t.index_put_((idx,), src, accumulate=True)
++            # Strict index_add remains unsupported, including FP16: its separate
++            # negative-index and alpha semantics are not qualified by index_put.
+             with self.assertRaisesRegex(RuntimeError, "does not have a deterministic implementation"):
+                 torch.zeros(3, dtype=dtype, device=device).index_add_(0, idx, src)
++            if dtype == torch.float16:
++                with self.assertRaisesRegex(RuntimeError, "does not have a deterministic implementation"):
++                    torch.zeros(3, dtype=dtype, device=device).put_(idx, src, accumulate=True)
++                with self.assertRaisesRegex(RuntimeError, "does not have a deterministic implementation"):
++                    torch.zeros(3, dtype=dtype, device=device).index_add_(0, idx.new_tensor([-1]), src[:1])
++                torch.use_deterministic_algorithms(True, warn_only=True)
++                with self.assertWarnsRegex(UserWarning, "does not have a deterministic implementation"):
++                    torch.zeros(3, dtype=dtype, device=device).index_add_(0, idx, src)
++                with self.assertWarnsRegex(UserWarning, "does not have a deterministic implementation"):
++                    torch.zeros(3, dtype=dtype, device=device).put_(idx, src, accumulate=True)
+         finally:
+             torch.use_deterministic_algorithms(False)
+ 
+--- a/torch/__init__.py
++++ b/torch/__init__.py
+@@ -1810,7 +1810,7 @@
+           and the index is a list of tensors
+         * :func:`torch.Tensor.index_put` with ``accumulate=False``
+         * :func:`torch.Tensor.index_put` with ``accumulate=True`` when called on a CPU
+-          tensor
++          tensor or an MPS tensor with ``torch.float16`` dtype
+         * :func:`torch.Tensor.put_` with ``accumulate=True`` when called on a CPU
+           tensor
+         * :func:`torch.Tensor.scatter_add_` when called on a CUDA tensor
+@@ -1868,7 +1868,7 @@
+         * :func:`torch.nn.functional.grid_sample` when attempting to differentiate a CUDA tensor
+         * :func:`torch.Tensor.scatter_reduce` when called on a CUDA tensor
+         * :func:`torch.Tensor.index_put` with ``accumulate=True`` when called on
+-          an MPS tensor with floating or complex dtype
++          an MPS tensor with floating or complex dtype other than ``torch.float16``
+         * :func:`torch.kthvalue` when called on an MPS tensor
+         * :class:`torch.nn.EmbeddingBag` when attempting to differentiate an MPS tensor
+         * :func:`torch.Tensor.resize_` when called with a quantized tensor

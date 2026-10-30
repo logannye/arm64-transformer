@@ -1,0 +1,201 @@
+{
+  "admission_stream_opened": false,
+  "complete": true,
+  "dependency_contract": {
+    "historical_joint_environment_qualified": false,
+    "name": "reuse-mlx-dependencies-with-patched-torch-numpy126-overlay-v2",
+    "numpy": "1.26.4",
+    "previous_selected_torch_numpy": "1.26.4",
+    "prior_probe_sha256": "7dfb7b25a3bf1c1b824ce4e35524bd63801ab1d0bc1dc3142b46510a5c92a9b7",
+    "prior_probe_source": "work/gpu-v4-owned/failed-runtime-probe-v1/runtime_probe.py",
+    "retained_failed_attempt": "work/gpu-v4-owned/joint-runtime-v1",
+    "shadowed_mlx_environment_numpy": "2.2.6",
+    "stock_torch_distribution_present_but_shadowed": "2.14.1"
+  },
+  "driver_sha256": "2156caa15e04d6b6bb942ce128e4571ec397b0e8b911a6ec497402b566887e8f",
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "fresh_process_comparison_contract": "owned-runtime-single-compiled-node-alpha-v1",
+  "fresh_process_comparisons": [
+    {
+      "all_non_graph_fields_exact": true,
+      "contract": "owned-runtime-single-compiled-node-alpha-v1",
+      "engine": "torch",
+      "graph_comparisons": [],
+      "normalized_fields": [],
+      "passed": true,
+      "raw_graphs_preserved": true,
+      "raw_probe_json_equal": true,
+      "tensor_output_hashes_compared_exactly": true
+    },
+    {
+      "all_non_graph_fields_exact": true,
+      "contract": "owned-runtime-single-compiled-node-alpha-v1",
+      "engine": "mlx",
+      "graph_comparisons": [
+        {
+          "canonical_graph_dot": "digraph {\n{ rank=source; \"A\"; }\n{ rank=source; \"B\"; }\n{ rank=source; \"C\"; }\n{ rank=source; \"D\"; }\n{ compiled_node [label =\"CompiledBroadcastMultiplyAddBroadcastMaximum\", shape=rectangle]; }\n\"A\" -> compiled_node\n\"B\" -> compiled_node\n\"C\" -> compiled_node\n\"D\" -> compiled_node\n{ rank=sink; \"E\"; }\ncompiled_node -> \"E\"\n}",
+          "canonical_graph_sha256": "c58109ed047d97af22ea8bee1f225b30574b0dbe8c63b363314e2e0dc8dcd084",
+          "raw_graph_sha256": "6d798e2d1e0dd1e17903cea53302bd63e5e3c5516db6c111ae8d7b4b692be10e",
+          "raw_node_id": "37522885400"
+        },
+        {
+          "canonical_graph_dot": "digraph {\n{ rank=source; \"A\"; }\n{ rank=source; \"B\"; }\n{ rank=source; \"C\"; }\n{ rank=source; \"D\"; }\n{ compiled_node [label =\"CompiledBroadcastMultiplyAddBroadcastMaximum\", shape=rectangle]; }\n\"A\" -> compiled_node\n\"B\" -> compiled_node\n\"C\" -> compiled_node\n\"D\" -> compiled_node\n{ rank=sink; \"E\"; }\ncompiled_node -> \"E\"\n}",
+          "canonical_graph_sha256": "c58109ed047d97af22ea8bee1f225b30574b0dbe8c63b363314e2e0dc8dcd084",
+          "raw_graph_sha256": "e27dd0152e47e6c4e483260284e89519de457641fd1376e552ab78ba3fb69982",
+          "raw_node_id": "44004866584"
+        }
+      ],
+      "normalized_fields": [
+        "compilation.graph_dot",
+        "compilation.graph_sha256"
+      ],
+      "passed": true,
+      "raw_graphs_preserved": true,
+      "raw_probe_json_equal": false,
+      "tensor_output_hashes_compared_exactly": true
+    }
+  ],
+  "fresh_process_tensor_and_graph_structure_equality": true,
+  "historical_standard_study_unchanged": true,
+  "identities": {
+    "mlx": {
+      "base": "a21f892a6e8e83afb117cef1d1ceae3e82f48c32",
+      "mode": "jit-on",
+      "runtime_manifest_sha256": "97cb2ade3efa1364ed7458e99c41367f6674ee6d199ee2d05ba3934bbadfe200",
+      "variant": "patched"
+    },
+    "torch_cpu": {
+      "runtime_manifest_sha256": "5c5165860d484250101a150917277b8c85506bccc6323b5a3d6d6c28b7d333d5",
+      "source_revision": "71d2a08507ab47dd6b2fa9b66319d17ce2377de4"
+    },
+    "torch_mps": {
+      "runtime_manifest_sha256": "5c5165860d484250101a150917277b8c85506bccc6323b5a3d6d6c28b7d333d5",
+      "source_revision": "71d2a08507ab47dd6b2fa9b66319d17ce2377de4"
+    }
+  },
+  "passed": true,
+  "planned_workers": [
+    {
+      "engine": "torch",
+      "process_index": 0
+    },
+    {
+      "engine": "torch",
+      "process_index": 1
+    },
+    {
+      "engine": "mlx",
+      "process_index": 0
+    },
+    {
+      "engine": "mlx",
+      "process_index": 1
+    }
+  ],
+  "protocol": "gpu-v4-owned-development-v1",
+  "schema": "gpu-owned-joint-runtime-probe-v1",
+  "scope": "Joint import, native origin and dyadic GPU execution; no model qualification or timing",
+  "workers": [
+    {
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/runtime_probe.py",
+        "--workspace",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/joint-runtime-v4/torch-p0",
+        "--worker",
+        "torch",
+        "--process-index",
+        "0",
+        "--expected-driver-sha256",
+        "2156caa15e04d6b6bb942ce128e4571ec397b0e8b911a6ec497402b566887e8f"
+      ],
+      "engine": "torch",
+      "passed": true,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/joint-runtime-v4/torch-p0/result.json",
+      "process_index": 0,
+      "returncode": 0,
+      "sha256": "b3d6a2be4da56b3a95522d32b9213fefa652c42a9f581b56e3ee66e047f9ce24"
+    },
+    {
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/runtime_probe.py",
+        "--workspace",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/joint-runtime-v4/torch-p1",
+        "--worker",
+        "torch",
+        "--process-index",
+        "1",
+        "--expected-driver-sha256",
+        "2156caa15e04d6b6bb942ce128e4571ec397b0e8b911a6ec497402b566887e8f"
+      ],
+      "engine": "torch",
+      "passed": true,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/joint-runtime-v4/torch-p1/result.json",
+      "process_index": 1,
+      "returncode": 0,
+      "sha256": "17d1b5c77380e5b09b286f5ab3130556a5cf71779db8e13f69058f7f2c4571bd"
+    },
+    {
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/runtime_probe.py",
+        "--workspace",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/joint-runtime-v4/mlx-p0",
+        "--worker",
+        "mlx",
+        "--process-index",
+        "0",
+        "--expected-driver-sha256",
+        "2156caa15e04d6b6bb942ce128e4571ec397b0e8b911a6ec497402b566887e8f"
+      ],
+      "engine": "mlx",
+      "passed": true,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/joint-runtime-v4/mlx-p0/result.json",
+      "process_index": 0,
+      "returncode": 0,
+      "sha256": "7456ad98873c29e98f433f912fcb07bdc6484c96ed95bffc66868d7b4df381b2"
+    },
+    {
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/runtime_probe.py",
+        "--workspace",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/joint-runtime-v4/mlx-p1",
+        "--worker",
+        "mlx",
+        "--process-index",
+        "1",
+        "--expected-driver-sha256",
+        "2156caa15e04d6b6bb942ce128e4571ec397b0e8b911a6ec497402b566887e8f"
+      ],
+      "engine": "mlx",
+      "passed": true,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/joint-runtime-v4/mlx-p1/result.json",
+      "process_index": 1,
+      "returncode": 0,
+      "sha256": "6bf66465dfad441aad0a8d9b10ff6858e97e6ad589b780b4fbeb5e210b843e91"
+    }
+  ]
+}

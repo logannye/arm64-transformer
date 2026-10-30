@@ -1,0 +1,14 @@
+{
+  "case": {
+    "dtype": "bfloat16",
+    "layout": "outer",
+    "operation": "bmm",
+    "shape": [
+      2,
+      2,
+      2,
+      2
+    ]
+  },
+  "complete": false
+}

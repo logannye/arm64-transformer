@@ -1,0 +1,428 @@
+{
+  "admission_stream_opened": false,
+  "authentication": {
+    "dependency_contract": {
+      "historical_joint_environment_qualified": false,
+      "name": "reuse-mlx-dependencies-with-patched-torch-numpy126-overlay-v2",
+      "numpy": "1.26.4",
+      "previous_selected_torch_numpy": "1.26.4",
+      "prior_probe_sha256": "7dfb7b25a3bf1c1b824ce4e35524bd63801ab1d0bc1dc3142b46510a5c92a9b7",
+      "prior_probe_source": "work/gpu-v4-owned/failed-runtime-probe-v1/runtime_probe.py",
+      "retained_failed_attempt": "work/gpu-v4-owned/joint-runtime-v1",
+      "shadowed_mlx_environment_numpy": "2.2.6",
+      "stock_torch_distribution_present_but_shadowed": "2.14.1"
+    },
+    "identities": {
+      "mlx": {
+        "base": "a21f892a6e8e83afb117cef1d1ceae3e82f48c32",
+        "mode": "jit-on",
+        "runtime_manifest_sha256": "97cb2ade3efa1364ed7458e99c41367f6674ee6d199ee2d05ba3934bbadfe200",
+        "variant": "patched"
+      },
+      "torch_cpu": {
+        "runtime_manifest_sha256": "5c5165860d484250101a150917277b8c85506bccc6323b5a3d6d6c28b7d333d5",
+        "source_revision": "71d2a08507ab47dd6b2fa9b66319d17ce2377de4"
+      },
+      "torch_mps": {
+        "runtime_manifest_sha256": "5c5165860d484250101a150917277b8c85506bccc6323b5a3d6d6c28b7d333d5",
+        "source_revision": "71d2a08507ab47dd6b2fa9b66319d17ce2377de4"
+      }
+    },
+    "numpy_overlay": {
+      "link": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/runtime-numpy126-overlay-v2/numpy",
+      "link_stat": {
+        "st_ctime_ns": 1793378010224860442,
+        "st_dev": 16777234,
+        "st_ino": 298752415,
+        "st_mode": 41453,
+        "st_mtime_ns": 1793378010224836525
+      },
+      "native_binaries_copied": false,
+      "package_manager_used": false,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/runtime-numpy126-overlay-v2",
+      "target": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/runtime-env/lib/python3.12/site-packages/numpy"
+    },
+    "pinned_files": {
+      "/Users/logannye/.local/share/uv/python/cpython-3.12.13-macos-aarch64-none/bin/python3.12": {
+        "bytes": 49968,
+        "sha256": "e2605291e058fdbe3102e8185d0ac5fe0e063398de617010a6af3a42a78f05e3"
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/runtime_probe.py": {
+        "bytes": 32783,
+        "sha256": "2156caa15e04d6b6bb942ce128e4571ec397b0e8b911a6ec497402b566887e8f"
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/transformer/gpu_mlx_compile.py": {
+        "bytes": 3454,
+        "sha256": "6029935a51aeb76707828270b430dc7f4f5374276b96c574de847c30c79ffa6d"
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/operator-bench-release-v1/operator-manifest-v1.json": {
+        "bytes": 25343848,
+        "sha256": "79f8fc4b53d3918226ad37e96287e22cff4d2fd1e57ecb961f9771b22da202d8"
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/release-40978071574/bundles/patched-jit-on/MANIFEST.json": {
+        "bytes": 247963,
+        "sha256": "97cb2ade3efa1364ed7458e99c41367f6674ee6d199ee2d05ba3934bbadfe200"
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/release-40978071574/mlx-release-patched-jit-on-macos14-arm64-cp312.tar.gz": {
+        "bytes": 15390369,
+        "sha256": "f2045a87c87963a82ff95884e27b73e100c5defee37c7289efa9feaaa242003d"
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/release-40978071574/publication-files.json": {
+        "bytes": 18208,
+        "sha256": "50b7ede6889a68b0a5e6d49fc28bfcab68f2061a2e3e31488183433d6f0e64a2"
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/pytorch-integrated-runtime.tar.gz": {
+        "bytes": 116647267,
+        "sha256": "e0d82f7dfa61da87ef59abceaf5a7fa2030f20178f08f4ae1b456249930620de"
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/receipt.json": {
+        "bytes": 168452,
+        "sha256": "6e47533073c68ba5cd54a0e8de14d06d616b8e495281403deb3eba09711fa338"
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/artifact/wheels/numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl": {
+        "bytes": 13685868,
+        "sha256": "03a8c78d01d9781b28a6989f6fa1bb2c4f2d51201cf99d3dd875df6fbd96b23b"
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/runtime-manifest.json": {
+        "bytes": 2668023,
+        "sha256": "5c5165860d484250101a150917277b8c85506bccc6323b5a3d6d6c28b7d333d5"
+      }
+    },
+    "scope_limits": [
+      "CPython executable is bound; its base libpython/stdlib is not inventoried here.",
+      "System framework bytes are not independently bound in this development smoke check.",
+      "Only this driver and the named compilation helper are bound project sources.",
+      "Project root is on the import path; the entire project tree is not authenticated."
+    ],
+    "trees": {
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/runtime-numpy126-overlay-v2/numpy-1.26.4.dist-info": {
+        "bytes": 182570,
+        "files": 5,
+        "inventory_sha256": "ccbf6fde014c44ec23c59757d78d83f55d7d476449cdba63c03859d9dcadde4f"
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/release-40978071574/bundles/patched-jit-on": {
+        "bytes": 47940121,
+        "files": 1295,
+        "inventory_sha256": "ea17274fd3f5a84f871d8ca2c431e2702c9d1e5f6c228a054acdad65993c9636"
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/lib/python3.12/site-packages": {
+        "bytes": 2146594919,
+        "files": 45981,
+        "inventory_sha256": "7f21881311d71f087c7d63ee8be5d1b01f7c18097306a804b8ca73a7e4335cca"
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime": {
+        "bytes": 534521394,
+        "files": 15707,
+        "inventory_sha256": "1a616cea7e310ef7c3237806c1d7b8063c367c6ce79578d4e2f4237dbfe0b3dd"
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/runtime-env/lib/python3.12/site-packages/numpy": {
+        "bytes": 45209250,
+        "files": 785,
+        "inventory_sha256": "3cabe9b71b5ee2f0ad5e39be9f2671502523023bb8f03c6306451294def36b0a"
+      }
+    },
+    "workspace": "/Users/logannye/Documents/Codex/2026-10-28/we-x20"
+  },
+  "complete": true,
+  "deterministic_mode_restored": true,
+  "diagnostic_file": {
+    "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/summary.json",
+    "sha256": "72a7a32e3321f503163e57efdd13f1b7ed3355be11edd5689a56eb6faecc3014"
+  },
+  "diagnostic_summary": {
+    "all_dual_fp64_pass": true,
+    "cases": 40,
+    "cpu_mps_tolerance_failures": 120,
+    "cpu_serial_order_disagreements": 0,
+    "mps_nonrepeatable_operation_cases": 0
+  },
+  "execution_integrity_passed": true,
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "numpy_after": {
+    "metadata_matches": true,
+    "package": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/runtime-env/lib/python3.12/site-packages/numpy",
+    "version": "1.26.4"
+  },
+  "numpy_before": {
+    "metadata_matches": true,
+    "package": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/runtime-env/lib/python3.12/site-packages/numpy",
+    "version": "1.26.4"
+  },
+  "pid": 3562,
+  "plan_sha256": "c5cd2c76385c72b841bbc7d370dd84f0a5c6f75865044e22ec78bf8922bbccf6",
+  "postflight": {
+    "all_declared_input_bytes_and_file_identities_unchanged": true,
+    "passed": true,
+    "trees": {
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/runtime-numpy126-overlay-v2/numpy-1.26.4.dist-info": {
+        "bytes": 182570,
+        "files": 5
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/release-40978071574/bundles/patched-jit-on": {
+        "bytes": 47940121,
+        "files": 1295
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/lib/python3.12/site-packages": {
+        "bytes": 2146594919,
+        "files": 45981
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime": {
+        "bytes": 534521394,
+        "files": 15707
+      },
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/runtime-env/lib/python3.12/site-packages/numpy": {
+        "bytes": 45209250,
+        "files": 785
+      }
+    }
+  },
+  "process_index": 1,
+  "protocol": "gpu-owned-half-index-execution-v1",
+  "raw_files": [
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-00.npz",
+      "sha256": "cb1165af7394b960962a4a653e7d80ab19f092dc16b3790c57334179a78fb1e2"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-01.npz",
+      "sha256": "cb1165af7394b960962a4a653e7d80ab19f092dc16b3790c57334179a78fb1e2"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-02.npz",
+      "sha256": "cb1165af7394b960962a4a653e7d80ab19f092dc16b3790c57334179a78fb1e2"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-03.npz",
+      "sha256": "cb1165af7394b960962a4a653e7d80ab19f092dc16b3790c57334179a78fb1e2"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-04.npz",
+      "sha256": "3012f988e6df703db01ebe846bc821e65a7c3223f16812992b3ac6105c00a336"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-05.npz",
+      "sha256": "3012f988e6df703db01ebe846bc821e65a7c3223f16812992b3ac6105c00a336"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-06.npz",
+      "sha256": "3012f988e6df703db01ebe846bc821e65a7c3223f16812992b3ac6105c00a336"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-07.npz",
+      "sha256": "3012f988e6df703db01ebe846bc821e65a7c3223f16812992b3ac6105c00a336"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-08.npz",
+      "sha256": "03205af4f6a70431a26e51535e25286dd68c6794f71844df4c1f45765ec26204"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-09.npz",
+      "sha256": "03205af4f6a70431a26e51535e25286dd68c6794f71844df4c1f45765ec26204"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-10.npz",
+      "sha256": "e968745fba4d9944c8a37d20fa3646e6b85e094e50bebdd525c4a179d6ba0d83"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-11.npz",
+      "sha256": "e968745fba4d9944c8a37d20fa3646e6b85e094e50bebdd525c4a179d6ba0d83"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-12.npz",
+      "sha256": "fd3c30b35f02627719d839602de5cae793ca64f37c9fa6218a6ae6b829d42a15"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-13.npz",
+      "sha256": "fd3c30b35f02627719d839602de5cae793ca64f37c9fa6218a6ae6b829d42a15"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-14.npz",
+      "sha256": "b1af786e0a985f1bdead534556c81bed3c416aa47ab52ca394c7b24fe880086f"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-15.npz",
+      "sha256": "b1af786e0a985f1bdead534556c81bed3c416aa47ab52ca394c7b24fe880086f"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-16.npz",
+      "sha256": "fe3da73cec2deba56cb2c32eb67b48a4386ea8714a16eb78e8e0fecabe22e1d2"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-17.npz",
+      "sha256": "fe3da73cec2deba56cb2c32eb67b48a4386ea8714a16eb78e8e0fecabe22e1d2"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-18.npz",
+      "sha256": "ca035fb3f17ebfa08ec550fcccb762d59d5bebe4796b683ec09005b3780ec55b"
+    },
+    {
+      "bytes": 7950,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-19.npz",
+      "sha256": "ca035fb3f17ebfa08ec550fcccb762d59d5bebe4796b683ec09005b3780ec55b"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-20.npz",
+      "sha256": "d7c79109b09b255a001045dae802b9a6822504c5c00d3449151029c62fb84564"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-21.npz",
+      "sha256": "d7c79109b09b255a001045dae802b9a6822504c5c00d3449151029c62fb84564"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-22.npz",
+      "sha256": "d7c79109b09b255a001045dae802b9a6822504c5c00d3449151029c62fb84564"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-23.npz",
+      "sha256": "d7c79109b09b255a001045dae802b9a6822504c5c00d3449151029c62fb84564"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-24.npz",
+      "sha256": "f4d98a4defeba6cefa5721d3f065de88c2a4555f8df223fb27f9b43c00f1915e"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-25.npz",
+      "sha256": "f4d98a4defeba6cefa5721d3f065de88c2a4555f8df223fb27f9b43c00f1915e"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-26.npz",
+      "sha256": "f4d98a4defeba6cefa5721d3f065de88c2a4555f8df223fb27f9b43c00f1915e"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-27.npz",
+      "sha256": "f4d98a4defeba6cefa5721d3f065de88c2a4555f8df223fb27f9b43c00f1915e"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-28.npz",
+      "sha256": "d774739fc18408826873d293f35a359d28ed496e70034142c7fdfc41193daddb"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-29.npz",
+      "sha256": "d774739fc18408826873d293f35a359d28ed496e70034142c7fdfc41193daddb"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-30.npz",
+      "sha256": "d774739fc18408826873d293f35a359d28ed496e70034142c7fdfc41193daddb"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-31.npz",
+      "sha256": "d774739fc18408826873d293f35a359d28ed496e70034142c7fdfc41193daddb"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-32.npz",
+      "sha256": "c1bf740950b2869d6b4b6012c213a658f2e7f2d4fb097b21328a056f2d3c405e"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-33.npz",
+      "sha256": "c1bf740950b2869d6b4b6012c213a658f2e7f2d4fb097b21328a056f2d3c405e"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-34.npz",
+      "sha256": "c1bf740950b2869d6b4b6012c213a658f2e7f2d4fb097b21328a056f2d3c405e"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-35.npz",
+      "sha256": "c1bf740950b2869d6b4b6012c213a658f2e7f2d4fb097b21328a056f2d3c405e"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-36.npz",
+      "sha256": "451d80fd0bd02f587a55b3cc218dbcc2788f003034fdc98c984709eb74e52ee3"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-37.npz",
+      "sha256": "451d80fd0bd02f587a55b3cc218dbcc2788f003034fdc98c984709eb74e52ee3"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-38.npz",
+      "sha256": "451d80fd0bd02f587a55b3cc218dbcc2788f003034fdc98c984709eb74e52ee3"
+    },
+    {
+      "bytes": 11674,
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/case-39.npz",
+      "sha256": "451d80fd0bd02f587a55b3cc218dbcc2788f003034fdc98c984709eb74e52ee3"
+    }
+  ],
+  "reference_agreement_passed": true,
+  "retained_case_summary": {
+    "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/cases/summary.json",
+    "sha256": "72a7a32e3321f503163e57efdd13f1b7ed3355be11edd5689a56eb6faecc3014"
+  },
+  "schema": "gpu-owned-half-index-worker-v1",
+  "scope": "Failure localization only; strict study requirements remain unchanged",
+  "sources": {
+    "half_index_diagnostic.py": "1d6b9ef81dbea40dc7645c59cc55658365435020ba8376d145728e46089d49b3",
+    "run_half_diagnostic.py": "ee234c54efb8cb0c4e3f21399d53288ee2c16fa675471b8f777725ad2990298e",
+    "runtime_probe.py": "2156caa15e04d6b6bb942ce128e4571ec397b0e8b911a6ec497402b566887e8f"
+  },
+  "torch_after": {
+    "build_configuration": "PyTorch built with:\n  - GCC 4.2\n  - C++ Version: 202002\n  - clang 21.0.0\n  - OpenMP 202011\n  - LAPACK is enabled (usually provided by MKL)\n  - NNPACK is enabled\n  - CPU capability usage: DEFAULT\n  - Build settings: BLAS_INFO=accelerate, BUILD_TYPE=Release, COMMIT_SHA=71d2a08507ab47dd6b2fa9b66319d17ce2377de4, CUDA_FLAGS= -DLIBCUDACXX_ENABLE_SIMPLIFIED_COMPLEX_OPERATIONS -Xfatbin -compress-all  -Wno-deprecated-gpu-targets --expt-extended-lambda -DCUB_WRAPPED_NAMESPACE=at_cuda_detail -DDISABLE_CUSPARSE_DEPRECATED -DCUDA_HAS_FP16=1 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -DC10_NODEPRECATED, CXX_COMPILER=/Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++, CXX_FLAGS= -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DUSE_PYTORCH_QNNPACK -DAT_BUILD_ARM_VEC256_WITH_SLEEF -DUSE_PYTORCH_METAL -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -DC10_NODEPRECATED -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=braced-scalar-init -Werror=range-loop-construct -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-unknown-pragmas -Wno-unused-parameter -Wno-strict-overflow -Wno-strict-aliasing -Wvla-extension -Wsuggest-override -Wnewline-eof -Winconsistent-missing-override -Winconsistent-missing-destructor-override -Wno-pass-failed -Wno-error=old-style-cast -Wconstant-conversion -Qunused-arguments -faligned-new -Werror -fno-math-errno -fno-trapping-math -Werror=format -fclang-abi-compat=17 -DUSE_MPS -Wno-missing-braces, LAPACK_INFO=accelerate, TORCH_VERSION=2.16.0, USE_CUDA=0, USE_CUDNN=OFF, USE_CUSPARSELT=OFF, USE_EIGEN_FOR_BLAS=ON, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_GLOO=OFF, USE_HIPSPARSELT=OFF, USE_MKL=OFF, USE_MKLDNN=OFF, USE_MPI=OFF, USE_NCCL=OFF, USE_NNPACK=ON, USE_OPENMP=1, USE_ROCM=OFF, USE_ROCM_KERNEL_ASSERT=OFF, USE_XCCL=OFF, USE_XPU=OFF, \n",
+    "extension": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/_C.cpython-312-darwin.so",
+    "module": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/__init__.py",
+    "module_count": 959,
+    "native_libraries": [
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/lib/libc10.dylib",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/lib/libomp.dylib",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/lib/libshm.dylib",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/lib/libtorch.dylib",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/lib/libtorch_cpu.dylib",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/lib/libtorch_global_deps.dylib",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/lib/libtorch_python.dylib"
+    ],
+    "version": "2.16.0a0+git71d2a08"
+  },
+  "torch_before": {
+    "build_configuration": "PyTorch built with:\n  - GCC 4.2\n  - C++ Version: 202002\n  - clang 21.0.0\n  - OpenMP 202011\n  - LAPACK is enabled (usually provided by MKL)\n  - NNPACK is enabled\n  - CPU capability usage: DEFAULT\n  - Build settings: BLAS_INFO=accelerate, BUILD_TYPE=Release, COMMIT_SHA=71d2a08507ab47dd6b2fa9b66319d17ce2377de4, CUDA_FLAGS= -DLIBCUDACXX_ENABLE_SIMPLIFIED_COMPLEX_OPERATIONS -Xfatbin -compress-all  -Wno-deprecated-gpu-targets --expt-extended-lambda -DCUB_WRAPPED_NAMESPACE=at_cuda_detail -DDISABLE_CUSPARSE_DEPRECATED -DCUDA_HAS_FP16=1 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -DC10_NODEPRECATED, CXX_COMPILER=/Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++, CXX_FLAGS= -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -DNDEBUG -DUSE_KINETO -DUSE_PYTORCH_QNNPACK -DAT_BUILD_ARM_VEC256_WITH_SLEEF -DUSE_PYTORCH_METAL -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -DC10_NODEPRECATED -Wall -Wextra -Werror=return-type -Werror=non-virtual-dtor -Werror=braced-scalar-init -Werror=range-loop-construct -Werror=bool-operation -Wnarrowing -Wno-missing-field-initializers -Wno-unknown-pragmas -Wno-unused-parameter -Wno-strict-overflow -Wno-strict-aliasing -Wvla-extension -Wsuggest-override -Wnewline-eof -Winconsistent-missing-override -Winconsistent-missing-destructor-override -Wno-pass-failed -Wno-error=old-style-cast -Wconstant-conversion -Qunused-arguments -faligned-new -Werror -fno-math-errno -fno-trapping-math -Werror=format -fclang-abi-compat=17 -DUSE_MPS -Wno-missing-braces, LAPACK_INFO=accelerate, TORCH_VERSION=2.16.0, USE_CUDA=0, USE_CUDNN=OFF, USE_CUSPARSELT=OFF, USE_EIGEN_FOR_BLAS=ON, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_GLOO=OFF, USE_HIPSPARSELT=OFF, USE_MKL=OFF, USE_MKLDNN=OFF, USE_MPI=OFF, USE_NCCL=OFF, USE_NNPACK=ON, USE_OPENMP=1, USE_ROCM=OFF, USE_ROCM_KERNEL_ASSERT=OFF, USE_XCCL=OFF, USE_XPU=OFF, \n",
+    "extension": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/_C.cpython-312-darwin.so",
+    "module": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/__init__.py",
+    "module_count": 729,
+    "native_libraries": [
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/lib/libc10.dylib",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/lib/libomp.dylib",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/lib/libshm.dylib",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/lib/libtorch.dylib",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/lib/libtorch_cpu.dylib",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/lib/libtorch_global_deps.dylib",
+      "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/lib/libtorch_python.dylib"
+    ],
+    "version": "2.16.0a0+git71d2a08"
+  }
+}

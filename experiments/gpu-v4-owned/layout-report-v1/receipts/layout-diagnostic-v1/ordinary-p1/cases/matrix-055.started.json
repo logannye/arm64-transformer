@@ -1,0 +1,13 @@
+{
+  "case": {
+    "dtype": "bfloat16",
+    "layout": "inner",
+    "operation": "mm",
+    "shape": [
+      33,
+      17,
+      49
+    ]
+  },
+  "complete": false
+}
