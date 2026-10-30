@@ -1,0 +1,60 @@
+{
+  "checks": {
+    "all_proof_bytes_sha_and_executable_bits_equal": true,
+    "all_stream_exit_bytes_sha_and_no_problem": true,
+    "canonical_alias_count": 201,
+    "canonical_payload_count": 64,
+    "catalog_urls_and_download_ordinals_equal": true,
+    "exact_proof_directory_inventory": true,
+    "exact_public_asset_bytes": 16897047897,
+    "exact_public_asset_count": 92,
+    "five_download_receipt_counts": [
+      16,
+      2,
+      58,
+      14,
+      2
+    ],
+    "formal_admission_unopened": true,
+    "formal_fits": 0,
+    "historical_false_flags_preserved": true,
+    "later_catalog_commit_distinguished_from_tested_source": true,
+    "local_markdown_links_resolve": 16,
+    "package_mapping_file_counts": [
+      14,
+      3,
+      8
+    ],
+    "package_verifier_cli_matches_preserved_source": true,
+    "private_frameworks_not_admitted": true,
+    "proof_copy_bytes": 2056008,
+    "proof_copy_count": 574,
+    "public_snapshot_ids_names_sizes_digests_equal": true,
+    "same_tested_source_tag_push_ci_pr_ci": "695afbfebcae976e315125f9cbddbf4186dd2fe2",
+    "source_inventory_files": 586,
+    "zero_supplement_differing_replacements": true
+  },
+  "complete": true,
+  "created_utc": "2026-10-30T11:02:44.854530+00:00",
+  "findings": [],
+  "limits": [
+    "This is a metadata/copy review of the retained completed download proofs, not an additional remote download.",
+    "Public release state is scoped to the original recorded final public inventory time.",
+    "No scientific failure or admission requirement is changed by publication integrity."
+  ],
+  "passed": true,
+  "review_scope": "Independent source/metadata and exact small-copy review; no network, asset payload rehash, numerical execution, native build, or source edits.",
+  "reviewed_files": [
+    {
+      "bytes": 477341,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/PUBLICATION.json",
+      "sha256": "8e90e584de11602081f5ef10cceffacadb11ec4eb25a634f7f0279d4729ae209"
+    },
+    {
+      "bytes": 8809,
+      "path": "outputs/arm64-transformer/experiments/upstream-integration-v2/PUBLICATION.md",
+      "sha256": "001800401cd58d5443ad28cdc298f2d2d285f2a3df540dd3ce73860f3606287e"
+    }
+  ],
+  "schema": "publication-catalog-independent-review-v1"
+}

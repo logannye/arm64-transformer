@@ -1,0 +1,55 @@
+{
+  "after": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T05:35:12Z",
+    "digest": "sha256:03a8c78d01d9781b28a6989f6fa1bb2c4f2d51201cf99d3dd875df6fbd96b23b",
+    "id": 691062150,
+    "label": "",
+    "name": "dependency-03a8c78d01d9781b-x000-numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl",
+    "node_id": "RA_kwDOVbC4ds4pMMWG",
+    "size": 13685868,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T05:35:13Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062150"
+  },
+  "before": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T05:35:12Z",
+    "digest": "sha256:03a8c78d01d9781b28a6989f6fa1bb2c4f2d51201cf99d3dd875df6fbd96b23b",
+    "id": 691062150,
+    "label": "",
+    "name": "dependency-03a8c78d01d9781b-x000-numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl",
+    "node_id": "RA_kwDOVbC4ds4pMMWG",
+    "size": 13685868,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T05:35:13Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691062150"
+  },
+  "expected": {
+    "asset_id": 691062150,
+    "bytes": 13685868,
+    "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl",
+    "name": "dependency-03a8c78d01d9781b-x000-numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl",
+    "sha256": "03a8c78d01d9781b28a6989f6fa1bb2c4f2d51201cf99d3dd875df6fbd96b23b"
+  },
+  "finished_utc": "2026-10-30T05:41:03.221559+00:00",
+  "ordinal": 0,
+  "started_utc": "2026-10-30T05:41:00.969154+00:00",
+  "status": "passed",
+  "stream": {
+    "accept": "application/octet-stream",
+    "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/691062150",
+    "argument_count": 6,
+    "executable": "gh",
+    "payload_copied_to_disk": false,
+    "problem": null,
+    "raw_stderr_retained": false,
+    "returncode": 0,
+    "seconds": 1.4702622923068702,
+    "stderr_bytes": 0,
+    "stderr_markers": [],
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 13685868,
+    "stdout_sha256": "03a8c78d01d9781b28a6989f6fa1bb2c4f2d51201cf99d3dd875df6fbd96b23b"
+  }
+}

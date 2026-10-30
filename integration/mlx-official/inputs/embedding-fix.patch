@@ -1,0 +1,832 @@
+diff --git a/mlx/backend/metal/CMakeLists.txt b/mlx/backend/metal/CMakeLists.txt
+index cccaad8a5c23a1be98e6e5898a4966e0c4b60438..7481ca6079c2ad7149a8764df2ad4b9f2e016218 100644
+--- a/mlx/backend/metal/CMakeLists.txt
++++ b/mlx/backend/metal/CMakeLists.txt
+@@ -28,6 +28,7 @@ make_jit_source(binary_ops)
+ make_jit_source(ternary_ops)
+ make_jit_source(reduce_utils kernels/atomic.h kernels/reduction/ops.h)
+ make_jit_source(indexing/scatter kernels/indexing/indexing.h)
++make_jit_source(indexing/scatter_slices kernels/indexing/indexing.h)
+ make_jit_source(indexing/masked_scatter)
+ make_jit_source(indexing/gather kernels/indexing/indexing.h)
+ make_jit_source(indexing/gather_front kernels/indexing/indexing.h)
+diff --git a/mlx/backend/metal/indexing.cpp b/mlx/backend/metal/indexing.cpp
+index 8f4c46a17955a8fde48791b54fadd9d5d3dcedb5..4c4581cac7867c7c39a7963e940d083b9af221c9 100644
+--- a/mlx/backend/metal/indexing.cpp
++++ b/mlx/backend/metal/indexing.cpp
+@@ -12,6 +12,7 @@
+ #include "mlx/backend/metal/jit/includes.h"
+ #include "mlx/backend/metal/jit/indexing.h"
+ #include "mlx/backend/metal/kernels.h"
++#include "mlx/backend/metal/sort.h"
+ #include "mlx/backend/metal/utils.h"
+ #include "mlx/dtype.h"
+ #include "mlx/primitives.h"
+@@ -235,6 +236,108 @@ void Gather::eval_gpu(const std::vector<array>& inputs, array& out) {
+   compute_encoder.dispatch_threads(grid_dims, group_dims);
+ }
+ 
++namespace {
++
++bool is_complete_slice_sum(
++    const std::vector<array>& inputs,
++    const array& out,
++    const std::vector<int>& axes,
++    Scatter::ReduceType reduction) {
++  // Merge sort uses signed int tile offsets. Other scatters keep their path.
++  if (reduction != Scatter::Sum || axes.size() != 1 ||
++      !issubdtype(out.dtype(), inexact) ||
++      inputs[1].size() > (size_t{1} << 30)) {
++    return false;
++  }
++  int idx_ndim = inputs[1].ndim();
++  for (int i = 0; i < out.ndim(); ++i) {
++    int expected = i == axes[0] ? 1 : out.shape(i);
++    if (inputs.back().shape(idx_ndim + i) != expected) {
++      return false;
++    }
++  }
++  return true;
++}
++
++void scatter_slices_sum_gpu(
++    const std::vector<array>& inputs,
++    array& out,
++    int axis,
++    const Stream& s) {
++  auto& d = metal::device(s.device);
++  auto& encoder = metal::get_command_encoder(s);
++  array indices = inputs[1];
++  array updates = inputs.back();
++  if (!indices.flags().row_contiguous) {
++    indices = contiguous_copy_gpu(indices, s);
++    encoder.add_temporary(indices);
++  }
++  if (!updates.flags().row_contiguous) {
++    updates = contiguous_copy_gpu(updates, s);
++    encoder.add_temporary(updates);
++  }
++
++  uint32_t count = indices.size();
++  array keys({static_cast<int>(count)}, uint64, nullptr, {});
++  array order({static_cast<int>(count)}, uint32, nullptr, {});
++  keys.set_data(allocator::malloc(keys.nbytes()));
++  auto keys_name = "scatter_slice_keys_" + type_to_name(indices);
++  auto keys_lib = d.get_library(keys_name, [&]() {
++    std::string source = metal::utils();
++    source += metal::scatter_slices();
++    source += get_template_definition(
++        keys_name, "scatter_slice_keys", get_type_string(indices.dtype()));
++    return source;
++  });
++  auto keys_kernel = d.get_kernel(keys_name, keys_lib);
++  encoder.set_compute_pipeline_state(keys_kernel);
++  encoder.set_input_array(indices, 0);
++  encoder.set_output_array(keys, 1);
++  encoder.set_bytes(out.shape(axis), 2);
++  encoder.dispatch_threads(
++      MTL::Size(count, 1, 1), MTL::Size(std::min<size_t>(count, 256), 1, 1));
++
++  argsort_gpu(keys, order, 0, s);
++
++  bool indexed_rows = count < out.shape(axis);
++  auto sum_name = "scatter_slices_sum_" + type_to_name(out) +
++      (indexed_rows ? "_indexed" : "_dense");
++  auto sum_lib = d.get_library(sum_name, [&]() {
++    std::string source = metal::utils();
++    source += metal::scatter_slices();
++    source += get_template_definition(
++        sum_name,
++        "scatter_slices_sum",
++        get_type_string(out.dtype()),
++        indexed_rows ? "true" : "false");
++    return source;
++  });
++  auto sum_kernel = d.get_kernel(sum_name, sum_lib);
++  size_t slice_size = out.size() / out.shape(axis);
++  size_t trailing_size = 1;
++  for (int i = axis + 1; i < out.ndim(); ++i) {
++    trailing_size *= out.shape(i);
++  }
++  size_t group_size =
++      std::min<size_t>(256, sum_kernel->maxTotalThreadsPerThreadgroup());
++  encoder.set_compute_pipeline_state(sum_kernel);
++  encoder.set_input_array(keys, 0);
++  encoder.set_input_array(order, 1);
++  encoder.set_input_array(updates, 2);
++  encoder.set_output_array(out, 3);
++  encoder.set_bytes(count, 4);
++  encoder.set_bytes(slice_size, 5);
++  encoder.set_bytes(trailing_size, 6);
++  encoder.set_bytes(out.shape(axis), 7);
++  size_t rows = indexed_rows ? count : out.shape(axis);
++  encoder.dispatch_threadgroups(
++      MTL::Size((slice_size + group_size - 1) / group_size, rows, 1),
++      MTL::Size(group_size, 1, 1));
++  encoder.add_temporaries({keys, order});
++}
++
++} // namespace
++
+ void Scatter::eval_gpu(const std::vector<array>& inputs, array& out) {
+   if (size_of(out.dtype()) == 8 &&
+       !(out.dtype() == complex64 && reduce_type_ == Scatter::Sum)) {
+@@ -269,6 +372,10 @@ void Scatter::eval_gpu(const std::vector<array>& inputs, array& out) {
+     return;
+   }
+ 
++  if (is_complete_slice_sum(inputs, out, axes_, reduce_type_)) {
++    return scatter_slices_sum_gpu(inputs, out, axes_[0], stream());
++  }
++
+   // Get stream
+   auto& s = stream();
+   auto& d = metal::device(s.device);
+diff --git a/mlx/backend/metal/jit/includes.h b/mlx/backend/metal/jit/includes.h
+index 8ad0a9ca7c03bebfc0ff32852b5b9eb570efbdf4..1af614cb9f71e71a23cbb915dee7cbe406c8d9ab 100644
+--- a/mlx/backend/metal/jit/includes.h
++++ b/mlx/backend/metal/jit/includes.h
+@@ -11,6 +11,7 @@ const char* ternary_ops();
+ const char* reduce_utils();
+ const char* gather();
+ const char* scatter();
++const char* scatter_slices();
+ const char* masked_scatter();
+ 
+ const char* arange();
+diff --git a/mlx/backend/metal/sort.cpp b/mlx/backend/metal/sort.cpp
+index b38d3ac2bddd3a567fb145b2b432269e4b777678..091257c3590961773c205ff3e0552b81985b06db 100644
+--- a/mlx/backend/metal/sort.cpp
++++ b/mlx/backend/metal/sort.cpp
+@@ -6,6 +6,7 @@
+ #include "mlx/backend/gpu/copy.h"
+ #include "mlx/backend/metal/device.h"
+ #include "mlx/backend/metal/kernels.h"
++#include "mlx/backend/metal/sort.h"
+ #include "mlx/backend/metal/utils.h"
+ #include "mlx/primitives.h"
+ 
+@@ -317,16 +318,15 @@ void gpu_merge_sort(
+ 
+ } // namespace
+ 
+-void ArgSort::eval_gpu(const std::vector<array>& inputs, array& out) {
+-  assert(inputs.size() == 1);
+-
++void argsort_gpu(const array& in, array& out, int axis, const Stream& s) {
+   out.set_data(allocator::malloc(out.nbytes()));
+-
+-  auto& s = stream();
+   auto& d = metal::device(s.device);
+-  auto& in = inputs[0];
++  gpu_merge_sort(s, d, in, out, axis, true);
++}
+ 
+-  gpu_merge_sort(s, d, in, out, axis_, true);
++void ArgSort::eval_gpu(const std::vector<array>& inputs, array& out) {
++  assert(inputs.size() == 1);
++  argsort_gpu(inputs[0], out, axis_, stream());
+ }
+ 
+ void Sort::eval_gpu(const std::vector<array>& inputs, array& out) {
+diff --git a/benchmarks/python/gather_grad_bench.py b/benchmarks/python/gather_grad_bench.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..a92a68b00211d7647755e3e6627a878c8b3de458
+--- /dev/null
++++ b/benchmarks/python/gather_grad_bench.py
+@@ -0,0 +1,110 @@
++# Copyright © 2026 Apple Inc.
++
++"""Compare this script on unchanged and patched MLX builds.
++
++For each build, use the same --vocab, --width, --tokens, --pattern, and --compiled
++arguments. Test both small and large vocabularies, unique and repeated indices,
++and token counts around the sort-block boundary (1023, 1024, 1025). Measurements
++include synchronization, and exclude compilation and fixture generation.
++Include sparse cases with vocabularies 32768, 131072, and 1048576 and widths
++1, 32, and 256, as well as small vocabularies with many repeated indices.
++"""
++
++import argparse
++import hashlib
++import json
++import platform
++import time
++
++import mlx.core as mx
++import numpy as np
++
++
++def main():
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--vocab", type=int, default=128)
++    parser.add_argument("--width", type=int, default=64)
++    parser.add_argument("--tokens", type=int, default=512)
++    parser.add_argument(
++        "--pattern", choices=("unique", "uniform", "same", "skewed"), default="skewed"
++    )
++    parser.add_argument("--compiled", action="store_true")
++    parser.add_argument("--repeats", type=int, default=100)
++    parser.add_argument("--warmup", type=int, default=5)
++    parser.add_argument("--label", default="unspecified-build")
++    args = parser.parse_args()
++    if min(args.vocab, args.width, args.tokens, args.repeats) <= 0 or args.warmup < 0:
++        parser.error("shapes and repeat count must be positive")
++    if args.pattern == "unique" and args.tokens > args.vocab:
++        parser.error("unique indices require tokens <= vocab")
++
++    mx.set_default_device(mx.gpu)
++    rng = np.random.default_rng(817)
++    if args.pattern == "unique":
++        indices_np = rng.permutation(args.vocab)[: args.tokens].astype(np.int32)
++    elif args.pattern == "same":
++        indices_np = np.zeros(args.tokens, np.int32)
++    else:
++        indices_np = rng.integers(0, args.vocab, args.tokens, dtype=np.int32)
++        if args.pattern == "skewed":
++            indices_np[np.arange(args.tokens) % 16 != 0] = 0
++    cotangent_np = rng.normal(size=(args.tokens, args.width)).astype(np.float32)
++    expected = np.zeros((args.vocab, args.width), np.float64)
++    np.add.at(expected, indices_np, cotangent_np)
++    weight = mx.zeros((args.vocab, args.width))
++    indices, cotangent = mx.array(indices_np), mx.array(cotangent_np)
++    mx.eval(weight, indices, cotangent)
++
++    def scatter(w, i, c):
++        return w.at[i].add(c)
++
++    def loss(w, i, c):
++        return (w[i] * c).sum()
++
++    operations = {
++        "scatter_add": scatter,
++        "embedding_value_and_grad": mx.value_and_grad(loss),
++    }
++    result = {
++        "schema": 1,
++        "label": args.label,
++        "mlx_version": mx.__version__,
++        "platform": platform.platform(),
++        "arguments": vars(args),
++        "fixture_sha256": hashlib.sha256(
++            indices_np.tobytes() + cotangent_np.tobytes()
++        ).hexdigest(),
++        "scope": "synchronized operator and autograd calls, not full model training",
++        "measurements": {},
++    }
++    for name, operation in operations.items():
++        if args.compiled:
++            operation = mx.compile(operation)
++        for _ in range(args.warmup):
++            mx.eval(operation(weight, indices, cotangent))
++        samples = []
++        for _ in range(args.repeats):
++            start = time.perf_counter_ns()
++            output = operation(weight, indices, cotangent)
++            mx.eval(output)
++            samples.append((time.perf_counter_ns() - start) / 1e6)
++        hashes, errors = [], []
++        for _ in range(10):
++            output = operation(weight, indices, cotangent)
++            gradient = output[1] if name == "embedding_value_and_grad" else output
++            actual = np.array(gradient)
++            hashes.append(hashlib.sha256(actual.tobytes()).hexdigest())
++            errors.append(float(np.max(np.abs(actual.astype(np.float64) - expected))))
++        result["measurements"][name] = {
++            "samples_ms": samples,
++            "p50_ms": float(np.quantile(samples, 0.5)),
++            "p95_ms": float(np.quantile(samples, 0.95)),
++            "replay_sha256": hashes,
++            "byte_repeatable": len(set(hashes)) == 1,
++            "max_absolute_fp64_errors": errors,
++        }
++    print(json.dumps(result, indent=2))
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/mlx/backend/metal/kernels/indexing/scatter_slices.h b/mlx/backend/metal/kernels/indexing/scatter_slices.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..2d935e54bc625b6c227bd487b067111b02640480
+--- /dev/null
++++ b/mlx/backend/metal/kernels/indexing/scatter_slices.h
+@@ -0,0 +1,82 @@
++// Copyright © 2026 Apple Inc.
++
++#include "mlx/backend/metal/kernels/indexing/indexing.h"
++
++template <typename IdxT>
++[[kernel]] void scatter_slice_keys(
++    const device IdxT* indices,
++    device uint64_t* keys,
++    const constant int& axis_size,
++    uint index [[thread_position_in_grid]]) {
++  auto row = offset_neg_idx(indices[index], axis_size);
++  // The position breaks ties, including positive and negative aliases.
++  keys[index] = (uint64_t(row) << 32) | uint64_t(index);
++}
++
++template <typename T, bool IndexedRows>
++[[kernel]] void scatter_slices_sum(
++    const device uint64_t* keys,
++    const device uint32_t* order,
++    const device T* updates,
++    device T* out,
++    const constant uint& count,
++    const constant size_t& slice_size,
++    const constant size_t& trailing_size,
++    const constant int& axis_size,
++    uint2 group [[threadgroup_position_in_grid]],
++    uint tid [[thread_index_in_threadgroup]],
++    uint2 group_size [[threads_per_threadgroup]]) {
++  threadgroup uint3 bounds;
++  if (tid == 0) {
++    uint row = group.y;
++    uint lo = 0;
++    uint hi = count;
++    bool first = true;
++    if constexpr (IndexedRows) {
++      lo = group.y;
++      row = keys[order[lo]] >> 32;
++      first = lo == 0 || (keys[order[lo - 1]] >> 32) != row;
++    }
++    if (!first) {
++      bounds = uint3(0, 0, row);
++    } else {
++      if constexpr (!IndexedRows) {
++        while (lo < hi) {
++          uint mid = lo + (hi - lo) / 2;
++          if ((keys[order[mid]] >> 32) < row) {
++            lo = mid + 1;
++          } else {
++            hi = mid;
++          }
++        }
++      }
++      bounds.x = lo;
++      hi = count;
++      while (lo < hi) {
++        uint mid = lo + (hi - lo) / 2;
++        if ((keys[order[mid]] >> 32) <= row) {
++          lo = mid + 1;
++        } else {
++          hi = mid;
++        }
++      }
++      bounds.y = lo;
++      bounds.z = row;
++    }
++  }
++  threadgroup_barrier(mem_flags::mem_threadgroup);
++
++  size_t channel = size_t(group.x) * group_size.x + tid;
++  if (channel >= slice_size || bounds.x == bounds.y) {
++    return;
++  }
++  size_t offset =
++      (channel / trailing_size * axis_size + bounds.z) * trailing_size +
++      channel % trailing_size;
++  T value = out[offset];
++  // One writer visits each row's updates in their original logical order.
++  for (uint i = bounds.x; i < bounds.y; ++i) {
++    value = value + updates[size_t(order[i]) * slice_size + channel];
++  }
++  out[offset] = value;
++}
+diff --git a/mlx/backend/metal/sort.h b/mlx/backend/metal/sort.h
+new file mode 100644
+index 0000000000000000000000000000000000000000..3321a50ef77e23ff6fba4ecd5f618dfb63762312
+--- /dev/null
++++ b/mlx/backend/metal/sort.h
+@@ -0,0 +1,12 @@
++// Copyright © 2026 Apple Inc.
++
++#pragma once
++
++#include "mlx/array.h"
++#include "mlx/stream.h"
++
++namespace mlx::core {
++
++void argsort_gpu(const array& in, array& out, int axis, const Stream& s);
++
++} // namespace mlx::core
+diff --git a/python/tests/test_gather_grad.py b/python/tests/test_gather_grad.py
+new file mode 100644
+index 0000000000000000000000000000000000000000..a1180091b4918bec0f4b3e6b5eb31aeab7e1072a
+--- /dev/null
++++ b/python/tests/test_gather_grad.py
+@@ -0,0 +1,413 @@
++# Copyright © 2026 Apple Inc.
++
++import json
++import os
++import subprocess
++import sys
++import unittest
++from itertools import product
++from pathlib import Path
++
++import mlx.core as mx
++import mlx.nn as nn
++import mlx_tests
++import numpy as np
++
++
++def take_reference(shape, indices, cotangent, axis):
++    """Accumulate the supplied (already quantized) cotangent in FP64."""
++    axis %= len(shape)
++    indices = np.asarray(indices)
++    dtype = np.complex128 if np.iscomplexobj(cotangent) else np.float64
++    result = np.zeros(shape, dtype=dtype)
++    permutation = (
++        list(range(axis, axis + indices.ndim))
++        + list(range(axis))
++        + list(range(axis + indices.ndim, cotangent.ndim))
++    )
++    updates = np.transpose(cotangent, permutation).reshape(
++        (indices.size,) + shape[:axis] + shape[axis + 1 :]
++    )
++    np.add.at(np.moveaxis(result, axis, 0), indices.reshape(-1), updates)
++    return result
++
++
++def take_gradient(weight, indices, cotangent, axis=0):
++    return mx.vjp(lambda w: mx.take(w, indices, axis=axis), [weight], [cotangent])[1][0]
++
++
++def array_bytes(value):
++    mx.eval(value)
++    return np.array(value.view(mx.uint8)).tobytes()
++
++
++def round_bfloat16(values):
++    bits = np.asarray(values, dtype=np.float32).view(np.uint32)
++    rounded = (bits + np.uint32(0x7FFF) + ((bits >> 16) & 1)) & np.uint32(0xFFFF0000)
++    return rounded.view(np.float32)
++
++
++def repeatability_worker():
++    mx.set_default_device(mx.gpu)
++    rng = np.random.default_rng(173)
++    indices = np.where(np.arange(257) % 7, 3, -1).astype(np.int32)
++    cotangent = rng.normal(size=(257, 65)).astype(np.float32)
++    weight = mx.zeros((17, 65))
++    operation = mx.compile(take_gradient)
++    expected = take_reference(weight.shape, indices, cotangent, 0)
++    outputs = []
++    for _ in range(10):
++        result = operation(weight, mx.array(indices), mx.array(cotangent))
++        np.testing.assert_allclose(np.array(result), expected, rtol=3e-5, atol=3e-4)
++        outputs.append(array_bytes(result).hex())
++    assert len(set(outputs)) == 1
++    print(json.dumps(outputs[0]))
++
++
++class TestGatherGradient(mlx_tests.MLXTestCase):
++    def setUp(self):
++        super().setUp()
++        if not self.is_apple_silicon or mx.default_device() != mx.gpu:
++            self.skipTest("Metal complete-slice reduction")
++
++    def check_gradient(self, weight, indices, cotangent, axis=0, compiled=False):
++        def operation(w, i, c):
++            return take_gradient(w, i, c, axis)
++
++        if compiled:
++            operation = mx.compile(operation)
++        cotangent_np = np.array(
++            cotangent
++            if cotangent.dtype == mx.complex64
++            else cotangent.astype(mx.float32)
++        )
++        expected = take_reference(weight.shape, np.array(indices), cotangent_np, axis)
++        first = None
++        for _ in range(10):
++            result = operation(weight, indices, cotangent)
++            self.assertEqual(result.shape, weight.shape)
++            self.assertEqual(result.dtype, weight.dtype)
++            actual = np.array(
++                result if result.dtype == mx.complex64 else result.astype(mx.float32)
++            )
++            tolerance = {
++                mx.float16: (2e-3, 2e-3),
++                mx.bfloat16: (8e-3, 8e-3),
++            }.get(weight.dtype, (3e-5, 3e-4))
++            np.testing.assert_allclose(
++                actual, expected, rtol=tolerance[0], atol=tolerance[1]
++            )
++            current = array_bytes(result)
++            if first is None:
++                first = current
++            self.assertEqual(current, first)
++        return result
++
++    def test_repeated_embedding_ids(self):
++        rng = np.random.default_rng(817)
++        for width in (1, 31, 32, 65, 257):
++            for pattern in ("same", "alternating", "skewed", "unique"):
++                count = 257 if pattern != "unique" else 17
++                if pattern == "same":
++                    indices = np.full(count, 3, dtype=np.int32)
++                elif pattern == "alternating":
++                    indices = np.arange(count, dtype=np.int32) % 2
++                elif pattern == "skewed":
++                    indices = np.where(np.arange(count) % 11, 3, -1).astype(np.int32)
++                else:
++                    indices = np.arange(count, dtype=np.int32)
++                cotangent = rng.normal(size=(count, width)).astype(np.float32)
++                for compiled in (False, True):
++                    with self.subTest(width=width, pattern=pattern, compiled=compiled):
++                        self.check_gradient(
++                            mx.zeros((17, width)),
++                            mx.array(indices),
++                            mx.array(cotangent),
++                            compiled=compiled,
++                        )
++
++    def test_multiple_sort_blocks_and_partial_slice_tiles(self):
++        rng = np.random.default_rng(309)
++        for count in (1023, 1024, 1025, 2049):
++            with self.subTest(count=count):
++                indices = rng.integers(-19, 19, size=count, dtype=np.int32)
++                cotangent = rng.normal(size=(count, 259)).astype(np.float32)
++                self.check_gradient(
++                    mx.zeros((19, 259)),
++                    mx.array(indices),
++                    mx.array(cotangent),
++                    compiled=True,
++                )
++
++    def test_axes_scalar_and_empty_indices(self):
++        rng = np.random.default_rng(227)
++        shape = (5, 7, 9)
++        for axis in (0, 1, 2, -1):
++            normalized_axis = axis % len(shape)
++            for indices in (
++                np.array(-1, dtype=np.int32),
++                np.array([[0, -1, 0], [-shape[normalized_axis], 1, -1]], np.int32),
++                np.empty((2, 0), dtype=np.int32),
++            ):
++                cotangent_shape = (
++                    shape[:normalized_axis]
++                    + indices.shape
++                    + shape[normalized_axis + 1 :]
++                )
++                with self.subTest(axis=axis, index_shape=indices.shape):
++                    self.check_gradient(
++                        mx.zeros(shape),
++                        mx.array(indices),
++                        mx.array(rng.normal(size=cotangent_shape).astype(np.float32)),
++                        axis=axis,
++                        compiled=True,
++                    )
++        self.check_gradient(mx.zeros((5, 0)), mx.array([0, 0]), mx.zeros((2, 0)))
++        self.check_gradient(mx.zeros((7,)), mx.array(-7), mx.array(1.25))
++
++    def test_index_dtypes_and_negative_aliases(self):
++        for dtype in (
++            mx.int8,
++            mx.int16,
++            mx.int32,
++            mx.int64,
++            mx.uint8,
++            mx.uint16,
++            mx.uint32,
++            mx.uint64,
++        ):
++            signed = mx.issubdtype(dtype, mx.signedinteger)
++            indices = [0, 4, -1 if signed else 4, -5 if signed else 0, 4]
++            with self.subTest(dtype=dtype):
++                self.check_gradient(
++                    mx.zeros((5, 3)),
++                    mx.array(indices, dtype=dtype),
++                    mx.array(np.arange(15, dtype=np.float32).reshape(5, 3) / 7),
++                )
++
++    def test_noncontiguous_inputs(self):
++        rng = np.random.default_rng(827)
++        for axis in (0, 1):
++            weight = mx.array(rng.normal(size=(23, 7)).astype(np.float32))[1::2].T
++            indices = mx.array([[0, -1, 0, 1], [0, -1, 0, 2]])[:, ::-2].T
++            output_shape = (
++                weight.shape[:axis] + indices.shape + weight.shape[axis + 1 :]
++            )
++            storage_shape = output_shape[:-1] + (output_shape[-1] * 2 + 1,)
++            cotangent = mx.array(rng.normal(size=storage_shape).astype(np.float32))[
++                ..., 1::2
++            ]
++            with self.subTest(axis=axis):
++                self.check_gradient(weight, indices, cotangent, axis, compiled=True)
++        self.check_gradient(
++            mx.zeros((7, 11)),
++            mx.broadcast_to(mx.array(-1), (3, 5)),
++            mx.broadcast_to(mx.array(0.125), (3, 5, 11)),
++        )
++
++    def test_output_dtypes(self):
++        rng = np.random.default_rng(409)
++        indices = mx.array(np.arange(129) % 5, mx.int32)
++        for dtype, vocab in product(
++            (mx.float16, mx.bfloat16, mx.float32, mx.complex64), (7, 257)
++        ):
++            values = rng.normal(size=(129, 33)).astype(np.float32)
++            if dtype == mx.complex64:
++                values = values + 1j * rng.normal(size=values.shape).astype(np.float32)
++            with self.subTest(dtype=dtype, vocab=vocab):
++                if dtype in (mx.float32, mx.complex64):
++                    self.check_gradient(
++                        mx.zeros((vocab, 33), dtype=dtype),
++                        indices,
++                        mx.array(values, dtype=dtype),
++                        compiled=True,
++                    )
++                    continue
++                cotangent = mx.array(values, dtype=dtype)
++                values = np.array(cotangent.astype(mx.float32))
++                expected = np.zeros((vocab, 33), np.float32)
++                round_value = (
++                    (lambda x: x.astype(np.float16).astype(np.float32))
++                    if dtype == mx.float16
++                    else round_bfloat16
++                )
++                for row, update in zip(np.array(indices), values):
++                    expected[row] = round_value(expected[row] + update)
++                fp64 = take_reference((vocab, 33), np.array(indices), values, 0)
++                absolute_sum = take_reference(
++                    (vocab, 33), np.array(indices), np.abs(values), 0
++                )
++                unit_roundoff = 2 ** (-11 if dtype == mx.float16 else -8)
++                terms = 26
++                bound = terms * unit_roundoff / (1 - terms * unit_roundoff)
++                operation = mx.compile(take_gradient)
++                first = None
++                for _ in range(10):
++                    result = operation(
++                        mx.zeros((vocab, 33), dtype=dtype), indices, cotangent
++                    )
++                    actual = np.array(result.astype(mx.float32))
++                    self.assertEqual(actual.tobytes(), expected.tobytes())
++                    self.assertTrue(
++                        np.all(np.abs(actual - fp64) <= bound * absolute_sum + 1e-6)
++                    )
++                    current = array_bytes(result)
++                    if first is None:
++                        first = current
++                    self.assertEqual(current, first)
++
++    def test_sparse_large_vocabulary(self):
++        rng = np.random.default_rng(907)
++        for vocab, width in ((521, 259), (32768, 32), (1 << 20, 1)):
++            indices = np.array([0, -1, 2, -1, 0, 2, 17], np.int32)
++            cotangent = rng.normal(size=(indices.size, width)).astype(np.float32)
++            with self.subTest(vocab=vocab, width=width):
++                self.check_gradient(
++                    mx.zeros((vocab, width)),
++                    mx.array(indices),
++                    mx.array(cotangent),
++                    compiled=True,
++                )
++
++    def test_zero_and_cancellation(self):
++        indices = mx.array(np.arange(257) % 3, mx.int32)
++        cotangent = mx.zeros((257, 17))
++        zero = self.check_gradient(mx.zeros((5, 17)), indices, cotangent, compiled=True)
++        self.assertEqual(array_bytes(zero), bytes(zero.nbytes))
++
++        values = np.tile(np.array([1024, 0.00003, -1024], np.float32), 85)
++        cotangent_np = np.broadcast_to(values[:, None], (values.size, 17)).copy()
++        indices_np = np.zeros(values.size, np.int32)
++        expected = take_reference((5, 17), indices_np, cotangent_np, 0)
++        ordered = np.zeros((5, 17), np.float32)
++        np.add.at(ordered, indices_np, cotangent_np)
++        reordered = np.zeros_like(ordered)
++        permutation = np.arange(values.size).reshape(-1, 3)[:, [0, 2, 1]].reshape(-1)
++        np.add.at(reordered, indices_np[permutation], cotangent_np[permutation])
++        self.assertNotEqual(ordered.tobytes(), reordered.tobytes())
++        operation = mx.compile(take_gradient)
++        first = None
++        for _ in range(10):
++            result = operation(
++                mx.zeros((5, 17)), mx.array(indices_np), mx.array(cotangent_np)
++            )
++            actual = np.array(result)
++            self.assertEqual(actual.tobytes(), ordered.tobytes())
++            # FP32 rounding is separate from repeatability under cancellation.
++            np.testing.assert_allclose(actual, expected, rtol=0, atol=0.01)
++            current = array_bytes(result)
++            if first is None:
++                first = current
++            self.assertEqual(current, first)
++
++    def test_scatter_initial_values_and_untouched_signed_zero(self):
++        source_np = np.full((7, 33), -0.0, dtype=np.float32)
++        source_np[2] = np.linspace(-1, 1, 33)
++        indices_np = np.array([2, -5, 2, -1], np.int32)
++        updates_np = np.arange(132, dtype=np.float32).reshape(4, 33) / 19
++        source = mx.array(source_np)
++        indices = mx.array(indices_np)
++        updates = mx.array(updates_np)
++        expected = source_np.astype(np.float64)
++        np.add.at(expected, indices_np, updates_np)
++        operation = mx.compile(lambda s, i, u: s.at[i].add(u))
++        first = None
++        for _ in range(10):
++            result = operation(source, indices, updates)
++            actual = np.array(result)
++            np.testing.assert_allclose(actual, expected, rtol=3e-5, atol=3e-4)
++            self.assertEqual(actual[0].tobytes(), source_np[0].tobytes())
++            current = array_bytes(result)
++            if first is None:
++                first = current
++            self.assertEqual(current, first)
++
++    def test_embedding_module_and_higher_order(self):
++        rng = np.random.default_rng(533)
++        layer = nn.Embedding(11, 33)
++        layer.weight = mx.zeros((11, 33))
++        indices_np = np.arange(129, dtype=np.int32) % 11
++        cotangent_np = rng.normal(size=(129, 33)).astype(np.float32)
++        indices, cotangent = mx.array(indices_np), mx.array(cotangent_np)
++        gradient = nn.value_and_grad(layer, lambda i, c: (layer(i) * c).sum())
++        gradient = mx.compile(gradient, inputs=layer.state)
++        first = None
++        expected = take_reference(layer.weight.shape, indices_np, cotangent_np, 0)
++        for _ in range(10):
++            _, result = gradient(indices, cotangent)
++            np.testing.assert_allclose(
++                np.array(result["weight"]), expected, rtol=3e-5, atol=3e-4
++            )
++            current = array_bytes(result["weight"])
++            if first is None:
++                first = current
++            self.assertEqual(current, first)
++
++        def loss(w):
++            return mx.square(w[indices]).sum()
++
++        weight = mx.ones((11, 33))
++        second = mx.grad(lambda w: mx.grad(loss)(w).sum())(weight)
++        expected_second = take_reference(
++            weight.shape, indices_np, np.full((129, 33), 2.0), 0
++        )
++        np.testing.assert_array_equal(np.array(second), expected_second)
++
++    def test_vmap_shared_weight(self):
++        rng = np.random.default_rng(953)
++        indices = mx.array(np.arange(51).reshape(3, 17) % 7, mx.int32)
++        cotangent = mx.array(rng.normal(size=(3, 17, 33)).astype(np.float32))
++        weight = mx.zeros((7, 33))
++
++        def objective(w, i, c):
++            return (mx.vmap(lambda row: w[row])(i) * c).sum()
++
++        operation = mx.compile(mx.grad(objective))
++        first = None
++        for _ in range(10):
++            result = operation(weight, indices, cotangent)
++            expected = take_reference(
++                weight.shape, np.array(indices), np.array(cotangent), 0
++            )
++            np.testing.assert_allclose(np.array(result), expected, rtol=3e-5, atol=3e-4)
++            current = array_bytes(result)
++            if first is None:
++                first = current
++            self.assertEqual(current, first)
++
++    def test_partial_slice_and_multi_axis_fallback(self):
++        source = mx.zeros((5, 7))
++        indices = mx.array([1, 1, 3])
++        result = source.at[indices, :2].add(mx.ones((3, 2)))
++        expected = np.zeros((5, 7), np.float32)
++        np.add.at(expected, (np.array([1, 1, 3])[:, None], np.arange(2)), 1)
++        np.testing.assert_array_equal(np.array(result), expected)
++        result = source.at[indices, mx.array([2, 2, 4])].add(mx.array([1.0, 2.0, 3.0]))
++        expected = np.zeros((5, 7), np.float32)
++        np.add.at(expected, ([1, 1, 3], [2, 2, 4]), [1, 2, 3])
++        np.testing.assert_array_equal(np.array(result), expected)
++
++    def test_fresh_process_replay(self):
++        results = []
++        for _ in range(2):
++            completed = subprocess.run(
++                [
++                    sys.executable,
++                    str(Path(__file__).resolve()),
++                    "--repeatability-worker",
++                ],
++                env={**os.environ, "DEVICE": "gpu"},
++                text=True,
++                capture_output=True,
++                timeout=120,
++                check=True,
++            )
++            results.append(json.loads(completed.stdout))
++        self.assertEqual(results[0], results[1])
++
++
++if __name__ == "__main__":
++    if sys.argv[1:] == ["--repeatability-worker"]:
++        repeatability_worker()
++    else:
++        unittest.main()

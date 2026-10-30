@@ -1,0 +1,27 @@
+{
+  "ast_identical_to_passing_nine_test_inspect_source": true,
+  "native_or_numerical_execution": false,
+  "network_executed": false,
+  "prior_inspect": "inspect-v2/receipt.json",
+  "project_format_applied": true,
+  "project_ruff_check_passed": true,
+  "schema": "publication-metadata-preparation-v1",
+  "sources": {
+    "README.md": {
+      "bytes": 2974,
+      "sha256": "56db79bcfedbd6e986ad8ac45f9d7f13b813879da401fdc8406244bd8e26b2d2"
+    },
+    "plan.json": {
+      "bytes": 2236,
+      "sha256": "14a57d584d2616a2ae4228618c3ca9cba44f10c1c978a232d541308d3be7863d"
+    },
+    "test_upload.py": {
+      "bytes": 14233,
+      "sha256": "3c22be25b7fb3f1f09205e936ea3169abf56b8a9cd1c3f3b75cc6542bf3ed234"
+    },
+    "upload.py": {
+      "bytes": 13343,
+      "sha256": "dd0d95d1d477e7e7a185a0fd4246f123c779ff0401325bd0873edd1428686073"
+    }
+  }
+}

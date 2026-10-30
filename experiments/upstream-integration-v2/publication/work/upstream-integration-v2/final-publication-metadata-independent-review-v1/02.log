@@ -1,0 +1,11 @@
+E501 Line too long (103 > 100)
+   --> work/upstream-integration-v2/final-publication-metadata-v1/upload.py:190:101
+    |
+188 |         "invalidated_cache_fields": ["st_ctime_ns"] if changed else [],
+189 |         "stable_full_byte_read_passed": True,
+190 |         "scope": "Original closed upload receipt supplies SHA/size authority; only ctime may refresh.",
+    |                                                                                                     ^^^
+191 |     }
+    |
+
+Found 1 error.

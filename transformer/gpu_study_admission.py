@@ -15,6 +15,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+from transformer.gpu_environment import child_environment, require_environment
 from transformer.gpu_study import (
     ENGINES,
     ENVIRONMENT,
@@ -318,11 +319,26 @@ def verify_baseline_repeatability(manifest, roots):
         )
         required_sources = {
             "transformer/gpu_repeatability.py",
+            "transformer/gpu_environment.py",
             "scripts/check_gpu_repeatability.py",
             "transformer/reference.py",
             "transformer/spec.py",
             f"transformer/gpu_{engine}.py",
         }
+        if engine == "mlx":
+            required_sources.add("transformer/gpu_mlx_compile.py")
+            capabilities = worker.get("capabilities", {})
+            probe = capabilities.get("compilation_probe", {})
+            require(
+                capabilities.get("compiled") is True
+                and capabilities.get("MLX_DISABLE_COMPILE", "missing") is None
+                and probe.get("status") == "passed"
+                and probe.get("mode_override_used") is False
+                and probe.get("python_trace_count") == 1
+                and probe.get("executions") == 4
+                and probe.get("compiled_primitive_present") is True,
+                "Baseline has no passing MLX compilation execution proof",
+            )
         require(set(source) == required_sources, "Incomplete baseline executed source identity")
         expected = expected_case_names(width, STAGES)
         cases = worker.get("cases", [])
@@ -522,8 +538,7 @@ def run_admission(manifest_path, expected_hash, roots, output):
     try:
         for width in WIDTHS:
             verify_bindings(manifest, roots)
-            env = os.environ.copy()
-            env.update(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(width))
+            env = child_environment(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(width))
             env["PYTHONPATH"] = python_path(manifest, roots)
             env["ARM64_TRANSFORMER_METAL_POLICY"] = str(policy_path(manifest, roots))
             command = [
@@ -591,6 +606,7 @@ def run_admission(manifest_path, expected_hash, roots, output):
 
 
 def produce_width(manifest, roots, output, width):
+    require_environment(ENVIRONMENT)
     from transformer.gpu_admission_checks import close_contexts, produce_gate
 
     require(

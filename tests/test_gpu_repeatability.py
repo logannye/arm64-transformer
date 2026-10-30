@@ -8,6 +8,15 @@ import pytest
 from transformer import gpu_repeatability as diagnostic
 
 
+@pytest.fixture(autouse=True)
+def configured_environment(monkeypatch):
+    for key, value in diagnostic.PINS.items():
+        if value is None:
+            monkeypatch.delenv(key, raising=False)
+        else:
+            monkeypatch.setenv(key, value)
+
+
 def test_inventory_has_complete_bounded_counts_and_explicit_unique_exclusions():
     cases = list(diagnostic.embedding_cases(1024))
     assert len(cases) == 72

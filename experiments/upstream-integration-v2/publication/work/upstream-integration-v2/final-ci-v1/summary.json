@@ -1,0 +1,22 @@
+{
+  "commit": "695afbfebcae976e315125f9cbddbf4186dd2fe2",
+  "complete": true,
+  "formal_fits": 0,
+  "job_names": [
+    "python",
+    "native"
+  ],
+  "jobs": {
+    "bytes": 6204,
+    "sha256": "1fc853a6d9129d778640ea0bee21d2502f66bad314a6c04d934d5dabb1f4c5f4"
+  },
+  "passed": true,
+  "run": {
+    "bytes": 13476,
+    "sha256": "66962d2ab64012ade0e7413cbc87e1335411b16428d0a5db82ecbfe139dc2404"
+  },
+  "run_id": 41038541163,
+  "schema": "exact-project-ci-v1",
+  "scope": "Hosted project validation and supported CPU backends; separate from retained real-GPU development checks and formal admission.",
+  "url": "https://github.com/logannye/arm64-transformer/actions/runs/41038541163"
+}

@@ -1,0 +1,23 @@
+{
+  "command": "python3 -I -S -B work/upstream-integration-v2/final-publication-metadata-v1/upload.py inspect",
+  "coordinator_reported_unchanged": [
+    "bytes",
+    "sha256",
+    "all non-ctime stat fields"
+  ],
+  "current_st_ctime_ns": 1793356625846354816,
+  "error": "Preceding contract changed",
+  "network_executed": false,
+  "original_contract": {
+    "bytes": 31197,
+    "sha256": "aca4eb09f1183af1838125cf1caa755410a886968bb62ca796bd671e4ce64b5a",
+    "st_ctime_ns": 1793356625629246606
+  },
+  "passed": false,
+  "prior_source_identity": {
+    "bytes": 11914,
+    "sha256": "4d8d80f04fb24bd47b096954f13354ee7a6845eacccb8e363283c1f4d86adca8"
+  },
+  "schema": "publication-metadata-inspect-failure-report-v1",
+  "source": "Coordinator reported actual read-only inspect failure; this record is not captured process stdout."
+}

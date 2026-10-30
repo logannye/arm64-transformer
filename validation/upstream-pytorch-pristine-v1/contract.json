@@ -1,0 +1,352 @@
+{
+  "schema": "pytorch-pristine-control-contract-v1",
+  "scope": "Retrospective exact-pristine control for retained27 failed tests; no admission or speed claims",
+  "reference_hosted_run": {
+    "repository": "logannye/arm64-transformer",
+    "run_id": "40989036595",
+    "attempt": "1",
+    "head": "dfd55c1d2b50bab8f4f43c0f48a48d36aea99ba5",
+    "receipt": {
+      "bytes": 168452,
+      "sha256": "6e47533073c68ba5cd54a0e8de14d06d616b8e495281403deb3eba09711fa338"
+    }
+  },
+  "source_revision": "71d2a08507ab47dd6b2fa9b66319d17ce2377de4",
+  "pristine_source_sha256": {
+    "aten/src/ATen/native/mps/kernels/Embedding.metal": "59b59958250fcf580a8918c1fd2fb4178bdd1cf8a5cd4a4e343be02ff76806e9",
+    "aten/src/ATen/native/mps/operations/Embedding.mm": "271d6ed4348cf57156c70e4aae0dab923d1b66f4746f7f64b096b28651327326",
+    "test/test_mps.py": "dc94603a28f204f4dbe7b0072066709f3605ca14ae8fe00b43f8cec2198e2fe1",
+    "torch/__init__.py": "b4bfabe0c00475b89beeff8b9ee91c0201ac003e523958087ad20f5af1500981"
+  },
+  "formatted_test_sha256": "7345b6e229aed240921460a3b598ffd1a47148ab4816aead0d405539a154a396",
+  "unchanged_test_method_ast_sha256": {
+    "TestMPS.test_gemv_strided_output_falls_back": "6ebf950a847dcfe738997e25e79cd58e843686412820943681a07e6ee1a2cb5b",
+    "TestMPS.test_mm_strided_output": "db71dbc8420616ff6361a1629fea94b3f8321136d407c1b39cad25c3814bc0d0",
+    "TestMPS.test_bmm_strided_output": "c2d2c5e4a5054c25e8a63122eafd2058704ecec5abfedc44d72952252d43b666",
+    "TestConv3dChannelsLast3dMPS._run_conv3d_cl3d": "56ded9114487cfe7934a89e3c44f0cdd9390cf808ef73d3711d3a6dd9ba5e3df",
+    "TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd": "60822cd65b716bc344dab5d6685b85d2e5f28e0728239acf5063f4a8597c2c24",
+    "TestConv3dChannelsLast3dMPS.test_conv_transpose3d_channels_last_3d": "ac549799e8d64fd1ddfa7aa644868da62ce64b09a3aa1a09c20d9ec0f81cd2e4",
+    "TestConsistency._compute_tolerances": "35e8a80cd93986c96c7fc2061d2a624294a7053f66a1d075bfd92196d766e82f",
+    "TestConsistency._run_op": "5f5c2615b4710214ffc7c99d5226ec13616a30e4981bef323221727f55bd134b",
+    "TestConsistency.test_output_grad_match": "13a8421b000ac56fabb54ec79af1b1fc95eaab742d1ee0531bd43525e54c14d7"
+  },
+  "build_environment": {
+    "MAX_JOBS": "2",
+    "CMAKE_BUILD_PARALLEL_LEVEL": "2",
+    "DEBUG": "0",
+    "REL_WITH_DEB_INFO": "0",
+    "CMAKE_BUILD_TYPE": "Release",
+    "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+    "USE_DISTRIBUTED": "0",
+    "USE_CUDA": "0",
+    "USE_MPS": "1",
+    "USE_OPENMP": "1",
+    "USE_PYTORCH_METAL": "1",
+    "BUILD_TEST": "OFF",
+    "WERROR": "1",
+    "TORCH_NATIVE_AOT": "0",
+    "SKBUILD_EDITABLE_REBUILD": "false",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PYTHONNOUSERSITE": "1",
+    "PIP_DISABLE_PIP_VERSION_CHECK": "1",
+    "UV_NO_BUILD": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "host": {
+    "python": "3.12.10 (v3.12.10:0cc81280367, Apr  8 2025, 08:46:59) [Clang 13.0.0 (clang-1300.0.29.30)]",
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "image": {
+      "RUNNER_OS": "macOS",
+      "RUNNER_ARCH": "ARM64",
+      "ImageOS": "macos26",
+      "ImageVersion": "20261013.0424.1"
+    }
+  },
+  "tool_checks": {
+    "xcode-selection": {
+      "original_log": "06-xcode-selection.log",
+      "original_log_sha256": "56f3907ca311ea06dd092dac1c343e94c3e5c5d9647cb253cb3bb559f572b613",
+      "normalized_stdout": "/Applications/Xcode_26.6.app/Contents/Developer\n"
+    },
+    "xcode-version": {
+      "original_log": "07-xcode-version.log",
+      "original_log_sha256": "18730ed2ae28a2c9cf0c2d5db549033a4f07089331391a7133b7b32187454fa9",
+      "normalized_stdout": "Xcode 26.6\nBuild version 17F113\n"
+    },
+    "metal-version": {
+      "original_log": "09-metal-version.log",
+      "original_log_sha256": "166a1e6011e846dda14b63bb87988226f1639b8bc5193687e623d41cf026f2df",
+      "normalized_stdout": "Apple metal version 32023.883 (metalfe-32023.883)\nTarget: air64-apple-darwin25.6.0\nThread model: posix\n"
+    },
+    "clang-version": {
+      "original_log": "10-clang-version.log",
+      "original_log_sha256": "6c263f4a0b378193483e8853193204a89db0eacf407199d789fb7e3125b8148b",
+      "normalized_stdout": "Apple clang version 21.0.0 (clang-2100.1.1.101)\nTarget: arm64-apple-darwin25.6.0\nThread model: posix\n"
+    },
+    "sdk-version": {
+      "original_log": "11-sdk-version.log",
+      "original_log_sha256": "25205f2e2f02dc71036ee827e19c49b893b231a3d1af240e35a3ac55aa8cdcb6",
+      "normalized_stdout": "26.5\n"
+    },
+    "libomp-prefix": {
+      "original_log": "13-libomp-prefix.log",
+      "original_log_sha256": "65da4b8a929413afc954da39d059887c9be7c1ec75a04625ffaba067a6ab9992",
+      "normalized_stdout": "/opt/homebrew/opt/libomp\n"
+    }
+  },
+  "libomp": {
+    "name": "libomp",
+    "versions": {
+      "stable": "23.1.3",
+      "head": null,
+      "bottle": true
+    },
+    "revision": 0,
+    "version_scheme": 0,
+    "bottle": {
+      "stable": {
+        "rebuild": 0,
+        "root_url": "https://ghcr.io/v2/homebrew/core",
+        "files": {
+          "arm64_tahoe": {
+            "cellar": ":any",
+            "url": "https://ghcr.io/v2/homebrew/core/libomp/blobs/sha256:16242d8803a0f31370b94f685a219c83783317748a76f02b9144cd6ce7cfb20b",
+            "sha256": "16242d8803a0f31370b94f685a219c83783317748a76f02b9144cd6ce7cfb20b"
+          }
+        }
+      }
+    },
+    "ruby_source_checksum": {
+      "sha256": "c9cfe198df9d2b9949c0d2371ae6cbf6155c7b620a38450907d4b99553afa791"
+    },
+    "installed": [
+      {
+        "version": "23.1.3",
+        "used_options": [],
+        "built_as_bottle": true,
+        "poured_from_bottle": true
+      }
+    ]
+  },
+  "wheel_inventory": {
+    "attrs-26.1.0-py3-none-any.whl": {
+      "sha256": "c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309",
+      "bytes": 67548
+    },
+    "build-1.6.1-py3-none-any.whl": {
+      "sha256": "ecd351a4be9d35a9eaaba244a7687143c9c7d4aea6ac964e7e7ddab20cbcf4e7",
+      "bytes": 31179
+    },
+    "certifi-2026.10.23-py3-none-any.whl": {
+      "sha256": "e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1",
+      "bytes": 135082
+    },
+    "charset_normalizer-3.5.2-cp312-cp312-macosx_10_13_universal2.whl": {
+      "sha256": "ed2a239c0ea213acc1908150a3037257083c7c083128f1a4cec2ec4b97dca491",
+      "bytes": 367780
+    },
+    "click-8.3.3-py3-none-any.whl": {
+      "sha256": "a2bf429bb3033c89fa4936ffb35d5cb471e3719e1f3c8a7c3fff0b8314305613",
+      "bytes": 110502
+    },
+    "cmake-3.31.6-py3-none-macosx_10_10_universal2.whl": {
+      "sha256": "da9d4fd9abd571fd016ddb27da0428b10277010b23bb21e3678f8b9e96e1686e",
+      "bytes": 47224338
+    },
+    "execnet-2.1.2-py3-none-any.whl": {
+      "sha256": "67fba928dd5a544b783f6056f449e5e3931a5c378b128bc18501f7ea79e296ec",
+      "bytes": 40708
+    },
+    "expecttest-0.3.0-py3-none-any.whl": {
+      "sha256": "60f88103086e1754240b42175f622be83b6ffeac419434691ee5a5be819d0544",
+      "bytes": 8238
+    },
+    "filelock-3.20.3-py3-none-any.whl": {
+      "sha256": "4b0dda527ee31078689fc205ec4f1c1bf7d56cf88b6dc9426c4f230e46c2dce1",
+      "bytes": 16701
+    },
+    "fsspec-2026.9.0-py3-none-any.whl": {
+      "sha256": "8dd6e646e99ea382bd85f97a45e6b526a442d79423a7dc673f1e2756d05fcb5f",
+      "bytes": 221738
+    },
+    "hypothesis-6.56.4-py3-none-any.whl": {
+      "sha256": "67950103ee930c66673494b3671474a083ea71f1ebe8f0ff849ba8ad5317772d",
+      "bytes": 395269
+    },
+    "idna-3.20-py3-none-any.whl": {
+      "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+      "bytes": 69583
+    },
+    "importlib_metadata-10.1.0-py3-none-any.whl": {
+      "sha256": "cf45ce66a929c64e994185a809c04840d0501db17e663810d993d0f4829265c7",
+      "bytes": 32221
+    },
+    "iniconfig-2.3.1-py3-none-any.whl": {
+      "sha256": "9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7",
+      "bytes": 7552
+    },
+    "jinja2-3.1.6-py3-none-any.whl": {
+      "sha256": "85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67",
+      "bytes": 134899
+    },
+    "lintrunner-0.13.0-py3-none-macosx_11_0_arm64.whl": {
+      "sha256": "8df172135368d89ed3b60ceaa81838111b98b6a84517afa698472671d8d3d2ba",
+      "bytes": 1888534
+    },
+    "markupsafe-3.0.4-cp312-cp312-macosx_11_0_arm64.whl": {
+      "sha256": "0930db9bdc62d22944e10b066448bb65dc9abe9112880c7cab8da54db4284d5f",
+      "bytes": 12050
+    },
+    "mpmath-1.3.0-py3-none-any.whl": {
+      "sha256": "a0b2b9fe80bbcd81a6647ff13108738cfb482d481d826cc0e02f5b35e5c88d2c",
+      "bytes": 536198
+    },
+    "networkx-3.7-py3-none-any.whl": {
+      "sha256": "e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0",
+      "bytes": 2142205
+    },
+    "ninja-1.13.0-py3-none-macosx_10_9_universal2.whl": {
+      "sha256": "fa2a8bfc62e31b08f83127d1613d10821775a0eb334197154c4d6067b7068ff1",
+      "bytes": 310125
+    },
+    "numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl": {
+      "sha256": "03a8c78d01d9781b28a6989f6fa1bb2c4f2d51201cf99d3dd875df6fbd96b23b",
+      "bytes": 13685868
+    },
+    "optree-0.20.0-cp312-cp312-macosx_11_0_arm64.whl": {
+      "sha256": "05596b84c1d5b43d9f45ca0bfee528e3e96f0d547522b074cf20bfe8ffea8938",
+      "bytes": 417675
+    },
+    "packaging-24.2-py3-none-any.whl": {
+      "sha256": "09abb1bccd265c01f4a3aa3f7a7db064b36514d2cba19a2f694fe6150451a759",
+      "bytes": 65451
+    },
+    "pathspec-1.1.1-py3-none-any.whl": {
+      "sha256": "a00ce642f577bf7f473932318056212bc4f8bfdf53128c78bbd5af0b9b20b189",
+      "bytes": 57328
+    },
+    "pip-26.2.2-py3-none-any.whl": {
+      "sha256": "fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70",
+      "bytes": 1819850
+    },
+    "pluggy-1.7.0-py3-none-any.whl": {
+      "sha256": "7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec",
+      "bytes": 27082
+    },
+    "psutil-7.2.2-cp36-abi3-macosx_11_0_arm64.whl": {
+      "sha256": "1a7b04c10f32cc88ab39cbf606e117fd74721c831c98a27dc04578deb0c16979",
+      "bytes": 129859
+    },
+    "pyproject_hooks-1.3.3-py3-none-any.whl": {
+      "sha256": "5fc53fdac9f7bd63fbcdc868fb5f90b4784d78a53a3d3388cd738b807441a20b",
+      "bytes": 10724
+    },
+    "pytest-7.3.2-py3-none-any.whl": {
+      "sha256": "cdcbd012c9312258922f8cd3f1b62a6580fdced17db6014896053d47cddf9295",
+      "bytes": 320900
+    },
+    "pytest_rerunfailures-14.0-py3-none-any.whl": {
+      "sha256": "4197bdd2eaeffdbf50b5ea6e7236f47ff0e44d1def8dae08e409f536d84e7b32",
+      "bytes": 12709
+    },
+    "pytest_subtests-0.13.1-py3-none-any.whl": {
+      "sha256": "ab616a22f64cd17c1aee65f18af94dbc30c444f8683de2b30895c3778265e3bd",
+      "bytes": 8038
+    },
+    "pytest_xdist-3.3.1-py3-none-any.whl": {
+      "sha256": "ff9daa7793569e6a68544850fd3927cd257cc03a7ef76c95e86915355e82b5f2",
+      "bytes": 41752
+    },
+    "pyyaml-6.0.3-cp312-cp312-macosx_11_0_arm64.whl": {
+      "sha256": "fc09d0aa354569bc501d4e787133afc08552722d3ab34836a80547331bb5d4a0",
+      "bytes": 173973
+    },
+    "requests-2.34.2-py3-none-any.whl": {
+      "sha256": "2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0",
+      "bytes": 73075
+    },
+    "scikit_build_core-1.1.1-py3-none-any.whl": {
+      "sha256": "6f6d6cf600e2e9639fd258ecd11cfc19bd189354b968916a519c6793e7e26237",
+      "bytes": 293450
+    },
+    "setuptools-78.1.1-py3-none-any.whl": {
+      "sha256": "c3a9c4211ff4c309edb8b8c4f1cbfa7ae324c4ba9f91ff254e3d305b9fd54561",
+      "bytes": 1256462
+    },
+    "six-1.17.0-py2.py3-none-any.whl": {
+      "sha256": "4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274",
+      "bytes": 11050
+    },
+    "sortedcontainers-2.4.0-py2.py3-none-any.whl": {
+      "sha256": "a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0",
+      "bytes": 29575
+    },
+    "spin-0.17-py3-none-any.whl": {
+      "sha256": "6d69a2c6c7c6fe373c67dedacbe11552ec906c03d34cd1d6ca026289f74d01e8",
+      "bytes": 31980
+    },
+    "sympy-1.14.0-py3-none-any.whl": {
+      "sha256": "e091cc3e99d2141a0ba2847328f5479b05d94a6635cb96148ccb3f34671bd8f5",
+      "bytes": 6299353
+    },
+    "typing_extensions-4.15.0-py3-none-any.whl": {
+      "sha256": "f0fa19c6845758ab08074a0cfa8b7aecb71c999ca73d62883bc25cc018c4e548",
+      "bytes": 44614
+    },
+    "urllib3-2.8.0-py3-none-any.whl": {
+      "sha256": "0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3",
+      "bytes": 135717
+    },
+    "uv-0.13.6-py3-none-macosx_11_0_arm64.whl": {
+      "sha256": "51361029b7cf91185d0092c4b356d110b4ad629e9cb11593f1e006ac72a72ca9",
+      "bytes": 14344205
+    },
+    "wheel-0.48.0-py3-none-any.whl": {
+      "sha256": "3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab",
+      "bytes": 33320
+    },
+    "zipp-4.1.2-py3-none-any.whl": {
+      "sha256": "b30cb6cd253122169c47de245ca24a86bac2a5d3802ba15bf7ba6414eb9e144d",
+      "bytes": 10581
+    }
+  },
+  "dependency_freeze": "attrs==26.1.0\nbuild==1.6.1\ncertifi==2026.10.23\ncharset-normalizer==3.5.2\nclick==8.3.3\ncmake==3.31.6\nexecnet==2.1.2\nexpecttest==0.3.0\nfilelock==3.20.3\nfsspec==2026.9.0\nhypothesis==6.56.4\nidna==3.20\nimportlib_metadata==10.1.0\niniconfig==2.3.1\nJinja2==3.1.6\nlintrunner==0.13.0\nMarkupSafe==3.0.4\nmpmath==1.3.0\nnetworkx==3.7\nninja==1.13.0\nnumpy==1.26.4\noptree==0.20.0\npackaging==24.2\npathspec==1.1.1\npip==26.2.2\npluggy==1.7.0\npsutil==7.2.2\npyproject_hooks==1.3.3\npytest==7.3.2\npytest-rerunfailures==14.0\npytest-subtests==0.13.1\npytest-xdist==3.3.1\nPyYAML==6.0.3\nrequests==2.34.2\nscikit_build_core==1.1.1\nsetuptools==78.1.1\nsix==1.17.0\nsortedcontainers==2.4.0\nspin==0.17\nsympy==1.14.0\ntyping_extensions==4.15.0\nurllib3==2.8.0\nuv==0.13.6\nwheel==0.48.0\nzipp==4.1.2\n",
+  "submodule_identities": " 7e1e1fe3858c63c251c637ae41a20de425dde96f android/libs/fbjni (7e1e1fe)\n 4dfe081cf6bcd15db339cf2680b9281b8451eeb3 third_party/FP16 (4dfe081)\n b408327ac2a15ec3e43352421954f5b1967701d1 third_party/FXdiv (b408327)\n c07e3a0400713d546e0dea2d5466dd22ea389c73 third_party/NNPACK (c07e3a0)\n b20b676e62e09621bc8dddc62e5596908c104d06 third_party/NVTX (v3.6.0)\n 1d8f600fd424278486eade7ed3e877c99f0846b1 third_party/VulkanMemoryAllocator (1d8f600)\n 51a0103656eff6fc9bfd39a4597923c4b542c883 third_party/XNNPACK (51a01036)\n 971d98b8ed4003639486134a435df7e2ef9c0475 third_party/aiter (971d98b)\n af7118e342580ecd3f71edce7b1d0ba465012ecf third_party/aiter/3rdparty/composable_kernel (af7118e)\n 299e5928955cc62af9968370293b916f5130916f third_party/benchmark (299e592)\n 5a74dec07a894484b9489d0c0e00cd3b52652d18 third_party/composable_kernel (5a74dec)\n 62d899feac3cf9215a55f2b43da250fdd98d2156 third_party/cpp-httplib (62d899f)\n bc3c01e230c6974283e4b89421cfb0e232435589 third_party/cpuinfo (bc3c01e)\n 42286a6fb8792055f3db80403350e80114ea086c third_party/cudnn_frontend (42286a6)\n 098de2a652cf8f00fd70b2df54051c7eccbb855a third_party/cutlass (098de2a)\n bf6dce360a4fe133bc779e2fd036277678509f95 third_party/fbgemm (bf6dce3)\n a3199e8857792cd10b7589ff5d58343d2c9008ea third_party/fbgemm/external/asmjit (a3199e8)\n 7fe50dc3da2069d6645d9deb8c017a876472a977 third_party/fbgemm/external/composable_kernel (7fe50dc)\n 161a9ec374884f4b3e85725cb22e05f9458fdc93 third_party/fbgemm/external/cpuinfo (161a9ec)\n 571edeb2d0ac872a8392fc49285b156b07884b4e third_party/fbgemm/external/cutlass (571edeb)\n 52eb8108c5bdec04579160ae17225d66034bd723 third_party/fbgemm/external/googletest (52eb810)\n 63b6a7b541fa7f08f8475ca7d74054db36ff2691 third_party/fbgemm/external/hipify_torch (63b6a7b)\n 55f93686c01528224f448c19128836e7df245f72 third_party/fbgemm/external/json (55f9368)\n bb25ba3ce4b1c8df5d4ef6a94807f0d3910599ca third_party/flash-attention (bb25ba3)\n c56c6750d0fc54ed771d532cc92c316423449614 third_party/flash-attention/csrc/composable_kernel (c56c675)\n 7127592069c2fe01b041e174ba4345ef9b279671 third_party/flash-attention/csrc/cutlass (7127592)\n f0966b0aed0b38198e2e1ca1cff8cca343bbcb7e third_party/flash-attention/third_party/aiter (f0966b0)\n af9e1d1f1ae347c22feeb08fd2d42645075e0c5d third_party/flash-attention/third_party/aiter/3rdparty/composable_kernel (af9e1d1)\n a2cd1ea3b6d3fee220106b5fed3f7ce8da9eb757 third_party/flatbuffers (a2cd1ea)\n c0330b746600bfd91dbacb88837da5a16f947ba5 third_party/fmt (c0330b7)\n 3fb5c176c17c765a3492cd2f0321b0dab712f350 third_party/gemmlowp/gemmlowp (3fb5c17)\n 74cc005ae13f69c11d8a41e50b42025b6730e796 third_party/gloo (74cc005)\n 52eb8108c5bdec04579160ae17225d66034bd723 third_party/googletest (52eb810)\n 3d5a3a466de3952f4aa56632c23660243da1802d third_party/ideep (3d5a3a4)\n b38f97eb6f2173513112f15a0481750b8a66e901 third_party/ideep/mkl-dnn (b38f97e)\n 0c57540822deb5dae43bef6c1cc9b3be4772a033 third_party/ittapi (0c57540)\n f68e4feebff1599632cdd900d1acf3ba9808aece third_party/kleidiai (f68e4fe)\n 2406cc5f3ab6d6e54fe560cdd66fa46eee775312 third_party/mimalloc (2406cc5)\n 3d332d1c0c0ac7765852c97b3979c9ef913e037f third_party/mslk (3d332d1)\n 7fe50dc3da2069d6645d9deb8c017a876472a977 third_party/mslk/external/composable_kernel (7fe50dc)\n 571edeb2d0ac872a8392fc49285b156b07884b4e third_party/mslk/external/cutlass (571edeb)\n 52eb8108c5bdec04579160ae17225d66034bd723 third_party/mslk/external/googletest (52eb810)\n 63b6a7b541fa7f08f8475ca7d74054db36ff2691 third_party/mslk/external/hipify_torch (63b6a7b)\n 55f93686c01528224f448c19128836e7df245f72 third_party/nlohmann (55f9368)\n e709452ef2bbc1d113faf678c24e6d3467696e83 third_party/onnx (e709452)\n a2e59f0e7065404b44dfe92a28aca47ba1378dc4 third_party/onnx/third_party/pybind11 (a2e59f0)\n 0fa0ef591e38c2758e3184c6c23e497b9f732ffa third_party/pocketfft (0fa0ef5)\n f0dc78d7e6e331b8c6bb2d5283e06aa26883ca7c third_party/protobuf (f0dc78d)\n 5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8 third_party/protobuf/third_party/benchmark (5b7683f)\n 5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081 third_party/protobuf/third_party/googletest (5ec7f0c)\n 072586a71b55b7f8c584153d223e95687148a900 third_party/psimd (heads/master)\n a56dcd79c699366e7ac6466792c3025883ff7704 third_party/pthreadpool (a56dcd7)\n 97bf890db679505a14dfe547a5e77bb2bd05dc90 third_party/pybind11 (97bf890)\n f45429b087dd7d5bc78bb40dc7cf06425c252d67 third_party/python-peachpy (f45429b)\n 5a1d179df9cf652951b59010a2d2075372d67f68 third_party/sleef (5a1d179)\n 2b4cd91092d335a697416b2a3cb398283246849d third_party/tensorpipe (2b4cd91)\n aee0f9d9b5b87796ee8a0ab26b7587ec30e8858e third_party/tensorpipe/third_party/googletest (aee0f9d)\n 910b55815be16109f04f4180e9adee14fb4ce281 third_party/tensorpipe/third_party/libnop (910b558)\n 5152db2cbfeb5582e9c27c5ea1dba2cd9e10759b third_party/tensorpipe/third_party/libuv (5152db2)\n a23996fce38ff6ccfbcdc09f1e63f2c4be5ea2ef third_party/tensorpipe/third_party/pybind11 (a23996f)\n 6a00cbc4a9b8e68b71caf7f774b3f9c753ae84d5 third_party/tensorpipe/third_party/pybind11/tools/clang (6a00cbc)\n",
+  "cmake_cache": {
+    "CMAKE_BUILD_TYPE": "Release",
+    "CMAKE_C_COMPILER": "/Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc",
+    "CMAKE_CXX_COMPILER": "/Applications/Xcode_26.6.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++",
+    "CMAKE_C_FLAGS": "",
+    "CMAKE_CXX_FLAGS": "",
+    "CMAKE_C_FLAGS_RELEASE": "-O3 -DNDEBUG",
+    "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG",
+    "CMAKE_OSX_DEPLOYMENT_TARGET": "",
+    "CMAKE_OSX_SYSROOT": "/Applications/Xcode_26.6.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.5.sdk",
+    "CMAKE_OSX_ARCHITECTURES": "",
+    "USE_MPS": "1",
+    "USE_OPENMP": "1",
+    "USE_DISTRIBUTED": "0",
+    "USE_CUDA": "0",
+    "USE_PYTORCH_METAL": "1",
+    "CAN_COMPILE_METAL": "YES",
+    "BUILD_TEST": "OFF",
+    "WERROR": "1"
+  },
+  "retained_helpers": {
+    "hosted_build.py": {
+      "bytes": 24420,
+      "sha256": "208c142d52c96f5133e6228659765391e955b3bf920e26d496594ac2c66700e6"
+    },
+    "verify_runtime.py": {
+      "bytes": 10914,
+      "sha256": "b30e26ba6436832862ce1e8d7b9ca1a306c281395917395a57ec6762a38055f4"
+    },
+    "hosted-constraints.txt": {
+      "bytes": 526,
+      "sha256": "7c9b1f75aa5fac0701bf7d32a4e5efe174e9cc45871259a7f7f1a70075865190"
+    }
+  },
+  "method_hash_serialization": "AST class and every declared field; sorted compact JSON; locations excluded; non-JSON constants explicitly tagged"
+}

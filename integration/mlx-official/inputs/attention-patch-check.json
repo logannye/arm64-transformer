@@ -1,0 +1,45 @@
+{
+  "base_commit": "a21f892a6e8e83afb117cef1d1ceae3e82f48c32",
+  "patch_sha256": "b9787a423920641034f42e611f0d8529f6dd49022d094e280fa5ce52a38b7cc3",
+  "files": {
+    "mlx/backend/metal/scaled_dot_product_attention.cpp": {
+      "base_sha256": "ae7c606dde489ef98e1fa83a5b0324234faeb19ea6f75a74114a67679f2f3ad6",
+      "patched_sha256": "ab04c14fd7f118106d90c8e0eb567d1c2d0d78a94cad0ea132974d020925ebed"
+    },
+    "mlx/backend/metal/kernels/steel/attn/kernels/steel_attention.metal": {
+      "base_sha256": "2074731fa5b55c8cf88195dddb8fc276ee835058de4e6cec1226e80b6d591871",
+      "patched_sha256": "92e30e14a53f593c7967df392ca0f0f0008bcb49489f0baf01e26d8087ef75cc"
+    },
+    "python/tests/test_fast_sdpa_training.py": {
+      "base_sha256": null,
+      "patched_sha256": "e9c216656e281735caa8d41e4b8e6f375f3de4a1995de6fbe71187e3d5327925"
+    }
+  },
+  "check": {
+    "git_apply_check": true,
+    "applied_bytes_match_checkout": true,
+    "stdout": "",
+    "stderr": "",
+    "base_materialization": "git show exact base for both existing files; new test path absent"
+  },
+  "test_methods": {
+    "TestSDPANumpyOracle": [
+      "test_gradients_against_finite_differences"
+    ],
+    "TestMetalSDPATraining": [
+      "test_short_training_vjp_regression",
+      "test_training_query_length_boundaries",
+      "test_training_neighboring_head_dimensions",
+      "test_training_partial_query_and_key_tiles",
+      "test_short_training_asymmetric_head_dimensions",
+      "test_float32_head_dim_192_threadgroup_memory",
+      "test_short_training_strided_inputs_and_cotangent",
+      "test_short_training_more_queries_than_keys",
+      "test_short_training_low_precision",
+      "test_short_training_sequence_isolation",
+      "test_short_training_array_mask_fallback",
+      "test_training_rejects_vector_only_head_dimensions",
+      "test_inference_keeps_vector_head_dimensions"
+    ]
+  }
+}

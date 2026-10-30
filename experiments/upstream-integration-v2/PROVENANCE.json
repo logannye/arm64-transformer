@@ -1,0 +1,429 @@
+{
+  "copied_files": {
+    "data/operator-comparisons.csv": {
+      "bytes": 318755,
+      "path": "outputs/upstream-integration-v2/operator-results-v3/comparisons.csv",
+      "sha256": "93f6e63670063b06042962c69a3cb1bb3adae2d2c11275314504c9c6790afcaa"
+    },
+    "data/pytorch-initial-state.csv": {
+      "bytes": 1860,
+      "path": "outputs/upstream-integration-v2/pytorch-matched-integration-v2/pytorch-initial-state.csv",
+      "sha256": "1ccd0d9df18eb059ba7c2a5e7295133280cf7c9a2dc035448e11192af997dd0c"
+    },
+    "data/release-numerical-margins.csv": {
+      "bytes": 1041,
+      "path": "outputs/upstream-integration-v2/release-integration-v2/release-integration.csv",
+      "sha256": "ac4d14313463b1c0f96bf4d4c8af44f317c9cb72fc3d6604ef2b89f8976f4419"
+    },
+    "figures/attention-costs-jit-off.svg": {
+      "bytes": 52165,
+      "path": "outputs/upstream-integration-v2/operator-results-v3/attention-costs-jit-off.svg",
+      "sha256": "08c221d5e03d2f91d31384893a812b486b00f0601de36c5edfc861d0ab3fc264"
+    },
+    "figures/attention-costs-jit-on.svg": {
+      "bytes": 52163,
+      "path": "outputs/upstream-integration-v2/operator-results-v3/attention-costs-jit-on.svg",
+      "sha256": "dd6721fbfe42415d9e17921ea5d4e960bc1cdc764550ead490a9ee56c2cdbeea"
+    },
+    "figures/attention-qualification-jit-off.svg": {
+      "bytes": 52827,
+      "path": "outputs/upstream-integration-v2/operator-results-v3/attention-qualification-jit-off.svg",
+      "sha256": "6ce1f60fdfcdb35dfe031fa968b8a0866b802c9e0b7230011691ee96a958a273"
+    },
+    "figures/attention-qualification-jit-on.svg": {
+      "bytes": 52825,
+      "path": "outputs/upstream-integration-v2/operator-results-v3/attention-qualification-jit-on.svg",
+      "sha256": "9eb193c11971ae34005b1db812dacb94e20511e3e68f2fb597498a1e5b137df8"
+    },
+    "figures/embedding-embedding_value_and_grad-jit-off.svg": {
+      "bytes": 20894,
+      "path": "outputs/upstream-integration-v2/operator-results-v3/embedding-embedding_value_and_grad-jit-off.svg",
+      "sha256": "0ed7ae9de53155614cf05dea0eed6eb5e43662e09374040b824e09df6063fc1f"
+    },
+    "figures/embedding-embedding_value_and_grad-jit-on.svg": {
+      "bytes": 20893,
+      "path": "outputs/upstream-integration-v2/operator-results-v3/embedding-embedding_value_and_grad-jit-on.svg",
+      "sha256": "cbabc5dffa270381a6c57a40811eec3873f2f18c067f6e69874a8af078da05c3"
+    },
+    "figures/embedding-scatter_add-jit-off.svg": {
+      "bytes": 20868,
+      "path": "outputs/upstream-integration-v2/operator-results-v3/embedding-scatter_add-jit-off.svg",
+      "sha256": "18c03523765d156f45e7aecf17f19b9cfe0d15f486c5598355686d764fddd3f3"
+    },
+    "figures/embedding-scatter_add-jit-on.svg": {
+      "bytes": 20866,
+      "path": "outputs/upstream-integration-v2/operator-results-v3/embedding-scatter_add-jit-on.svg",
+      "sha256": "27b2e551332cd6cb178e771c0d11ed0adb368e9a4ab28ebf126b8fe9a92c9155"
+    },
+    "figures/mlx-release-numerical-margins.png": {
+      "bytes": 203975,
+      "path": "outputs/upstream-integration-v2/release-integration-v2/mlx-release-numerical-margins.png",
+      "sha256": "bb26f705138d4cd5285d9e27f7545da9b13ddc0f13a642118b511df0db670e60"
+    },
+    "figures/mlx-release-numerical-margins.svg": {
+      "bytes": 24361,
+      "path": "outputs/upstream-integration-v2/release-integration-v2/mlx-release-numerical-margins.svg",
+      "sha256": "53c7c1b41ed3a99ddbbbe147755ad27794f1b224c904bfc40e1e38a42d1b1ee0"
+    },
+    "figures/pytorch-initial-state-numerical-margins.png": {
+      "bytes": 213230,
+      "path": "outputs/upstream-integration-v2/pytorch-matched-integration-v2/pytorch-initial-state-numerical-margins.png",
+      "sha256": "0fdfc92f71259bdb4e72e53d8ba11a041bb9b2c69a9858898a516fc4b91c2222"
+    },
+    "figures/pytorch-initial-state-numerical-margins.svg": {
+      "bytes": 37427,
+      "path": "outputs/upstream-integration-v2/pytorch-matched-integration-v2/pytorch-initial-state-numerical-margins.svg",
+      "sha256": "69ee4a4fdd06fc4016ef26ec5d4e0b993d3e183c4417c04776473e550e114508"
+    }
+  },
+  "full_suite_failure_cause_established": false,
+  "historical_data_generator": {
+    "bytes": 12709,
+    "path": "work/upstream-integration-v2/project-report-v2/prepare.py",
+    "sha256": "361d960738b149cea6e3b5dd79fde63d708992814e997a0f6ca7c0ea98996134"
+  },
+  "isolated_failure_replay_closed": true,
+  "new_mps_figure_original_inputs": 39,
+  "new_mps_figure_total_inputs": 41,
+  "original_figure_values_and_csv_unchanged": true,
+  "paired_control_pending": false,
+  "paired_control_status_source": {
+    "bytes": 35246,
+    "path": "work/upstream-integration-v2/pytorch/paired-hosted-summary-v1/summary.json",
+    "sha256": "f11a29f300b853f632a138f4dcb65037bf6c8ce57a6c4b303e325de0fee06605"
+  },
+  "paired_device_audit": {
+    "bytes": 346018,
+    "path": "work/upstream-integration-v2/pytorch/paired-control-audit-actual-v3/audit.json",
+    "sha256": "0c650134d2c4cd8ac5aacd27d1fc530fdad63237da6371d1d47785faa24be578"
+  },
+  "paired_device_result": {
+    "bytes": 268872,
+    "path": "work/upstream-integration-v2/pytorch/paired-device-control-v4/summary.json",
+    "sha256": "019f4250657fef70ce082b1bb458f6c71e771a65784a98667bfc251c21d65eec"
+  },
+  "previous_project_documentation_generator": {
+    "bytes": 6779,
+    "path": "work/upstream-integration-v2/project-report-v1/prepare.py",
+    "sha256": "cd12fc30a476956ce2670fd6d9303b728b68b4dc058bdce3e702487fece4b802"
+  },
+  "project_source_and_publication_scope": "Exact own-project commit/CI and remote asset identities belong to separate final source/release receipts; they are not inferred from this report.",
+  "raw_evidence_in_git": false,
+  "remote_archive_verification": "Not established by this documentation copy.",
+  "result_audit_pending": false,
+  "revision_method": "Final mechanism-led prose and audited paired-control result; historical model and operator numerical data unchanged. No raw arrays or numerical equations rerun.",
+  "role": "Compact publication subset; source paths are evidence-archive paths relative to the original workspace, not repository-relative links.",
+  "schema": "upstream-integration-project-provenance-v7",
+  "sources": {
+    "closed_paired_audit": {
+      "bytes": 346018,
+      "path": "work/upstream-integration-v2/pytorch/paired-control-audit-actual-v3/audit.json",
+      "sha256": "0c650134d2c4cd8ac5aacd27d1fc530fdad63237da6371d1d47785faa24be578"
+    },
+    "closed_paired_hosted_summary": {
+      "bytes": 35246,
+      "path": "work/upstream-integration-v2/pytorch/paired-hosted-summary-v1/summary.json",
+      "sha256": "f11a29f300b853f632a138f4dcb65037bf6c8ce57a6c4b303e325de0fee06605"
+    },
+    "closed_paired_replay_summary": {
+      "bytes": 268872,
+      "path": "work/upstream-integration-v2/pytorch/paired-device-control-v4/summary.json",
+      "sha256": "019f4250657fef70ce082b1bb458f6c71e771a65784a98667bfc251c21d65eec"
+    },
+    "closed_source_byte_postflight": {
+      "bytes": 9288,
+      "path": "work/upstream-integration-v2/pytorch/source-postflight-v2/execution-v2/result.json",
+      "sha256": "493f734a093a4266c2c305f43e75345cf8ee69269172de6381003b9caefd4f1b"
+    },
+    "final_mps_figure_PYTORCH-NUMERICAL-CHECKS.md": {
+      "bytes": 2082,
+      "path": "outputs/upstream-integration-v2/pytorch-matched-integration-v2/PYTORCH-NUMERICAL-CHECKS.md",
+      "sha256": "46864ec6fc39fc4bfba39b579b11e3dfb124545207c064be521ad962947431cd"
+    },
+    "final_mps_figure_generation.json": {
+      "bytes": 121,
+      "path": "outputs/upstream-integration-v2/pytorch-matched-integration-v2/generation.json",
+      "sha256": "22ae5915d5ee630030b98dc68fe84a79ecf9286178a9f580e8bb1fc04fe57042"
+    },
+    "final_mps_figure_generator": {
+      "bytes": 25687,
+      "path": "work/upstream-integration-v2/pytorch/plot_matched_mps_v2.py",
+      "sha256": "9a7205d6e7eec4bb7d9593efded575082a700f190b366d4bd48c1e0564b38fc8"
+    },
+    "final_mps_figure_provenance.json": {
+      "bytes": 13731,
+      "path": "outputs/upstream-integration-v2/pytorch-matched-integration-v2/provenance.json",
+      "sha256": "3a85cdd3d5a4bcc37af6089c5e92960d4ae6d1db4e6f8bc4e9e3ca128b82448a"
+    },
+    "final_mps_figure_pytorch-initial-state.data.json": {
+      "bytes": 22409,
+      "path": "outputs/upstream-integration-v2/pytorch-matched-integration-v2/pytorch-initial-state.data.json",
+      "sha256": "e9088d9ea4fdd408bd2862ffc592c084985b460529d7b2a3394b57b833fc308c"
+    },
+    "final_mps_figure_tests": {
+      "bytes": 11404,
+      "path": "work/upstream-integration-v2/pytorch/test_plot_matched_mps_v2.py",
+      "sha256": "7a48359efad2c4bb0225e7e86b923daed59f79015f0bc9bb260e50806d0166f7"
+    },
+    "outputs/arm64-transformer/.github/workflows/upstream-pytorch-paired-v1.yml": {
+      "bytes": 2742,
+      "path": "outputs/arm64-transformer/.github/workflows/upstream-pytorch-paired-v1.yml",
+      "sha256": "46d148a9169e9a525eaea64fe0451f76e8cc3d0b27cdcc6045b2745d122e6f68"
+    },
+    "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/contract.json": {
+      "bytes": 21474,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/contract.json",
+      "sha256": "de369cb67b57c2b5cf9021562478fe69236a50d63cb3e70af8beb578a0421b2b"
+    },
+    "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/control.py": {
+      "bytes": 10731,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/control.py",
+      "sha256": "9ca69ccc8ac8909c2b5594ec70f9fe34b05b2209765052f727cf6f406e787a9d"
+    },
+    "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/hosted_build.py": {
+      "bytes": 34097,
+      "path": "outputs/arm64-transformer/validation/upstream-pytorch-paired-v1/hosted_build.py",
+      "sha256": "a4f8cc8da9f78c0b54e9b86e78c345672a7bf2efb126541e6c1441a71944f94e"
+    },
+    "outputs/upstream-framework-fixes/mlx-attention/VALIDATION.md": {
+      "bytes": 7251,
+      "path": "outputs/upstream-framework-fixes/mlx-attention/VALIDATION.md",
+      "sha256": "a7fc6016f231bf1d76514f7e56743335acb6a861158d06510a58c15b58e43a06"
+    },
+    "outputs/upstream-framework-fixes/mlx-embedding/IMPLEMENTATION.md": {
+      "bytes": 3606,
+      "path": "outputs/upstream-framework-fixes/mlx-embedding/IMPLEMENTATION.md",
+      "sha256": "7c241e1a016782902fd8124fbbe593fcee6701037b8907f90de51a1e00e10519"
+    },
+    "outputs/upstream-integration-v2/operator-results-v3/README.md": {
+      "bytes": 4252,
+      "path": "outputs/upstream-integration-v2/operator-results-v3/README.md",
+      "sha256": "eb171ff3e1f75b02a463ebb455886e47047345cc6dca2d54ab1b5097cce6aca1"
+    },
+    "outputs/upstream-integration-v2/operator-results-v3/generation.json": {
+      "bytes": 1046168,
+      "path": "outputs/upstream-integration-v2/operator-results-v3/generation.json",
+      "sha256": "fc743055adcc433bd8babd370dfb9f336f9340ba487e0282869ee0ff7260f54a"
+    },
+    "outputs/upstream-integration-v2/operator-results-v3/results.json": {
+      "bytes": 675154,
+      "path": "outputs/upstream-integration-v2/operator-results-v3/results.json",
+      "sha256": "6594c17214e8eb968e19cf03f4cd9bf60bf10ad1f6182482093139cf4e92a27c"
+    },
+    "outputs/upstream-integration-v2/pytorch-matched-integration-v1/PYTORCH-NUMERICAL-CHECKS.md": {
+      "bytes": 1767,
+      "path": "outputs/upstream-integration-v2/pytorch-matched-integration-v1/PYTORCH-NUMERICAL-CHECKS.md",
+      "sha256": "a5abbe3ae4d0bc9946523c3067ec3dd1786072b8bbeff3f01c2f761013de4a90"
+    },
+    "outputs/upstream-integration-v2/pytorch-matched-integration-v1/generation.json": {
+      "bytes": 121,
+      "path": "outputs/upstream-integration-v2/pytorch-matched-integration-v1/generation.json",
+      "sha256": "22ae5915d5ee630030b98dc68fe84a79ecf9286178a9f580e8bb1fc04fe57042"
+    },
+    "outputs/upstream-integration-v2/pytorch-matched-integration-v1/provenance.json": {
+      "bytes": 11930,
+      "path": "outputs/upstream-integration-v2/pytorch-matched-integration-v1/provenance.json",
+      "sha256": "0ab36269a8e280a98300c5df5616b38b98b10c3a86fe6b956994dc0460e40d33"
+    },
+    "outputs/upstream-integration-v2/pytorch-matched-integration-v1/pytorch-initial-state.data.json": {
+      "bytes": 20608,
+      "path": "outputs/upstream-integration-v2/pytorch-matched-integration-v1/pytorch-initial-state.data.json",
+      "sha256": "1333245733aabffd34d9bad622087ac94f1cd9772a71e174702a0eb3f5f492fe"
+    },
+    "outputs/upstream-integration-v2/pytorch/formatted-v2/changes.patch": {
+      "bytes": 21314,
+      "path": "outputs/upstream-integration-v2/pytorch/formatted-v2/changes.patch",
+      "sha256": "3834dca844ea3de6b40467ce214b99bce83fa06dae2bc454623516dafc0fdd71"
+    },
+    "outputs/upstream-integration-v2/release-integration-v2/RELEASE-INTEGRATION.md": {
+      "bytes": 2350,
+      "path": "outputs/upstream-integration-v2/release-integration-v2/RELEASE-INTEGRATION.md",
+      "sha256": "49334856ea7c11fa7434afe06995035aec4d2a57e7353c5fdf947443d6653992"
+    },
+    "outputs/upstream-integration-v2/release-integration-v2/release-integration.data.json": {
+      "bytes": 67802,
+      "path": "outputs/upstream-integration-v2/release-integration-v2/release-integration.data.json",
+      "sha256": "b98362420087e702a60ae8daf08c6f88c5c986d40e218758d31eede8cb0bb306"
+    },
+    "outputs/upstream-integration-v2/release-integration-v2/release-integration.provenance.json": {
+      "bytes": 32228,
+      "path": "outputs/upstream-integration-v2/release-integration-v2/release-integration.provenance.json",
+      "sha256": "78dba6a7ee88c493b4553a8944e49677b2d9a32a4579f57981b90163bf8dff31"
+    },
+    "work/upstream-integration-v2/corrected-baseline-independent-review-v1.json": {
+      "bytes": 52383,
+      "path": "work/upstream-integration-v2/corrected-baseline-independent-review-v1.json",
+      "sha256": "4724fdf23d0a2d871cbaaa345e920a98f0fdd8e365acdd0513652c5129412a2f"
+    },
+    "work/upstream-integration-v2/mlx-release-validation-v1/jit-off-full-gpu-suite-v2-audit-v1/summary.json": {
+      "bytes": 31758,
+      "path": "work/upstream-integration-v2/mlx-release-validation-v1/jit-off-full-gpu-suite-v2-audit-v1/summary.json",
+      "sha256": "8f03b2496112317f7d590999df47c07121f7d4e561378a79807e35123e7b747e"
+    },
+    "work/upstream-integration-v2/mlx-release-validation-v1/jit-on-full-gpu-suite-v2-audit-v1/summary.json": {
+      "bytes": 31730,
+      "path": "work/upstream-integration-v2/mlx-release-validation-v1/jit-on-full-gpu-suite-v2-audit-v1/summary.json",
+      "sha256": "6790277277b36c1af3a231d1346c74f53f175780c84dd7a4631aa0e6fdffef26"
+    },
+    "work/upstream-integration-v2/mlx-release-validation-v1/raw-integrity-v1.json": {
+      "bytes": 17625435,
+      "path": "work/upstream-integration-v2/mlx-release-validation-v1/raw-integrity-v1.json",
+      "sha256": "a97d6f4673853bde9c836346c2626fefd3eb9e7580abf1beb6ff1165043f458f"
+    },
+    "work/upstream-integration-v2/project-report-v4/INTEGRATION-REPORT.proposed.md": {
+      "bytes": 14959,
+      "path": "work/upstream-integration-v2/project-report-v4/INTEGRATION-REPORT.proposed.md",
+      "sha256": "f10eb9f49891595e220fc741a967cd3b3c6a88d5ab7378bcdabd49047a7720cd"
+    },
+    "work/upstream-integration-v2/project-report-v4/OPERATORS.proposed.md": {
+      "bytes": 4258,
+      "path": "work/upstream-integration-v2/project-report-v4/OPERATORS.proposed.md",
+      "sha256": "1e97f3971a92d10fdf1506b3def2788064378ea7dd6d5fa6715f25de42f74f37"
+    },
+    "work/upstream-integration-v2/project-report-v4/PROVENANCE.proposed.json": {
+      "bytes": 14239,
+      "path": "work/upstream-integration-v2/project-report-v4/PROVENANCE.proposed.json",
+      "sha256": "4d16498a9ddec44ca8dd39d5ffc3626340c562b22c979cc4db76b82c341a90a4"
+    },
+    "work/upstream-integration-v2/project-report-v4/README.proposed.md": {
+      "bytes": 14195,
+      "path": "work/upstream-integration-v2/project-report-v4/README.proposed.md",
+      "sha256": "5f7de9298990114a8a7a08278a508a3228da4e741275b962dff56ffed2f6dcc8"
+    },
+    "work/upstream-integration-v2/project-report-v4/summary.proposed.json": {
+      "bytes": 27515,
+      "path": "work/upstream-integration-v2/project-report-v4/summary.proposed.json",
+      "sha256": "3ea97b630cb78274420d6c64cbfd035fbf3b311e1a8150bc18dd0f17ae9731fb"
+    },
+    "work/upstream-integration-v2/project-report-v5/FOLLOWUP-PENDING.md": {
+      "bytes": 631,
+      "path": "work/upstream-integration-v2/project-report-v5/FOLLOWUP-PENDING.md",
+      "sha256": "175518d21b5ac51f4999b552d56b92cb9ac9e4a1c187324c47131e3ef5c9d11e"
+    },
+    "work/upstream-integration-v2/project-report-v5/INTEGRATION-REPORT.proposed.md": {
+      "bytes": 16948,
+      "path": "work/upstream-integration-v2/project-report-v5/INTEGRATION-REPORT.proposed.md",
+      "sha256": "725b34ed9a3b5ed2b30a5051b98dc80791d20edb226e2f4beb0c143f644882f5"
+    },
+    "work/upstream-integration-v2/project-report-v5/OPERATORS.proposed.md": {
+      "bytes": 4258,
+      "path": "work/upstream-integration-v2/project-report-v5/OPERATORS.proposed.md",
+      "sha256": "1e97f3971a92d10fdf1506b3def2788064378ea7dd6d5fa6715f25de42f74f37"
+    },
+    "work/upstream-integration-v2/project-report-v5/PROVENANCE.proposed.json": {
+      "bytes": 18682,
+      "path": "work/upstream-integration-v2/project-report-v5/PROVENANCE.proposed.json",
+      "sha256": "5baf609a2b43c5b3cd3d3dde8a4e5bdcb8075921966e3f859c68d009351fd842"
+    },
+    "work/upstream-integration-v2/project-report-v5/README.proposed.md": {
+      "bytes": 14410,
+      "path": "work/upstream-integration-v2/project-report-v5/README.proposed.md",
+      "sha256": "f07a2ab58494c58c1a365f107c7abb0044b92f3249273158ad4526ee6ed57406"
+    },
+    "work/upstream-integration-v2/project-report-v5/SUPPLEMENT-READINESS.md": {
+      "bytes": 7199,
+      "path": "work/upstream-integration-v2/project-report-v5/SUPPLEMENT-READINESS.md",
+      "sha256": "8b0e0f821068f7a7459e3f8c02ec42c5a772da74552f190573741a4d81cd8f7b"
+    },
+    "work/upstream-integration-v2/project-report-v5/paired-run-reported-observation.json": {
+      "bytes": 514,
+      "path": "work/upstream-integration-v2/project-report-v5/paired-run-reported-observation.json",
+      "sha256": "08bb037a79b600f03566be2c73899507a02d2cdf691422ff1143eb8cdc463c0b"
+    },
+    "work/upstream-integration-v2/project-report-v5/summary.proposed.json": {
+      "bytes": 29894,
+      "path": "work/upstream-integration-v2/project-report-v5/summary.proposed.json",
+      "sha256": "62899648893fc1cd1f8c260104549eb723bbf9116cdbddfd7a5e88c49739b545"
+    },
+    "work/upstream-integration-v2/pytorch/closed-five-family-audit-v2/audit/results.json": {
+      "bytes": 14996600,
+      "path": "work/upstream-integration-v2/pytorch/closed-five-family-audit-v2/audit/results.json",
+      "sha256": "9d2636a84056bd4cac351fa88f73f77d90e46f66de17df02695f4e0b5c978343"
+    },
+    "work/upstream-integration-v2/pytorch/development-eligibility-v5.json": {
+      "bytes": 206009,
+      "path": "work/upstream-integration-v2/pytorch/development-eligibility-v5.json",
+      "sha256": "a475fc47f860e4a676a1e1f1a9db33de42a05578ec99f1382bc87e5ded71a474"
+    },
+    "work/upstream-integration-v2/pytorch/device-format-v2-v5/focused-v1/campaign.json": {
+      "bytes": 8738,
+      "path": "work/upstream-integration-v2/pytorch/device-format-v2-v5/focused-v1/campaign.json",
+      "sha256": "bc558b949dc705e0a401a569c2090b70b9b3c755e9f42abb763b1f9ac4a6f31f"
+    },
+    "work/upstream-integration-v2/pytorch/device-format-v2-v5/focused-v1/focused-1/result.json": {
+      "bytes": 28899,
+      "path": "work/upstream-integration-v2/pytorch/device-format-v2-v5/focused-v1/focused-1/result.json",
+      "sha256": "caaaf5f498d6df6629ff4b8a3eb2b69e3d18c4eeeae14630816ee5bb5e3f61e8"
+    },
+    "work/upstream-integration-v2/pytorch/device-format-v2-v5/full-suite-v1/campaign.json": {
+      "bytes": 16749,
+      "path": "work/upstream-integration-v2/pytorch/device-format-v2-v5/full-suite-v1/campaign.json",
+      "sha256": "b389d425ff5e3d7d9b931cbdc6c6ac1035342735f3de01f4bf514d8c9d2a9a1f"
+    },
+    "work/upstream-integration-v2/pytorch/device-format-v2-v5/full-suite-v1/full-1/result.json": {
+      "bytes": 3970722,
+      "path": "work/upstream-integration-v2/pytorch/device-format-v2-v5/full-suite-v1/full-1/result.json",
+      "sha256": "eab61f146499b51c30e9cf4ec4b422914f2c89accebd3ef8fbde4dedd68919e2"
+    },
+    "work/upstream-integration-v2/pytorch/device-format-v2-v5/legacy-v1/campaign.json": {
+      "bytes": 11162,
+      "path": "work/upstream-integration-v2/pytorch/device-format-v2-v5/legacy-v1/campaign.json",
+      "sha256": "ffb50e57680ac1e306a3d9a973f2973aa9233b6b65f5866136d10fb6012690fb"
+    },
+    "work/upstream-integration-v2/pytorch/device-format-v2-v5/matched-v1/contract.json": {
+      "bytes": 19610,
+      "path": "work/upstream-integration-v2/pytorch/device-format-v2-v5/matched-v1/contract.json",
+      "sha256": "5c7885b975f7a79588722026a6217d3b3e58b8252c8afabc8b21aa60ebe6a3de"
+    },
+    "work/upstream-integration-v2/pytorch/device-format-v2-v5/matched-v1/summary.json": {
+      "bytes": 115402,
+      "path": "work/upstream-integration-v2/pytorch/device-format-v2-v5/matched-v1/summary.json",
+      "sha256": "1beab08895b1acf55119b0cd308512a7b3a47adce5b7a43a02fbdc201f360a74"
+    },
+    "work/upstream-integration-v2/pytorch/device-format-v2-v5/matrix-v1/campaign.json": {
+      "bytes": 11061,
+      "path": "work/upstream-integration-v2/pytorch/device-format-v2-v5/matrix-v1/campaign.json",
+      "sha256": "642cac6adcdf497007a7197ab9718f184456e05277ec3aa25efeeb773d4f0fcc"
+    },
+    "work/upstream-integration-v2/pytorch/failed-id-replay-v2/summary.json": {
+      "bytes": 47852,
+      "path": "work/upstream-integration-v2/pytorch/failed-id-replay-v2/summary.json",
+      "sha256": "d8fac2bc4554bcda219640443a2ee2e1bfda61f25ca76164e1756a062f28bd5d"
+    },
+    "work/upstream-integration-v2/pytorch/failure-replay-state-audit-v1/audit.json": {
+      "bytes": 52920,
+      "path": "work/upstream-integration-v2/pytorch/failure-replay-state-audit-v1/audit.json",
+      "sha256": "e99f2b4fc37080a9ecdcb1601a11e961beaf723579f09d5daf1e58ae84bc010a"
+    },
+    "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/verification.json": {
+      "bytes": 2973016,
+      "path": "work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/verification.json",
+      "sha256": "4d64086911257dfc33dc4763c5064dd50e713be8f947375250efaceb9be271f9"
+    },
+    "work/upstream-integration-v2/pytorch/paired-producer-independent-review-v1/review.json": {
+      "bytes": 3670,
+      "path": "work/upstream-integration-v2/pytorch/paired-producer-independent-review-v1/review.json",
+      "sha256": "4db582177fdede4362ac8670152f3b50ca42ce724278c1aa2aa87ec624884413"
+    },
+    "work/upstream-integration-v2/pytorch/plot_matched_mps_v1.py": {
+      "bytes": 20631,
+      "path": "work/upstream-integration-v2/pytorch/plot_matched_mps_v1.py",
+      "sha256": "6beceb2374143f0eb918bd7afc7caa831ba18c754f435fc230d193544769abd2"
+    },
+    "work/upstream-integration-v2/pytorch/pristine-41007910243-preserved-v2/preservation.json": {
+      "bytes": 8629,
+      "path": "work/upstream-integration-v2/pytorch/pristine-41007910243-preserved-v2/preservation.json",
+      "sha256": "94348adcd96125de1de36020ec616e1a42c5321411dd30d1cbe97f80deba8947"
+    },
+    "work/upstream-integration-v2/pytorch/test_plot_matched_mps_v1.py": {
+      "bytes": 6376,
+      "path": "work/upstream-integration-v2/pytorch/test_plot_matched_mps_v1.py",
+      "sha256": "e48f92e003bfc6144c65e342d09434a5b855e24433150282ac1c0101b2316e8e"
+    },
+    "work/upstream-integration-v2/study-mlx-capture-corrected-v2-metadata.json": {
+      "bytes": 11006,
+      "path": "work/upstream-integration-v2/study-mlx-capture-corrected-v2-metadata.json",
+      "sha256": "83bd1398790f0e567c8786f569899cd9ab3af4e22b5545d2ec3836318b2dc3a9"
+    }
+  }
+}

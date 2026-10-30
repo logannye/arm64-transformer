@@ -1,0 +1,36 @@
+{
+  "command": [
+    "python3",
+    "-I",
+    "-S",
+    "-B",
+    "work/upstream-integration-v2/final-publication-metadata-v1/upload.py",
+    "inspect"
+  ],
+  "exit_code": 0,
+  "native_or_numerical_execution": false,
+  "network_executed": false,
+  "passed": true,
+  "schema": "publication-metadata-inspect-execution-v1",
+  "source_inputs": {
+    "README.md": {
+      "bytes": 2974,
+      "sha256": "56db79bcfedbd6e986ad8ac45f9d7f13b813879da401fdc8406244bd8e26b2d2"
+    },
+    "plan.json": {
+      "bytes": 2236,
+      "sha256": "14a57d584d2616a2ae4228618c3ca9cba44f10c1c978a232d541308d3be7863d"
+    },
+    "test_upload.py": {
+      "bytes": 14425,
+      "sha256": "5bdb651fdaf9661ca5137ffdc40dfe6de05f3edb8b981b5d155872da986c7f1f"
+    },
+    "upload.py": {
+      "bytes": 13479,
+      "sha256": "72e0293874b643cc55057c43953c88682b4f26135c426de61173bb38bf3cc5df"
+    }
+  },
+  "stderr": "",
+  "stdout": "Authenticated two metadata assets; no network access or prior payload hashing.\n",
+  "utc": "2026-10-30T10:44:28.388603+00:00"
+}

@@ -1,0 +1,16 @@
+{
+  "accept": "application/vnd.github+json",
+  "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/691070688",
+  "argument_count": 6,
+  "executable": "gh",
+  "payload_copied_to_disk": false,
+  "problem": null,
+  "raw_stderr_retained": false,
+  "returncode": 0,
+  "seconds": 1.3711272911168635,
+  "stderr_bytes": 0,
+  "stderr_markers": [],
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 1591,
+  "stdout_sha256": "2e6e50c0e005eecbcce774d377173f85ce8bd7c4e565e4b6ae341cb21f676aba"
+}

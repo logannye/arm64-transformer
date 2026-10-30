@@ -1,0 +1,25 @@
+{
+  "before": {
+    "content_type": "application/json",
+    "created_at": "2026-10-30T00:14:34Z",
+    "digest": "sha256:3c239abfeaeb15f0e9b7719f2d3bf66b767d3406e21f9b6166d1a9c95459f024",
+    "id": 690349378,
+    "label": "",
+    "name": "package.json",
+    "node_id": "RA_kwDOVbC4ds4pJeVC",
+    "size": 19875100,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T00:14:43Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690349378"
+  },
+  "expected": {
+    "asset_id": 690349378,
+    "bytes": 19875100,
+    "local_path": "outputs/upstream-integration-v2/evidence-major-v1/package.json",
+    "name": "package.json",
+    "sha256": "3c239abfeaeb15f0e9b7719f2d3bf66b767d3406e21f9b6166d1a9c95459f024"
+  },
+  "ordinal": 15,
+  "started_utc": "2026-10-30T00:24:29.630392+00:00",
+  "status": "running"
+}

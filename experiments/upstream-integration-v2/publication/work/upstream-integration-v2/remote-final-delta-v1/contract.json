@@ -1,0 +1,110 @@
+{
+  "assets": [
+    {
+      "asset_id": 691746601,
+      "bytes": 22022,
+      "local_path": "work/upstream-integration-v2/supplement-v2/original-wrapper-bytecode-v1/lint-v3-original-host-bytecode.bin",
+      "name": "lint-v3-original-host-bytecode.bin",
+      "sha256": "3750033702c4a05fecc7a4df2d681331dc2e8e597b25530e38dbb537841466ab"
+    },
+    {
+      "asset_id": 691746699,
+      "bytes": 22022,
+      "local_path": "work/upstream-integration-v2/supplement-v2/original-wrapper-bytecode-v1/lint-v4-original-host-bytecode.bin",
+      "name": "lint-v4-original-host-bytecode.bin",
+      "sha256": "2e9f6ea6c34c499cfa09261d1a2e8ef6415e9daba77d937a3b39d7c03c4c561b"
+    },
+    {
+      "asset_id": 691746811,
+      "bytes": 116651557,
+      "local_path": "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/formatted/pytorch-integrated-runtime.tar.gz",
+      "name": "pytorch-paired-formatted-runtime-41008996057.tar.gz",
+      "sha256": "febbdf27c26f07f7dc505f645855dbe09a2bfad3d128b461c2759d8627d3539d"
+    },
+    {
+      "asset_id": 691747809,
+      "bytes": 239588,
+      "local_path": "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/formatted/pytorch-paired-formatted-test-source.tar.gz",
+      "name": "pytorch-paired-formatted-test-source-41008996057.tar.gz",
+      "sha256": "fc6d5ef18b638ca461df40a73378f83a8554675f2c4777596b2fc0657b4f921e"
+    },
+    {
+      "asset_id": 691747869,
+      "bytes": 116623257,
+      "local_path": "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/pristine/pytorch-integrated-runtime.tar.gz",
+      "name": "pytorch-paired-pristine-runtime-41008996057.tar.gz",
+      "sha256": "28ee4c66080572e53a43fec11da1d6fefde2055e7325fee1549c1b0adc012ae2"
+    },
+    {
+      "asset_id": 691748486,
+      "bytes": 237611,
+      "local_path": "work/upstream-integration-v2/pytorch/paired-41008996057-verified-v1/artifact/pristine/pytorch-paired-pristine-test-source.tar.gz",
+      "name": "pytorch-paired-pristine-test-source-41008996057.tar.gz",
+      "sha256": "204ff3be72b443afec9ac84f2281234884c9f21c04b609f6f032530724a8a716"
+    },
+    {
+      "asset_id": 691748564,
+      "bytes": 786491000,
+      "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/evidence-0001.tar.gz",
+      "name": "upstream-supplement-v3-evidence-0001.tar.gz",
+      "sha256": "7dfd972fd4c5d081d006610ed4a9e60a1b312e890d80a2aa83565af62bfa0e4c"
+    },
+    {
+      "asset_id": 691752369,
+      "bytes": 917031151,
+      "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/evidence-0002.tar.gz",
+      "name": "upstream-supplement-v3-evidence-0002.tar.gz",
+      "sha256": "3f2dce41e3d647fbf0b28108052f2860b1c4e2bc80d5fb1d822e4395e284c1c0"
+    },
+    {
+      "asset_id": 691756332,
+      "bytes": 918442365,
+      "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/evidence-0003.tar.gz",
+      "name": "upstream-supplement-v3-evidence-0003.tar.gz",
+      "sha256": "4a575a086bbf5919da7fb361f1594a10fc19134dc6758b6f4b48224e826ccfb6"
+    },
+    {
+      "asset_id": 691760773,
+      "bytes": 267197573,
+      "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/evidence-0004.tar.gz",
+      "name": "upstream-supplement-v3-evidence-0004.tar.gz",
+      "sha256": "a89b92de7085d2abe55b0c50807ae1d8ac23f29987bf8a4c74d41b9e8d8d1239"
+    },
+    {
+      "asset_id": 691762292,
+      "bytes": 816678992,
+      "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/evidence-0005.tar.gz",
+      "name": "upstream-supplement-v3-evidence-0005.tar.gz",
+      "sha256": "73745dfe57f2761199f4cfece7fcf1d91e25d23a3695d4dffe8a6cf8cfa3856c"
+    },
+    {
+      "asset_id": 691766540,
+      "bytes": 89603264,
+      "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/evidence-0006.tar.gz",
+      "name": "upstream-supplement-v3-evidence-0006.tar.gz",
+      "sha256": "6bb1f1fde3ad78a25ed393a21840abbe776727ec382fb2b26227bdb19632c92d"
+    },
+    {
+      "asset_id": 691767054,
+      "bytes": 5003065,
+      "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/input-selection.json",
+      "name": "upstream-supplement-v3-input-selection.json",
+      "sha256": "b1557b748624afc6c2ec65ae9054fae340f3b577bc517e040b1e122d61c58c95"
+    },
+    {
+      "asset_id": 691767150,
+      "bytes": 18679595,
+      "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/package.json",
+      "name": "upstream-supplement-v3-package.json",
+      "sha256": "fb21c76bab9559ac8b0532211685accb7bc1bf5135fda500892921b768c829e6"
+    }
+  ],
+  "draft": true,
+  "expected_login": "logannye",
+  "prerelease": false,
+  "release_id": 428513598,
+  "repository": "logannye/arm64-transformer",
+  "schema": "release-asset-download-contract-v1",
+  "tag_name": "transformer-upstream-integration-v2",
+  "workspace_root": "/Users/logannye/Documents/Codex/2026-10-28/we-x20"
+}

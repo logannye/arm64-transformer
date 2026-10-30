@@ -1,0 +1,26 @@
+{
+  "assets": [
+    {
+      "asset_id": 691796651,
+      "bytes": 2677500,
+      "local_path": "work/upstream-integration-v2/final-supplement-selection-v1/selection.receipt.json",
+      "name": "upstream-supplement-v3-selection-receipt.json",
+      "sha256": "f8f49be951e4f64e1cc759bb2020215cef45bc03e40b108245247d28cc34e562"
+    },
+    {
+      "asset_id": 691796861,
+      "bytes": 1658,
+      "local_path": "work/upstream-integration-v2/final-supplement-verification-v1.json",
+      "name": "upstream-supplement-v3-verification.json",
+      "sha256": "30c5b10bce70b569d4239e17eccadbefe3fb1e80997d5777c4a5c5e34961a183"
+    }
+  ],
+  "draft": true,
+  "expected_login": "logannye",
+  "prerelease": false,
+  "release_id": 428513598,
+  "repository": "logannye/arm64-transformer",
+  "schema": "release-asset-download-contract-v1",
+  "tag_name": "transformer-upstream-integration-v2",
+  "workspace_root": "/Users/logannye/Documents/Codex/2026-10-28/we-x20"
+}

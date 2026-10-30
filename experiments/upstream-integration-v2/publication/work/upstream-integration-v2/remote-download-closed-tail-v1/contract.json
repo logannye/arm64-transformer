@@ -1,0 +1,26 @@
+{
+  "schema": "release-asset-download-contract-v1",
+  "repository": "logannye/arm64-transformer",
+  "release_id": 428513598,
+  "tag_name": "transformer-upstream-integration-v2",
+  "draft": true,
+  "prerelease": false,
+  "expected_login": "logannye",
+  "workspace_root": "/Users/logannye/Documents/Codex/2026-10-28/we-x20",
+  "assets": [
+    {
+      "name": "evidence-0010.tar.gz",
+      "asset_id": 690339398,
+      "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0010.tar.gz",
+      "bytes": 1008190101,
+      "sha256": "98f503b5d90db916ef54b3aeef3cf70c835e0c56dfa794f33c41cc22ebf5a237"
+    },
+    {
+      "name": "evidence-0011.tar.gz",
+      "asset_id": 690347645,
+      "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0011.tar.gz",
+      "bytes": 1027363723,
+      "sha256": "989576cdd9153ae8d4e8834b985ce3ef0f8766d92324fd96f38b44a446e5da35"
+    }
+  ]
+}

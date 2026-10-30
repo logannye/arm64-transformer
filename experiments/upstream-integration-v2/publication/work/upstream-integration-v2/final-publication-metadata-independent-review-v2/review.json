@@ -1,0 +1,111 @@
+{
+  "schema": "final-publication-metadata-independent-review-v2",
+  "complete": true,
+  "passed": true,
+  "findings": [],
+  "sources": [
+    {
+      "path": "work/upstream-integration-v2/final-publication-metadata-v1/upload.py",
+      "bytes": 13343,
+      "sha256": "dd0d95d1d477e7e7a185a0fd4246f123c779ff0401325bd0873edd1428686073"
+    },
+    {
+      "path": "work/upstream-integration-v2/final-publication-metadata-v1/test_upload.py",
+      "bytes": 14233,
+      "sha256": "3c22be25b7fb3f1f09205e936ea3169abf56b8a9cd1c3f3b75cc6542bf3ed234"
+    },
+    {
+      "path": "work/upstream-integration-v2/final-publication-metadata-v1/README.md",
+      "bytes": 2974,
+      "sha256": "56db79bcfedbd6e986ad8ac45f9d7f13b813879da401fdc8406244bd8e26b2d2"
+    }
+  ],
+  "checks": [
+    {
+      "argv": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/final-publication-metadata-v1",
+        "-p",
+        "test_upload.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": {
+        "path": "work/upstream-integration-v2/final-publication-metadata-independent-review-v2/00.log",
+        "bytes": 1461,
+        "sha256": "b80b93338acda031ffac13c92bf3695706f4b4acb3d63dd6e23dbb5151919407"
+      }
+    },
+    {
+      "argv": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/final-publication-metadata-v1/upload.py",
+        "--help"
+      ],
+      "exit_code": 0,
+      "log": {
+        "path": "work/upstream-integration-v2/final-publication-metadata-independent-review-v2/01.log",
+        "bytes": 257,
+        "sha256": "1f604a3dad8f32fbdb2e9272b7a30c19bde4bbddb84a9547d82f469d982715b8"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/ruff",
+        "check",
+        "--config",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/pyproject.toml",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/final-publication-metadata-v1/upload.py",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/final-publication-metadata-v1/test_upload.py"
+      ],
+      "exit_code": 0,
+      "log": {
+        "path": "work/upstream-integration-v2/final-publication-metadata-independent-review-v2/02.log",
+        "bytes": 19,
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      }
+    },
+    {
+      "argv": [
+        "/opt/homebrew/bin/ruff",
+        "format",
+        "--check",
+        "--config",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/pyproject.toml",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/final-publication-metadata-v1/upload.py",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/final-publication-metadata-v1/test_upload.py"
+      ],
+      "exit_code": 0,
+      "log": {
+        "path": "work/upstream-integration-v2/final-publication-metadata-independent-review-v2/03.log",
+        "bytes": 26,
+        "sha256": "3bc53bf3e981a98a34a852e175bf9b77af841edea74fca595d9aedcbaf9a4938"
+      }
+    }
+  ],
+  "test_methods": 9,
+  "previous_review": {
+    "path": "work/upstream-integration-v2/final-publication-metadata-independent-review-v1/review.json",
+    "bytes": 1060,
+    "sha256": "0cf34913203aa329c36dcdf71dda048c571048527e9aedf515fac5f19d41333d"
+  },
+  "network_executed": false,
+  "real_payloads_read": false,
+  "numerical_or_framework_execution": false,
+  "review_scope": [
+    "Exact frozen two assets,90 prior identities preserved,92-asset final contract",
+    "Prior contract stable full SHA/size revalidation permits only typed ctime change; all other original stats exact",
+    "Strict full stat checks remain for upload sources; before/after raw bytes unchanged",
+    "Every prospective row retained on failures; upload success remains distinct from remote payload verification and publication"
+  ]
+}

@@ -1,0 +1,42 @@
+name: Isolated MLX matched Release builds v1
+on:
+  push:
+    branches: [codex/upstream-integration-v2]
+    paths:
+      - integration/mlx-release-bench/**
+      - .github/workflows/upstream-mlx-release-bench.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: isolated-mlx-patch-integration
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.repository == 'logannye/arm64-transformer'
+    runs-on: macos-26
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12.10'
+          architecture: arm64
+      - name: Isolated interpreter
+        run: python -m venv "$RUNNER_TEMP/mlx-matched-release-venv"
+      - name: Four serial builds in one build directory
+        run: |
+          "$RUNNER_TEMP/mlx-matched-release-venv/bin/python" -B \
+            integration/mlx-release-bench/hosted_build.py \
+            --work-root "$RUNNER_TEMP/mlx-matched-release-v1" --parallel 2
+      - name: Retain every runtime and failure
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: isolated-mlx-release-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/mlx-matched-release-v1/publish/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 14

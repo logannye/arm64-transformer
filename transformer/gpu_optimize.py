@@ -56,6 +56,7 @@ def source_identity():
         "validate",
         "gpu_precision",
         "gpu_run",
+        "gpu_environment",
         "gpu_inputs",
         "gpu_contract",
         "gpu_metal",

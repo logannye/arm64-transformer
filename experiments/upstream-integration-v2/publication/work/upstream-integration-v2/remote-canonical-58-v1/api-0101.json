@@ -1,0 +1,16 @@
+{
+  "accept": "application/octet-stream",
+  "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/691063646",
+  "argument_count": 6,
+  "executable": "gh",
+  "payload_copied_to_disk": false,
+  "problem": null,
+  "raw_stderr_retained": false,
+  "returncode": 0,
+  "seconds": 0.6023832079954445,
+  "stderr_bytes": 0,
+  "stderr_markers": [],
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_bytes": 320900,
+  "stdout_sha256": "cdcbd012c9312258922f8cd3f1b62a6580fdced17db6014896053d47cddf9295"
+}

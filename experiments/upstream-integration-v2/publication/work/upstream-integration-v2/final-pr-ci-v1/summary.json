@@ -1,0 +1,18 @@
+{
+  "bindings": {
+    "jobs.json": {
+      "bytes": 6204,
+      "sha256": "901731e385f3fe33e32894b5b842235c9d27556e38aa4d19f785b3b16c4f57b0"
+    },
+    "run.json": {
+      "bytes": 13497,
+      "sha256": "bb70a2a3ba38b0fee228dc04e0576772d0953b890fa77ce4b60c1c85bdb36782"
+    }
+  },
+  "commit": "695afbfebcae976e315125f9cbddbf4186dd2fe2",
+  "complete": true,
+  "passed": true,
+  "run_id": 41038825815,
+  "schema": "exact-project-pr-ci-v1",
+  "url": "https://github.com/logannye/arm64-transformer/actions/runs/41038825815"
+}

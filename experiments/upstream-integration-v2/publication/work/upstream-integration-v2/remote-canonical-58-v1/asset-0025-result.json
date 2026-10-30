@@ -1,0 +1,55 @@
+{
+  "after": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T05:35:50Z",
+    "digest": "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0",
+    "id": 691063283,
+    "label": "",
+    "name": "dependency-a163dcaede0f1c02-x000-sortedcontainers-2.4.0-py2.py3-none-any.whl",
+    "node_id": "RA_kwDOVbC4ds4pMMnz",
+    "size": 29575,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T05:35:50Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063283"
+  },
+  "before": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T05:35:50Z",
+    "digest": "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0",
+    "id": 691063283,
+    "label": "",
+    "name": "dependency-a163dcaede0f1c02-x000-sortedcontainers-2.4.0-py2.py3-none-any.whl",
+    "node_id": "RA_kwDOVbC4ds4pMMnz",
+    "size": 29575,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T05:35:50Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063283"
+  },
+  "expected": {
+    "asset_id": 691063283,
+    "bytes": 29575,
+    "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/sortedcontainers-2.4.0-py2.py3-none-any.whl",
+    "name": "dependency-a163dcaede0f1c02-x000-sortedcontainers-2.4.0-py2.py3-none-any.whl",
+    "sha256": "a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0"
+  },
+  "finished_utc": "2026-10-30T05:41:57.504329+00:00",
+  "ordinal": 25,
+  "started_utc": "2026-10-30T05:41:56.274353+00:00",
+  "status": "passed",
+  "stream": {
+    "accept": "application/octet-stream",
+    "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/691063283",
+    "argument_count": 6,
+    "executable": "gh",
+    "payload_copied_to_disk": false,
+    "problem": null,
+    "raw_stderr_retained": false,
+    "returncode": 0,
+    "seconds": 0.5110604581423104,
+    "stderr_bytes": 0,
+    "stderr_markers": [],
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 29575,
+    "stdout_sha256": "a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0"
+  }
+}

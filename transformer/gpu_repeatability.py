@@ -20,7 +20,9 @@ from pathlib import Path
 
 import numpy as np
 
-CONTRACT = "gpu-v2-standard-baseline-repeatability-v1"
+from transformer.gpu_environment import ENVIRONMENT, child_environment, require_environment
+
+CONTRACT = "gpu-v2-standard-baseline-repeatability-v2"
 WIDTHS = (32, 64, 128, 256, 512, 1024)
 BATCHES = (1, 3, 16)
 LENGTHS = (3, 32)
@@ -30,18 +32,8 @@ STAGES = ("embedding", "full_model", "training")
 REPETITIONS = 10
 PROCESSES = 2
 SEED = 20261103
-PINS = {
-    "PYTORCH_ENABLE_MPS_FALLBACK": "0",
-    "PYTORCH_MPS_FAST_MATH": "0",
-    "PYTORCH_MPS_PREFER_METAL": "0",
-    "MLX_ENABLE_TF32": "0",
-    "MLX_DISABLE_COMPILE": "0",
-    "MLX_SDPA_VJP_FALLBACK": "0",
-    "OMP_NUM_THREADS": "1",
-    "MKL_NUM_THREADS": "1",
-    "OPENBLAS_NUM_THREADS": "1",
-    "VECLIB_MAXIMUM_THREADS": "1",
-}
+PINS = dict(ENVIRONMENT)
+
 TOLERANCES = {"forward": (2e-5, 2e-4), "gradient": (3e-5, 3e-3), "oracle": (1e-10, 1e-10)}
 
 
@@ -355,6 +347,7 @@ def _numpy_forward(initial, tokens):
 def source_identity(engine=None):
     root = Path(__file__).resolve().parents[1]
     names = [
+        "transformer/gpu_environment.py",
         "transformer/gpu_repeatability.py",
         "scripts/check_gpu_repeatability.py",
         "transformer/reference.py",
@@ -362,6 +355,8 @@ def source_identity(engine=None):
     ]
     engines = ("mps", "mlx", "metal") if engine is None else (engine,)
     names.extend(f"transformer/gpu_{name}.py" for name in engines)
+    if "mlx" in engines:
+        names.append("transformer/gpu_mlx_compile.py")
     if "metal" in engines:
         names.extend(
             str(path.relative_to(root)) for path in (root / "native/metal").glob("*.metal")
@@ -373,6 +368,7 @@ def source_identity(engine=None):
 
 
 def run_worker(engine, width, destination, stages, runtime_identity_sha256=None):
+    require_environment(PINS)
     from transformer import spec
 
     if width != spec.WIDTH:
@@ -746,7 +742,7 @@ def main(argv=None):
             paths = []
             for process in range(PROCESSES):
                 destination = args.output / f"{engine}-w{width}-process{process}"
-                env = {**os.environ, **PINS, "ARM64_TRANSFORMER_WIDTH": str(width)}
+                env = child_environment(PINS, ARM64_TRANSFORMER_WIDTH=str(width))
                 command = [
                     sys.executable,
                     str(root / "scripts/check_gpu_repeatability.py"),

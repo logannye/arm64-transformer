@@ -1,0 +1,316 @@
+import copy
+import importlib.util
+import json
+import tempfile
+import unittest
+from pathlib import Path
+from unittest.mock import patch
+
+HERE = Path(__file__).resolve().parent
+spec = importlib.util.spec_from_file_location(
+    "publication_metadata_test", HERE / "upload.py"
+)
+m = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(m)
+
+
+def remote(expected):
+    return {
+        "id": expected["asset_id"],
+        "node_id": "node-" + str(expected["asset_id"]),
+        "name": expected["name"],
+        "label": "",
+        "state": "uploaded",
+        "size": expected["bytes"],
+        "digest": "sha256:" + expected["sha256"],
+        "content_type": "application/octet-stream",
+        "url": f"https://api.github.com/repos/logannye/arm64-transformer/releases/assets/{expected['asset_id']}",
+        "created_at": "2026-10-30T00:00:00Z",
+        "updated_at": "2026-10-30T00:00:00Z",
+    }
+
+
+AUTH = {"login": "logannye", "id": 123, "type": "User"}
+RELEASE = {
+    "id": 428513598,
+    "tag_name": "transformer-upstream-integration-v2",
+    "draft": True,
+    "prerelease": False,
+    "created_at": "2026-10-30T00:00:00Z",
+    "published_at": None,
+}
+
+
+class Client:
+    def __init__(self, rows, failure=None, hook=None):
+        self.rows = copy.deepcopy(rows)
+        self.failure, self.hook = failure, hook
+        self.uploads = []
+
+    def user(self):
+        return {**AUTH, "login": "wrong"} if self.failure == "account" else AUTH
+
+    def release(self):
+        return {**RELEASE, "draft": False} if self.failure == "release" else RELEASE
+
+    def assets(self):
+        return copy.deepcopy(self.rows)
+
+    def asset(self, asset_id):
+        return copy.deepcopy(next(r for r in self.rows if r["id"] == asset_id))
+
+    def upload(self, expected):
+        if self.failure == "interrupt":
+            raise KeyboardInterrupt()
+        if self.failure == "upload":
+            raise ValueError("synthetic upload failure")
+        selected = {
+            "name": expected["asset_name"],
+            "asset_id": 1000 + len(self.uploads),
+            "bytes": expected["bytes"],
+            "sha256": expected["sha256"],
+        }
+        response = remote(selected)
+        if self.failure == "digest":
+            response["digest"] = "sha256:" + "f" * 64
+        self.rows.append(response)
+        self.uploads.append(expected["asset_name"])
+        if self.failure == "old_changed":
+            self.rows[0]["label"] = "changed"
+        if self.hook:
+            self.hook()
+        return copy.deepcopy(response)
+
+
+class MetadataTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name).resolve()
+        self.here = self.root / "work/metadata"
+        self.here.mkdir(parents=True)
+        self.previous_path = self.root / "work/previous/summary.json"
+        self.previous_path.parent.mkdir()
+        self.patches = [
+            patch.object(m, "ROOT", self.root),
+            patch.object(m, "HERE", self.here),
+            patch.object(m.d, "ROOT", self.root),
+            patch.object(m, "PREVIOUS", self.previous_path),
+            patch.object(m, "sources", return_value={"source": "synthetic"}),
+        ]
+        for item in self.patches:
+            item.start()
+        self.addCleanup(self.tmp.cleanup)
+        self.addCleanup(lambda: [item.stop() for item in reversed(self.patches)])
+        old_rows = [
+            {
+                "name": f"old-{i:03d}",
+                "asset_id": i + 1,
+                "local_path": f"work/old-{i:03d}",
+                "bytes": 100,
+                "sha256": ("b" if i == 0 else "c") * 64,
+            }
+            for i in range(90)
+        ]
+        self.old = m.d.download_contract(old_rows)
+        old_path = self.previous_path.parent / "final-inventory-contract.json"
+        old_path.write_text(json.dumps(self.old))
+        self.previous = {
+            "schema": "final-release-delta-upload-v1",
+            "complete": True,
+            "passed": True,
+            "status": "passed",
+            "published": False,
+            "plan": {"sha256": "d" * 64},
+            "inventory_after": {
+                "selected": [remote(r) for r in old_rows],
+                "unselected": [],
+            },
+            "authenticated_before": AUTH,
+            "authenticated_after": AUTH,
+            "release_before": RELEASE,
+            "release_after": RELEASE,
+            "final_inventory_contract": m.v.file_identity(old_path),
+        }
+        self.previous_path.write_text(json.dumps(self.previous))
+        records = [
+            {
+                "schema": "supplement-selection-receipt-v1",
+                "complete": True,
+                "formal_fits": 0,
+                "selection_sha256": "b" * 64,
+                "selected_files": 12,
+            },
+            {
+                "verified": True,
+                "package_sha256": "c" * 64,
+                "selection_sha256": "b" * 64,
+                "member_count": 12,
+            },
+        ]
+        self.assets = []
+        for i, record in enumerate(records):
+            path = self.root / f"work/metadata-{i}.json"
+            path.write_text(json.dumps(record))
+            identity = m.v.file_identity(path)
+            self.assets.append(
+                {
+                    "asset_name": f"new-{i}.json",
+                    "local_path": f"work/metadata-{i}.json",
+                    "restore_path": f"work/metadata-{i}.json",
+                    "bytes": identity["bytes"],
+                    "sha256": identity["sha256"],
+                    "source_stat": identity["stat"],
+                    "executable_bits": 0,
+                    "role": [
+                        "supplement_layer_history",
+                        "supplement_local_verification",
+                    ][i],
+                }
+            )
+        self.plan = {
+            "schema": "post-package-publication-metadata-v1",
+            "repository": "logannye/arm64-transformer",
+            "release_id": 428513598,
+            "tag_name": "transformer-upstream-integration-v2",
+            "expected_draft": True,
+            "expected_preceding_count": 90,
+            "complete_delta_plan_sha256": "d" * 64,
+            "expected_selection_sha256": "b" * 64,
+            "expected_package_sha256": "c" * 64,
+            "assets": self.assets,
+            "scope": "tiny fixture",
+        }
+        (self.here / "plan.json").write_text(json.dumps(self.plan))
+        self.patches += [
+            patch.object(
+                m, "PLAN_SHA", m.v.file_identity(self.here / "plan.json")["sha256"]
+            ),
+            patch.object(
+                m, "PREVIOUS_SHA", m.v.file_identity(self.previous_path)["sha256"]
+            ),
+        ]
+        for item in self.patches[-2:]:
+            item.start()
+
+    def client(self, failure=None, hook=None):
+        return Client(self.previous["inventory_after"]["selected"], failure, hook)
+
+    def execute(self, name="run", client=None):
+        client = client or self.client()
+        return m.run(self.here / name, client_factory=lambda output: client)
+
+    def test_success_preserves_90_and_builds_two_and_92_contracts(self):
+        client = self.client()
+        result = self.execute(client=client)
+        self.assertTrue(result["passed"])
+        self.assertEqual(len(client.uploads), 2)
+        self.assertEqual(result["local_before"], result["local_after"])
+        self.assertFalse(result["published"])
+        self.assertFalse(result["remote_payloads_verified"])
+        self.assertTrue(
+            all(not (self.root / r["local_path"]).exists() for r in self.old["assets"])
+        )
+        for file, count in [
+            ("download-contract.json", 2),
+            ("final-inventory-contract.json", 92),
+        ]:
+            self.assertEqual(
+                len(json.loads((self.here / "run" / file).read_text())["assets"]), count
+            )
+
+    def test_scope_and_inventory_mutations_reject(self):
+        changes = [
+            lambda p: p.update(expected_preceding_count=89),
+            lambda p: p.update(expected_draft=False),
+            lambda p: p["assets"].pop(),
+            lambda p: p["assets"].reverse(),
+            lambda p: p["assets"][0].update(asset_name="old-000"),
+            lambda p: p["assets"][0].update(local_path="work/../escape"),
+            lambda p: p["assets"][0].update(restore_path="work/other"),
+            lambda p: p["assets"][0].update(executable_bits=1),
+        ]
+        for change in changes:
+            plan = copy.deepcopy(self.plan)
+            change(plan)
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                m.validate(plan, self.old, self.previous)
+        for field in ["passed", "complete"]:
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                m.validate(self.plan, self.old, {**self.previous, field: False})
+
+    def test_remote_account_release_and_full_identity_fail_before_upload(self):
+        for failure in ["account", "release", "missing", "identity"]:
+            client = self.client(failure)
+            if failure == "missing":
+                client.rows.pop()
+            if failure == "identity":
+                client.rows[0]["updated_at"] = "changed"
+            with self.subTest(failure=failure), self.assertRaises(ValueError):
+                self.execute(failure, client)
+            self.assertEqual(client.uploads, [])
+            record = json.loads((self.here / failure / "summary.json").read_text())
+            self.assertEqual(
+                [r["status"] for r in record["assets"]], ["not_started"] * 2
+            )
+
+    def test_failed_or_interrupted_upload_retains_all_slots(self):
+        for failure, error in [
+            ("upload", ValueError),
+            ("interrupt", KeyboardInterrupt),
+            ("digest", ValueError),
+            ("old_changed", ValueError),
+        ]:
+            with self.subTest(failure=failure), self.assertRaises(error):
+                self.execute(failure, self.client(failure))
+            record = json.loads((self.here / failure / "summary.json").read_text())
+            self.assertFalse(record["passed"])
+            self.assertEqual(len(record["assets"]), 2)
+            self.assertEqual(record["assets"][1]["status"], "not_started")
+            self.assertFalse(
+                (self.here / failure / "final-inventory-contract.json").exists()
+            )
+
+    def test_payload_mutation_before_or_during_upload_rejects(self):
+        path = self.root / self.assets[0]["local_path"]
+        original = path.read_bytes()
+        with self.assertRaises(ValueError):
+            self.execute("during", self.client(hook=lambda: path.write_bytes(original)))
+        self.assertFalse(
+            json.loads((self.here / "during/summary.json").read_text())["passed"]
+        )
+        client = self.client()
+        with self.assertRaises(ValueError):
+            self.execute("before", client)
+        self.assertEqual(client.uploads, [])
+
+    def test_input_hashes_and_output_boundaries_reject(self):
+        with patch.object(m, "PREVIOUS_SHA", "f" * 64), self.assertRaises(ValueError):
+            m.inputs()
+        with patch.object(m, "PLAN_SHA", "f" * 64), self.assertRaises(ValueError):
+            m.inputs()
+        for output in [
+            self.here,
+            self.here / ".." / "escape",
+            self.root / "work/elsewhere",
+        ]:
+            with self.subTest(output=output), self.assertRaises(ValueError):
+                m.run(output, lambda _: self.client())
+
+    def test_semantic_binding_rejects_even_self_consistent_new_hash(self):
+        path = self.root / self.assets[1]["local_path"]
+        record = json.loads(path.read_text())
+        record["member_count"] = 13
+        path.write_text(json.dumps(record))
+        identity = m.v.file_identity(path)
+        plan = copy.deepcopy(self.plan)
+        plan["assets"][1].update(
+            bytes=identity["bytes"],
+            sha256=identity["sha256"],
+            source_stat=identity["stat"],
+        )
+        with self.assertRaises(ValueError):
+            m.local_metadata(plan)
+
+
+if __name__ == "__main__":
+    unittest.main()

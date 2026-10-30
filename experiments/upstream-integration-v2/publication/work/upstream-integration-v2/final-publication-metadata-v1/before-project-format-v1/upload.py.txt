@@ -1,0 +1,374 @@
+"""Publish two declared bookkeeping assets to the authenticated 90-asset draft."""
+
+import argparse
+import hashlib
+import importlib.util
+import re
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[2]
+DELTA = HERE.parent / "final-delta-upload-v1/upload.py"
+DELTA_SHA = "a9f87ca94f22ab527435fd56894681f304f5bdae49b103c847829399988d9060"
+PLAN_SHA = "14a57d584d2616a2ae4228618c3ca9cba44f10c1c978a232d541308d3be7863d"
+PREVIOUS = HERE.parent / "final-delta-upload-v1/upload-v1/summary.json"
+PREVIOUS_SHA = "1362f56e74da6850eb353cfd89c6a12ce45d3860c9b0ed63dfd6b4f2392aebe0"
+if hashlib.sha256(DELTA.read_bytes()).hexdigest() != DELTA_SHA:
+    raise ValueError("Reviewed delta helper changed")
+spec = importlib.util.spec_from_file_location("metadata_delta", DELTA)
+d = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(d)
+u, v, p, require = d.u, d.v, d.p, d.require
+UploadClient = d.UploadClient
+
+
+def read_bound(path, expected_sha=None):
+    raw, state = p.read_plain_file(path)  # Reviewed 64 MiB metadata bound, not 8 MiB.
+    identity = {
+        "bytes": len(raw),
+        "sha256": hashlib.sha256(raw).hexdigest(),
+        "stat": state,
+    }
+    require(
+        expected_sha is None or identity["sha256"] == expected_sha,
+        "Metadata hash differs",
+    )
+    return p.parse_json(raw), identity
+
+
+def sources():
+    require(d.ROOT == ROOT, "Workspace differs")
+    require(v.file_identity(DELTA)["sha256"] == DELTA_SHA, "Delta helper changed")
+    return {
+        "metadata_source_sha256": v.file_identity(Path(__file__))["sha256"],
+        **d.source_identity(),
+    }
+
+
+def validate(plan, old, previous):
+    require(
+        plan["schema"] == "post-package-publication-metadata-v1"
+        and plan["repository"] == "logannye/arm64-transformer"
+        and plan["release_id"] == 428513598
+        and plan["tag_name"] == "transformer-upstream-integration-v2"
+        and plan["expected_draft"] is True
+        and type(plan["expected_preceding_count"]) is int
+        and plan["expected_preceding_count"] == 90,
+        "Wrong metadata scope",
+    )
+    require(
+        previous["schema"] == "final-release-delta-upload-v1"
+        and previous["complete"] is True
+        and previous["passed"] is True
+        and previous["status"] == "passed"
+        and previous["published"] is False
+        and previous["plan"]["sha256"] == plan["complete_delta_plan_sha256"]
+        and not any(k in previous for k in ("error", "error_type", "integrity_error")),
+        "Previous upload is not the closed passing attempt",
+    )
+    require(
+        d.download_contract(old["assets"]) == old, "Preceding contract scope differs"
+    )
+    inventory = v.inventory_check(
+        previous["inventory_after"]["selected"], old, exact=True
+    )
+    require(
+        len(old["assets"]) == 90
+        and previous["inventory_after"] == inventory
+        and previous["authenticated_before"] == previous["authenticated_after"]
+        and previous["release_before"] == previous["release_after"],
+        "Preceding full identity inventory differs",
+    )
+    rows = plan["assets"]
+    require(len(rows) == 2, "Exactly two metadata assets required")
+    require(
+        [r["role"] for r in rows]
+        == ["supplement_layer_history", "supplement_local_verification"],
+        "Wrong metadata roles",
+    )
+    names, paths = [], []
+    for row in rows:
+        require(
+            set(row)
+            == {
+                "asset_name",
+                "bytes",
+                "executable_bits",
+                "local_path",
+                "restore_path",
+                "role",
+                "sha256",
+                "source_stat",
+            },
+            "Unexpected metadata asset fields",
+        )
+        require(
+            re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", row["asset_name"]),
+            "Unsafe name",
+        )
+        v.safe_relative(row["local_path"])
+        require(row["restore_path"] == row["local_path"], "Restore path differs")
+        require(
+            type(row["bytes"]) is int
+            and 0 <= row["bytes"] <= 64 << 20
+            and v.hexsha(row["sha256"])
+            and row["executable_bits"] == 0,
+            "Invalid byte/mode identity",
+        )
+        require(
+            row["source_stat"]["st_size"] == row["bytes"]
+            and row["source_stat"]["st_mode"] & 0o111 == 0,
+            "Source mode/size differs",
+        )
+        names.append(row["asset_name"])
+        paths.append(row["local_path"])
+    require(
+        names == sorted(set(names)) and len(set(paths)) == 2,
+        "Duplicate/reordered metadata",
+    )
+    require(
+        not set(names) & {r["name"] for r in old["assets"]},
+        "Existing remote name collision",
+    )
+    require(
+        not set(paths) & {r["local_path"] for r in old["assets"]},
+        "Existing path collision",
+    )
+    by_hash = {r["sha256"] for r in old["assets"]}
+    require(
+        plan["expected_selection_sha256"] in by_hash
+        and plan["expected_package_sha256"] in by_hash,
+        "Selected package is not uploaded",
+    )
+
+
+def contract_revalidation(current, original):
+    """Refresh only ctime after a stable full read proves original bytes unchanged."""
+    require(
+        set(current) == set(original) == {"bytes", "sha256", "stat"},
+        "Contract identity schema differs",
+    )
+    require(
+        current["bytes"] == original["bytes"]
+        and current["sha256"] == original["sha256"],
+        "Original contract bytes changed",
+    )
+    fields = {
+        "st_dev",
+        "st_ino",
+        "st_size",
+        "st_mode",
+        "st_nlink",
+        "st_mtime_ns",
+        "st_ctime_ns",
+    }
+    require(
+        set(current["stat"]) == set(original["stat"]) == fields,
+        "Contract stat schema differs",
+    )
+    require(
+        all(
+            type(row[field]) is int
+            for row in [current["stat"], original["stat"]]
+            for field in fields
+        ),
+        "Invalid contract stat type",
+    )
+    require(
+        all(
+            current["stat"][field] == original["stat"][field]
+            for field in fields - {"st_ctime_ns"}
+        ),
+        "Contract non-ctime identity changed",
+    )
+    changed = current["stat"]["st_ctime_ns"] != original["stat"]["st_ctime_ns"]
+    return {
+        "original_identity": original,
+        "current_identity": current,
+        "invalidated_cache_fields": ["st_ctime_ns"] if changed else [],
+        "stable_full_byte_read_passed": True,
+        "scope": "Original closed upload receipt supplies SHA/size authority; only ctime may refresh.",
+    }
+
+
+def inputs():
+    plan, plan_id = read_bound(HERE / "plan.json", PLAN_SHA)
+    previous, previous_id = read_bound(PREVIOUS, PREVIOUS_SHA)
+    old, old_id = read_bound(PREVIOUS.parent / "final-inventory-contract.json")
+    revalidation = contract_revalidation(old_id, previous["final_inventory_contract"])
+    validate(plan, old, previous)
+    return (
+        plan,
+        old,
+        previous,
+        {
+            "plan": plan_id,
+            "previous_upload": previous_id,
+            "previous_inventory": old_id,
+            "previous_inventory_revalidation": revalidation,
+        },
+    )
+
+
+def local_metadata(plan):
+    results, records = {}, []
+    for expected in plan["assets"]:
+        record, actual = read_bound(ROOT / expected["local_path"], expected["sha256"])
+        require(
+            actual["bytes"] == expected["bytes"]
+            and actual["stat"] == expected["source_stat"],
+            "Original local bytes/stat changed",
+        )
+        results[expected["local_path"]] = actual
+        records.append(record)
+    selection, verification = records
+    require(
+        selection["schema"] == "supplement-selection-receipt-v1"
+        and selection["complete"] is True
+        and selection["formal_fits"] == 0
+        and selection["selection_sha256"] == plan["expected_selection_sha256"],
+        "Selection receipt is not the preserved layer history",
+    )
+    require(
+        verification["verified"] is True
+        and verification["package_sha256"] == plan["expected_package_sha256"]
+        and verification["selection_sha256"] == plan["expected_selection_sha256"]
+        and verification["member_count"] == selection["selected_files"],
+        "Local verification does not bind the same package/selection",
+    )
+    return results
+
+
+def run(output, client_factory=UploadClient):
+    plan, old, previous, bindings = inputs()
+    output = Path(output).absolute()
+    require(
+        output == output.resolve(strict=False)
+        and output.parent == HERE
+        and not output.exists(),
+        "Use a fresh canonical direct child output",
+    )
+    p.canonical_directory(output.parent)
+    output.mkdir()
+    record = {
+        "schema": "final-publication-metadata-upload-v1",
+        "inputs": bindings,
+        "sources": sources(),
+        "status": "running",
+        "complete": False,
+        "passed": False,
+        "published": False,
+        "remote_payloads_verified": False,
+        "old_payloads_rehashed": False,
+        "created_utc": v.utc(),
+        "assets": [
+            {"ordinal": i, "expected": row, "status": "not_started"}
+            for i, row in enumerate(plan["assets"])
+        ],
+    }
+    v.write_summary(output / "summary.json", record)
+    try:
+        record["local_before"] = local_metadata(plan)
+        v.write_summary(output / "summary.json", record)
+        client = client_factory(output)
+        view = {"existing_assets": old["assets"]}
+        identities = list(previous["inventory_after"]["selected"])
+        added = []
+        auth, release = previous["authenticated_after"], previous["release_after"]
+        before = d.remote_state(client, view, added, identities, auth, release)
+        record.update(
+            authenticated_before=before[0],
+            release_before=before[1],
+            inventory_before=before[2],
+        )
+        v.write_summary(output / "summary.json", record)
+        for row in record["assets"]:
+            expected = row["expected"]
+            d.remote_state(client, view, added, identities, auth, release)
+            require(
+                local_metadata(plan) == record["local_before"],
+                "Pre-upload metadata changed",
+            )
+            row.update(status="uploading", started_utc=v.utc())
+            v.write_summary(output / "summary.json", record)
+            response = client.upload(expected)
+            selected = {
+                "name": expected["asset_name"],
+                "asset_id": response["id"],
+                **{k: expected[k] for k in ("local_path", "bytes", "sha256")},
+            }
+            require(
+                selected["asset_id"] not in {r["id"] for r in identities},
+                "Asset ID reused",
+            )
+            row["response"] = v.asset_identity(response, selected)
+            require(
+                v.asset_identity(client.asset(selected["asset_id"]), selected)
+                == row["response"],
+                "Uploaded asset changed",
+            )
+            row["local_after"] = local_metadata(plan)[expected["local_path"]]
+            require(
+                row["local_after"] == record["local_before"][expected["local_path"]],
+                "Local upload source changed",
+            )
+            added.append(selected)
+            identities.append(row["response"])
+            row.update(status="uploaded", finished_utc=v.utc())
+            v.write_summary(output / "summary.json", record)
+        after = d.remote_state(client, view, added, identities, auth, release)
+        record.update(
+            authenticated_after=after[0],
+            release_after=after[1],
+            inventory_after=after[2],
+        )
+        record["local_after"] = local_metadata(plan)
+        require(
+            record["local_after"] == record["local_before"],
+            "Final local metadata changed",
+        )
+        require(
+            inputs()[3] == bindings and sources() == record["sources"],
+            "Bound inputs changed",
+        )
+        v.write_new(output / "download-contract.json", d.download_contract(added))
+        v.write_new(
+            output / "final-inventory-contract.json",
+            d.download_contract([*old["assets"], *added]),
+        )
+        record.update(
+            status="passed",
+            complete=True,
+            passed=True,
+            finished_utc=v.utc(),
+            remote_verification_required=True,
+            download_contract=v.file_identity(output / "download-contract.json"),
+            final_inventory_contract=v.file_identity(
+                output / "final-inventory-contract.json"
+            ),
+        )
+        v.write_summary(output / "summary.json", record)
+        return record
+    except BaseException as error:
+        d.fail(output, record, error)
+        raise
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("command", choices=("inspect", "upload"))
+    parser.add_argument("--output", type=Path)
+    args = parser.parse_args()
+    if args.command == "inspect":
+        plan, _, _, _ = inputs()
+        local_metadata(plan)
+        print(
+            "Authenticated two metadata assets; no network access or prior payload hashing."
+        )
+    else:
+        require(args.output is not None, "Require a fresh output namespace")
+        run(args.output)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,55 @@
+{
+  "after": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T10:37:01Z",
+    "digest": "sha256:fb21c76bab9559ac8b0532211685accb7bc1bf5135fda500892921b768c829e6",
+    "id": 691767150,
+    "label": "",
+    "name": "upstream-supplement-v3-package.json",
+    "node_id": "RA_kwDOVbC4ds4pO4du",
+    "size": 18679595,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T10:37:03Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691767150"
+  },
+  "before": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T10:37:01Z",
+    "digest": "sha256:fb21c76bab9559ac8b0532211685accb7bc1bf5135fda500892921b768c829e6",
+    "id": 691767150,
+    "label": "",
+    "name": "upstream-supplement-v3-package.json",
+    "node_id": "RA_kwDOVbC4ds4pO4du",
+    "size": 18679595,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T10:37:03Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691767150"
+  },
+  "expected": {
+    "asset_id": 691767150,
+    "bytes": 18679595,
+    "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/package.json",
+    "name": "upstream-supplement-v3-package.json",
+    "sha256": "fb21c76bab9559ac8b0532211685accb7bc1bf5135fda500892921b768c829e6"
+  },
+  "finished_utc": "2026-10-30T10:41:48.171743+00:00",
+  "ordinal": 13,
+  "started_utc": "2026-10-30T10:41:45.963542+00:00",
+  "status": "passed",
+  "stream": {
+    "accept": "application/octet-stream",
+    "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/691767150",
+    "argument_count": 6,
+    "executable": "gh",
+    "payload_copied_to_disk": false,
+    "problem": null,
+    "raw_stderr_retained": false,
+    "returncode": 0,
+    "seconds": 1.458819624967873,
+    "stderr_bytes": 0,
+    "stderr_markers": [],
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 18679595,
+    "stdout_sha256": "fb21c76bab9559ac8b0532211685accb7bc1bf5135fda500892921b768c829e6"
+  }
+}

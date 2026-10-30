@@ -1,0 +1,25 @@
+{
+  "before": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T05:36:12Z",
+    "digest": "sha256:e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1",
+    "id": 691064257,
+    "label": "",
+    "name": "dependency-e9b54de76e530bb6-x000-certifi-2026.10.23-py3-none-any.whl",
+    "node_id": "RA_kwDOVbC4ds4pMM3B",
+    "size": 135082,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T05:36:12Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691064257"
+  },
+  "expected": {
+    "asset_id": 691064257,
+    "bytes": 135082,
+    "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/certifi-2026.10.23-py3-none-any.whl",
+    "name": "dependency-e9b54de76e530bb6-x000-certifi-2026.10.23-py3-none-any.whl",
+    "sha256": "e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1"
+  },
+  "ordinal": 37,
+  "started_utc": "2026-10-30T05:42:25.678329+00:00",
+  "status": "running"
+}

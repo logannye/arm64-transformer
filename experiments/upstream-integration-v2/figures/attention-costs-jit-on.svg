@@ -1,0 +1,397 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="1165" viewBox="0 0 1260 1165" role="img">
+<title>Attention observed operator costs · jit-on</title>
+<rect width="1260" height="1165" fill="#f8fafc"/>
+<text x="30" y="38" font-family="Arial,sans-serif" font-size="23" fill="#213047" text-anchor="start" font-weight="bold">Attention observed operator costs · jit-on</text>
+<text x="30" y="65" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="start" font-weight="normal">Main / patched: mean of two process p50 values, µs. — = that variant was not timed.</text>
+<text x="30" y="108" font-family="Arial,sans-serif" font-size="18" fill="#213047" text-anchor="start" font-weight="bold">Training · eager</text>
+<text x="30" y="141" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">T / D</text>
+<text x="151" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<text x="284" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">128</text>
+<text x="417" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">192</text>
+<text x="550" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">256</text>
+<text x="50" y="184" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">1</text>
+<rect x="88" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="151" y="176" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 206.0</text>
+<text x="151" y="193" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="221" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="284" y="176" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 196.8</text>
+<text x="284" y="193" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="354" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="176" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 192.9</text>
+<text x="417" y="193" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="487" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="550" y="176" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 203.0</text>
+<text x="550" y="193" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<text x="50" y="238" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">3</text>
+<rect x="88" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="151" y="230" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 173.0</text>
+<text x="151" y="247" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="221" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="284" y="230" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 196.7</text>
+<text x="284" y="247" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="354" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="230" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 203.9</text>
+<text x="417" y="247" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="487" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="550" y="230" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 238.7</text>
+<text x="550" y="247" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<text x="50" y="292" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">8</text>
+<rect x="88" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="151" y="284" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 189.9</text>
+<text x="151" y="301" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="221" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="284" y="284" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 286.4</text>
+<text x="284" y="301" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="354" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="284" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 280.6</text>
+<text x="417" y="301" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="487" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="550" y="284" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 217.0</text>
+<text x="550" y="301" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<text x="50" y="346" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">9</text>
+<rect x="88" y="316" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="338" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">210.0 / 202.1</text>
+<text x="151" y="355" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="221" y="316" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="338" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">206.5 / 243.5</text>
+<text x="284" y="355" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="354" y="316" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="338" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 271.8</text>
+<text x="417" y="355" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="487" y="316" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="338" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">213.0 / 211.8</text>
+<text x="550" y="355" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="50" y="400" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">31</text>
+<rect x="88" y="370" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="392" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">246.3 / 199.9</text>
+<text x="151" y="409" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="221" y="370" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="392" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">202.8 / 209.0</text>
+<text x="284" y="409" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="354" y="370" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="392" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 210.4</text>
+<text x="417" y="409" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="487" y="370" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="392" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">219.7 / 222.0</text>
+<text x="550" y="409" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="50" y="454" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">32</text>
+<rect x="88" y="424" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="446" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">268.1 / 197.8</text>
+<text x="151" y="463" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="221" y="424" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="446" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">249.1 / 208.5</text>
+<text x="284" y="463" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="354" y="424" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="446" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 209.0</text>
+<text x="417" y="463" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="487" y="424" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="446" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">222.9 / 222.6</text>
+<text x="550" y="463" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="50" y="508" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<rect x="88" y="478" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="500" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">235.4 / 301.6</text>
+<text x="151" y="517" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="221" y="478" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="500" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">208.9 / 211.9</text>
+<text x="284" y="517" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="354" y="478" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="500" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 218.2</text>
+<text x="417" y="517" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="487" y="478" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="500" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">226.6 / 231.8</text>
+<text x="550" y="517" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="655" y="108" font-family="Arial,sans-serif" font-size="18" fill="#213047" text-anchor="start" font-weight="bold">Training · compiled</text>
+<text x="655" y="141" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">T / D</text>
+<text x="776" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<text x="909" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">128</text>
+<text x="1042" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">192</text>
+<text x="1175" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">256</text>
+<text x="675" y="184" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">1</text>
+<rect x="713" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="776" y="176" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 193.8</text>
+<text x="776" y="193" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="846" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="909" y="176" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 197.8</text>
+<text x="909" y="193" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="979" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="176" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 183.8</text>
+<text x="1042" y="193" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="1112" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1175" y="176" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 245.9</text>
+<text x="1175" y="193" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<text x="675" y="238" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">3</text>
+<rect x="713" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="776" y="230" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 184.8</text>
+<text x="776" y="247" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="846" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="909" y="230" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 246.9</text>
+<text x="909" y="247" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="979" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="230" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 234.4</text>
+<text x="1042" y="247" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="1112" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1175" y="230" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 215.0</text>
+<text x="1175" y="247" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<text x="675" y="292" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">8</text>
+<rect x="713" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="776" y="284" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 189.4</text>
+<text x="776" y="301" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="846" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="909" y="284" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 199.6</text>
+<text x="909" y="301" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="979" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="284" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 265.0</text>
+<text x="1042" y="301" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="1112" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1175" y="284" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 207.5</text>
+<text x="1175" y="301" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<text x="675" y="346" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">9</text>
+<rect x="713" y="316" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="338" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">194.5 / 240.3</text>
+<text x="776" y="355" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="846" y="316" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="338" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">207.8 / 209.0</text>
+<text x="909" y="355" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="979" y="316" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="338" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 204.8</text>
+<text x="1042" y="355" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="1112" y="316" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="338" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">213.5 / 213.0</text>
+<text x="1175" y="355" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="675" y="400" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">31</text>
+<rect x="713" y="370" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="392" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">221.0 / 233.5</text>
+<text x="776" y="409" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="846" y="370" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="392" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">207.1 / 214.9</text>
+<text x="909" y="409" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="979" y="370" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="392" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 207.0</text>
+<text x="1042" y="409" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="1112" y="370" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="392" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">216.9 / 225.4</text>
+<text x="1175" y="409" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="675" y="454" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">32</text>
+<rect x="713" y="424" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="446" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">203.9 / 232.8</text>
+<text x="776" y="463" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="846" y="424" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="446" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">218.4 / 204.7</text>
+<text x="909" y="463" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="979" y="424" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="446" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 215.1</text>
+<text x="1042" y="463" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="1112" y="424" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="446" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">227.8 / 220.1</text>
+<text x="1175" y="463" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="675" y="508" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<rect x="713" y="478" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="500" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">209.0 / 291.4</text>
+<text x="776" y="517" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="846" y="478" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="500" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">213.9 / 203.0</text>
+<text x="909" y="517" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="979" y="478" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="500" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 220.2</text>
+<text x="1042" y="517" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="1112" y="478" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="500" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">230.1 / 228.4</text>
+<text x="1175" y="517" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="30" y="598" font-family="Arial,sans-serif" font-size="18" fill="#213047" text-anchor="start" font-weight="bold">Inference · eager</text>
+<text x="30" y="631" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">T / D</text>
+<text x="151" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<text x="284" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">128</text>
+<text x="417" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">192</text>
+<text x="550" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">256</text>
+<text x="50" y="674" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">1</text>
+<rect x="88" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="666" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">128.0 / 136.7</text>
+<text x="151" y="683" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="221" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="666" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">148.7 / 134.1</text>
+<text x="284" y="683" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="354" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="417" y="666" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">160.5 / 126.4</text>
+<text x="417" y="683" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="487" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="666" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">152.2 / 162.9</text>
+<text x="550" y="683" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="50" y="728" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">3</text>
+<rect x="88" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="720" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">138.5 / 138.1</text>
+<text x="151" y="737" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="221" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="720" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">139.2 / 142.0</text>
+<text x="284" y="737" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="354" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="417" y="720" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">144.6 / 150.6</text>
+<text x="417" y="737" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="487" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="720" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">149.8 / 147.8</text>
+<text x="550" y="737" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="50" y="782" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">8</text>
+<rect x="88" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="774" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">143.3 / 131.5</text>
+<text x="151" y="791" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="221" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="774" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">154.0 / 143.9</text>
+<text x="284" y="791" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="354" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="417" y="774" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">159.7 / 163.7</text>
+<text x="417" y="791" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="487" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="774" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">154.0 / 172.5</text>
+<text x="550" y="791" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="50" y="836" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">9</text>
+<rect x="88" y="806" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="828" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">164.2 / 157.4</text>
+<text x="151" y="845" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="221" y="806" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="828" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">169.1 / 168.4</text>
+<text x="284" y="845" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="354" y="806" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="828" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 140.5</text>
+<text x="417" y="845" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="487" y="806" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="828" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">139.0 / 164.8</text>
+<text x="550" y="845" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="50" y="890" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">31</text>
+<rect x="88" y="860" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="882" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">156.8 / 161.3</text>
+<text x="151" y="899" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="221" y="860" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="882" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">158.0 / 167.1</text>
+<text x="284" y="899" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="354" y="860" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="882" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 159.4</text>
+<text x="417" y="899" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="487" y="860" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="882" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">184.7 / 182.2</text>
+<text x="550" y="899" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="50" y="944" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">32</text>
+<rect x="88" y="914" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="936" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">155.9 / 154.3</text>
+<text x="151" y="953" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="221" y="914" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="936" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">177.9 / 164.4</text>
+<text x="284" y="953" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="354" y="914" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="936" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 171.0</text>
+<text x="417" y="953" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="487" y="914" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="936" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">189.9 / 175.9</text>
+<text x="550" y="953" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="50" y="998" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<rect x="88" y="968" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="990" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">165.2 / 167.4</text>
+<text x="151" y="1007" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="221" y="968" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="990" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">191.7 / 192.2</text>
+<text x="284" y="1007" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="354" y="968" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="990" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 198.9</text>
+<text x="417" y="1007" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="487" y="968" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="990" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">186.4 / 219.3</text>
+<text x="550" y="1007" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="655" y="598" font-family="Arial,sans-serif" font-size="18" fill="#213047" text-anchor="start" font-weight="bold">Inference · compiled</text>
+<text x="655" y="631" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">T / D</text>
+<text x="776" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<text x="909" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">128</text>
+<text x="1042" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">192</text>
+<text x="1175" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">256</text>
+<text x="675" y="674" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">1</text>
+<rect x="713" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="666" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">138.4 / 141.4</text>
+<text x="776" y="683" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="846" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="666" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">144.2 / 144.3</text>
+<text x="909" y="683" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="979" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1042" y="666" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">144.7 / 157.3</text>
+<text x="1042" y="683" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="1112" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="666" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">125.4 / 142.1</text>
+<text x="1175" y="683" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="675" y="728" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">3</text>
+<rect x="713" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="720" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">126.4 / 127.4</text>
+<text x="776" y="737" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="846" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="720" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">143.1 / 143.9</text>
+<text x="909" y="737" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="979" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1042" y="720" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">144.1 / 151.6</text>
+<text x="1042" y="737" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="1112" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="720" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">133.8 / 150.9</text>
+<text x="1175" y="737" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="675" y="782" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">8</text>
+<rect x="713" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="774" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">143.5 / 131.8</text>
+<text x="776" y="791" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="846" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="774" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">146.9 / 150.9</text>
+<text x="909" y="791" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="979" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1042" y="774" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">128.6 / 157.2</text>
+<text x="1042" y="791" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="1112" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="774" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">168.0 / 148.8</text>
+<text x="1175" y="791" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="675" y="836" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">9</text>
+<rect x="713" y="806" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="828" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">164.6 / 156.7</text>
+<text x="776" y="845" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="846" y="806" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="828" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">173.0 / 160.8</text>
+<text x="909" y="845" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="979" y="806" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="828" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 159.5</text>
+<text x="1042" y="845" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="1112" y="806" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="828" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">184.5 / 158.2</text>
+<text x="1175" y="845" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="675" y="890" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">31</text>
+<rect x="713" y="860" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="882" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">161.0 / 149.5</text>
+<text x="776" y="899" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="846" y="860" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="882" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">171.6 / 186.4</text>
+<text x="909" y="899" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="979" y="860" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="882" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 165.6</text>
+<text x="1042" y="899" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="1112" y="860" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="882" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">153.4 / 207.2</text>
+<text x="1175" y="899" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="675" y="944" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">32</text>
+<rect x="713" y="914" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="936" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">152.0 / 144.1</text>
+<text x="776" y="953" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="846" y="914" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="936" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">170.0 / 174.3</text>
+<text x="909" y="953" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="979" y="914" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="936" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 158.6</text>
+<text x="1042" y="953" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="1112" y="914" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="936" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">178.4 / 175.0</text>
+<text x="1175" y="953" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="675" y="998" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<rect x="713" y="968" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="990" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">143.4 / 163.2</text>
+<text x="776" y="1007" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="846" y="968" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="990" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">166.6 / 186.9</text>
+<text x="909" y="1007" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<rect x="979" y="968" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="990" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">— / 161.6</text>
+<text x="1042" y="1007" font-family="Arial,sans-serif" font-size="10" fill="#7854a4" text-anchor="middle" font-weight="normal">U · RUNTIME</text>
+<rect x="1112" y="968" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="990" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">188.3 / 180.2</text>
+<text x="1175" y="1007" font-family="Arial,sans-serif" font-size="10" fill="#167d9a" text-anchor="middle" font-weight="normal">Q</text>
+<text x="30" y="1086" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="start" font-weight="normal">M: main; P: patched. T: sequence length; D: per-head dimension. Same B2 / H4 causal fixture.</text>
+<text x="30" y="1110" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">Q: qualified; U: unqualified. RUNTIME: execution failed; MIXED: distinct failure types. ABBA: two processes per variant.</text>
+<text x="30" y="1135" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="start" font-weight="normal">These are individual attention operators. They do not measure transformer training or qualify the five-engine study.</text>
+</svg>

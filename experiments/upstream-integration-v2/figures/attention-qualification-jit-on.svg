@@ -1,0 +1,397 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="1165" viewBox="0 0 1260 1165" role="img">
+<title>Attention qualification · jit-on</title>
+<rect width="1260" height="1165" fill="#f8fafc"/>
+<text x="30" y="38" font-family="Arial,sans-serif" font-size="23" fill="#213047" text-anchor="start" font-weight="bold">Attention qualification · jit-on</text>
+<text x="30" y="65" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="start" font-weight="normal">Only PASS cells receive a main / patched latency ratio; &gt;1 means the patch is faster.</text>
+<text x="30" y="108" font-family="Arial,sans-serif" font-size="18" fill="#213047" text-anchor="start" font-weight="bold">Training · eager</text>
+<text x="30" y="141" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">T / D</text>
+<text x="151" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<text x="284" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">128</text>
+<text x="417" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">192</text>
+<text x="550" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">256</text>
+<text x="50" y="184" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">1</text>
+<rect x="88" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="151" y="174" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="151" y="192" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="221" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="284" y="174" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="284" y="192" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="354" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="174" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="417" y="192" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="487" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="550" y="174" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="550" y="192" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<text x="50" y="238" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">3</text>
+<rect x="88" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="151" y="228" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="151" y="246" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="221" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="284" y="228" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="284" y="246" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="354" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="228" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="417" y="246" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="487" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="550" y="228" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="550" y="246" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<text x="50" y="292" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">8</text>
+<rect x="88" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="151" y="282" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="151" y="300" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="221" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="284" y="282" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="284" y="300" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="354" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="282" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="417" y="300" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="487" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="550" y="282" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="550" y="300" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<text x="50" y="346" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">9</text>
+<rect x="88" y="316" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="336" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="151" y="354" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.039×</text>
+<rect x="221" y="316" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="336" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="284" y="354" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.848×</text>
+<rect x="354" y="316" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="336" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="417" y="354" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="487" y="316" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="336" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="550" y="354" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.006×</text>
+<text x="50" y="400" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">31</text>
+<rect x="88" y="370" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="390" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="151" y="408" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.233×</text>
+<rect x="221" y="370" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="390" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="284" y="408" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.970×</text>
+<rect x="354" y="370" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="390" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="417" y="408" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="487" y="370" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="390" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="550" y="408" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.989×</text>
+<text x="50" y="454" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">32</text>
+<rect x="88" y="424" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="444" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="151" y="462" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.355×</text>
+<rect x="221" y="424" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="444" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="284" y="462" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.194×</text>
+<rect x="354" y="424" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="444" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="417" y="462" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="487" y="424" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="444" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="550" y="462" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.001×</text>
+<text x="50" y="508" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<rect x="88" y="478" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="498" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="151" y="516" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.780×</text>
+<rect x="221" y="478" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="498" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="284" y="516" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.986×</text>
+<rect x="354" y="478" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="498" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="417" y="516" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="487" y="478" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="498" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="550" y="516" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.978×</text>
+<text x="655" y="108" font-family="Arial,sans-serif" font-size="18" fill="#213047" text-anchor="start" font-weight="bold">Training · compiled</text>
+<text x="655" y="141" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">T / D</text>
+<text x="776" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<text x="909" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">128</text>
+<text x="1042" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">192</text>
+<text x="1175" y="141" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">256</text>
+<text x="675" y="184" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">1</text>
+<rect x="713" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="776" y="174" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="776" y="192" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="846" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="909" y="174" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="909" y="192" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="979" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="174" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="1042" y="192" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="1112" y="154" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1175" y="174" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="1175" y="192" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<text x="675" y="238" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">3</text>
+<rect x="713" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="776" y="228" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="776" y="246" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="846" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="909" y="228" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="909" y="246" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="979" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="228" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="1042" y="246" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="1112" y="208" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1175" y="228" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="1175" y="246" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<text x="675" y="292" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">8</text>
+<rect x="713" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="776" y="282" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="776" y="300" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="846" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="909" y="282" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="909" y="300" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="979" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="282" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="1042" y="300" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="1112" y="262" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1175" y="282" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="1175" y="300" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<text x="675" y="346" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">9</text>
+<rect x="713" y="316" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="336" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="776" y="354" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.809×</text>
+<rect x="846" y="316" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="336" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="909" y="354" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.994×</text>
+<rect x="979" y="316" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="336" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="1042" y="354" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="1112" y="316" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="336" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="1175" y="354" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.003×</text>
+<text x="675" y="400" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">31</text>
+<rect x="713" y="370" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="390" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="776" y="408" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.946×</text>
+<rect x="846" y="370" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="390" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="909" y="408" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.964×</text>
+<rect x="979" y="370" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="390" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="1042" y="408" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="1112" y="370" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="390" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="1175" y="408" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.962×</text>
+<text x="675" y="454" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">32</text>
+<rect x="713" y="424" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="444" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="776" y="462" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.876×</text>
+<rect x="846" y="424" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="444" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="909" y="462" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.067×</text>
+<rect x="979" y="424" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="444" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="1042" y="462" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="1112" y="424" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="444" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="1175" y="462" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.035×</text>
+<text x="675" y="508" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<rect x="713" y="478" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="498" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="776" y="516" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.717×</text>
+<rect x="846" y="478" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="498" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="909" y="516" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.053×</text>
+<rect x="979" y="478" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="498" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="1042" y="516" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="1112" y="478" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="498" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="1175" y="516" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.008×</text>
+<text x="30" y="598" font-family="Arial,sans-serif" font-size="18" fill="#213047" text-anchor="start" font-weight="bold">Inference · eager</text>
+<text x="30" y="631" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">T / D</text>
+<text x="151" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<text x="284" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">128</text>
+<text x="417" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">192</text>
+<text x="550" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">256</text>
+<text x="50" y="674" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">1</text>
+<rect x="88" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="664" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="151" y="682" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.936×</text>
+<rect x="221" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="664" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="284" y="682" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.108×</text>
+<rect x="354" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="417" y="664" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="417" y="682" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.270×</text>
+<rect x="487" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="664" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="550" y="682" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.934×</text>
+<text x="50" y="728" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">3</text>
+<rect x="88" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="718" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="151" y="736" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.003×</text>
+<rect x="221" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="718" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="284" y="736" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.981×</text>
+<rect x="354" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="417" y="718" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="417" y="736" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.960×</text>
+<rect x="487" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="718" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="550" y="736" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.013×</text>
+<text x="50" y="782" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">8</text>
+<rect x="88" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="772" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="151" y="790" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.090×</text>
+<rect x="221" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="772" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="284" y="790" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.070×</text>
+<rect x="354" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="417" y="772" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="417" y="790" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.976×</text>
+<rect x="487" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="772" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="550" y="790" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.892×</text>
+<text x="50" y="836" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">9</text>
+<rect x="88" y="806" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="826" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="151" y="844" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.044×</text>
+<rect x="221" y="806" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="826" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="284" y="844" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.004×</text>
+<rect x="354" y="806" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="826" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="417" y="844" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="487" y="806" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="826" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="550" y="844" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.843×</text>
+<text x="50" y="890" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">31</text>
+<rect x="88" y="860" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="880" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="151" y="898" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.972×</text>
+<rect x="221" y="860" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="880" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="284" y="898" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.946×</text>
+<rect x="354" y="860" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="880" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="417" y="898" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="487" y="860" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="880" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="550" y="898" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.014×</text>
+<text x="50" y="944" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">32</text>
+<rect x="88" y="914" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="934" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="151" y="952" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.011×</text>
+<rect x="221" y="914" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="934" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="284" y="952" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.082×</text>
+<rect x="354" y="914" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="934" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="417" y="952" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="487" y="914" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="934" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="550" y="952" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.079×</text>
+<text x="50" y="998" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<rect x="88" y="968" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="151" y="988" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="151" y="1006" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.987×</text>
+<rect x="221" y="968" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="284" y="988" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="284" y="1006" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.997×</text>
+<rect x="354" y="968" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="417" y="988" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="417" y="1006" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="487" y="968" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="550" y="988" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="550" y="1006" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.850×</text>
+<text x="655" y="598" font-family="Arial,sans-serif" font-size="18" fill="#213047" text-anchor="start" font-weight="bold">Inference · compiled</text>
+<text x="655" y="631" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">T / D</text>
+<text x="776" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<text x="909" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">128</text>
+<text x="1042" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">192</text>
+<text x="1175" y="631" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">256</text>
+<text x="675" y="674" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">1</text>
+<rect x="713" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="664" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="776" y="682" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.979×</text>
+<rect x="846" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="664" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="909" y="682" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.999×</text>
+<rect x="979" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1042" y="664" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="1042" y="682" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.920×</text>
+<rect x="1112" y="644" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="664" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="1175" y="682" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.883×</text>
+<text x="675" y="728" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">3</text>
+<rect x="713" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="718" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="776" y="736" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.992×</text>
+<rect x="846" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="718" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="909" y="736" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.995×</text>
+<rect x="979" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1042" y="718" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="1042" y="736" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.951×</text>
+<rect x="1112" y="698" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="718" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="1175" y="736" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.887×</text>
+<text x="675" y="782" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">8</text>
+<rect x="713" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="772" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="776" y="790" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.089×</text>
+<rect x="846" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="772" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="909" y="790" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.974×</text>
+<rect x="979" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1042" y="772" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="1042" y="790" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.818×</text>
+<rect x="1112" y="752" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="772" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="1175" y="790" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.129×</text>
+<text x="675" y="836" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">9</text>
+<rect x="713" y="806" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="826" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="776" y="844" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.050×</text>
+<rect x="846" y="806" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="826" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="909" y="844" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.076×</text>
+<rect x="979" y="806" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="826" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="1042" y="844" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="1112" y="806" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="826" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="1175" y="844" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.166×</text>
+<text x="675" y="890" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">31</text>
+<rect x="713" y="860" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="880" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="776" y="898" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.078×</text>
+<rect x="846" y="860" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="880" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="909" y="898" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.921×</text>
+<rect x="979" y="860" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="880" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="1042" y="898" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="1112" y="860" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="880" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="1175" y="898" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.740×</text>
+<text x="675" y="944" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">32</text>
+<rect x="713" y="914" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="934" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="776" y="952" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.055×</text>
+<rect x="846" y="914" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="934" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="909" y="952" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.975×</text>
+<rect x="979" y="914" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="934" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="1042" y="952" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="1112" y="914" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="934" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="1175" y="952" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.019×</text>
+<text x="675" y="998" font-family="Arial,sans-serif" font-size="14" fill="#213047" text-anchor="middle" font-weight="normal">64</text>
+<rect x="713" y="968" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="776" y="988" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="776" y="1006" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.879×</text>
+<rect x="846" y="968" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="909" y="988" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="909" y="1006" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">0.891×</text>
+<rect x="979" y="968" width="126" height="48" rx="5" fill="#7854a4" fill-opacity="0.12" stroke="#7854a4"/>
+<text x="1042" y="988" font-family="Arial,sans-serif" font-size="9" fill="#7854a4" text-anchor="middle" font-weight="bold">M RUNTIME / P PASS</text>
+<text x="1042" y="1006" font-family="Arial,sans-serif" font-size="10" fill="#213047" text-anchor="middle" font-weight="normal">ratio suppressed</text>
+<rect x="1112" y="968" width="126" height="48" rx="5" fill="#167d9a" fill-opacity="0.12" stroke="#167d9a"/>
+<text x="1175" y="988" font-family="Arial,sans-serif" font-size="9" fill="#167d9a" text-anchor="middle" font-weight="bold">M PASS / P PASS</text>
+<text x="1175" y="1006" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">1.045×</text>
+<text x="30" y="1086" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="start" font-weight="normal">M: main; P: patched. T: sequence length; D: per-head dimension. Same B2 / H4 causal fixture.</text>
+<text x="30" y="1110" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">Q: qualified; U: unqualified. RUNTIME: execution failed; MIXED: distinct failure types. ABBA: two processes per variant.</text>
+<text x="30" y="1135" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="start" font-weight="normal">These are individual attention operators. They do not measure transformer training or qualify the five-engine study.</text>
+</svg>

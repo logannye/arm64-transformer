@@ -19,6 +19,8 @@ from pathlib import Path
 
 import numpy as np
 
+from transformer.gpu_environment import ENVIRONMENT, child_environment, require_environment
+
 ADMISSION_SEED = 20261104
 _CONTEXTS = {}
 UNSUPPORTED = set()
@@ -280,6 +282,7 @@ class Context:
             width == spec.WIDTH and os.environ.get("ARM64_TRANSFORMER_WIDTH") == str(width),
             "Admission width must be selected before process imports",
         )
+        require_environment(ENVIRONMENT)
         self.manifest, self.roots, self.output, self.width = manifest, roots, Path(output), width
         self.backends, self.cache, self.counter = {}, {}, 0
         from transformer.reference import Transformer
@@ -515,7 +518,7 @@ def _fresh_training(context, engine):
     subprocess.run(
         command,
         cwd=context.roots["source"],
-        env=os.environ.copy(),
+        env=child_environment(),
         check=True,
         capture_output=True,
         text=True,
@@ -705,6 +708,12 @@ def _control(context, engine, name):
                     str(importlib.import_module("mlx.core").default_device())
                     == str(importlib.import_module("mlx.core").gpu),
                     capabilities["cpu_tensor_fallback"] is False,
+                    capabilities["compiled"] is True,
+                    capabilities["MLX_DISABLE_COMPILE"] is None,
+                    capabilities["compilation_probe"]["status"] == "passed",
+                    capabilities["compilation_probe"]["python_trace_count"] == 1,
+                    capabilities["compilation_probe"]["executions"] == 4,
+                    capabilities["compilation_probe"]["compiled_primitive_present"] is True,
                 ]
             )
         return _bools(
@@ -1024,6 +1033,7 @@ def close_contexts():
 
 def repeat_worker(engine, input_file, output_file):
     """Replay supplied arrays; this child never generates random fixtures."""
+    require_environment(ENVIRONMENT)
     values = _read_npz(input_file)
     runtime = importlib.import_module(f"transformer.gpu_{engine}")
     backend = runtime.Backend(values["parameters"])

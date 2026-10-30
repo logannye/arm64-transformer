@@ -1,0 +1,278 @@
+"""Small temporary-file packaging tests; never touch project evidence payloads."""
+
+import copy
+import hashlib
+import json
+import os
+import tarfile
+import tempfile
+import unittest
+from pathlib import Path
+from unittest import mock
+
+import package_selected_evidence as package
+
+
+class PackageTests(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name).resolve()
+        (self.root / "work").mkdir()
+        (self.root / "outputs").mkdir()
+        self.rows = []
+        self.add_file("work/input.txt", b"retained raw evidence\n")
+        self.add_file("outputs/reproduce.py", b"print('reproduce')\n", 0o111)
+        self.selection = self.root / "selection.json"
+        self.write_selection()
+
+    def add_file(self, name, data, executable=0):
+        path = self.root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+        path.chmod(0o644 | executable)
+        self.rows.append(
+            {
+                "path": name,
+                "bytes": len(data),
+                "sha256": hashlib.sha256(data).hexdigest(),
+                "executable_bits": executable,
+            }
+        )
+        return path
+
+    def write_selection(self, rows=None):
+        self.selection.write_text(
+            json.dumps(
+                {
+                    "schema": package.SELECTION_SCHEMA,
+                    "workspace_root": str(self.root),
+                    "files": self.rows if rows is None else rows,
+                }
+            )
+        )
+
+    def pack(self, name="archive", target=package.DEFAULT_SHARD_BYTES):
+        return package.pack(self.selection, self.root / name, target)
+
+    def test_deterministic_archive_roundtrip_metadata_and_paths(self):
+        self.add_file("work/" + "long-" * 24 + "/evidence-λ.json", b'{"pass":true}', 0o100)
+        self.add_file("work/empty", b"")
+        self.write_selection()
+        first, second = self.pack("one"), self.pack("two")
+        self.assertTrue(first["verified"])
+        self.assertEqual(first["shards"], second["shards"])
+        self.assertEqual(first["member_count"], 4)
+        receipt = json.loads((self.root / "one/package.json").read_text())
+        self.assertEqual(receipt["shards"][0]["verification"]["members_verified"], 4)
+        self.assertEqual(
+            receipt["shards"][0]["members"], sorted(self.rows, key=lambda x: x["path"])
+        )
+        raw = (self.root / "one/evidence-0001.tar.gz").read_bytes()
+        self.assertEqual(raw[4:8], b"\0" * 4)
+        self.assertFalse(raw[3] & 8)  # No filename embedded in the gzip header.
+
+    def test_sharding_uses_exact_tar_size_and_keeps_oversize_member(self):
+        self.rows = []
+        for index in range(3):
+            self.add_file(f"work/chunk-{index}", bytes([index]) * 6000)
+        self.add_file("work/oversize", b"X" * 21000)
+        self.write_selection()
+        result = self.pack(target=10240)
+        receipt = json.loads((self.root / "archive/package.json").read_text())
+        self.assertEqual(len(result["shards"]), 4)
+        self.assertTrue(receipt["shards"][-1]["oversized_single_member"])
+        self.assertTrue(all(s["uncompressed_tar_bytes"] == 10240 for s in receipt["shards"][:-1]))
+
+    def test_invalid_paths_and_duplicates_rejected(self):
+        for path in (
+            "../secret",
+            "work/../secret",
+            "/work/file",
+            "work//file",
+            "work/./file",
+            "work\\file",
+            "other/file",
+            "work/line\nfile",
+        ):
+            rows = copy.deepcopy(self.rows)
+            rows[0]["path"] = path
+            self.write_selection(rows)
+            with self.subTest(path=path), self.assertRaises((ValueError, OSError)):
+                self.pack()
+            self.assertFalse((self.root / "archive").exists())
+        self.write_selection(self.rows + [copy.deepcopy(self.rows[0])])
+        with self.assertRaisesRegex(ValueError, "Duplicate member"):
+            self.pack()
+
+    def test_symlink_file_and_parent_and_special_file_rejected(self):
+        (self.root / "work/link").symlink_to(self.root / "work/input.txt")
+        (self.root / "work/directory").symlink_to(self.root / "outputs", target_is_directory=True)
+        os.mkfifo(self.root / "work/fifo")
+        for path in ("work/link", "work/directory/reproduce.py", "work/fifo"):
+            rows = copy.deepcopy(self.rows[:1])
+            rows[0]["path"] = path
+            self.write_selection(rows)
+            with self.subTest(path=path), self.assertRaises((ValueError, OSError)):
+                self.pack()
+
+    def test_wrong_size_and_executable_bits_rejected_before_output(self):
+        for field, value in (("bytes", 999), ("executable_bits", 1)):
+            rows = copy.deepcopy(self.rows)
+            rows[0][field] = value
+            self.write_selection(rows)
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                self.pack()
+            self.assertFalse((self.root / "archive").exists())
+
+    def test_wrong_hash_retains_failed_partial_without_qualification(self):
+        rows = copy.deepcopy(self.rows)
+        rows[0]["sha256"] = "0" * 64
+        self.write_selection(rows)
+        with self.assertRaisesRegex(ValueError, "Source payload hash differs"):
+            self.pack()
+        receipt = json.loads((self.root / "archive/package.json").read_text())
+        self.assertFalse(receipt["complete"])
+        self.assertFalse(receipt["verified"])
+        self.assertEqual(receipt["shards"][0]["status"], "failed")
+        self.assertTrue((self.root / "archive/evidence-0001.tar.gz.partial").exists())
+        with self.assertRaisesRegex(ValueError, "incomplete/failed"):
+            package.verify_package(self.root / "archive")
+
+    def test_mutation_during_read_is_detected(self):
+        original = package.HashReader.read
+        mutated = False
+
+        # fdopen names descriptors, so identify the descriptor path by its inode.
+        target_inode = (self.root / "work/input.txt").stat().st_ino
+
+        def mutate_fd(reader, size=-1):
+            nonlocal mutated
+            value = original(reader, size)
+            if not mutated and hasattr(reader.source, "fileno"):
+                try:
+                    same = os.fstat(reader.source.fileno()).st_ino == target_inode
+                except (ValueError, OSError):
+                    same = False
+                if same:
+                    mutated = True
+                    with (self.root / "work/input.txt").open("ab") as handle:
+                        handle.write(b"changed")
+            return value
+
+        with mock.patch.object(package.HashReader, "read", mutate_fd):
+            with self.assertRaisesRegex(ValueError, "Source changed during read"):
+                self.pack()
+        self.assertTrue(mutated)
+
+    def test_source_or_selection_change_after_shard_is_detected(self):
+        for kind in ("source", "selection"):
+            with self.subTest(kind=kind):
+                original = package.write_archive
+
+                def alter(*args, **kwargs):
+                    result = original(*args, **kwargs)
+                    target = self.root / "work/input.txt" if kind == "source" else self.selection
+                    with target.open("ab") as handle:
+                        handle.write(b" ")
+                    return result
+
+                with mock.patch.object(package, "write_archive", side_effect=alter):
+                    with self.assertRaisesRegex(ValueError, "changed during packaging"):
+                        self.pack(name=kind)
+                # Restore only this temporary fixture for the second negative control.
+                (self.root / "work/input.txt").write_bytes(b"retained raw evidence\n")
+                self.write_selection()
+
+    def test_corruption_missing_shard_extra_file_and_changed_member_hash_fail(self):
+        self.pack()
+        folder = self.root / "archive"
+        shard = folder / "evidence-0001.tar.gz"
+        original = shard.read_bytes()
+        changed = bytearray(original)
+        changed[len(changed) // 2] ^= 1
+        shard.write_bytes(changed)
+        with self.assertRaises((ValueError, OSError, EOFError, tarfile.TarError)):
+            package.verify_package(folder)
+        shard.write_bytes(original)
+        shard.rename(folder / "unexpected.tar.gz")
+        with self.assertRaisesRegex(ValueError, "Unexpected/missing"):
+            package.verify_package(folder)
+        (folder / "unexpected.tar.gz").rename(shard)
+        (folder / "extra").write_bytes(b"x")
+        with self.assertRaisesRegex(ValueError, "Unexpected/missing"):
+            package.verify_package(folder)
+        (folder / "extra").unlink()
+        receipt = json.loads((folder / "package.json").read_text())
+        expected = copy.deepcopy(receipt["shards"][0])
+        expected["members"][0]["sha256"] = "0" * 64
+        with self.assertRaisesRegex(ValueError, "Archived payload differs"):
+            package.verify_archive(shard, expected)
+
+    def test_receipt_source_stats_and_trusted_hash_are_required(self):
+        result = self.pack()
+        folder = self.root / "archive"
+        self.assertTrue(package.verify_package(folder, result["package_sha256"])["verified"])
+        with self.assertRaisesRegex(ValueError, "trusted external hash"):
+            package.verify_package(folder, "0" * 64)
+        receipt = json.loads((folder / "package.json").read_text())
+        receipt["shards"][0]["verification"]["source_stat_checks"].pop()
+        (folder / "package.json").write_text(json.dumps(receipt))
+        with self.assertRaisesRegex(ValueError, "source stat checks"):
+            package.verify_package(folder)
+
+    def test_uncompressed_tail_cannot_exceed_declared_limit(self):
+        import io
+
+        reader = package.TarReader(io.BytesIO(b"x" * 4 + b"\0" * 100), 4, 8)
+        with self.assertRaisesRegex(ValueError, "Excess uncompressed"):
+            reader.read(1000)
+
+    def test_verify_rejects_self_consistent_empty_or_incomplete_selection(self):
+        for mutation in ("empty", "missing_workspace", "relative_workspace", "extra_field"):
+            with self.subTest(mutation=mutation):
+                self.pack(name=mutation)
+                folder = self.root / mutation
+                selected = json.loads((folder / "input-selection.json").read_text())
+                receipt = json.loads((folder / "package.json").read_text())
+                if mutation == "empty":
+                    selected["files"] = []
+                    receipt.update(shards=[], member_count=0, payload_bytes=0)
+                    (folder / "evidence-0001.tar.gz").unlink()
+                elif mutation == "missing_workspace":
+                    selected.pop("workspace_root")
+                elif mutation == "relative_workspace":
+                    selected["workspace_root"] = "relative"
+                else:
+                    selected["unexpected"] = True
+                raw = json.dumps(selected).encode()
+                (folder / "input-selection.json").write_bytes(raw)
+                receipt["selection_sha256"] = hashlib.sha256(raw).hexdigest()
+                (folder / "package.json").write_text(json.dumps(receipt))
+                with self.assertRaises(ValueError):
+                    package.verify_package(folder)
+
+    def test_verify_rejects_mismatched_workspace_identity(self):
+        self.pack()
+        folder = self.root / "archive"
+        receipt = json.loads((folder / "package.json").read_text())
+        receipt["workspace_root"] = "/different-workspace"
+        (folder / "package.json").write_text(json.dumps(receipt))
+        with self.assertRaisesRegex(ValueError, "workspace roots differ"):
+            package.verify_package(folder)
+
+    def test_existing_output_and_selection_symlink_cannot_be_used(self):
+        folder = self.root / "archive"
+        folder.mkdir()
+        (folder / "keep").write_bytes(b"untouched")
+        with self.assertRaisesRegex(ValueError, "fresh"):
+            self.pack()
+        self.assertEqual((folder / "keep").read_bytes(), b"untouched")
+        link = self.root / "selection-link.json"
+        link.symlink_to(self.selection)
+        with self.assertRaisesRegex(ValueError, "symlink"):
+            package.pack(link, self.root / "other")
+
+
+if __name__ == "__main__":
+    unittest.main(verbosity=2)

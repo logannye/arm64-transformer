@@ -1,0 +1,196 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1330" height="1110" viewBox="0 0 1330 1110" role="img">
+<title>Embedding operator costs · jit-off · embedding_value_and_grad</title>
+<rect width="1330" height="1110" fill="#f8fafc"/>
+<text x="30" y="38" font-family="Arial,sans-serif" font-size="23" fill="#213047" text-anchor="start" font-weight="bold">Embedding operator costs · jit-off · embedding_value_and_grad</text>
+<text x="30" y="65" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="start" font-weight="normal">Dots: each process p50. Hollow: that variant fails eligibility. No ratio is shown unless both variants qualify.</text>
+<line x1="570.0" y1="145" x2="570.0" y2="1011" stroke="#dce3eb"/>
+<text x="570.0" y="130" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="middle" font-weight="normal">100</text>
+<line x1="1120.0" y1="145" x2="1120.0" y2="1011" stroke="#dce3eb"/>
+<text x="1120.0" y="130" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="middle" font-weight="normal">1000</text>
+<text x="845.0" y="106" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="middle" font-weight="normal">Latency (µs, logarithmic)</text>
+<text x="1150" y="130" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">Qualification</text>
+<text x="30" y="174" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">00  V128 / W32 / N512 · uniform · C</text>
+<line x1="570" y1="170" x2="1120" y2="170" stroke="#edf0f4"/>
+<circle cx="690.58" cy="166" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="683.48" cy="174" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="686.28" cy="174" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="649.02" cy="166" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="174" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="207" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">01  V128 / W32 / N512 · same · C</text>
+<line x1="570" y1="203" x2="1120" y2="203" stroke="#edf0f4"/>
+<circle cx="653.93" cy="199" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="797.05" cy="207" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="789.46" cy="207" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="655.23" cy="199" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="207" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="240" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">02  V128 / W32 / N32 · unique · C</text>
+<line x1="570" y1="236" x2="1120" y2="236" stroke="#edf0f4"/>
+<circle cx="599.10" cy="232" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<circle cx="661.72" cy="240" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="670.77" cy="240" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="638.31" cy="232" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<text x="1150" y="240" font-family="Arial,sans-serif" font-size="11" fill="#167d9a" text-anchor="start" font-weight="normal">PASS · 0.822×</text>
+<text x="30" y="273" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">03  V128 / W64 / N512 · uniform · C</text>
+<line x1="570" y1="269" x2="1120" y2="269" stroke="#edf0f4"/>
+<circle cx="650.76" cy="265" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="681.77" cy="273" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="684.86" cy="273" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="648.41" cy="265" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="273" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="306" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">04  V128 / W64 / N512 · same · C</text>
+<line x1="570" y1="302" x2="1120" y2="302" stroke="#edf0f4"/>
+<circle cx="659.16" cy="298" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="790.63" cy="306" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="789.52" cy="306" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="650.80" cy="298" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="306" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="339" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">05  V128 / W64 / N32 · unique · C</text>
+<line x1="570" y1="335" x2="1120" y2="335" stroke="#edf0f4"/>
+<circle cx="682.20" cy="331" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<circle cx="656.75" cy="339" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="653.06" cy="339" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="638.38" cy="331" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<text x="1150" y="339" font-family="Arial,sans-serif" font-size="11" fill="#167d9a" text-anchor="start" font-weight="normal">PASS · 1.027×</text>
+<text x="30" y="372" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">06  V128 / W128 / N512 · uniform · C</text>
+<line x1="570" y1="368" x2="1120" y2="368" stroke="#edf0f4"/>
+<circle cx="687.34" cy="364" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="673.56" cy="372" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="684.71" cy="372" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="700.46" cy="364" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="372" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="405" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">07  V128 / W128 / N512 · same · C</text>
+<line x1="570" y1="401" x2="1120" y2="401" stroke="#edf0f4"/>
+<circle cx="709.76" cy="397" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="788.59" cy="405" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="795.09" cy="405" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="702.96" cy="397" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="405" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="438" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">08  V128 / W128 / N32 · unique · C</text>
+<line x1="570" y1="434" x2="1120" y2="434" stroke="#edf0f4"/>
+<circle cx="627.99" cy="430" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<circle cx="665.99" cy="438" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="661.48" cy="438" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="631.86" cy="430" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<text x="1150" y="438" font-family="Arial,sans-serif" font-size="11" fill="#167d9a" text-anchor="start" font-weight="normal">PASS · 0.868×</text>
+<text x="30" y="471" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">09  V128 / W256 / N512 · uniform · C</text>
+<line x1="570" y1="467" x2="1120" y2="467" stroke="#edf0f4"/>
+<circle cx="714.05" cy="463" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="737.18" cy="471" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="671.06" cy="471" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="716.86" cy="463" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="471" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="504" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">10  V128 / W256 / N512 · same · C</text>
+<line x1="570" y1="500" x2="1120" y2="500" stroke="#edf0f4"/>
+<circle cx="722.66" cy="496" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="796.37" cy="504" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="787.83" cy="504" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="708.40" cy="496" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="504" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="537" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">11  V128 / W256 / N32 · unique · C</text>
+<line x1="570" y1="533" x2="1120" y2="533" stroke="#edf0f4"/>
+<circle cx="650.23" cy="529" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<circle cx="665.72" cy="537" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="667.68" cy="537" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="596.94" cy="529" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<text x="1150" y="537" font-family="Arial,sans-serif" font-size="11" fill="#167d9a" text-anchor="start" font-weight="normal">PASS · 0.840×</text>
+<text x="30" y="570" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">12  V128 / W512 / N512 · uniform · C</text>
+<line x1="570" y1="566" x2="1120" y2="566" stroke="#edf0f4"/>
+<circle cx="747.48" cy="562" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="817.28" cy="570" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="702.99" cy="570" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="752.91" cy="562" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="570" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="603" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">13  V128 / W512 / N512 · same · C</text>
+<line x1="570" y1="599" x2="1120" y2="599" stroke="#edf0f4"/>
+<circle cx="750.84" cy="595" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="810.20" cy="603" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="802.71" cy="603" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="754.09" cy="595" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="603" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="636" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">14  V128 / W512 / N32 · unique · C</text>
+<line x1="570" y1="632" x2="1120" y2="632" stroke="#edf0f4"/>
+<circle cx="643.81" cy="628" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<circle cx="748.85" cy="636" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="664.38" cy="636" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="653.72" cy="628" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<text x="1150" y="636" font-family="Arial,sans-serif" font-size="11" fill="#167d9a" text-anchor="start" font-weight="normal">PASS · 0.773×</text>
+<text x="30" y="669" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">15  V128 / W1024 / N512 · uniform · C</text>
+<line x1="570" y1="665" x2="1120" y2="665" stroke="#edf0f4"/>
+<circle cx="800.88" cy="661" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="748.40" cy="669" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="730.54" cy="669" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="725.84" cy="661" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="669" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="702" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">16  V128 / W1024 / N512 · same · C</text>
+<line x1="570" y1="698" x2="1120" y2="698" stroke="#edf0f4"/>
+<circle cx="796.56" cy="694" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="821.49" cy="702" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="813.54" cy="702" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="803.83" cy="694" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="702" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="735" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">17  V128 / W1024 / N32 · unique · C</text>
+<line x1="570" y1="731" x2="1120" y2="731" stroke="#edf0f4"/>
+<circle cx="695.51" cy="727" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<circle cx="688.44" cy="735" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="769.06" cy="735" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="699.60" cy="727" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<text x="1150" y="735" font-family="Arial,sans-serif" font-size="11" fill="#167d9a" text-anchor="start" font-weight="normal">PASS · 0.865×</text>
+<text x="30" y="768" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">18  V32,768 / W256 / N32 · unique · C</text>
+<line x1="570" y1="764" x2="1120" y2="764" stroke="#edf0f4"/>
+<circle cx="769.71" cy="760" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<circle cx="802.13" cy="768" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="788.41" cy="768" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="770.78" cy="760" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<text x="1150" y="768" font-family="Arial,sans-serif" font-size="11" fill="#167d9a" text-anchor="start" font-weight="normal">PASS · 0.900×</text>
+<text x="30" y="801" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">19  V131,072 / W32 / N32 · unique · C</text>
+<line x1="570" y1="797" x2="1120" y2="797" stroke="#edf0f4"/>
+<circle cx="726.23" cy="793" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<circle cx="839.90" cy="801" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="838.56" cy="801" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="751.15" cy="793" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<text x="1150" y="801" font-family="Arial,sans-serif" font-size="11" fill="#167d9a" text-anchor="start" font-weight="normal">PASS · 0.657×</text>
+<text x="30" y="834" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">20  V1,048,576 / W1 / N7 · skewed · C</text>
+<line x1="570" y1="830" x2="1120" y2="830" stroke="#edf0f4"/>
+<circle cx="742.07" cy="826" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="725.43" cy="834" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="790.39" cy="834" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="718.93" cy="826" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="834" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="867" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">21  V128 / W65 / N1,023 · skewed · C</text>
+<line x1="570" y1="863" x2="1120" y2="863" stroke="#edf0f4"/>
+<circle cx="661.92" cy="859" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="857.61" cy="867" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="867.74" cy="867" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="657.00" cy="859" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="867" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="900" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">22  V128 / W65 / N1,024 · skewed · C</text>
+<line x1="570" y1="896" x2="1120" y2="896" stroke="#edf0f4"/>
+<circle cx="660.16" cy="892" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="867.53" cy="900" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="860.02" cy="900" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="671.25" cy="892" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="900" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="933" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">23  V128 / W65 / N1,025 · skewed · C</text>
+<line x1="570" y1="929" x2="1120" y2="929" stroke="#edf0f4"/>
+<circle cx="655.02" cy="925" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="876.17" cy="933" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="866.49" cy="933" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="663.85" cy="925" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="933" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="966" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">24  V128 / W64 / N512 · same · E</text>
+<line x1="570" y1="962" x2="1120" y2="962" stroke="#edf0f4"/>
+<circle cx="666.75" cy="958" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<circle cx="802.41" cy="966" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="787.55" cy="966" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="657.62" cy="958" r="4" stroke="#3159a6" stroke-width="1.8" fill="#f8fafc"/>
+<text x="1150" y="966" font-family="Arial,sans-serif" font-size="11" fill="#d89d24" text-anchor="start" font-weight="normal">M REPEAT / P PASS</text>
+<text x="30" y="999" font-family="Arial,sans-serif" font-size="12" fill="#213047" text-anchor="start" font-weight="normal">25  V128 / W64 / N32 · unique · E</text>
+<line x1="570" y1="995" x2="1120" y2="995" stroke="#edf0f4"/>
+<circle cx="640.35" cy="991" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<circle cx="671.71" cy="999" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="686.92" cy="999" r="4" stroke="#d27822" stroke-width="1.8" fill="#d27822"/>
+<circle cx="635.86" cy="991" r="4" stroke="#3159a6" stroke-width="1.8" fill="#3159a6"/>
+<text x="1150" y="999" font-family="Arial,sans-serif" font-size="11" fill="#167d9a" text-anchor="start" font-weight="normal">PASS · 0.841×</text>
+<text x="30" y="1050" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="start" font-weight="normal">Blue: unchanged main source. Orange: patched source. C: compiled; E: eager. V: vocabulary; W: width; N: token count.</text>
+<text x="30" y="1077" font-family="Arial,sans-serif" font-size="13" fill="#213047" text-anchor="start" font-weight="normal">Solid dots: that variant passes accuracy and exact replay. Ratios require both variants. Other costs are descriptive only.</text>
+</svg>

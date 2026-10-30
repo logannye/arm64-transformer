@@ -1,0 +1,55 @@
+{
+  "after": {
+    "content_type": "application/x-gtar",
+    "created_at": "2026-10-30T00:00:20Z",
+    "digest": "sha256:c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce",
+    "id": 690318215,
+    "label": "",
+    "name": "evidence-0004.tar.gz",
+    "node_id": "RA_kwDOVbC4ds4pJWuH",
+    "size": 1037007516,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T00:09:20Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318215"
+  },
+  "before": {
+    "content_type": "application/x-gtar",
+    "created_at": "2026-10-30T00:00:20Z",
+    "digest": "sha256:c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce",
+    "id": 690318215,
+    "label": "",
+    "name": "evidence-0004.tar.gz",
+    "node_id": "RA_kwDOVbC4ds4pJWuH",
+    "size": 1037007516,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T00:09:20Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/690318215"
+  },
+  "expected": {
+    "asset_id": 690318215,
+    "bytes": 1037007516,
+    "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0004.tar.gz",
+    "name": "evidence-0004.tar.gz",
+    "sha256": "c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce"
+  },
+  "finished_utc": "2026-10-30T00:19:31.366126+00:00",
+  "ordinal": 3,
+  "started_utc": "2026-10-30T00:18:38.130684+00:00",
+  "status": "passed",
+  "stream": {
+    "accept": "application/octet-stream",
+    "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/690318215",
+    "argument_count": 6,
+    "executable": "gh",
+    "payload_copied_to_disk": false,
+    "problem": null,
+    "raw_stderr_retained": false,
+    "returncode": 0,
+    "seconds": 52.421250332612544,
+    "stderr_bytes": 0,
+    "stderr_markers": [],
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 1037007516,
+    "stdout_sha256": "c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce"
+  }
+}

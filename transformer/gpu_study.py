@@ -22,31 +22,26 @@ import sys
 import time
 from pathlib import Path, PurePosixPath
 
+from transformer.gpu_environment import ENVIRONMENT as GPU_ENVIRONMENT
+from transformer.gpu_environment import child_environment
+
 # Runtime snapshots include existing bytecode; never mutate the installation by
 # writing additional caches during a frozen experiment.
 sys.dont_write_bytecode = True
 
-PROTOCOL = "gpu-v2-five-engine-v1"
+PROTOCOL = "gpu-v2-five-engine-v2"
 WIDTHS = (32, 64, 128, 256, 512, 1024)
 SEEDS = (42, 43, 44)
 ENGINES = ("cpu_arm64", "cpu_torch", "metal", "mps", "mlx")
 CPU_REVISION = "2c5191047068c16b12e3312652b118d48a5f3744"
 CPU_PUBLICATION = "7504ae04684eb7e5ec89904471360c11930fabb7"
 ENVIRONMENT = {
-    "OMP_NUM_THREADS": "1",
-    "MKL_NUM_THREADS": "1",
-    "OPENBLAS_NUM_THREADS": "1",
-    "VECLIB_MAXIMUM_THREADS": "1",
+    **GPU_ENVIRONMENT,
     "PYTHONHASHSEED": "0",
     "PYTHONDONTWRITEBYTECODE": "1",
     "ARM64_TRANSFORMER_BACKEND": "auto",
-    "PYTORCH_ENABLE_MPS_FALLBACK": "0",
-    "PYTORCH_MPS_FAST_MATH": "0",
-    "PYTORCH_MPS_PREFER_METAL": "0",
-    "MLX_ENABLE_TF32": "0",
-    "MLX_DISABLE_COMPILE": "0",
-    "MLX_SDPA_VJP_FALLBACK": "0",
 }
+
 FIXTURE_FILES = (
     "config.bin",
     "initial.f32",
@@ -642,8 +637,7 @@ def run_campaign(manifest_path, expected_sha256, roots, admission_path, output):
             require(valid_conditions(before), "Invalid measurement power condition")
             child = output / cell["id"]
             require(not child.exists(), "Cell output collision")
-            env = os.environ.copy()
-            env.update(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(cell["width"]))
+            env = child_environment(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(cell["width"]))
             env["PYTHONPATH"] = python_path(manifest, roots)
             env["ARM64_TRANSFORMER_METAL_POLICY"] = str(policy_path(manifest, roots))
             args = [

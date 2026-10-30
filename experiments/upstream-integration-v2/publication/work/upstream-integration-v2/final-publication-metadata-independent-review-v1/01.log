@@ -1,0 +1,10 @@
+usage: upload.py [-h] [--output OUTPUT] {inspect,upload}
+
+Publish two declared bookkeeping assets to the authenticated 90-asset draft.
+
+positional arguments:
+  {inspect,upload}
+
+options:
+  -h, --help        show this help message and exit
+  --output OUTPUT

@@ -1,0 +1,55 @@
+{
+  "after": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T05:35:42Z",
+    "digest": "sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67",
+    "id": 691063038,
+    "label": "",
+    "name": "dependency-85ece4451f492d0c-x000-jinja2-3.1.6-py3-none-any.whl",
+    "node_id": "RA_kwDOVbC4ds4pMMj-",
+    "size": 134899,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T05:35:42Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063038"
+  },
+  "before": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T05:35:42Z",
+    "digest": "sha256:85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67",
+    "id": 691063038,
+    "label": "",
+    "name": "dependency-85ece4451f492d0c-x000-jinja2-3.1.6-py3-none-any.whl",
+    "node_id": "RA_kwDOVbC4ds4pMMj-",
+    "size": 134899,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T05:35:42Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691063038"
+  },
+  "expected": {
+    "asset_id": 691063038,
+    "bytes": 134899,
+    "local_path": "work/upstream-integration-v2/pytorch/hosted-40964493481-failed-records/wheels/jinja2-3.1.6-py3-none-any.whl",
+    "name": "dependency-85ece4451f492d0c-x000-jinja2-3.1.6-py3-none-any.whl",
+    "sha256": "85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67"
+  },
+  "finished_utc": "2026-10-30T05:41:47.614037+00:00",
+  "ordinal": 19,
+  "started_utc": "2026-10-30T05:41:45.972232+00:00",
+  "status": "passed",
+  "stream": {
+    "accept": "application/octet-stream",
+    "api_endpoint": "repos/logannye/arm64-transformer/releases/assets/691063038",
+    "argument_count": 6,
+    "executable": "gh",
+    "payload_copied_to_disk": false,
+    "problem": null,
+    "raw_stderr_retained": false,
+    "returncode": 0,
+    "seconds": 0.7087806253693998,
+    "stderr_bytes": 0,
+    "stderr_markers": [],
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_bytes": 134899,
+    "stdout_sha256": "85ece4451f492d0c13c5dd7c13a64681a86afae63a5f347908daf103ce6d2f67"
+  }
+}

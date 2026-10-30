@@ -10,11 +10,11 @@ from __future__ import annotations
 import argparse
 import itertools
 import json
-import os
 import subprocess
 import sys
 from pathlib import Path
 
+from transformer.gpu_environment import child_environment
 from transformer.gpu_study import (
     ENGINES,
     ENVIRONMENT,
@@ -213,8 +213,7 @@ def inspect_cell(cell, directory, manifest_sha256):
 
 
 def replay_engine(engine, roots, width, fixture, checkpoint, output, *, manifest):
-    env = os.environ.copy()
-    env.update(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(width))
+    env = child_environment(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(width))
     tree = roots["cpu"] if engine.startswith("cpu_") else roots["source"]
     env["PYTHONPATH"] = python_path(manifest, roots, cpu=engine.startswith("cpu_"))
     env["ARM64_TRANSFORMER_METAL_POLICY"] = str(policy_path(manifest, roots))

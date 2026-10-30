@@ -1,0 +1,124 @@
+{
+  "schema": "release-asset-download-contract-v1",
+  "repository": "logannye/arm64-transformer",
+  "release_id": 428513598,
+  "tag_name": "transformer-upstream-integration-v2",
+  "draft": true,
+  "prerelease": false,
+  "expected_login": "logannye",
+  "workspace_root": "/Users/logannye/Documents/Codex/2026-10-28/we-x20",
+  "assets": [
+    {
+      "name": "evidence-0001.tar.gz",
+      "asset_id": 690318222,
+      "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0001.tar.gz",
+      "bytes": 912814484,
+      "sha256": "5a96cfdba13a99e602ab21a003f830d5315604552d5a97a717a52dfc9d6b7f35"
+    },
+    {
+      "name": "evidence-0002.tar.gz",
+      "asset_id": 690318216,
+      "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0002.tar.gz",
+      "bytes": 907724645,
+      "sha256": "0f7b234da90e8bdd968a2629acd17cfbee660ff9b1822361a59ba06bc13bef0a"
+    },
+    {
+      "name": "evidence-0003.tar.gz",
+      "asset_id": 690318218,
+      "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0003.tar.gz",
+      "bytes": 854485997,
+      "sha256": "91abdbb71bcb01cd677545c74bd4cbf984d4b1a9ca560f56d42f899573c26b9e"
+    },
+    {
+      "name": "evidence-0004.tar.gz",
+      "asset_id": 690318215,
+      "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0004.tar.gz",
+      "bytes": 1037007516,
+      "sha256": "c7d66807ccc177ac0d189817af5b5c9a9c1c953cd60f5d9c43711a7c267d24ce"
+    },
+    {
+      "name": "evidence-0005.tar.gz",
+      "asset_id": 690318220,
+      "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0005.tar.gz",
+      "bytes": 986742002,
+      "sha256": "24d4b2840e3eec5dd52b203dc29a6908e76c4429d14c198d3f002522717f0e0e"
+    },
+    {
+      "name": "evidence-0006.tar.gz",
+      "asset_id": 690334780,
+      "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0006.tar.gz",
+      "bytes": 1030845920,
+      "sha256": "34e783d7d215032161bd6849ef42deb227a284c4423559dce6393ed10a452801"
+    },
+    {
+      "name": "evidence-0007.tar.gz",
+      "asset_id": 690335485,
+      "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0007.tar.gz",
+      "bytes": 996936043,
+      "sha256": "5dda7c7029477dae5d71c0d2fbe60d2f651cef052a433f8e20de3f28907e1c8c"
+    },
+    {
+      "name": "evidence-0008.tar.gz",
+      "asset_id": 690335531,
+      "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0008.tar.gz",
+      "bytes": 1050480864,
+      "sha256": "4f56c1faa8d33151a5d78329d264e870b717054035227355d6668861179b0d48"
+    },
+    {
+      "name": "evidence-0009.tar.gz",
+      "asset_id": 690337323,
+      "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0009.tar.gz",
+      "bytes": 1015685054,
+      "sha256": "7dcbbf33bec39e01897e52d3254f88d40cadf98f4c3635a1516172405ea17e70"
+    },
+    {
+      "name": "evidence-0012.tar.gz",
+      "asset_id": 690348860,
+      "local_path": "outputs/upstream-integration-v2/evidence-major-v1/evidence-0012.tar.gz",
+      "bytes": 223417130,
+      "sha256": "f5c9516abc602fd473576ab5c9edd7f429463b169bcc6a4c8bab875dcca06c3b"
+    },
+    {
+      "name": "input-selection.json",
+      "asset_id": 690349676,
+      "local_path": "outputs/upstream-integration-v2/evidence-major-v1/input-selection.json",
+      "bytes": 5302169,
+      "sha256": "b4a8d9a136e85769fb20eac0cf6e1d98a5a2f089423fbed97196d10d43669e6a"
+    },
+    {
+      "name": "mlx-remainder-asset-aliases.json",
+      "asset_id": 690335386,
+      "local_path": "outputs/upstream-integration-v2/release-assets/mlx-remainder-asset-aliases.json",
+      "bytes": 882,
+      "sha256": "6ab9e2d8f995a96b4944280256e90892d521bf39338299621c4eec56b1124007"
+    },
+    {
+      "name": "mlx-remainder-evidence.tar.gz",
+      "asset_id": 690335390,
+      "local_path": "outputs/upstream-integration-v2/release-assets/mlx-remainder-evidence.tar.gz",
+      "bytes": 15421247,
+      "sha256": "c05834ec7e26cb1617191dfedd8676f461a381f7e2862ad3c1ff721fbb57a0bb"
+    },
+    {
+      "name": "mlx-remainder-package.json",
+      "asset_id": 690335388,
+      "local_path": "outputs/upstream-integration-v2/release-assets/mlx-remainder-package.json",
+      "bytes": 1717805,
+      "sha256": "77e8501e76e7d7fd1b55d1d2a64275b0b400051a9cd13599baa23edf10b98ad6"
+    },
+    {
+      "name": "mlx-remainder-selection.json",
+      "asset_id": 690335389,
+      "local_path": "outputs/upstream-integration-v2/release-assets/mlx-remainder-selection.json",
+      "bytes": 435239,
+      "sha256": "51130156f54360009bfe1c62f725af319b85c598c2b18e7437f7f90f415879e6"
+    },
+    {
+      "name": "package.json",
+      "asset_id": 690349378,
+      "local_path": "outputs/upstream-integration-v2/evidence-major-v1/package.json",
+      "bytes": 19875100,
+      "sha256": "3c239abfeaeb15f0e9b7719f2d3bf66b767d3406e21f9b6166d1a9c95459f024"
+    }
+  ]
+}

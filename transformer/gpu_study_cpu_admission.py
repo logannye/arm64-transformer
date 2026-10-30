@@ -8,7 +8,7 @@ implementation or a substitute for its standalone training executable.
 from __future__ import annotations
 
 import argparse
-import os
+import runpy
 import struct
 import subprocess
 import sys
@@ -16,13 +16,13 @@ from pathlib import Path
 
 
 def run_cpu_operation(engine, manifest, roots, operand_file, output_file, *, width):
+    from transformer.gpu_environment import child_environment
     from transformer.gpu_study import ENVIRONMENT, python_path, require, verify_bindings
 
     require(engine in ("cpu_arm64", "cpu_torch"), "Unknown CPU engine")
     verify_bindings(manifest, roots)
     require(not Path(output_file).exists(), "CPU bridge output collision")
-    env = os.environ.copy()
-    env.update(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(width))
+    env = child_environment(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(width))
     env["PYTHONPATH"] = python_path(manifest, roots, cpu=True)
     command = [
         sys.executable,
@@ -41,6 +41,8 @@ def run_cpu_operation(engine, manifest, roots, operand_file, output_file, *, wid
 
 
 def execute(engine, operand_file, output_file):
+    controls = runpy.run_path(str(Path(__file__).with_name("gpu_environment.py")))
+    controls["require_environment"](controls["ENVIRONMENT"])
     import numpy as np
 
     with np.load(operand_file, allow_pickle=False) as data:
@@ -263,6 +265,7 @@ def run_cpu_checkpoint_tie(engine, manifest, roots, output_directory, *, width):
     """Exercise the frozen standalone runner on an exactly balanced zero model."""
     import numpy as np
 
+    from transformer.gpu_environment import child_environment
     from transformer.gpu_study import (
         ENVIRONMENT,
         digest,
@@ -281,8 +284,7 @@ def run_cpu_checkpoint_tie(engine, manifest, roots, output_directory, *, width):
     _write_tie_fixture(fixture, width, 20261104)
     # Each target ID appears exactly four times in the B16/T32 batch. The head bias
     # gradient sums exact binary fractions to zero; all other paths are zero.
-    env = os.environ.copy()
-    env.update(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(width))
+    env = child_environment(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(width))
     env["PYTHONPATH"] = python_path(manifest, roots, cpu=True)
     cpu = Path(roots["cpu"]).resolve()
     command = (

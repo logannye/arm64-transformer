@@ -1,0 +1,70 @@
+# Isolated integration validation approved by the owner on 2026-10-29.
+# This does not admit patched frameworks into the transformer study.
+name: PyTorch same-host pristine and patched control
+on:
+  push:
+    branches: [codex/upstream-integration-v2]
+    paths:
+      - '.github/workflows/upstream-pytorch-paired-v1.yml'
+      - 'validation/upstream-pytorch-paired-v1/**'
+  workflow_dispatch:
+    inputs:
+      runner_label:
+        description: macOS arm64 runner with at least 40 GiB free and offline Metal compiler
+        type: string
+        required: true
+        default: macos-26
+permissions:
+  contents: read
+concurrency:
+  group: pytorch-upstream-integration
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.repository == 'logannye/arm64-transformer'
+    runs-on: ${{ inputs.runner_label || 'macos-26' }}
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: study
+      - uses: actions/checkout@v4
+        with:
+          repository: pytorch/pytorch
+          ref: 71d2a08507ab47dd6b2fa9b66319d17ce2377de4
+          persist-credentials: false
+          path: pytorch-source
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.10'
+          architecture: arm64
+      - name: Provision OpenMP from a binary bottle only
+        run: brew install --force-bottle libomp
+      - name: Build pristine and patched frameworks in one environment
+        run: >-
+          python -B study/validation/upstream-pytorch-paired-v1/hosted_build.py
+          --source pytorch-source
+          --output integration-paired-v1-result
+      - name: Retain receipts, failures, archive, and dependency wheels
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytorch-paired-v1-control-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            integration-paired-v1-result/*.json
+            integration-paired-v1-result/*.log
+            integration-paired-v1-result/wheels/
+            integration-paired-v1-result/pristine/*.json
+            integration-paired-v1-result/pristine/*.log
+            integration-paired-v1-result/pristine/CMakeCache.txt
+            integration-paired-v1-result/pristine/*.tar.gz
+            integration-paired-v1-result/pristine/*.partial
+            integration-paired-v1-result/formatted/*.json
+            integration-paired-v1-result/formatted/*.log
+            integration-paired-v1-result/formatted/CMakeCache.txt
+            integration-paired-v1-result/formatted/*.tar.gz
+            integration-paired-v1-result/formatted/*.partial
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0

@@ -1,0 +1,383 @@
+diff --git a/mlx/backend/metal/kernels/steel/attn/kernels/steel_attention.metal b/mlx/backend/metal/kernels/steel/attn/kernels/steel_attention.metal
+index 6796a3d..3cc2723 100644
+--- a/mlx/backend/metal/kernels/steel/attn/kernels/steel_attention.metal
++++ b/mlx/backend/metal/kernels/steel/attn/kernels/steel_attention.metal
+@@ -28,6 +28,7 @@ instantiate_attn_shapes_helper(float16, half);
+ instantiate_attn_shapes_helper(bfloat16, bfloat16_t);
+ instantiate_attn_shapes_helper(float32, float);
+ 
++instantiate_attn_helper(float32, float, 32, 16, 192, 192, 4, 2);
+ instantiate_attn_helper(float16, half, 32, 16, 256, 256, 4, 2);
+ instantiate_attn_helper(float16, half, 32, 32, 256, 256, 4, 2);
+ instantiate_attn_helper(bfloat16, bfloat16_t, 32, 16, 256, 256, 4, 2);
+diff --git a/mlx/backend/metal/scaled_dot_product_attention.cpp b/mlx/backend/metal/scaled_dot_product_attention.cpp
+index 2978320..f75eeef 100644
+--- a/mlx/backend/metal/scaled_dot_product_attention.cpp
++++ b/mlx/backend/metal/scaled_dot_product_attention.cpp
+@@ -17,6 +17,10 @@ namespace mlx::core::fast {
+ 
+ namespace {
+ 
++bool use_full_attention(const array& q, bool output_logsumexp) {
++  return q.shape(2) > 8 || output_logsumexp;
++}
++
+ bool use_blocked_d512(
+     const array& q,
+     const array& k,
+@@ -552,7 +556,8 @@ void sdpa_full_self_attention_metal(
+       : (bd < 128 ? 32 : 16);
+ 
+   int wm = 4;
+-  int wn = (bd == 256) ? 2 : 1;
++  // Keep FP32 D192 queries in registers to fit 32 KiB of threadgroup memory.
++  int wn = (bd == 256 || (bd == 192 && q.dtype() == float32)) ? 2 : 1;
+ 
+   const bool align_Q = (qL % bq) == 0;
+   const bool align_K = (kL % bk) == 0;
+@@ -1210,7 +1215,7 @@ std::tuple<bool, std::string> has_fused_kernel(
+   const int gqa_factor = num_query_heads / num_kv_heads;
+ 
+   std::ostringstream msg;
+-  if (query_sequence_length > 8) {
++  if (use_full_attention(q, output_logsumexp)) {
+     const bool supports_d512 = metal::is_nax_available() &&
+         (env::enable_tf32() || q.dtype() != float32);
+     const bool asymmetric = query_head_dim == 96 && value_head_dim == 64;
+@@ -1816,14 +1821,8 @@ void ScaledDotProductAttention::eval_gpu(
+     sdpa_split(s, d, q, k, v, scale_, o, do_causal_);
+   }
+ 
+-  // We are in vector mode ie single query
+-  else if (q_pre.shape(2) <= 8) {
+-    if (outputs.size() > 1) {
+-      throw std::runtime_error(
+-          "[scaled_dot_product_attention] the vector kernels do not produce a "
+-          "logsumexp; the VJP path requires the full-attention kernel.");
+-    }
+-
++  // Vector kernels do not save the logsumexp needed by the backward pass.
++  else if (!use_full_attention(q_pre, outputs.size() > 1)) {
+     auto q_copy_unless = [](const array& arr) {
+       if (arr.flags().row_contiguous) {
+         return true;
+diff --git a/python/tests/test_fast_sdpa_training.py b/python/tests/test_fast_sdpa_training.py
+new file mode 100644
+index 0000000..ca84ae5
+--- /dev/null
++++ b/python/tests/test_fast_sdpa_training.py
+@@ -0,0 +1,314 @@
++# Copyright © 2026 Apple Inc.
++
++import unittest
++from itertools import product
++
++import mlx.core as mx
++import mlx_tests
++import numpy as np
++
++
++def numpy_sdpa_vjp(q, k, v, cotangent, scale, mask=None):
++    q, k, v, cotangent = [
++        np.asarray(value, dtype=np.float64) for value in (q, k, v, cotangent)
++    ]
++    batch, query_heads, query_length, _ = q.shape
++    key_heads, key_length = k.shape[1:3]
++    repeats = query_heads // key_heads
++    keys = np.repeat(k, repeats, axis=1)
++    values = np.repeat(v, repeats, axis=1)
++    scores = (q * scale) @ keys.swapaxes(-1, -2)
++    if isinstance(mask, str):
++        assert mask == "causal"
++        mask = np.arange(key_length) <= (
++            np.arange(query_length)[:, None] + key_length - query_length
++        )
++    if mask is not None:
++        mask = np.asarray(mask)
++        scores = (
++            np.where(mask, scores, -np.inf) if mask.dtype == np.bool_ else scores + mask
++        )
++    probabilities = np.exp(scores - scores.max(axis=-1, keepdims=True))
++    probabilities /= probabilities.sum(axis=-1, keepdims=True)
++    output = probabilities @ values
++    dp = cotangent @ values.swapaxes(-1, -2)
++    ds = probabilities * (dp - (dp * probabilities).sum(axis=-1, keepdims=True))
++    dq = (ds @ keys) * scale
++    dk = (ds.swapaxes(-1, -2) @ q) * scale
++    dv = probabilities.swapaxes(-1, -2) @ cotangent
++    dk = dk.reshape(batch, key_heads, repeats, key_length, k.shape[-1]).sum(axis=2)
++    dv = dv.reshape(batch, key_heads, repeats, key_length, v.shape[-1]).sum(axis=2)
++    return output, dq, dk, dv
++
++
++class TestSDPANumpyOracle(unittest.TestCase):
++    def test_gradients_against_finite_differences(self):
++        rng = np.random.default_rng(0)
++        arrays = [
++            rng.normal(0, 0.5, shape)
++            for shape in ((2, 4, 3, 5), (2, 2, 4, 5), (2, 2, 4, 7), (2, 4, 3, 7))
++        ]
++        scale = 5**-0.5
++        for mask in (None, "causal", np.array([True, False, True, True])):
++            _, *gradients = numpy_sdpa_vjp(*arrays, scale, mask)
++            for argument in range(3):
++                for index in ((0, 0, 0, 0), (0, 1, 1, 2), (1, -1, -1, -1)):
++                    with self.subTest(
++                        mask=type(mask).__name__, argument=argument, index=index
++                    ):
++                        eps = 1e-5
++                        plus, minus = (
++                            [value.copy() for value in arrays],
++                            [value.copy() for value in arrays],
++                        )
++                        plus[argument][index] += eps
++                        minus[argument][index] -= eps
++                        difference = (
++                            numpy_sdpa_vjp(*plus, scale, mask)[0]
++                            - numpy_sdpa_vjp(*minus, scale, mask)[0]
++                        )
++                        expected = (difference * arrays[-1]).sum() / (2 * eps)
++                        np.testing.assert_allclose(
++                            gradients[argument][index], expected, atol=1e-8, rtol=1e-6
++                        )
++
++
++@unittest.skipIf(not mx.metal.is_available(), "Metal kernel path only")
++class TestMetalSDPATraining(mlx_tests.MLXTestCase):
++    def setUp(self):
++        super().setUp()
++        if mx.default_device() != mx.gpu:
++            self.skipTest("requires GPU")
++
++    def inputs(self, query_length, key_length, dim, *, key_heads=2, value_dim=None):
++        value_dim = dim if value_dim is None else value_dim
++        rng = np.random.default_rng(17)
++        shapes = (
++            (2, 4, query_length, dim),
++            (2, key_heads, key_length, dim),
++            (2, key_heads, key_length, value_dim),
++            (2, 4, query_length, value_dim),
++        )
++        return [
++            (0.5 * rng.standard_normal(shape)).astype(np.float32) for shape in shapes
++        ]
++
++    def check_vjp(
++        self, inputs, *, mask=None, compiled=False, force_fused=True, dtype=mx.float32
++    ):
++        values = [
++            value.astype(dtype)
++            if isinstance(value, mx.array)
++            else mx.array(value, dtype=dtype)
++            for value in inputs
++        ]
++        stored = [np.array(value.astype(mx.float32)) for value in values]
++        scale = inputs[0].shape[-1] ** -0.5
++        device_mask = mx.array(mask) if isinstance(mask, np.ndarray) else mask
++
++        def attention(q, k, v):
++            return mx.fast.scaled_dot_product_attention(
++                q, k, v, scale=scale, mask=device_mask, force_fused=force_fused
++            )
++
++        def evaluate(q, k, v, cotangent):
++            outputs, gradients = mx.vjp(attention, [q, k, v], [cotangent])
++            return outputs[0], *gradients
++
++        if compiled:
++            evaluate = mx.compile(evaluate)
++        with mx.config.scoped_update(MLX_SDPA_VJP_FALLBACK=0):
++            actual = evaluate(*values)
++            mx.eval(actual)
++        expected = numpy_sdpa_vjp(*stored, scale, mask)
++        tolerance = 2e-5 if dtype == mx.float32 else 1e-2
++        result = []
++        for observed, reference in zip(actual, expected):
++            self.assertEqual(observed.dtype, dtype)
++            self.assertEqual(observed.shape, reference.shape)
++            observed = np.array(observed.astype(mx.float32))
++            self.assertTrue(np.isfinite(observed).all())
++            np.testing.assert_allclose(
++                observed, reference, atol=tolerance, rtol=tolerance
++            )
++            result.append(observed)
++        return result
++
++    def test_short_training_vjp_regression(self):
++        # The old dispatch raises instead of producing the saved logsumexp.
++        for dim, compiled, mask in product(
++            (64, 128, 256), (False, True), (None, "causal")
++        ):
++            with self.subTest(dim=dim, compiled=compiled, mask=mask):
++                self.check_vjp(
++                    self.inputs(3, 3, dim, key_heads=4),
++                    mask=mask,
++                    compiled=compiled,
++                    force_fused=False,
++                )
++
++    def test_training_query_length_boundaries(self):
++        for length, dim, compiled, mask in product(
++            (1, 3, 8, 9, 31, 32), (64, 128, 256), (False, True), (None, "causal")
++        ):
++            with self.subTest(length=length, dim=dim, compiled=compiled, mask=mask):
++                self.check_vjp(
++                    self.inputs(length, length, dim), mask=mask, compiled=compiled
++                )
++
++    def test_training_neighboring_head_dimensions(self):
++        for dim, length, compiled in product(
++            (72, 80, 96, 192), (3, 9, 31), (False, True)
++        ):
++            with self.subTest(dim=dim, length=length, compiled=compiled):
++                self.check_vjp(
++                    self.inputs(length, length + 1, dim),
++                    mask="causal",
++                    compiled=compiled,
++                )
++
++    def test_training_partial_query_and_key_tiles(self):
++        with mx.config.scoped_update(MLX_SDPA_VJP_BQ=5, MLX_SDPA_VJP_BK=7):
++            for length, dim, compiled, mask in product(
++                (1, 3, 8, 9, 31, 32), (64, 128, 256), (False, True), (None, "causal")
++            ):
++                with self.subTest(length=length, dim=dim, compiled=compiled, mask=mask):
++                    self.check_vjp(
++                        self.inputs(length, length + 5, dim),
++                        mask=mask,
++                        compiled=compiled,
++                    )
++
++    def test_short_training_asymmetric_head_dimensions(self):
++        for compiled, mask in product((False, True), (None, "causal")):
++            with self.subTest(compiled=compiled, mask=mask):
++                self.check_vjp(
++                    self.inputs(3, 9, 96, value_dim=64),
++                    mask=mask,
++                    compiled=compiled,
++                )
++
++    def test_float32_head_dim_192_threadgroup_memory(self):
++        # WN1 requires 40,448 bytes; the device may provide only 32 KiB.
++        for length, compiled, mask in product(
++            (3, 9, 31, 32, 33), (False, True), (None, "causal")
++        ):
++            with self.subTest(length=length, compiled=compiled, mask=mask):
++                inputs = self.inputs(length, length + 1, 192)
++                self.check_vjp(inputs, mask=mask, compiled=compiled)
++                scale = 192**-0.5
++
++                def attention(q, k, v):
++                    return mx.fast.scaled_dot_product_attention(
++                        q, k, v, scale=scale, mask=mask, force_fused=True
++                    )
++
++                if compiled:
++                    attention = mx.compile(attention)
++                actual = attention(*(mx.array(value) for value in inputs[:3]))
++                mx.eval(actual)
++                expected = numpy_sdpa_vjp(*inputs, scale, mask)[0]
++                np.testing.assert_allclose(
++                    np.array(actual), expected, atol=2e-5, rtol=2e-5
++                )
++
++    def test_short_training_strided_inputs_and_cotangent(self):
++        for dim, compiled in product((64, 128, 256), (False, True)):
++            values = []
++            for value in self.inputs(3, 9, dim):
++                shape = value.shape
++                storage = np.zeros(
++                    (*shape[:-2], 2 * shape[-1] + 1, 2 * shape[-2] + 1),
++                    dtype=np.float32,
++                )
++                storage[..., 1::2, 1::2] = value.swapaxes(-1, -2)
++                values.append(mx.array(storage)[..., 1::2, 1::2].swapaxes(-1, -2))
++            with self.subTest(dim=dim, compiled=compiled):
++                self.check_vjp(values, mask="causal", compiled=compiled)
++
++    def test_short_training_more_queries_than_keys(self):
++        for dim, compiled in product((64, 128, 256), (False, True)):
++            with self.subTest(dim=dim, compiled=compiled):
++                inputs = self.inputs(3, 2, dim)
++                self.check_vjp(inputs, compiled=compiled)
++                with self.assertRaisesRegex(
++                    ValueError, "query sequence to be no longer than the key sequence"
++                ):
++                    self.check_vjp(inputs, mask="causal", compiled=compiled)
++
++    def test_short_training_low_precision(self):
++        for dim, length, dtype, compiled in product(
++            (64, 128, 256), (3, 8, 9), (mx.float16, mx.bfloat16), (False, True)
++        ):
++            with self.subTest(dim=dim, length=length, dtype=dtype, compiled=compiled):
++                self.check_vjp(
++                    self.inputs(length, length + 1, dim),
++                    mask="causal",
++                    compiled=compiled,
++                    dtype=dtype,
++                )
++
++    def test_short_training_sequence_isolation(self):
++        for dim, compiled in product((64, 128, 256), (False, True)):
++            with self.subTest(dim=dim, compiled=compiled):
++                inputs = self.inputs(3, 33, dim)
++                before = self.check_vjp(inputs, mask="causal", compiled=compiled)
++                changed = [value.copy() for value in inputs]
++                for value in changed:
++                    value[1] = -value[1] + 0.25
++                after = self.check_vjp(changed, mask="causal", compiled=compiled)
++                for first, second in zip(before, after):
++                    np.testing.assert_array_equal(first[0], second[0])
++
++    def test_short_training_array_mask_fallback(self):
++        for dim, compiled, additive in product(
++            (64, 128, 256), (False, True), (False, True)
++        ):
++            with self.subTest(dim=dim, compiled=compiled, additive=additive):
++                mask = np.arange(9) % 3 != 1
++                if additive:
++                    mask = np.where(mask, 0.0, -np.inf).astype(np.float32)
++                inputs = self.inputs(3, 9, dim)
++                self.check_vjp(inputs, mask=mask, compiled=compiled, force_fused=False)
++                with self.assertRaisesRegex(
++                    ValueError, "backward pass does not support an array mask"
++                ):
++                    self.check_vjp(
++                        inputs, mask=mask, compiled=compiled, force_fused=True
++                    )
++
++    def test_training_rejects_vector_only_head_dimensions(self):
++        for compiled in (False, True):
++            with self.subTest(compiled=compiled):
++                inputs = self.inputs(3, 9, 192, value_dim=128)
++                self.check_vjp(inputs, compiled=compiled, force_fused=False)
++                with self.assertRaisesRegex(
++                    ValueError, "full attention kernel supports head dims"
++                ):
++                    self.check_vjp(inputs, compiled=compiled, force_fused=True)
++
++    def test_inference_keeps_vector_head_dimensions(self):
++        for dim, compiled in product((192, 512), (False, True)):
++            value_dim = 128 if dim == 192 else dim
++            inputs = self.inputs(3, 9, dim, value_dim=value_dim)
++            scale = dim**-0.5
++
++            def attention(q, k, v):
++                return mx.fast.scaled_dot_product_attention(
++                    q, k, v, scale=scale, force_fused=True
++                )
++
++            if compiled:
++                attention = mx.compile(attention)
++            with self.subTest(dim=dim, compiled=compiled):
++                with mx.config.scoped_update(MLX_SDPA_D512_MIN_KL=0):
++                    actual = attention(*(mx.array(value) for value in inputs[:3]))
++                    mx.eval(actual)
++                expected = numpy_sdpa_vjp(*inputs, scale)[0]
++                np.testing.assert_allclose(
++                    np.array(actual), expected, atol=2e-5, rtol=2e-5
++                )
++
++
++if __name__ == "__main__":
++    mlx_tests.MLXTestRunner()

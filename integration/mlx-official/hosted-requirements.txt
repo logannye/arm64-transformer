@@ -1,0 +1,11 @@
+# Separate integration environment; never install into the frozen study runtime.
+cmake==3.31.6
+setuptools==80.9.0
+numpy==2.2.6
+torch==2.14.1
+tensorflow==2.20.0
+ml_dtypes==0.5.3
+pytest==9.1.1
+pytest-xdist==3.8.0
+pre-commit==4.7.0
+typing_extensions==4.16.0

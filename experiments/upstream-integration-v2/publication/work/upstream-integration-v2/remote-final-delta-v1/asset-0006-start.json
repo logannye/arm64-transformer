@@ -1,0 +1,25 @@
+{
+  "before": {
+    "content_type": "application/octet-stream",
+    "created_at": "2026-10-30T10:29:06Z",
+    "digest": "sha256:7dfd972fd4c5d081d006610ed4a9e60a1b312e890d80a2aa83565af62bfa0e4c",
+    "id": 691748564,
+    "label": "",
+    "name": "upstream-supplement-v3-evidence-0001.tar.gz",
+    "node_id": "RA_kwDOVbC4ds4pOz7U",
+    "size": 786491000,
+    "state": "uploaded",
+    "updated_at": "2026-10-30T10:30:42Z",
+    "url": "https://api.github.com/repos/logannye/arm64-transformer/releases/assets/691748564"
+  },
+  "expected": {
+    "asset_id": 691748564,
+    "bytes": 786491000,
+    "local_path": "outputs/upstream-integration-v2/evidence-supplement-v3/evidence-0001.tar.gz",
+    "name": "upstream-supplement-v3-evidence-0001.tar.gz",
+    "sha256": "7dfd972fd4c5d081d006610ed4a9e60a1b312e890d80a2aa83565af62bfa0e4c"
+  },
+  "ordinal": 6,
+  "started_utc": "2026-10-30T10:38:19.128004+00:00",
+  "status": "running"
+}

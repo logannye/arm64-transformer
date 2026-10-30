@@ -1,0 +1,23 @@
+{
+  "schema": "release-asset-aliases-v1",
+  "files": [
+    {
+      "release_asset": "mlx-remainder-evidence.tar.gz",
+      "restore_to": "outputs/upstream-integration-v2/evidence-mlx-remainder-v1/evidence-0001.tar.gz",
+      "bytes": 15421247,
+      "sha256": "c05834ec7e26cb1617191dfedd8676f461a381f7e2862ad3c1ff721fbb57a0bb"
+    },
+    {
+      "release_asset": "mlx-remainder-package.json",
+      "restore_to": "outputs/upstream-integration-v2/evidence-mlx-remainder-v1/package.json",
+      "bytes": 1717805,
+      "sha256": "77e8501e76e7d7fd1b55d1d2a64275b0b400051a9cd13599baa23edf10b98ad6"
+    },
+    {
+      "release_asset": "mlx-remainder-selection.json",
+      "restore_to": "outputs/upstream-integration-v2/evidence-mlx-remainder-v1/input-selection.json",
+      "bytes": 435239,
+      "sha256": "51130156f54360009bfe1c62f725af319b85c598c2b18e7437f7f90f415879e6"
+    }
+  ]
+}
