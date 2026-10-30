@@ -1,0 +1,62 @@
+# Own-project diagnostic control. Never admits a patched study baseline.
+name: PyTorch pristine and patched lint control v4
+on:
+  push:
+    branches: [codex/upstream-integration-v2]
+    paths:
+      - '.github/workflows/upstream-pytorch-lint-control-v4.yml'
+      - 'validation/upstream-pytorch-lint-control-v4/**'
+  workflow_dispatch:
+    inputs:
+      runner_label:
+        description: macOS arm64 host with at least 40 GiB free
+        required: true
+        type: string
+        default: macos-26
+permissions:
+  contents: read
+concurrency:
+  group: pytorch-pristine-lint-control
+  cancel-in-progress: false
+jobs:
+  lint-control:
+    if: github.repository == 'logannye/arm64-transformer'
+    runs-on: ${{ inputs.runner_label || 'macos-26' }}
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: study
+      - uses: actions/checkout@v4
+        with:
+          repository: pytorch/pytorch
+          ref: 71d2a08507ab47dd6b2fa9b66319d17ce2377de4
+          fetch-depth: 0
+          persist-credentials: false
+          path: pytorch-source
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.10'
+          architecture: arm64
+      - name: Provision OpenMP from a binary bottle only
+        run: brew install --force-bottle libomp
+      - name: Compare unchanged upstream lint in one hosted environment
+        run: >-
+          python study/validation/upstream-pytorch-lint-control-v4/run.py
+          --source pytorch-source
+          --output lint-control-v4-result
+      - name: Retain every lint outcome and identity receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytorch-lint-control-v4-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            lint-control-v4-result/*.json
+            lint-control-v4-result/*.log
+            lint-control-v4-result/CMakeCache.txt
+            lint-control-v4-result/env_forwarded.txt
+            study/validation/upstream-pytorch-lint-control-v4/
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 6
