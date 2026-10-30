@@ -54,6 +54,16 @@ directory records, file/directory collisions, links and every missing or changed
 payload file. The original failed preparation remains retained; no runtime bytes
 or numerical qualification changed.
 
+After expansion and runtime capture, the first full-suite preparation rejected
+the source archive's explicit symlink records. The source verifier and portable
+auditor now normalize that format alongside the earlier digest-based manifest.
+They hash each literal link target, reject lexical escapes and substituted files,
+and require live links to resolve within the authenticated source tree. Regular
+file content and modes remain checked. All 146,435 members of the actual source
+tree verify; 80 producer/archive tests pass without a framework import or build.
+The original failed preparation is retained. Fresh capture must bind the corrected
+verifier; this format correction provides no numerical qualification.
+
 ```sh
 python3 -I -B -m unittest discover \
   -s integration/gpu-owned -p 'test_candidate_half_v3_validation.py'

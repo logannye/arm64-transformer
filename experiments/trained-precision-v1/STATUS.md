@@ -66,8 +66,10 @@ only that observed gate into the FP64 backward removes all 12 gradient failures.
 Every observed prefix through the second normalization retains the correct gate
 when FF1 is recomputed in FP64, isolating the residual error to that projection.
 The declared framework-v3 bit 8 applies the existing compensated linear operation
-and explicit derivatives to FF1. Its policy-15 screen and complete replays remain
-pending. This policy's bit mapping differs from native policy 15. The queued
+and explicit derivatives to FF1. Its policy-15 forward and gradient screens pass
+independent raw audits, including exact repeat checks. The complete historical
+and existing-fresh replays are running under the frozen serial phase-9 plan.
+This policy's bit mapping differs from native policy 15. The queued
 fresh-state plans stopped at their prerequisites without launching a worker.
 
 Ordinary maintained MPS and MLX still fail the historical width-1024 forward
@@ -162,10 +164,16 @@ matches GitHub's SHA256 `a2b311ec1886804a9be6d348c5bbafb4276ce9b4730da13ae18a41a
 The first preparation rejected legitimate empty runtime include directories;
 the narrow verifier correction retains all file/link/path checks and leaves
 those empty directory records unexpanded. The actual runtime archive's 15,707
-payload files now verify. Expansion, capture and device qualification remain
-pending. That build
+payload files now verify. The complete source/runtime pair has been expanded;
+runtime capture retains 28,909 runtime and 2,220 project file identities.
+Full-suite preparation then rejected the new source manifest's explicit symlink
+records. The producer and portable auditor now normalize both retained source
+formats, hashing literal link targets and rejecting missing, escaped or replaced
+links. The corrected producer verifies all 146,435 source members, including 21
+symlinks. The failed preparation is preserved. A fresh capture and preparation
+must bind the corrected verifier before device qualification. That build
 addresses retained integration failures, not the MPS trained-attention arithmetic
-failures. The portable MPS evidence producer and archive auditor now have 70
+failures. The portable MPS evidence producer and archive auditor now have 80
 CPU-only checks, plus 25 eligibility checks. They verify retained evidence after
 relocation without reading original paths. No actual runtime or full MPS suite is
 qualified by those tests. Full framework conformance against the new runtime,

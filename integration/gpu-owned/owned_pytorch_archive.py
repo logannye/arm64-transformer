@@ -49,6 +49,55 @@ def relative(value):
     return path
 
 
+def source_member(name, item, schema=None):
+    """Normalize the two retained source-manifest formats without following links."""
+    path = relative(name)
+    require(isinstance(item, dict), "Invalid complete source member")
+    if schema == "pytorch-owned-source-archive-v1":
+        require(
+            type(item.get("mode")) is int and 0 <= item["mode"] <= 0o777,
+            "Invalid archive source mode",
+        )
+        if item.get("kind") == "symlink":
+            require(set(item) == {"kind", "target", "mode"}, "Malformed source link identity")
+            target = item["target"]
+            require(
+                isinstance(target, str)
+                and target
+                and "\\" not in target
+                and "\0" not in target
+                and not Path(target).is_absolute(),
+                "Unsafe source link target",
+            )
+            parts = list(path.parent.parts)
+            for component in Path(target).parts:
+                if component == "..":
+                    require(parts, "Source link escapes archive")
+                    parts.pop()
+                elif component != ".":
+                    parts.append(component)
+            raw = target.encode()
+            return dict(
+                kind="symlink",
+                sha256=hashlib.sha256(raw).hexdigest(),
+                bytes=len(raw),
+                target=target,
+            )
+        require(
+            item.get("kind") == "file" and set(item) == {"kind", "mode", "sha256", "bytes"},
+            "Malformed archive source file identity",
+        )
+    require(
+        isinstance(item.get("sha256"), str)
+        and re.fullmatch(r"[0-9a-f]{64}", item["sha256"])
+        and type(item.get("bytes")) is int
+        and item["bytes"] >= 0,
+        "Invalid complete source member",
+    )
+    kind = "symlink" if item.get("mode") == "120000" or item.get("type") == "symlink" else "file"
+    return dict(kind=kind, sha256=item["sha256"], bytes=item["bytes"])
+
+
 def raw(root, row):
     require(set(row) == {"path", "sha256", "bytes"}, "Malformed portable binding")
     path = Path(root) / relative(row["path"])
@@ -156,17 +205,10 @@ def source_authority(value, selected):
     )
     files = value.get("files")
     require(isinstance(files, dict) and files, "Missing complete source manifest")
-    for name, item in files.items():
-        relative(name)
-        require(
-            isinstance(item, dict)
-            and isinstance(item.get("sha256"), str)
-            and re.fullmatch(r"[0-9a-f]{64}", item["sha256"])
-            and type(item.get("bytes")) is int
-            and item["bytes"] >= 0,
-            "Invalid complete source member",
-        )
-    return {name: item["sha256"] for name, item in files.items()}
+    return {
+        name: source_member(name, item, value.get("schema"))["sha256"]
+        for name, item in files.items()
+    }
 
 
 def snapshot(value, cache, policy):

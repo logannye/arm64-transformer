@@ -277,29 +277,24 @@ def source_files(plan, selection, *, verify=True):
     )
     root = Path(plan["source_root"])
     require(root.is_dir() and root.resolve(strict=True) == root, "Noncanonical full source root")
+    archive = load(Path(__file__).resolve().parents[2] / ARCHIVE, "owned_mps_source_identity")
     result = {}
     for name, item in value["files"].items():
         relative = safe_relative(name)
-        require(
-            isinstance(item, dict)
-            and isinstance(item.get("sha256"), str)
-            and len(item["sha256"]) == 64
-            and type(item.get("bytes")) is int
-            and item["bytes"] >= 0,
-            "Malformed full source file identity",
-        )
-        result[name] = item["sha256"]
+        identity = archive.source_member(name, item, value.get("schema"))
+        result[name] = identity["sha256"]
         if not verify:
             continue
         path = root / relative
-        if path.is_symlink():
+        if identity["kind"] == "symlink":
             require(
-                item.get("mode") == "120000" or item.get("type") == "symlink",
-                "Undeclared source symlink",
+                path.is_symlink() and path.resolve(strict=True).is_relative_to(root),
+                "Missing or escaped source symlink",
             )
             raw = os.readlink(path).encode()
             require(
-                len(raw) == item["bytes"] and hashlib.sha256(raw).hexdigest() == item["sha256"],
+                len(raw) == identity["bytes"]
+                and hashlib.sha256(raw).hexdigest() == identity["sha256"],
                 "Source symlink changed",
             )
         else:
@@ -308,6 +303,8 @@ def source_files(plan, selection, *, verify=True):
                 actual["sha256"] == item["sha256"] and actual["bytes"] == item["bytes"],
                 "Full source bytes changed: " + name,
             )
+            if value.get("schema") == "pytorch-owned-source-archive-v1":
+                require(stat.S_IMODE(path.stat().st_mode) == item["mode"], "Source mode changed")
     if verify:
         actual = set()
         for current, dirs, files in os.walk(root, followlinks=False):

@@ -119,6 +119,59 @@ class SourceTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 M.source_files(self.plan, self.selected)
 
+    def archive_source_link(self):
+        self.data["schema"] = "pytorch-owned-source-archive-v1"
+        self.data["files"]["test/test_mps.py"].update(kind="file", mode=0o644)
+        (self.source / "test/test_mps.py").chmod(0o644)
+        (self.source / "link").symlink_to("test/test_mps.py")
+        self.data["files"]["link"] = dict(kind="symlink", target="test/test_mps.py", mode=0o755)
+        self.save()
+
+    def test_archive_manifest_link_target_is_bound_without_following_it_as_a_file(self):
+        self.archive_source_link()
+        expected = M.hashlib.sha256(b"test/test_mps.py").hexdigest()
+        self.assertEqual(M.source_files(self.plan, self.selected)["link"], expected)
+        self.assertEqual(M.source_files(self.plan, self.selected, verify=False)["link"], expected)
+
+    def test_archive_link_replaced_by_regular_file_is_rejected(self):
+        self.archive_source_link()
+        (self.source / "link").unlink()
+        (self.source / "link").write_text("test/test_mps.py")
+        with self.assertRaisesRegex(ValueError, "symlink"):
+            M.source_files(self.plan, self.selected)
+
+    def test_archive_link_target_change_is_rejected(self):
+        self.archive_source_link()
+        (self.source / "link").unlink()
+        (self.source / "link").symlink_to("./test/test_mps.py")
+        with self.assertRaisesRegex(ValueError, "symlink changed"):
+            M.source_files(self.plan, self.selected)
+
+    def test_archive_link_escape_is_rejected_even_without_live_verification(self):
+        self.archive_source_link()
+        for target in ("../escape", "/outside", "test/../../escape"):
+            self.data["files"]["link"]["target"] = target
+            self.save()
+            with self.subTest(target=target), self.assertRaises(ValueError):
+                M.source_files(self.plan, self.selected, verify=False)
+
+    def test_archive_regular_file_mode_remains_bound(self):
+        self.archive_source_link()
+        (self.source / "test/test_mps.py").chmod(0o755)
+        with self.assertRaisesRegex(ValueError, "mode changed"):
+            M.source_files(self.plan, self.selected)
+
+    def test_legacy_digest_link_format_still_verifies(self):
+        raw = b"test/test_mps.py"
+        (self.source / "link").symlink_to(raw.decode())
+        self.data["files"]["link"] = dict(
+            type="symlink", bytes=len(raw), sha256=M.hashlib.sha256(raw).hexdigest()
+        )
+        self.save()
+        self.assertEqual(
+            M.source_files(self.plan, self.selected)["link"], self.data["files"]["link"]["sha256"]
+        )
+
 
 class FixtureTests(unittest.TestCase):
     def setUp(self):

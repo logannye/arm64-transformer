@@ -468,5 +468,45 @@ class PortableTests(unittest.TestCase):
             A.source_authority(source, self.selected["pytorch"])
 
 
+class ArchiveSourceIdentityTests(unittest.TestCase):
+    def source(self):
+        selected = dict(base="a" * 40, patches=["b" * 64])
+        value = dict(
+            schema="pytorch-owned-source-archive-v1",
+            source_revision="a" * 40,
+            patch_sha256="b" * 64,
+            files={
+                "file.py": dict(kind="file", mode=0o644, bytes=3, sha256="c" * 64),
+                "folder/link": dict(kind="symlink", mode=0o755, target="../file.py"),
+            },
+        )
+        return value, selected
+
+    def test_portable_link_identity_uses_the_retained_literal_target(self):
+        value, selected = self.source()
+        result = A.source_authority(value, selected)
+        self.assertEqual(result["folder/link"], A.hashlib.sha256(b"../file.py").hexdigest())
+        self.assertEqual(result["file.py"], "c" * 64)
+
+    def test_portable_source_link_escape_is_rejected(self):
+        value, selected = self.source()
+        for target in ("../../escape", "/outside", "bad\\path", "bad\0path"):
+            value["files"]["folder/link"]["target"] = target
+            with self.subTest(target=target), self.assertRaises(ValueError):
+                A.source_authority(value, selected)
+
+    def test_archive_symlink_cannot_masquerade_as_a_regular_file(self):
+        value, selected = self.source()
+        value["files"]["folder/link"]["kind"] = "file"
+        with self.assertRaises(ValueError):
+            A.source_authority(value, selected)
+
+    def test_undeclared_link_format_cannot_supply_a_target_without_a_digest(self):
+        value, selected = self.source()
+        value.pop("schema")
+        with self.assertRaises(ValueError):
+            A.source_authority(value, selected)
+
+
 if __name__ == "__main__":
     unittest.main()
