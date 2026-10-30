@@ -2,6 +2,7 @@ name: Trained precision candidates
 on:
   push:
     branches: [codex/trained-state-precision]
+    paths: ['native/**', 'tests/test_native_precision.py', '.github/workflows/trained-precision.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -18,7 +19,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python -m pip install --only-binary=:all: -e '.[dev]'
+      - run: >-
+          python -m pip install --only-binary=:all: -e '.[dev]'
       - name: Build and check each candidate in one reusable build tree
         run: |
           mkdir -p results/precision-build
