@@ -178,7 +178,12 @@ def audit_worker(output, receipt_sha, plan_path, plan_sha, evidence_root):
         "gradients_checked": result["gradients_checked"],
         "full_width_inventory": result["full_width_inventory"],
         "native_policy": result.get("native", {}).get("precision_policy"),
-        "torch_diagnostic_policy": result["torch_diagnostic_policy"],
+        # Early retained workers predate the factorial field. Preserve missing
+        # metadata explicitly; raw numeric evidence does not infer a policy.
+        "torch_diagnostic_policy": result.get("torch_diagnostic_policy"),
+        "policy_metadata_present": "torch_diagnostic_policy" in result,
+        "python_candidate": result.get("python_candidate"),
+        "metal_candidate_shader_sha256": result.get("metal_candidate_shader_sha256"),
         "cases": audited,
     }
 

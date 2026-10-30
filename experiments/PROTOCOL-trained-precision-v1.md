@@ -81,3 +81,58 @@ checkpoint. Include all precision, packing and synchronization costs in timing.
 
 Native compilation uses hosted CI. Reuse installed Python libraries and retained
 artifacts locally; do not build or replace the framework runtime locally.
+
+## Bounded fresh development trajectory
+
+After the exposed-case factorial, evaluate native policy 1 on a fixed 64-update
+training-only trajectory at each wide width. Start from the existing seed-42
+initial checkpoint, authenticate its original training rows, and use private
+stream `[20261103, width, 73]` for 64 batches of 16 training indices and fresh
+development probes. Retain checkpoints 0, 1, 8, 32 and 64. Each checkpoint is
+replayed on one training-derived batch and one synthetic batch containing repeated
+0/127 tokens, alternating 0/127 tokens and uniform random tokens. Run two fresh
+processes and require all 65 parameter/first-moment/second-moment state digests
+to match. All comparisons still use identical saved weights across engines.
+This is 64 development updates, not a replacement for the 1,024-update formal
+training budget, a held-out assessment or evidence of convergence quality.
+
+The expanded exposed-state check uses B16 for native policy 1 gradients, in
+16-case shards bounded by the worker's 4 GiB raw-evidence limit. Retained MPS,
+MLX and handwritten Metal each replay the entire 87-case width-1024 forward
+inventory; width 512 has two exposed cases. Numerical failures remain completed
+failures. Source/runtime changes, missing cases and provenance failures remain
+integrity failures. The independent raw auditor verifies both kinds separately.
+
+## Prospective Python candidate after localization
+
+`python-fp32-saved-qkv-attention-v1` is a separate Python model candidate, not a
+relabeling of the ordinary PyTorch baseline. It uses standard PyTorch operations
+with explicit first-order autograd functions for QKV and causal attention. Only
+intermediate arithmetic is FP64; parameters, module outputs, saved activations,
+attention probabilities and returned gradients are FP32. The attention backward
+uses the saved FP32 probabilities. The model, epsilon and optimizer remain fixed.
+
+Before replay, require primitive forward/backward agreement, causal-prefix
+isolation, repeated inputs and an autograd saved-tensor audit. Then test the
+complete same-input regression inventory and the fixed fresh development states
+with unchanged tolerances. The candidate remains separate from both historical
+contracts and from a stock-framework performance claim. Its full cost would have
+to be included in any future explicitly revised Python comparison arm.
+
+## Prospective handwritten Metal refinement
+
+The reference Metal path has one failing width-1024 replay batch after its existing
+compensated score/QKV work. Before candidate execution, declare the complete
+four-policy factorial in `integration/trained-precision/metal_candidates.py`:
+bit 1 retains a two-float reciprocal-square-root refinement and normalized value
+through affine normalization; bit 2 uses a compensated attention-value sum.
+Both affect forward arithmetic, preserve FP32 buffers and retain the existing
+backward equations using saved FP32 state. The normalization candidate recovers
+the low part of the existing exact 1e-5 epsilon; it does not select a new epsilon.
+
+All four policies are replayed on the same entire exposed inventory. Baseline
+source, derived shader bytes, runtime compilation and host-library identities
+remain bound. These candidates address the reference shader path only; optimized
+policy paths are unchanged and cannot inherit their results. No timing or formal
+selection follows from the exposed cases alone. Local and propagated prefix
+errors are examined separately, with trace/ordinary-output equality reported.

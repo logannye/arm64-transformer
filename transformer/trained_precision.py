@@ -103,17 +103,27 @@ def source_inventory():
     paths = [*ROOT.glob("transformer/*.py"), *ROOT.glob("native/*.S")]
     paths += [*ROOT.glob("native/metal/*.mm"), *ROOT.glob("native/metal/*.metal")]
     paths += [ROOT / "integration/gpu-owned/runtime_probe.py", ROOT / "native/Makefile"]
+    paths += [ROOT / "integration/trained-precision/precision_reference.py"]
     return {str(p.relative_to(ROOT)): digest(p) for p in sorted(paths)}
 
 
-def torch_evaluate(flat, tokens, targets, *, dtype, device="cpu", gradients=False, policy=0):
+def torch_evaluate(
+    flat, tokens, targets, *, dtype, device="cpu", gradients=False, policy=0, candidate=False
+):
     import numpy as np
     import torch
 
     from transformer import spec
     from transformer.reference import Transformer
 
-    if policy:
+    if candidate:
+        if policy or device != "cpu" or dtype != torch.float32:
+            raise ValueError("The separate Python candidate requires CPU FP32 and no probe policy")
+        module = load_module(
+            "precision_reference", ROOT / "integration/trained-precision/precision_reference.py"
+        )
+        model = module.PrecisionReference()
+    elif policy:
         from transformer.torch_precision_probe import PrecisionProbe
 
         model = PrecisionProbe(policy)
@@ -174,6 +184,7 @@ def worker(args):
         "batch_size": args.batch_size,
         "gradients_checked": args.gradients,
         "torch_diagnostic_policy": args.torch_policy,
+        "python_candidate": "python-fp32-saved-qkv-attention-v1" if args.python_candidate else None,
         "formal_eligible": False,
         "complete": False,
         "passed": False,
@@ -187,6 +198,14 @@ def worker(args):
             raise ValueError("Worker width must be set before imports")
         if args.torch_policy and args.engine != "cpu_torch":
             raise ValueError("Counterfactual precision probes are CPU-only")
+        if args.python_candidate and (args.engine != "cpu_torch" or args.torch_policy):
+            raise ValueError("Separate Python candidate cannot change another engine/probe")
+        if args.metal_shaders:
+            if args.engine != "metal" or digest(args.metal_shaders) != args.metal_shaders_sha256:
+                raise ValueError("Alternate Metal source requires an explicit external binding")
+            if args.kernel_policy or os.environ.get("ARM64_TRANSFORMER_METAL_POLICY"):
+                raise ValueError("Alternate Metal source is restricted to the reference policy")
+            receipt["metal_candidate_shader_sha256"] = args.metal_shaders_sha256
         if digest(args.inventory) != args.inventory_sha256:
             raise ValueError("Inventory identity changed")
         plan = json.loads(Path(args.inventory).read_text())
@@ -291,6 +310,8 @@ def worker(args):
                         if not args.library or digest(args.library) != args.library_sha256:
                             raise ValueError("Metal bridge needs an external binary binding")
                         module.LIBRARY = Path(args.library)
+                        if args.metal_shaders:
+                            module.SHADERS = Path(args.metal_shaders)
                     policy = (
                         json.loads(Path(args.kernel_policy).read_text())
                         if args.kernel_policy
@@ -328,6 +349,7 @@ def worker(args):
                         device="mps" if args.engine == "mps" else "cpu",
                         gradients=args.gradients,
                         policy=args.torch_policy,
+                        candidate=args.python_candidate,
                     )
 
                 actual, repeat = evaluate(), evaluate()
@@ -401,6 +423,27 @@ def worker(args):
             raise ValueError("Source changed during execution")
         if digest(args.inventory) != args.inventory_sha256:
             raise ValueError("Inventory changed during execution")
+        if args.metal_shaders and digest(args.metal_shaders) != args.metal_shaders_sha256:
+            raise ValueError("Alternate Metal source changed during execution")
+        if native is not None:
+            before_backend = receipt["native"]["backend"]
+            after_backend = native.backend_identity
+            receipt["native"]["backend_after"] = after_backend
+            selected = "sme" if before_backend["selected_kind"] == 1 else "neon"
+            count = (5 - bool(receipt["native"]["precision_policy"] & 2)) * 2
+            forward_calls = count * len(cases) * args.batch_size
+            expected_dispatch = {
+                f"{backend}_{direction}_calls": (
+                    forward_calls
+                    if backend == selected and (direction == "forward" or args.gradients)
+                    else 0
+                )
+                for backend in ("sme", "neon")
+                for direction in ("forward", "backward")
+            }
+            if any(after_backend[k] - before_backend[k] != n for k, n in expected_dispatch.items()):
+                raise ValueError("Actual native dispatch counts differ from the declared policy")
+            receipt["native"]["expected_dispatch_delta"] = expected_dispatch
         receipt["complete"] = True
         receipt["passed"] = all(c["passed"] for c in receipt["cases"])
         if auth is not None:
@@ -446,6 +489,9 @@ def main():
     run.add_argument("--owned-workspace")
     run.add_argument("--gradients", action="store_true")
     run.add_argument("--torch-policy", type=int, choices=range(8), default=0)
+    run.add_argument("--python-candidate", action="store_true")
+    run.add_argument("--metal-shaders")
+    run.add_argument("--metal-shaders-sha256")
     run.add_argument("--case-limit", type=int)
     run.add_argument("--case-offset", type=int, default=0)
     run.add_argument("--output", required=True)
