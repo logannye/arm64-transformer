@@ -21,7 +21,7 @@ They retain the original numerical tolerances.
 | Handwritten reference Metal normalization refinement, policy 1 | 89/89 anchors pass | 20/20 batches pass |
 | Custom MPS first-LayerNorm/QKV/attention refinement, policy 7 | 89/89 anchors pass | 20/20 batches pass |
 | Custom compiled MLX first-LayerNorm/QKV/attention refinement, policy 7 | 88/89 anchors pass; one FF1 gradient failure | 20/20 batches pass |
-| Custom compiled MLX policy 15, additionally refining FF1 | 89/89 gradient-graph logits/loss/all-gradient anchors pass | Complete v3 replay pending |
+| Custom compiled MLX policy 15, additionally refining FF1 | 89/89 anchors pass, with separate inference and gradient audits | 20/20 batches pass in both modes |
 
 The Python refinement is an explicit custom model using PyTorch operations, not
 ordinary PyTorch and not yet a selected maintained-framework arm. Its CPU evidence
@@ -70,9 +70,13 @@ The declared framework-v3 bit 8 applies the existing compensated linear operatio
 and explicit derivatives to FF1. Its policy-15 forward and gradient screens pass
 independent raw audits, including exact repeat checks. Its complete historical
 gradient replay now passes independent raw audits at both widths: all 89 anchors
-and 73 distinct batches. Separate historical inference and existing-fresh replays
-are running under the frozen serial phase-9 plan; inference cannot inherit the
-compiled gradient graph's result.
+and 73 distinct batches. Separate historical inference also passes both complete
+widths. The existing-fresh replay passes all 20 batches in each mode, with eight
+independent collection audits across the two inventories, two widths and two
+operations. The first fresh launch used the wrong evidence root and stopped
+before evaluating any case. A separate successor authenticated the original
+checkpoint hashes under the correct root and ran those four fresh collections.
+The failed zero-case launch remains retained alongside the historical passes.
 This policy's bit mapping differs from native policy 15. The queued
 fresh-state plans stopped at their prerequisites without launching a worker.
 
@@ -174,14 +178,16 @@ Full-suite preparation then rejected the new source manifest's explicit symlink
 records. The producer and portable auditor now normalize both retained source
 formats, hashing literal link targets and rejecting missing, escaped or replaced
 links. The corrected producer verifies all 146,435 source members, including 21
-symlinks. The failed preparation is preserved. A fresh capture and preparation
-must bind the corrected verifier before device qualification. That build
+symlinks. The failed preparation is preserved. The subsequent
+[runtime capture and full-suite preparation](half-v3-preparation.json) bind the
+corrected verifier at `697bc9c05e792e31571a5fbff5fa4ae0a8b22c81` and pass.
+That build
 addresses retained integration failures, not the MPS trained-attention arithmetic
 failures. The portable MPS evidence producer and archive auditor now have 86
 CPU-only checks, plus 25 eligibility checks. They verify retained evidence after
 relocation without reading original paths. No actual runtime or full MPS suite is
 qualified by those tests. Full framework conformance against the new runtime,
-archive validation of that run, new runtime capture and a prospectively frozen
+archive validation of that run and a prospectively frozen
 successor comparison contract remain necessary before any formal campaign.
 
 Two later full-suite preparations stopped on file-stability checks. The retained
@@ -193,6 +199,12 @@ those checks remain enforced. Both failed preparations remain in the record.
 The corrected binder also verifies all 146,435 actual source members. Empty files
 are verified from their stable zero-length descriptor without a hydration read;
 all nonempty contents are read and hashed completely.
+The next preparation exposed one environment difference: macOS CPython adds
+`__CF_USER_TEXT_ENCODING` at startup. Preserving that platform variable makes
+the frozen environment match a fresh interpreter exactly. The latest capture
+and full-suite plan pass; the 34-method focused replay and complete 10,357-test
+MPS suite are queued after the fresh model checks. Preparation imports no
+framework and runs no device test or C++ fixture build.
 
 Large raw arrays are stored losslessly in `work/trained-raw-store-v1`. Each receipt
 binds the original NPZ hash; the store preserves exact compressed members and ZIP
@@ -230,8 +242,8 @@ same conformance-fixture and portable-evidence requirements. An explicit bounded
 expansion option retains 10 GiB after the declared payload plus per-member
 metadata allowance, with checks during and after expansion; the default remains
 16 GiB. Full-suite output (2 GiB), fixture cache (1 GiB) and the 5 GiB operating
-floor remain unchanged. Their new runtime
-and actual suite execution remain pending.
+floor remain unchanged. The new runtime's identity capture and suite preparation
+are complete; actual suite execution and device qualification remain pending.
 
 The candidate verifier now also hashes stable readable descriptors. Its explicit
 plan-rebinding command preserves the original plan and verifier, reauthenticates
@@ -251,3 +263,18 @@ inference cannot inherit compiled-gradient graph results. Both plans stopped
 without executing workers after the retained MLX failure. A new plan can follow
 the replacement candidate's complete checks; these failed prerequisites remain
 in the record.
+
+The corrected successor plans are `work/precision-phase7c` and
+`work/precision-phase8c`. The former has started native policy-15 training after
+all eight MLX collections and the other four implementations' historical gates
+passed. It retains two independent trajectories per width, saved Adam moments,
+the third-process restart and all-five-engine gradient checks. Only after the
+two trajectories' complete state histories and saved bytes match may identical
+checkpoint files share storage; every original path, byte and receipt remains.
+The initial storage allocation is the exact 1,313,802,240-byte checkpoint size
+plus 3 GiB of working space and the unchanged 5 GiB floor. Inference has a
+separate 512 MiB working allocation above that floor. Both supervisors monitor
+the floor throughout execution. These storage allocations do not alter test
+coverage or numerical requirements. Both width-512 processes now match all 65
+parameter and optimizer state digests exactly. Width-1024 training, the independent
+restarts and all-five-engine replay remain pending.

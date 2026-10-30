@@ -160,9 +160,10 @@ development candidates for all 89 exposed forward anchors and all 20 fresh
 logit/loss/gradient batches. The stronger native candidate also passes all 89
 historical gradient anchors on both M4/SME and hosted M1/NEON, with independent
 raw-array audits. Custom MPS also passes the complete historical gradient
-inventory; compiled MLX retains one failing batch, localized to an FF1/ReLU
-rounding error. Its replacement and full framework qualification remain in
-progress. The
+inventory. Compiled MLX's retained policy-7 failure was localized to an FF1/ReLU
+rounding error; its policy-15 replacement now passes the complete historical and
+existing-fresh inventories in separate inference and gradient audits. New
+training/restart checks and full framework qualification remain in progress. The
 [CPU report](experiments/width-sweep-v6/README.md) retains learning curves,
 quality, memory and prediction-level errors. Historical CPU measurements are
 separate from the new GPU development experiments.
