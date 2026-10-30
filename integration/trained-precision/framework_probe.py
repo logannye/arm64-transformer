@@ -182,14 +182,10 @@ def run(args):
                             graph = io.StringIO()
                             mx.export_to_dot(graph, values[name])
                             data = graph.getvalue()
-                            path = args.output / (name + ".dot")
-                            path.write_text(data)
-                            graphs[name] = dict(
-                                path=path.name,
-                                sha256=sha(path),
-                                bytes=path.stat().st_size,
-                                compiled_primitive_present="Compiled" in data,
+                            graph_storage = load(
+                                "graph_storage", Path(__file__).with_name("graph_evidence.py")
                             )
+                            graphs[name] = graph_storage.write(args.output, name, data)
                         record["model_compilation"] = dict(graphs=graphs)
                     record["model_compilation"]["python_trace_count"] = trace_count
                 mx.eval(*values.values())

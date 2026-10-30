@@ -271,18 +271,14 @@ def audit_worker(output, receipt_sha, plan_path, plan_sha, evidence_root, raw_st
                 == ({"logits", "gradient"} if result["gradients_checked"] else {"logits"}),
                 "Missing model graph",
             )
+            spec = importlib.util.spec_from_file_location(
+                "graph_evidence_audit", Path(__file__).with_name("graph_evidence.py")
+            )
+            graph_audit = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(graph_audit)
             for binding in proof["graphs"].values():
                 path = checked(output, binding["path"], binding["sha256"])
-                require(
-                    path.stat().st_size == binding["bytes"] <= 8 * 1024**2,
-                    "Model graph size differs",
-                )
-                graph = path.read_text()
-                require(
-                    graph.startswith("digraph")
-                    and binding["compiled_primitive_present"] == ("Compiled" in graph),
-                    "Model graph compilation claim differs",
-                )
+                graph_audit.read(path, binding)
     native = result.get("native", {})
     dispatch_verified = False
     if "backend_after" in native:

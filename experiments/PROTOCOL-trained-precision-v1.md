@@ -252,3 +252,13 @@ invalidate arithmetic decompositions and must be detected by numerical checks.
 These are explicit custom model equations with first-order derivatives, not
 ordinary framework baselines or evidence of general library correctness. Full
 historical and fresh inventories remain necessary after the screen.
+
+
+The first compiled MLX QKV screen numerically passes all five width-1024 cases
+but cannot complete its receipt because its expanded model graph exceeds the
+original 8 MiB plain-text transport limit. Preserve that incomplete receipt.
+Before repeating it, permit gzip graph transport with a 16 MiB compressed bound
+and 128 MiB decoded bound, exact hashes and lengths for both representations,
+and rejection of truncated or concatenated streams. Graphs below 8 MiB retain
+the original plain format. This changes evidence transport only, not arithmetic,
+compilation mode, numerical decisions or the qualification of the failed run.

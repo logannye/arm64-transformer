@@ -117,6 +117,7 @@ def source_inventory():
         ROOT / "integration/trained-precision/framework_reference.py",
         ROOT / "integration/trained-precision/compensated_attention.py",
         ROOT / "integration/trained-precision/compensated_linear.py",
+        ROOT / "integration/trained-precision/graph_evidence.py",
     ]
     return {str(p.relative_to(ROOT)): digest(p) for p in sorted(paths)}
 
@@ -511,19 +512,13 @@ def worker(args):
         if evaluator is not None and args.framework_compiled:
             proof = evaluator.proof
             receipt["compilation_configuration"] = proof["compilation_configuration"]
-            graphs = {}
-            for name, data in proof["graphs"].items():
-                path = output / (name + ".dot")
-                if len(data.encode()) > 8 * 1024**2:
-                    raise ValueError("Model graph exceeds 8 MiB")
-                with path.open("x") as stream:
-                    stream.write(data)
-                graphs[name] = dict(
-                    path=path.name,
-                    sha256=digest(path),
-                    bytes=path.stat().st_size,
-                    compiled_primitive_present="Compiled" in data,
-                )
+            graph_storage = load_module(
+                "graph_storage", ROOT / "integration/trained-precision/graph_evidence.py"
+            )
+            graphs = {
+                name: graph_storage.write(output, name, data)
+                for name, data in proof["graphs"].items()
+            }
             receipt["model_compilation"] = dict(
                 graphs=graphs,
                 python_trace_count=proof["python_trace_count"],
