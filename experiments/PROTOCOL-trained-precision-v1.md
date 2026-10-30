@@ -281,3 +281,12 @@ need the same separate dual-FP64 forward/gradient audits as earlier states. No
 assessment stream, optimizer equation, training schedule, tolerance or formal
 budget changes. Reserve at least 5 GiB beyond the planned checkpoint bytes and
 run these workers only after the current serial replay plan finishes.
+
+After the complete M4/SME and hosted M1/NEON historical native-gradient passes,
+build a six-width native bundle from one study source revision. Retain policy 0
+at widths 32, 64, 128 and 256, and all sixteen declared policies at 512 and 1024.
+Run full model and executable checks on policy 0 at the four smaller widths and
+policy 15 at the two larger widths, with auto/forced-NEON and supported-SME
+dispatch checks. This prepares explicit candidate artifacts; it does not change
+default arithmetic, select a formal arm, open admission or transfer evidence
+between binaries unless their bytes and relevant source inputs are identical.

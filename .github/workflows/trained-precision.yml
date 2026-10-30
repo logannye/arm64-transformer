@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        width: [512, 1024]
+        width: [32, 64, 128, 256, 512, 1024]
     env:
       OMP_NUM_THREADS: "1"
       OPENBLAS_NUM_THREADS: "1"
@@ -29,7 +29,11 @@ jobs:
       - name: Build and check each candidate in one reusable build tree
         run: |
           width=$ARM64_TRANSFORMER_WIDTH
-          for policy in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+          policies="0"
+          if [ "$width" -ge 512 ]; then
+            policies="0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15"
+          fi
+          for policy in $policies; do
             make -C native WIDTH=$width PRECISION=$policy PYTHON=python
             python -m pytest tests/test_native_precision.py -q
             dest=results/precision-build/width-$width/policy-$policy
@@ -49,21 +53,23 @@ jobs:
           name: precision-native-candidates-width-${{ matrix.width }}
           path: results/precision-build/
           retention-days: 30
-      - name: Full model and executable checks for the feed-forward precision candidate
+      - name: Full model and executable checks for the declared width policy
         run: |
           width=$ARM64_TRANSFORMER_WIDTH
-          make -C native WIDTH=$width PRECISION=15 PYTHON=python
+          policy=0
+          if [ "$width" -ge 512 ]; then policy=15; fi
+          make -C native WIDTH=$width PRECISION=$policy PYTHON=python
           python -m pytest -q
-          dest=results/precision-runtime/width-$width/policy-15
+          dest=results/precision-runtime/width-$width/policy-$policy
           python -m transformer.validate --output "$dest/auto.json" \
-            --development-precision-policy 15 --runtime --work-dir "$dest/smoke-auto"
+            --development-precision-policy "$policy" --runtime --work-dir "$dest/smoke-auto"
           ARM64_TRANSFORMER_BACKEND=neon python -m transformer.validate \
-            --output "$dest/neon.json" --development-precision-policy 15 \
+            --output "$dest/neon.json" --development-precision-policy "$policy" \
             --runtime --work-dir "$dest/smoke-neon"
           supported=$(python -c "import json; print(json.load(open('$dest/auto.json'))['backend']['sme_supported'])")
           if [ "$supported" = 1 ]; then
             ARM64_TRANSFORMER_BACKEND=sme python -m transformer.validate \
-              --output "$dest/sme.json" --development-precision-policy 15 \
+              --output "$dest/sme.json" --development-precision-policy "$policy" \
               --runtime --work-dir "$dest/smoke-sme"
           fi
       - uses: actions/upload-artifact@v4

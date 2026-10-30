@@ -16,6 +16,10 @@ The same worker accepts the separately authenticated fresh-development inventory
 
 The native policy build is produced by the hosted
 [`trained-precision.yml`](../../.github/workflows/trained-precision.yml) workflow.
+It now retains binaries at all six widths from one source revision: policy 0 at
+32–256 and the full 0–15 factorial at 512–1024. Full model/executable checks select
+policy 0 at the four smaller widths and policy 15 at the two wide widths. These
+are development candidates; the default build and formal selections are unchanged.
 Policy 1 changes first-LayerNorm arithmetic; policy 2 changes QKV accumulation;
 policy 3 changes both. The later bit 4 refines the second LayerNorm in both
 directions, giving policies 4–7 after the fresh ReLU-branch localization.
