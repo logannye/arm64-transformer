@@ -131,7 +131,25 @@ metadata and verifies byte-identical reconstruction. New workers can write share
 members directly from memory, and auditors read one bounded archive in memory.
 No arrays are rounded, downcast or discarded. The interrupted storage run and the
 sandboxed Metal launch that returned `No Metal device` remain explicit records.
-The current disk has about 2.6 GiB free after these bounded replays. Complete
-additional historical gradients and new framework-runtime validation require
-more space; the 2 GiB raw-evidence reserve and the suite's 5 GiB minimum remain
-unchanged. No historical raw evidence was discarded to bypass those limits.
+At the October 30 21:36 UTC checkpoint, user-authorized cleanup restored about
+26.6 GiB of available disk space. Thirty local copies of published archives were
+verified against their release asset hashes before removal. An obsolete stopped
+CI VM was removed after preserving its source and diagnostics; a duplicate
+expanded validation-cache file was removed after verifying byte identity with its
+retained compressed original. Current runtimes and historical transformer raw
+evidence were preserved. Cleanup receipts remain in
+`work/storage-cleanup-20261030`. Logical archive size is not a measure of physical
+space recovered from cloud-managed storage.
+
+Full historical gradients for native policy 15, MPS policy 7 and compiled MLX
+policy 7 resumed in a frozen serial plan in `work/precision-phase6`. Each engine
+has one two-case width-512 worker and six width-1024 shards covering all 87
+anchors. A collection audit follows each complete engine/width group. The plan
+requires 25 GiB initially and stops at a 5 GiB operating reserve. Results remain
+pending until the complete collections have been independently audited.
+
+The separate [v3 framework artifact adapter](../../integration/gpu-owned/CANDIDATE-HALF-V3-VALIDATION.md)
+has 30 standard-library checks. It verifies the new build's actual early/final
+compiler commands and retained Half differential bytes before preparing the
+34-method focused device replay. This adapter neither qualifies the pending
+build nor promotes the old runtime's evidence.
