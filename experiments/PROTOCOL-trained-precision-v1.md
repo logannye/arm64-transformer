@@ -309,3 +309,22 @@ Check the actual MLX maximum derivative at negative, zero and positive inputs.
 This diagnostic does not change ReLU, widen tolerances, select a new policy or
 qualify an implementation. The queued fresh-state plans must retain their
 declared prerequisites and stop if any required collection fails.
+
+The completed collection confirms one failing MLX batch among 71 distinct
+width-1024 batches. The instrumented compiled gradient exactly reproduces its
+original logits, loss and gradient. One FF1 preactivation is +3.6508e-7 in MLX
+versus -1.2613e-7 in FP64; substituting only that backward gate removes all 12
+gradient mismatches. Every observed prefix through the second normalization
+retains the correct gate when FF1 is recomputed in FP64. This localizes the
+remaining branch error to the ordinary FF1 projection.
+
+Before execution, add framework diagnostic v3 bit 8 for the existing tiled
+two-float linear operation at FF1, including its explicit first derivatives.
+Policy 15 combines it with the existing first-normalization, QKV and attention
+refinements. The second normalization and ReLU remain unchanged. This bit mapping
+is distinct from native policy 15. Policies 0–7 retain their v2 identities and
+equations; v3 identifies policies that enable the new bit. First screen policy 15
+against the retained failing batch in separate compiled forward and gradient
+modes, retaining policy 7 as control. Then require both complete historical
+inventories and the existing fresh inventory before restarting any gated fresh
+policy-15 training plan. A screen pass cannot replace complete qualification.

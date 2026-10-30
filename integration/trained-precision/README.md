@@ -60,6 +60,15 @@ transport does not change model arithmetic or relax numerical tolerances.
 These probes are diagnostic Python model expressions, not full-source framework
 repairs or admitted comparison arms.
 
+The complete compiled-MLX policy-7 gradient audit retains one failing historical
+batch. `framework_relu_localize.py` reproduces all original output bytes before
+using an auxiliary compiled trace; its single ReLU-gate substitution explains
+all 12 failing FF1 weight gradients. Framework v3 policy 15 adds compensated FF1
+projection and explicit derivatives (bit 8) to policy 7, keeping the second
+normalization and ReLU unchanged. It needs separate forward/gradient screens and
+complete historical/fresh audits. Framework and native policy 15 have different
+bit mappings; implementation identity must accompany the policy number.
+
 `fresh_states.py` runs exactly 64 native development updates from authenticated
 training-only inputs. Run it twice in fresh processes per width.
 `fresh_inventory.py` requires all 65 parameter, first-moment and second-moment

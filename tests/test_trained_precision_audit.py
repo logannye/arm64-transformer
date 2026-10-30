@@ -237,7 +237,10 @@ def test_lossless_archive_is_audited_without_restoring_the_whole_campaign(replay
 def test_framework_control_equality_is_recomputed_from_arrays(replay, forged):
     _, output, _, receipt, arrays = replay
     receipt.update(
-        framework_operation="forward", framework_candidate_policy=0, framework_compiled=False
+        framework_operation="forward",
+        framework_candidate_policy=0,
+        framework_compiled=False,
+        framework_candidate="compensated-framework-model-diagnostic-v2",
     )
     raw = output / "control.npz"
     np.savez_compressed(
@@ -252,3 +255,22 @@ def test_framework_control_equality_is_recomputed_from_arrays(replay, forged):
             run(replay)
     else:
         assert all(run(replay)["ordinary_control_exact"].values())
+
+
+@pytest.mark.parametrize("version,policy", [(1, 3), (2, 7), (3, 15)])
+def test_framework_policy_versions_remain_distinct(replay, version, policy):
+    receipt = replay[3]
+    receipt.update(
+        framework_operation="forward",
+        framework_candidate_policy=policy,
+        framework_compiled=False,
+        framework_candidate=f"compensated-framework-model-diagnostic-v{version}",
+    )
+    assert run(replay)["evidence_valid"]
+    receipt["framework_candidate"] = (
+        "compensated-framework-model-diagnostic-v2"
+        if version == 3
+        else "compensated-framework-model-diagnostic-v3"
+    )
+    with pytest.raises(ValueError, match="identity and policy"):
+        run(replay)

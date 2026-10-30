@@ -34,7 +34,9 @@ def run(args):
         width=args.width,
         batch_size=16,
         gradients_checked=not args.forward_only,
-        framework_candidate="compensated-framework-model-diagnostic-v2",
+        framework_candidate="compensated-framework-model-diagnostic-v3"
+        if args.policy & 8
+        else "compensated-framework-model-diagnostic-v2",
         framework_candidate_policy=args.policy,
         framework_compiled=args.compiled,
         framework_operation="forward" if args.forward_only else "gradient",
@@ -311,7 +313,7 @@ if __name__ == "__main__":
     parser.add_argument("--case", required=True)
     parser.add_argument("--width", type=int, choices=(512, 1024), required=True)
     parser.add_argument("--engine", choices=("mps", "mlx"), required=True)
-    parser.add_argument("--policy", type=int, choices=range(8), required=True)
+    parser.add_argument("--policy", type=int, choices=range(16), required=True)
     parser.add_argument("--compiled", action="store_true")
     parser.add_argument("--raw-store", type=Path)
     parser.add_argument("--forward-only", action="store_true")

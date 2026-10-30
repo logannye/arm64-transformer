@@ -241,10 +241,17 @@ def archive_inventory(archive_path, manifest, *, source):
             require(name not in seen, "Duplicate archive member")
             seen.add(name)
             if member.isdir():
+                # The authenticated runtime tar also contains empty include
+                # directories, which have no entry in its file manifest. They
+                # carry no executable bytes and expand_verified skips them.
+                # A directory must never stand in for, or descend through, an
+                # expected file (including runtime-manifest.json).
                 require(
                     not source
-                    and name == "runtime"
-                    or (not source and any(item.startswith(name + "/") for item in expected)),
+                    and member.size == 0
+                    and (name == "runtime" or name.startswith("runtime/"))
+                    and name not in expected
+                    and not any(str(parent) in expected for parent in PurePosixPath(name).parents),
                     "Unexpected archive directory",
                 )
                 continue
@@ -278,10 +285,32 @@ def archive_inventory(archive_path, manifest, *, source):
     return metadata, total
 
 
-def expand_verified(archive_path, destination, *, source):
+def expansion_budget(source_manifest, runtime_manifest, reserve_gib):
+    require(type(reserve_gib) is int and reserve_gib in (10, 16), "Undeclared expansion reserve")
+    source_files, source_bytes = manifest_files(source_manifest, source=True)
+    runtime_files, runtime_bytes = manifest_files(runtime_manifest, source=False)
+    # Account for allocation rounding, directories and metadata as well as the
+    # declared payload. The bounded option still leaves 10 GiB after expansion,
+    # twice the separate device-suite operating floor.
+    allowance = 8192 * (len(source_files) + len(runtime_files) + 3)
+    return dict(
+        source_bytes=source_bytes,
+        runtime_bytes=runtime_bytes,
+        metadata_allowance_bytes=allowance,
+        reserve_bytes=reserve_gib * GIB,
+        minimum_initial_free_bytes=source_bytes + runtime_bytes + allowance + reserve_gib * GIB,
+    )
+
+
+def expand_verified(archive_path, destination, *, source, minimum_free_bytes=0):
     """Called only after full archive verification; keep partial evidence on failure."""
     with tarfile.open(archive_path, "r:gz") as archive:
-        for member in archive:
+        for index, member in enumerate(archive):
+            if index % 128 == 0 and minimum_free_bytes:
+                require(
+                    shutil.disk_usage(destination).free >= minimum_free_bytes,
+                    "Expansion operating reserve exhausted",
+                )
             if member.isdir() or member.issym():
                 continue
             path = destination / member.name
@@ -747,7 +776,7 @@ def output_path(workspace, output):
     return output
 
 
-def prepare(workspace, artifact, receipt_sha, head, output):
+def prepare(workspace, artifact, receipt_sha, head, output, *, expansion_reserve_gib=16):
     require_hosted_selection()
     output_path(workspace, output)
     require(re.fullmatch(r"[0-9a-f]{64}", receipt_sha), "Require external hosted receipt SHA256")
@@ -793,8 +822,13 @@ def prepare(workspace, artifact, receipt_sha, head, output):
     _, runtime_bytes = manifest_files(runtime_manifest, source=False)
     for relative, sha in contract["source_sha256"].items():
         require(source_manifest["files"][relative]["sha256"] == sha, "Required source differs")
+    storage = expansion_budget(source_manifest, runtime_manifest, expansion_reserve_gib)
     require(
-        shutil.disk_usage(workspace).free >= source_bytes + runtime_bytes + 16 * GIB,
+        storage["source_bytes"] == source_bytes and storage["runtime_bytes"] == runtime_bytes,
+        "Expansion payload accounting differs",
+    )
+    require(
+        shutil.disk_usage(workspace).free >= storage["minimum_initial_free_bytes"],
         "Insufficient disk reserve for authenticated expansion",
     )
     dependencies = workspace / DEPENDENCIES
@@ -807,11 +841,23 @@ def prepare(workspace, artifact, receipt_sha, head, output):
         "formal_eligible": False,
         "formal_fits": 0,
         "admission_stream_opened": False,
+        "expansion_storage_budget": storage,
     }
     write(output / "preparation.json", record, new=True)
     try:
-        expand_verified(artifact / receipt["source_archive"]["file"], output, source=True)
-        expand_verified(runtime_archive, output, source=False)
+        expand_verified(
+            artifact / receipt["source_archive"]["file"],
+            output,
+            source=True,
+            minimum_free_bytes=storage["reserve_bytes"],
+        )
+        expand_verified(
+            runtime_archive, output, source=False, minimum_free_bytes=storage["reserve_bytes"]
+        )
+        require(
+            shutil.disk_usage(output).free >= storage["reserve_bytes"],
+            "Expansion operating reserve exhausted",
+        )
         verify_tree(output / "source", source_manifest, source=True)
         verify_tree(output / "runtime", runtime_manifest, source=False)
         local_contract, _, static = selection_contract()
@@ -956,6 +1002,17 @@ def authenticate_plan(path, external_sha):
         verify_tree(
             Path(plan[kind]), json_read(plan[kind + "_manifest"]["path"]), source=kind == "source"
         )
+    storage = plan["expansion_storage_budget"]
+    require(storage["reserve_bytes"] in (10 * GIB, 16 * GIB), "Undeclared retained reserve")
+    require(
+        storage
+        == expansion_budget(
+            json_read(plan["source_manifest"]["path"]),
+            json_read(plan["runtime_manifest"]["path"]),
+            storage["reserve_bytes"] // GIB,
+        ),
+        "Retained expansion budget differs",
+    )
     return plan, reference
 
 
@@ -1349,6 +1406,7 @@ def main():
         prepare_parser.add_argument("--" + name, type=Path, required=True)
     prepare_parser.add_argument("--receipt-sha256", required=True)
     prepare_parser.add_argument("--hosted-head", required=True)
+    prepare_parser.add_argument("--expansion-reserve-gib", type=int, choices=(10, 16), default=16)
     for name in ("run", "worker"):
         command = sub.add_parser(name)
         command.add_argument("--plan", type=Path, required=True)
@@ -1366,6 +1424,7 @@ def main():
             args.receipt_sha256,
             args.hosted_head,
             args.output.absolute(),
+            expansion_reserve_gib=args.expansion_reserve_gib,
         )
         print(json.dumps(result, indent=2))
         return 0

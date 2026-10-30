@@ -21,8 +21,14 @@ contract. It additionally requires:
 Preparation requires an independently checked hosted receipt hash. It verifies
 both archives before expanding one source/runtime pair and reuses the exact
 existing 45-wheel dependency installation. It performs no compilation, package
-installation or framework import. Expansion requires its complete declared size
-plus a 16 GiB free-space reserve. Execution uses the authenticated interpreter and
+installation or framework import. Expansion requires its complete declared size,
+an 8 KiB per-member metadata allowance and a 16 GiB free-space reserve by default.
+The explicit `--expansion-reserve-gib 10` option records a bounded development
+budget with 10 GiB reserved after expansion. Both options check the reserve during
+and after expansion and retain it in the authenticated plan. This accommodates
+the verified 2.84 GiB source/runtime pair while leaving room for the separately
+bounded 2 GiB full-suite output, 1 GiB fixture cache and 5 GiB operating floor.
+No runtime, numerical or suite gate changes. Execution uses the authenticated interpreter and
 fresh serial processes on the real device.
 
 The 34-method focused sequence retains all 27 original failures, four new FP16
@@ -35,10 +41,18 @@ runtime capture with `capture_runtime.py --half-v3-plan ...
 archive audit remain mandatory. These adapters are implemented; no full-suite
 execution is asserted. The old 10,353-method owned-suite contract is unchanged.
 
-The 30 standard-library checks exercise stale selection, missing/changed native
+The 36 standard-library checks exercise stale selection, missing/changed native
 evidence, both compile databases, Half coverage and payload corruption, exact
 dependency payloads, source/archive traversal and retained failure handling. They
 do not import a numerical framework or execute a compiler.
+
+The verified v3 runtime archive includes empty include directories absent from
+its file manifest. The first preparation rejected them before expansion. The
+adapter now accepts authenticated empty runtime directory records and ignores
+them during expansion. It still rejects paths outside the runtime, source
+directory records, file/directory collisions, links and every missing or changed
+payload file. The original failed preparation remains retained; no runtime bytes
+or numerical qualification changed.
 
 ```sh
 python3 -I -B -m unittest discover \

@@ -1,6 +1,6 @@
 {
   "schema": "trained-precision-development-evidence-index-v1",
-  "created_utc": "2026-10-30T22:31:40.174348+00:00",
+  "created_utc": "2026-10-30T22:43:49.105074+00:00",
   "scope": "Development regression/fresh-state evidence; no formal qualification or timing",
   "local_hardware": "Apple M4 Max, native automatic dispatch selected SME with 64-byte streaming vectors",
   "formal_eligible": false,
@@ -705,6 +705,76 @@
         {
           "path": "work/precision-phase4/mlx-1024-policy7-screen-forward/result.json",
           "sha256": "7e1c8e6ad1511e452a501b88316d771bfd1cf9ee776ceba3b1f1889e96bcc00d"
+        }
+      ]
+    },
+    {
+      "name": "mlx-1024-policy7-historical-gradient",
+      "evidence_valid": true,
+      "numerics_passed": false,
+      "sequence_anchors": 87,
+      "unique_batches": 71,
+      "failed_sequence_anchors": 1,
+      "failed_unique_batches": 1,
+      "audit": {
+        "path": "work/precision-phase6/mlx-1024-policy7-historical-gradient-audit.json",
+        "sha256": "066bb8d56a621fedc593e49319eaf941552dcaeb67f8cf3a291721aecc60b539",
+        "bytes": 605346
+      },
+      "inventory_sha256": "021f8e232863b437198c65e35c06dc6f95162cc07294a3f30714b60e6aeef18e",
+      "engine": "mlx",
+      "width": 1024,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "implementation": {
+        "engine": "mlx",
+        "width": 1024,
+        "batch_size": 16,
+        "gradients_checked": true,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": null,
+        "native_policy": null,
+        "native_selected_kind": null,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null,
+        "framework_candidate": "compensated-framework-model-diagnostic-v2",
+        "framework_candidate_policy": 7,
+        "framework_compiled": true,
+        "framework_operation": "gradient"
+      },
+      "source_inventory_sha256": "5c4524d8656c0dbc3cd6d4e47f28511b0621ab1ead9118251374314d5a5fd7eb",
+      "runtime": {
+        "numpy": "1.26.4",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.16.0a0+git71d2a08"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase6/mlx-1024-policy7-historical-gradient-000/result.json",
+          "sha256": "6bcde27c6ccd38f5c495244aa913728599d87053bf04a8c37139e3ed84f4bfd2"
+        },
+        {
+          "path": "work/precision-phase6/mlx-1024-policy7-historical-gradient-016/result.json",
+          "sha256": "60293b37fdbe6cb4be905c0ff8d3b685987db861ba2d5e961b18a45ebff7ab5a"
+        },
+        {
+          "path": "work/precision-phase6/mlx-1024-policy7-historical-gradient-032/result.json",
+          "sha256": "eb37d39ab30ad3b06690667376441b547063affc4d193183972630e066493219"
+        },
+        {
+          "path": "work/precision-phase6/mlx-1024-policy7-historical-gradient-048/result.json",
+          "sha256": "e4a54f1eaafe97c6faaea725950786d21b7243a4cc4afb2317c3266b6e6753be"
+        },
+        {
+          "path": "work/precision-phase6/mlx-1024-policy7-historical-gradient-064/result.json",
+          "sha256": "4d74c398eb8a1efe8d0259b639b66734ecf948979c7ea6e118dd63c7750f0d45"
+        },
+        {
+          "path": "work/precision-phase6/mlx-1024-policy7-historical-gradient-080/result.json",
+          "sha256": "562fab481f809a874398e4b065e42fef9b671be919b426706300c576459610ee"
         }
       ]
     },
@@ -1748,7 +1818,7 @@
   ],
   "resource_stops": [],
   "remaining": [
-    "Finish and audit compiled-MLX historical gradients, then localize and repair retained failures",
+    "Screen and fully audit the compensated-FF1 compiled-MLX replacement after the retained one-batch gradient failure",
     "Policy-15 training, saved-Adam continuation and all-five common-state replay",
     "Authenticate the successful maintained-framework build, capture its runtime and run full conformance suites",
     "Prospective successor suite/model/comparison contracts; no historical result relabeling",

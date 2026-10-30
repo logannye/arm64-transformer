@@ -196,6 +196,17 @@ def audit_worker(output, receipt_sha, plan_path, plan_sha, evidence_root, raw_st
     require(result["passed"] == passed, "Worker decision disagrees with raw")
     control_exact = None
     if "framework_operation" in result:
+        policies = {
+            "compensated-framework-model-diagnostic-v1": range(4),
+            "compensated-framework-model-diagnostic-v2": range(8),
+            "compensated-framework-model-diagnostic-v3": range(8, 16),
+        }
+        require(
+            result.get("framework_candidate") in policies
+            and type(result.get("framework_candidate_policy")) is int
+            and result["framework_candidate_policy"] in policies[result["framework_candidate"]],
+            "Framework candidate identity and policy differ",
+        )
         require(
             result["framework_operation"]
             == ("gradient" if result["gradients_checked"] else "forward"),

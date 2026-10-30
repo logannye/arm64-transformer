@@ -20,6 +20,7 @@ They retain the original numerical tolerances.
 | Python FP32-saved first-LayerNorm/QKV/attention refinement, v2 | 89/89 anchors pass | 20/20 batches pass |
 | Handwritten reference Metal normalization refinement, policy 1 | 89/89 anchors pass | 20/20 batches pass |
 | Custom MPS first-LayerNorm/QKV/attention refinement, policy 7 | 89/89 anchors pass | 20/20 batches pass |
+| Custom compiled MLX first-LayerNorm/QKV/attention refinement, policy 7 | 88/89 anchors pass; one FF1 gradient failure | 20/20 batches pass |
 
 The Python refinement is an explicit custom model using PyTorch operations, not
 ordinary PyTorch and not yet a selected maintained-framework arm. Its CPU evidence
@@ -44,8 +45,8 @@ all 89 historical forward anchors and all 20 fresh forward batches. These comple
 collections have independent raw audits in `work/precision-phase5/prior-*-audit.json`.
 MPS policy 7 now also passes the complete historical gradient inventory, with
 independent raw audits for both widths. Compiled MLX passes the two width-512
-gradient anchors; its width-1024 collection is still running and has exposed a
-failure, so it is not qualified by its earlier forward pass.
+gradient anchors; its complete width-1024 audit confirms one failing anchor/batch
+among 87 anchors and 71 distinct batches. It is not qualified by its forward pass.
 MPS and compiled MLX each also pass all seven gradient-screen anchors and all 20
 fresh logits/loss/gradient batches, with independent raw audits. The screen is
 the two width-512 anchors plus the five remaining width-1024 QKV-localization
@@ -55,13 +56,19 @@ framework candidates. Referenced `work/` raw artifacts remain local.
 
 ## Failures retained and next decisions
 
-The ongoing complete MLX policy-7 gradient replay fails 12 FF1 weight-gradient
+The complete MLX policy-7 gradient replay fails 12 FF1 weight-gradient
 coordinates at `w1024-37621e9d745f8bd4-validation-39`, while that batch's logits
-and loss pass. This is a worker observation pending the complete collection's
-independent audit. A new branch-localization diagnostic will reproduce the
-retained compiled execution and require an auxiliary trace to preserve its
-logits, loss and every gradient byte before interpreting ReLU gates or prefixes.
-The queued fresh-state plans retain their passing-collection prerequisites.
+and loss pass. The independent collection audit confirms the failure. The
+[branch-localization result](mlx-branch-localization.json) reproduces the original
+compiled logits, loss and every gradient byte, including after adding its trace.
+One ReLU preactivation is +3.6508e-7 in MLX versus -1.2613e-7 in FP64. Substituting
+only that observed gate into the FP64 backward removes all 12 gradient failures.
+Every observed prefix through the second normalization retains the correct gate
+when FF1 is recomputed in FP64, isolating the residual error to that projection.
+The declared framework-v3 bit 8 applies the existing compensated linear operation
+and explicit derivatives to FF1. Its policy-15 screen and complete replays remain
+pending. This policy's bit mapping differs from native policy 15. The queued
+fresh-state plans stopped at their prerequisites without launching a worker.
 
 Ordinary maintained MPS and MLX still fail the historical width-1024 forward
 inventory: 60/71 and 56/71 distinct batches, respectively. Passing short runtime
@@ -136,14 +143,27 @@ Hosted raw artifacts expire November 6; local M4 raw evidence remains in the
 lossless store. The hosted raw payload has not been independently downloaded
 and re-audited locally.
 
+The later [six-width build](native-six-width-build.json) at
+`44a3bca1b17bff104965848855fb8fe0954a610c` passed every hosted job in
+[run 41137295729](https://github.com/logannye/arm64-transformer/actions/runs/41137295729).
+All six small candidate bundles were independently hash-verified locally. Both
+wide policy-15 libraries are byte-identical to the existing M4 replay libraries.
+The width-1024 job passed 1,190 tests plus 190 subtests and 1,979 executable
+checks in each auto/NEON run. Large hosted raw runtime artifacts were not downloaded.
+
 The full-source PyTorch FP16/layout v2 build completed compilation, but failed
 its check because four Objective-C++ commands omit explicit `-g0` despite the
 CMake cache containing it. The failure is retained in run 41110294834. Recipe v3
 passes CMake flag variables explicitly and checks generated commands early.
 Its complete build, import and lint checks passed in
 [run 41125186309](https://github.com/logannye/arm64-transformer/actions/runs/41125186309)
-at `11fd196ed3665178f389e9c25256c3561b14fe5f`. Artifact transport authentication
-and device qualification are separate and remain pending. That build
+at `11fd196ed3665178f389e9c25256c3561b14fe5f`. Its 1,343,946,294-byte artifact
+matches GitHub's SHA256 `a2b311ec1886804a9be6d348c5bbafb4276ce9b4730da13ae18a41a93b534741`.
+The first preparation rejected legitimate empty runtime include directories;
+the narrow verifier correction retains all file/link/path checks and leaves
+those empty directory records unexpanded. The actual runtime archive's 15,707
+payload files now verify. Expansion, capture and device qualification remain
+pending. That build
 addresses retained integration failures, not the MPS trained-attention arithmetic
 failures. The portable MPS evidence producer and archive auditor now have 70
 CPU-only checks, plus 25 eligibility checks. They verify retained evidence after
@@ -175,24 +195,31 @@ anchors. A collection audit follows each complete engine/width group. The plan
 requires 25 GiB initially and stops at a 5 GiB operating reserve. Results remain
 pending until each complete collection has been independently audited. Both
 native and MPS width collections are complete and pass. MLX width 512 passes;
-its width-1024 collection is running with at least one numerical failure.
+its width-1024 audit confirms one numerical failure. All six collection audits
+are complete and evidence-valid; numerical success remains separate.
 
 The separate [v3 framework artifact adapter](../../integration/gpu-owned/CANDIDATE-HALF-V3-VALIDATION.md)
-has 30 standard-library checks. It verifies the new build's actual early/final
+has 36 standard-library checks. It verifies the new build's actual early/final
 compiler commands and retained Half differential bytes before preparing the
 34-method focused device replay. This adapter does not promote the old runtime's
 evidence or qualify the new runtime's device behavior. Explicit candidate runtime capture
 and the separately pinned 10,357-test full-suite route are implemented with the
-same conformance-fixture and portable-evidence requirements. Their new runtime
+same conformance-fixture and portable-evidence requirements. An explicit bounded
+expansion option retains 10 GiB after the declared payload plus per-member
+metadata allowance, with checks during and after expansion; the default remains
+16 GiB. Full-suite output (2 GiB), fixture cache (1 GiB) and the 5 GiB operating
+floor remain unchanged. Their new runtime
 and actual suite execution remain pending.
 
 The policy-15 development trajectory and saved-Adam continuation route has 16
 focused checks. The updated inventory reader also reconstructs the retained v1
 20-case inventory exactly from its original receipts and files. A separate frozen
-plan in `work/precision-phase7` waits for all six phase-6 collection audits to pass
+plan in `work/precision-phase7` required all six phase-6 collection audits to pass
 before starting two 64-update policy-15 processes per width, a third-process
 step-32 continuation, and all-five-engine replay of the resulting 20 common-state
 probes. Actual trajectory, continuation and replay results remain pending.
-The separate phase-8 inference plan waits for phase 7 and its complete audits;
-inference cannot inherit compiled-gradient graph results. Neither queued plan
-can start its workers if the preceding required collection fails.
+The separate phase-8 inference plan required phase 7 and its complete audits;
+inference cannot inherit compiled-gradient graph results. Both plans stopped
+without executing workers after the retained MLX failure. A new plan can follow
+the replacement candidate's complete checks; these failed prerequisites remain
+in the record.

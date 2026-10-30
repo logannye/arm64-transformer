@@ -89,6 +89,66 @@ class TransportTests(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     candidate.archive_inventory(path, manifest, source=True)
 
+    def test_authenticated_empty_runtime_directories_are_not_expanded(self):
+        directory = tarfile.TarInfo("runtime/torch/include/empty")
+        directory.type = tarfile.DIRTYPE
+        path, manifest = self.archive(source=False, extra=[(directory.name, directory)])
+        candidate.archive_inventory(path, manifest, source=False)
+        output = self.root / "runtime-with-empty-directories"
+        output.mkdir()
+        candidate.expand_verified(path, output, source=False)
+        candidate.verify_tree(output / "runtime", manifest, source=False)
+        self.assertFalse((output / directory.name).exists())
+
+    def test_directory_cannot_replace_an_expected_file_or_manifest(self):
+        for name in ("runtime/test.py", "runtime/runtime-manifest.json"):
+            directory = tarfile.TarInfo(name)
+            directory.type = tarfile.DIRTYPE
+            path, manifest = self.archive(source=False, omit=[name])
+            # Build a fresh tar so omit does not also remove the replacement.
+            with tarfile.open(path, "r:gz") as original:
+                members = [(member, original.extractfile(member).read()) for member in original]
+            with tarfile.open(path, "w:gz") as archive:
+                for member, payload in members:
+                    archive.addfile(member, io.BytesIO(payload))
+                archive.addfile(directory)
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, "directory"):
+                candidate.archive_inventory(path, manifest, source=False)
+
+    def test_directory_cannot_descend_through_a_file_or_escape_runtime(self):
+        for name in ("runtime/test.py/empty", "outside/empty", "runtime/../escape"):
+            directory = tarfile.TarInfo(name)
+            directory.type = tarfile.DIRTYPE
+            path, manifest = self.archive(source=False, extra=[(name, directory)])
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                candidate.archive_inventory(path, manifest, source=False)
+
+    def test_source_directory_records_remain_rejected(self):
+        directory = tarfile.TarInfo("source/empty")
+        directory.type = tarfile.DIRTYPE
+        path, manifest = self.archive(extra=[(directory.name, directory)])
+        with self.assertRaisesRegex(ValueError, "directory"):
+            candidate.archive_inventory(path, manifest, source=True)
+
+    def test_expansion_budget_covers_payload_and_metadata_with_a_fixed_reserve(self):
+        manifest = {"files": {"file": {"bytes": 19, "sha256": "a" * 64}}}
+        for reserve in (10, 16):
+            budget = candidate.expansion_budget(manifest, manifest, reserve)
+            self.assertGreater(budget["minimum_initial_free_bytes"], reserve * candidate.GIB + 38)
+            self.assertEqual(budget["reserve_bytes"], reserve * candidate.GIB)
+        for reserve in (5, 9, 10.0, True):
+            with self.assertRaisesRegex(ValueError, "reserve"):
+                candidate.expansion_budget(manifest, manifest, reserve)
+
+    def test_expansion_stops_before_writing_below_its_reserve(self):
+        path, _ = self.archive()
+        output = self.root / "bounded-expansion"
+        output.mkdir()
+        with mock.patch.object(candidate.shutil, "disk_usage", return_value=mock.Mock(free=1)):
+            with self.assertRaisesRegex(ValueError, "reserve"):
+                candidate.expand_verified(path, output, source=True, minimum_free_bytes=2)
+        self.assertEqual(list(output.iterdir()), [])
+
     def test_traversal_and_hardlink_rejected(self):
         link = tarfile.TarInfo("source/link")
         link.type, link.linkname = tarfile.LNKTYPE, "source/test.py"

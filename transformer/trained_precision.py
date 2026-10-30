@@ -270,8 +270,11 @@ def worker(args):
                 raise ValueError("Framework diagnostic requires an explicit GPU candidate arm")
             if args.framework_compiled and args.engine != "mlx":
                 raise ValueError("Only MLX compilation is supported")
+            module = load_module(
+                "framework_candidate", ROOT / "integration/trained-precision/framework_candidate.py"
+            )
             receipt.update(
-                framework_candidate="compensated-framework-model-diagnostic-v2",
+                framework_candidate=module.identity(args.framework_policy),
                 framework_candidate_policy=args.framework_policy,
                 framework_compiled=args.framework_compiled,
                 framework_operation="gradient" if args.gradients else "forward",
@@ -361,9 +364,6 @@ def worker(args):
         receipt["full_width_inventory"] = args.case_limit is None and args.case_offset == 0
         evaluator = None
         if args.framework_policy is not None:
-            module = load_module(
-                "framework_candidate", ROOT / "integration/trained-precision/framework_candidate.py"
-            )
             evaluator = module.Evaluator(
                 args.engine,
                 args.framework_policy,
@@ -599,7 +599,7 @@ def main():
     run.add_argument("--torch-policy", type=int, choices=range(8), default=0)
     run.add_argument("--python-candidate", action="store_true")
     run.add_argument("--python-candidate-version", type=int, choices=(1, 2), default=1)
-    run.add_argument("--framework-policy", type=int, choices=(2, 3, 6, 7))
+    run.add_argument("--framework-policy", type=int, choices=(2, 3, 6, 7, 15))
     run.add_argument("--framework-compiled", action="store_true")
     run.add_argument("--metal-shaders")
     run.add_argument("--metal-shaders-sha256")

@@ -13,7 +13,16 @@ PATH = Path(__file__).with_name("framework_reference.py")
 SPEC = importlib.util.spec_from_file_location("framework_candidate_equations", PATH)
 MODEL = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(MODEL)
-IDENTITY = "compensated-framework-model-diagnostic-v2"
+
+
+def identity(policy):
+    if type(policy) is not int or policy not in range(16):
+        raise ValueError("Unknown diagnostic policy")
+    return (
+        "compensated-framework-model-diagnostic-v3"
+        if policy & 8
+        else "compensated-framework-model-diagnostic-v2"
+    )
 
 
 class Evaluator:
@@ -23,7 +32,8 @@ class Evaluator:
 
         from transformer import spec
 
-        if engine not in ("cpu_torch", "mps", "mlx") or policy not in range(8):
+        identity(policy)
+        if engine not in ("cpu_torch", "mps", "mlx"):
             raise ValueError("Unknown diagnostic engine or policy")
         if compiled and engine != "mlx":
             raise ValueError("Only MLX compilation is in this diagnostic")

@@ -1,7 +1,8 @@
 """Separate same-model GPU diagnostics using ordinary framework operations.
 
 Policy bits: 1 = compensated first normalization, 2 = compensated attention,
-4 = compensated QKV projection with explicit first derivatives.
+4 = compensated QKV projection, 8 = compensated first feed-forward projection.
+Both precise projections use explicit first derivatives.
 These are candidate model equations, not operator overrides or admitted arms.
 They enable testing complete forward/backward propagation before source builds.
 """
@@ -54,7 +55,7 @@ def normalization(x, weight, bias, ops):
 
 
 def forward(parameters, tokens, ops, policy):
-    if policy not in range(8):
+    if policy not in range(16):
         raise ValueError("Unexpected framework diagnostic policy")
     p = parameters
     batch, length = tokens.shape
@@ -75,7 +76,8 @@ def forward(parameters, tokens, ops, policy):
     attention = ops.swapaxes(attention, 1, 2).reshape(batch, length, width)
     r1 = x + ops.linear(attention, p["attention_weight"], p["attention_bias"])
     n2 = ops.norm(r1, p["ln2_weight"], p["ln2_bias"])
-    hidden = ops.relu(ops.linear(n2, p["ff1_weight"], p["ff1_bias"]))
+    feed_forward = ops.precise_linear if policy & 8 else ops.linear
+    hidden = ops.relu(feed_forward(n2, p["ff1_weight"], p["ff1_bias"]))
     r2 = r1 + ops.linear(hidden, p["ff2_weight"], p["ff2_bias"])
     n3 = ops.norm(r2, p["ln3_weight"], p["ln3_bias"])
     return ops.linear(n3, p["head_weight"], p["head_bias"])
