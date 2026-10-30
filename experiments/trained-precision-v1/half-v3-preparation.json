@@ -26,5 +26,13 @@
   "formal_fits": 0,
   "admission_stream_opened": false,
   "local_evidence_directory": "work/hosted-half-v3-validated",
-  "limits": "Prepared identities only; source/runtime qualification and arithmetic repair remain separate"
+  "limits": "Prepared identities only; source/runtime qualification and arithmetic repair remain separate",
+  "mlx_suite_plan_sha256": "d7724421dc3a082c48a0e1aca9c94f9ea6bc6608fa3598ff1cf88f1bd71e271c",
+  "mlx_cpp_cases": 305,
+  "mlx_cpp_assertions": 4792,
+  "mlx_python_cases": 1053,
+  "mlx_python_passing_subtests": 17701,
+  "mlx_python_skip_identities_unchanged": 7,
+  "mlx_added_gpu_regressions": 27,
+  "mlx_test_source_files": 73
 }

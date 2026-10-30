@@ -205,6 +205,11 @@ the frozen environment match a fresh interpreter exactly. The latest capture
 and full-suite plan pass; the 34-method focused replay and complete 10,357-test
 MPS suite are queued after the fresh model checks. Preparation imports no
 framework and runs no device test or C++ fixture build.
+The unchanged MLX C++ and Python suites also prepare successfully against this
+same captured runtime. Their frozen inventory retains 305 C++ cases with 4,792
+assertions, 1,053 Python cases, seven unchanged skips, 17,701 passing subtests
+and all 27 added GPU regressions. Their device execution is queued after MPS;
+earlier MLX results under another NumPy environment cannot qualify this one.
 
 Large raw arrays are stored losslessly in `work/trained-raw-store-v1`. Each receipt
 binds the original NPZ hash; the store preserves exact compressed members and ZIP
@@ -275,6 +280,17 @@ The initial storage allocation is the exact 1,313,802,240-byte checkpoint size
 plus 3 GiB of working space and the unchanged 5 GiB floor. Inference has a
 separate 512 MiB working allocation above that floor. Both supervisors monitor
 the floor throughout execution. These storage allocations do not alter test
-coverage or numerical requirements. Both width-512 processes now match all 65
-parameter and optimizer state digests exactly. Width-1024 training, the independent
-restarts and all-five-engine replay remain pending.
+coverage or numerical requirements. Both independent processes now match all 65
+parameter and optimizer state digests at each width. Fresh-process restarts from
+step 32 also reproduce every saved parameter and moment digest through step 64
+at both widths. Sharing 34 byte-identical saved files then recovered 655,495,168
+bytes while retaining every original path. The width-512 native gradient replay
+passes its complete ten-case independent raw audit; the other new-state gradient
+collections and separate inference remain pending.
+
+The separate captured-runtime replay adapter has 16 CPU-only trust-boundary
+checks. It runs the unchanged numerical producer after authenticating a selected
+runtime capture and retains a separate pre/postflight origin receipt without
+changing the original worker result or raw arrays. Its actual replay under the
+new framework distribution remains pending; existing model passes under the old
+distribution do not transfer to it.

@@ -39,6 +39,16 @@ FP32 saved tensors. They are separate model implementations, not ordinary
 PyTorch baselines. Installed and maintained PyTorch runtimes must also be named
 separately; a pass under one distribution does not qualify another.
 
+`captured_replay.py` supplies an explicit path for checking a newly built runtime.
+It authenticates a hash-bound runtime capture before framework imports, then runs
+the unchanged replay worker under that capture's isolated interpreter policy.
+The original `result.json` and raw arrays remain unchanged. Its separate
+`captured-runtime.json` binds the original worker receipt, capture, producer and
+actual loaded origins before and after execution. Bind both receipts externally
+and audit the original raw arrays; a capture or provenance receipt alone does not
+establish numerical success. This route has 16 CPU-only trust-boundary checks;
+real-device replay against the new runtime remains pending.
+
 `metal_candidates.py` emits the declared four-way normalization/value-contraction
 factorial for the reference Metal shader path. It does not change default or
 optimized shaders. `localize_gpu.py` separates same-input local operation errors

@@ -1,6 +1,6 @@
 {
   "schema": "trained-precision-development-evidence-index-v1",
-  "created_utc": "2026-10-30T23:17:50.873662+00:00",
+  "created_utc": "2026-10-30T23:42:16.656309+00:00",
   "scope": "Development regression/fresh-state evidence; no formal qualification or timing",
   "local_hardware": "Apple M4 Max, native automatic dispatch selected SME with 64-byte streaming vectors",
   "formal_eligible": false,
@@ -1497,6 +1497,52 @@
         {
           "path": "work/precision-phase9b/mlx-512-policy15-fresh-gradient-000/result.json",
           "sha256": "0b4961dae9dc95b8d0ab297df4c7aebe43c69832e0af050c9d09f8bff2f59f5d"
+        }
+      ]
+    },
+    {
+      "name": "native-512-policy15-states-gradient",
+      "evidence_valid": true,
+      "numerics_passed": true,
+      "sequence_anchors": 10,
+      "unique_batches": 10,
+      "failed_sequence_anchors": 0,
+      "failed_unique_batches": 0,
+      "audit": {
+        "path": "work/precision-phase7c/native-512-policy15-states-gradient-audit.json",
+        "sha256": "68177321575b3bf62c75b4684a902b3117a2ee281f09a34a603f7cf64eefdbac",
+        "bytes": 77768
+      },
+      "inventory_sha256": "5e0d799aa53b9ae8c065da520675c6161269b275e366408cb294c84c18c630ad",
+      "engine": "native",
+      "width": 512,
+      "batch_size": 16,
+      "gradients_checked": true,
+      "implementation": {
+        "engine": "native",
+        "width": 512,
+        "batch_size": 16,
+        "gradients_checked": true,
+        "torch_diagnostic_policy": 0,
+        "python_candidate": null,
+        "metal_candidate_shader_sha256": null,
+        "native_library_sha256": "08bd16a9bb8d1a823756ce5388b3f5b1fbb14bf02ac87821f7b981f9f0cc6bad",
+        "native_policy": 15,
+        "native_selected_kind": 1,
+        "metal_library_sha256": null,
+        "metal_policy_sha256": null
+      },
+      "source_inventory_sha256": "dfd3f2672771fbd2b80e088533c48f5f303fbc207574feedc5d70abf2141c53b",
+      "runtime": {
+        "numpy": "2.5.2",
+        "platform": "macOS-26.2-arm64-arm-64bit",
+        "python": "3.12.13 (main, Mar 25 2026, 03:16:06) [Clang 22.1.1 ]",
+        "torch": "2.14.1"
+      },
+      "worker_receipts": [
+        {
+          "path": "work/precision-phase7c/native-512-policy15-states-gradient/result.json",
+          "sha256": "deb79fd26213e48ef07fd885488ee6b382cbcf6b45c55b970159032bfd1026d8"
         }
       ]
     },
