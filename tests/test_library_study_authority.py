@@ -4,6 +4,7 @@ import copy
 import importlib.util
 import os
 from pathlib import Path
+from types import SimpleNamespace
 from unittest import mock
 
 import pytest
@@ -90,3 +91,29 @@ def test_two_source_roles_allow_only_explicitly_sealed_files(tmp_path):
     for name in ("../escape.py", "/absolute.py", "bad\\path.py"):
         with pytest.raises(ValueError, match="Unsafe"):
             A.relative(name)
+
+
+def test_independent_oracle_cannot_resolve_an_editable_shadow_checkout(tmp_path):
+    spec = importlib.util.spec_from_file_location(
+        "test_frozen_audit_imports", ROOT / "integration/library-study-v1/audit.py"
+    )
+    audit = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(audit)
+    math, shadow = tmp_path / "math", tmp_path / "editable"
+    math.mkdir()
+    shadow.mkdir()
+    source, wrong = math / "reference.py", shadow / "reference.py"
+    source.write_text("frozen oracle")
+    wrong.write_text("frozen oracle")
+    role = dict(root=str(math), files={source.name: C.binding(source)["sha256"]})
+    result = audit.project_origins(
+        role, {"transformer.reference": SimpleNamespace(__file__=str(source))}
+    )
+    assert result["transformer.reference"]["sha256"] == role["files"][source.name]
+    with pytest.raises(ValueError, match="another project checkout"):
+        audit.project_origins(role, {"transformer.reference": SimpleNamespace(__file__=str(wrong))})
+    source.write_text("changed oracle")
+    with pytest.raises(ValueError, match="Unbound"):
+        audit.project_origins(
+            role, {"transformer.reference": SimpleNamespace(__file__=str(source))}
+        )
