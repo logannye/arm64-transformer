@@ -1,6 +1,6 @@
 {
   "schema": "trained-precision-origin-mapping-repair-v1",
-  "status": "source_corrected_device_validation_pending",
+  "status": "registered_forwarders_source_checked_device_validation_pending",
   "failure_receipt": {
     "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v3/full/receipt.json",
     "sha256": "4a270e7224edcdd1aa3f7d42445dbeb1f00da27a6fb46a1a16d9e705eb22ee94",
@@ -34,5 +34,34 @@
   "framework_binary_changed": false,
   "formal_eligible": false,
   "formal_fits": 0,
-  "admission_stream_opened": false
+  "admission_stream_opened": false,
+  "second_failure_receipt": {
+    "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v4/full/receipt.json",
+    "sha256": "df75238909654e06235e15d4022217f0b43d724d674d5dc7d58b4719d0ce3f0a"
+  },
+  "metadata_diagnostic": {
+    "path": "work/captured-namespace-diagnostic-v5/development-checker-proof.json",
+    "sha256": "86586142388437d73aa8a904f38c2858b6fe0eeac8a1ccc7ef89901cb6f10098",
+    "loaded_pytorch_modules": 1066,
+    "synthetic_namespaces": [
+      "torch._VF",
+      "torch.backends",
+      "torch.backends.cudnn",
+      "torch.backends.cudnn.rnn",
+      "torch.backends.miopen",
+      "torch.backends.mkldnn",
+      "torch.backends.opt_einsum",
+      "torch.backends.python_native",
+      "torch.backends.quantized",
+      "torch.backends.xnnpack",
+      "torch.classes",
+      "torch.ops"
+    ],
+    "numerical_work_executed": false,
+    "qualification": false
+  },
+  "python_origin_checks": 134,
+  "portable_suite_checks": 60,
+  "portable_archive_checks": 26,
+  "forwarding_subtests": 10
 }

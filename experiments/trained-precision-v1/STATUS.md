@@ -353,3 +353,17 @@ substitute for the complete historical/fresh inventories or all-width admission.
 These actual results remain pending. Source-level framework arithmetic repairs,
 optimized Metal qualification, a successor freeze and the 180-fit experiment
 remain open requirements.
+
+The next full-suite launch also stopped before numerical tests because `_VF.py`
+replaces its module with a fileless forwarding instance. A single authenticated
+metadata diagnostic enumerated all 46 fileless modules in the collected runtime.
+The verifier now explicitly recognizes `_VF` and nine registered backend wrappers,
+checking the original module/native target, actual registered object, exact
+class and declared Python function/property code against authenticated source.
+Unknown wrappers and altered targets, source, code or proof flags still fail.
+The same records are validated in CPU, GPU, suite and portable provenance audits.
+The actual 1,066-module PyTorch inventory passes this development check; no
+conformance test or numerical model was executed by that diagnostic. Unit checks
+pass: 134 origin/backend/CPU tests plus ten forwarding subtests, 60 suite checks
+and 26 portable archive checks. The failed launches remain retained. A new
+capture is required before repeating the full suites under this verifier.

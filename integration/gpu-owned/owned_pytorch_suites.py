@@ -665,7 +665,7 @@ def validate_native_proof(proof, runtime, root):
         and isinstance(synthetic, dict)
         and isinstance(aliases, dict)
         and framework["namespace_packages"] == {}
-        and set(synthetic) == {"torch.ops", "torch.classes"},
+        and {"torch.ops", "torch.classes"} <= set(synthetic),
         "Incomplete Torch namespace inventory",
     )
     require(
@@ -680,6 +680,11 @@ def validate_native_proof(proof, runtime, root):
         "Top-level/core origin binding differs",
     )
     package = Path(modules["torch"]).parent
+    origin = load(
+        Path(__file__).resolve().parents[2] / "transformer/gpu_owned_origins.py",
+        "retained_torch_forwarding_origins",
+    )
+    origin.validate_torch_forwarding_proofs(synthetic, package, known)
     core = modules["torch._C"]
     require(
         Path(core).parent == package and Path(core).name.startswith("_C.") and core.endswith(".so"),

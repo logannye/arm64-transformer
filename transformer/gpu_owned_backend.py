@@ -502,7 +502,10 @@ def validate_loaded_origin_proof(proof, *, inventory, runtime_root, receipt):
                 "torch.ops": ("torch._ops", "_Ops", "_ops.py"),
                 "torch.classes": ("torch._classes", "_Classes", "_classes.py"),
             }
-            require(set(synthetic) == set(definitions), "Missing Torch synthetic namespaces")
+            from transformer.gpu_owned_origins import validate_torch_forwarding_proofs
+
+            require(set(definitions) <= set(synthetic), "Missing Torch synthetic namespaces")
+            validate_torch_forwarding_proofs(synthetic, package, lambda p: bound(p, name))
             for module, (backing, class_name, filename) in definitions.items():
                 path = str(package / filename)
                 require(origins.get(backing) == path, "Synthetic backing module origin differs")
