@@ -383,6 +383,16 @@ class ProvenanceTests(unittest.TestCase):
         with mock.patch.object(suite.subprocess, "run", side_effect=otool):
             proof = suite.linkage(executable, library, self.root, "valid")
         self.assertEqual(proof["selected_libmlx"], str(library))
+        names = []
+        for kind in ("executable", "library"):
+            for flag, raw in proof[kind]["raw"].items():
+                path = self.root / raw["path"]
+                self.assertEqual(path.read_text(), proof[kind]["otool"][flag])
+                names.append(path.name.casefold())
+        self.assertEqual(len(set(names)), 4)
+        with mock.patch.object(suite.subprocess, "run", side_effect=otool):
+            with self.assertRaises(FileExistsError):
+                suite.linkage(executable, library, self.root, "valid")
         foreign = links + "\t/tmp/foreign.dylib (compatibility version 0.0.0)\n"
         with mock.patch.object(
             suite.subprocess,

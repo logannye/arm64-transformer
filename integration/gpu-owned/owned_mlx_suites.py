@@ -1051,6 +1051,7 @@ def bounded_process(command, *, cwd, log, env, timeout, output, new_session=True
 
 def linkage(executable, library, output, label):
     proof = {}
+    suffixes = {"-L": "libraries", "-l": "load-commands"}
     for name, path in (("executable", executable), ("library", library)):
         parts = {}
         for flag in ("-L", "-l"):
@@ -1061,14 +1062,19 @@ def linkage(executable, library, output, label):
                 timeout=30,
                 check=True,
             )
-            target = output / (label + "-" + name + flag + ".txt")
-            target.write_text(result.stdout)
+            target = output / (label + "-" + name + "-" + suffixes[flag] + ".txt")
+            # -L and -l are distinct otool modes, but those spellings collide
+            # as filenames on the usual case-insensitive macOS filesystem.
+            with target.open("x") as stream:
+                stream.write(result.stdout)
             parts[flag] = result.stdout
         proof[name] = {
             "file": binding(path),
             "otool": parts,
             "raw": {
-                flag: raw_binding(output / (label + "-" + name + flag + ".txt"), output)
+                flag: raw_binding(
+                    output / (label + "-" + name + "-" + suffixes[flag] + ".txt"), output
+                )
                 for flag in ("-L", "-l")
             },
         }

@@ -383,3 +383,16 @@ archive helper passes 26. No upstream test, tolerance or skip changed.
 The [retained full-run record](mps-full-suite-harness-failure.json) remains failed
 and unqualified. The independent full MLX run and matched model diagnostics
 continue under the previous captured project while the new MPS retry is prepared.
+
+The independent MLX C++ worker passes all 305 cases and 4,792 assertions with
+zero skips under the captured NumPy-1.26 environment. Its outer audit fails:
+`otool -L` and `otool -l` outputs were assigned filenames differing only in case,
+so the latter replaced the former on this filesystem. Both original command
+outputs remain embedded in the hash-bound worker receipt; the incomplete run is
+retained in [mlx-linkage-artifact-failure.json](mlx-linkage-artifact-failure.json).
+The corrected producer uses `libraries` and `load-commands` filenames with
+exclusive creation. Its regression checks require distinct case-folded names and
+byte-equal saved command output. All 31 MLX suite-helper tests pass. The Python
+suite and model diagnostics did not start after this integrity failure; no pass
+is transferred to another run. The corrected MPS and MLX routes need a new
+capture and fresh execution, preserving all suite coverage and storage limits.
