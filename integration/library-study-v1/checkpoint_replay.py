@@ -26,6 +26,14 @@ A, F, AD, W, E, ORIGINS = (
 C = A.C
 ENGINES = ("cpu_arm64", "cpu_torch", "metal", "mps", "mlx")
 NAMES = ("validation", "test", "validation_nll", "test_nll", "b1")
+TRANSPORT = {
+    "cpu_arm64": "native_sequential_full_rows",
+    "cpu_torch": "cpu_int64_full_rows_sliced_b16",
+    "metal": "resident_full_rows_indexed_b16",
+    "mps": "resident_full_rows_indexed_b16",
+    "mlx": "resident_full_rows_indexed_b16",
+    "oracle": "independent_fp64_equations",
+}
 
 
 def cell_receipt(binding, manifest, manifest_binding, admission):
@@ -101,13 +109,18 @@ def replay_values(engine, parameters, fixture, *, runtime=None, assets=None):
         oracle, model = FP64Transformer(parameters), Transformer().load_flat(parameters).double()
     else:
         backend = E.create_backend(runtime, engine, parameters, max_batch=16)
-    result, evidence = {}, {}
+    result, evidence = {}, dict(batch_transport=TRANSPORT[engine])
     try:
         for split in ("validation", "test"):
             rows = fixture[split]
             C.require(rows.shape == (256, 33) and rows.dtype == np.int32, "Wrong replay rows")
             values = np.empty((256, 32, 128), np.float64 if oracle else np.float32)
             total = 0.0
+            if backend is not None:
+                dataset = backend.upload_dataset(rows)
+                indices = backend.upload_indices(np.arange(256, dtype=np.int32))
+            elif model is not None and oracle is None:
+                tensor_rows = torch.from_numpy(rows.astype(np.int64))
             if native is not None:
                 for i, row in enumerate(rows):
                     workspace = native.forward(parameters, np.ascontiguousarray(row[:-1]))
@@ -127,14 +140,15 @@ def replay_values(engine, parameters, fixture, *, runtime=None, assets=None):
                         logits, loss = oracle(selected[:, :-1]), 0.0
                     elif model is not None:
                         with torch.no_grad():
-                            tensor = model(torch.tensor(selected[:, :-1].astype(np.int64)))
+                            tensor_batch = tensor_rows[start : start + 16]
+                            tensor = model(tensor_batch[:, :-1])
                             loss = functional.cross_entropy(
                                 tensor.reshape(-1, 128),
-                                torch.tensor(selected[:, 1:].astype(np.int64)).reshape(-1),
+                                tensor_batch[:, 1:].reshape(-1),
                             ).item()
                             logits = tensor.numpy()
                     else:
-                        batch = backend.upload_inputs(selected[:, :-1], selected[:, 1:])
+                        batch = backend.gather_batch(dataset, indices, start, 16)
                         loss_value, device_logits = backend.evaluate(batch)
                         logits = backend.to_numpy(device_logits)
                         loss = float(backend.to_numpy(loss_value).reshape(-1)[0])

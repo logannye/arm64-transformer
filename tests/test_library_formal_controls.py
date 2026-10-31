@@ -205,7 +205,7 @@ def test_actual_training_graph_reopens_bound_transport_and_rejects_trace_or_path
         audit.training_graph(role, proof, tmp_path)
 
 
-@pytest.mark.parametrize("engine", ["cpu_arm64", "mps", "mlx", "metal"])
+@pytest.mark.parametrize("engine", ["cpu_arm64", "cpu_torch", "mps", "mlx", "metal"])
 @pytest.mark.parametrize("fail", [False, True])
 def test_checkpoint_replay_preserves_full_splits_own_loss_b1_and_cleanup(monkeypatch, engine, fail):
     import torch
@@ -215,11 +215,33 @@ def test_checkpoint_replay_preserves_full_splits_own_loss_b1_and_cleanup(monkeyp
     replay = load("checkpoint_replay")
     monkeypatch.setattr(torch, "set_num_threads", lambda n: None)
     monkeypatch.setattr(torch, "set_num_interop_threads", lambda n: None)
-    calls = dict(evaluations=0, forwards=0, closed=False)
+    calls = dict(
+        evaluations=0, forwards=0, closed=False, datasets=0, indices=0, gathers=0, uploads=0
+    )
 
     class Backend:
         def upload_inputs(self, tokens, targets=None):
+            assert tokens.shape == (1, 32) and targets is None
+            calls["uploads"] += 1
             return tokens
+
+        def upload_dataset(self, rows):
+            assert rows.shape == (256, 33) and rows.dtype == np.int32
+            calls["datasets"] += 1
+            return rows
+
+        def upload_indices(self, indices):
+            assert np.array_equal(indices, np.arange(256, dtype=np.int32))
+            calls["indices"] += 1
+            return indices
+
+        def gather_batch(self, dataset, indices, offset, count):
+            calls["gathers"] += 1
+            selected_rows = dataset[indices[offset : offset + count]]
+            assert selected_rows.shape == (16, 33)
+            batch = selected_rows[:, :-1]
+            assert batch.strides == (33 * 4, 4)
+            return batch
 
         def evaluate(self, batch):
             calls["evaluations"] += 1
@@ -249,7 +271,35 @@ def test_checkpoint_replay_preserves_full_splits_own_loss_b1_and_cleanup(monkeyp
         selected.append((selected_engine, limits))
         return backend
 
-    if engine == "cpu_arm64":
+    if engine == "cpu_torch":
+        from torch.nn import functional
+
+        from transformer import library_training
+
+        class Model:
+            def load_flat(self, parameters):
+                return self
+
+            def __call__(self, tokens):
+                calls["forwards"] += 1
+                if fail:
+                    raise ValueError("synthetic replay failure")
+                assert tokens.dtype == torch.int64
+                assert tokens.stride() == ((33, 1) if len(tokens) == 16 else (32, 1))
+                return torch.full((len(tokens), 32, 128), 2, dtype=torch.float32)
+
+        def model_type(selected_engine):
+            selected.append(selected_engine)
+            return Model
+
+        def cross_entropy(logits, targets):
+            calls["evaluations"] += 1
+            assert targets.shape == (16 * 32,) and targets.stride() == (1,)
+            return torch.tensor(3, dtype=torch.float32)
+
+        monkeypatch.setattr(library_training, "torch_model_type", model_type)
+        monkeypatch.setattr(functional, "cross_entropy", cross_entropy)
+    elif engine == "cpu_arm64":
         monkeypatch.setattr(replay.W.N, "load", lambda *args: backend)
         monkeypatch.setattr(validate, "workspace_tensor", lambda value, name: value[0])
         backend.call = lambda *args: 3.0
@@ -262,7 +312,7 @@ def test_checkpoint_replay_preserves_full_splits_own_loss_b1_and_cleanup(monkeyp
         with pytest.raises(ValueError, match="synthetic replay failure"):
             replay.replay_values(engine, np.zeros(7, np.float32), rows, runtime=None, assets={})
     else:
-        result, _ = replay.replay_values(
+        result, proof = replay.replay_values(
             engine, np.zeros(7, np.float32), rows, runtime=None, assets={}
         )
         for split in ("validation", "test"):
@@ -270,9 +320,16 @@ def test_checkpoint_replay_preserves_full_splits_own_loss_b1_and_cleanup(monkeyp
             assert result[split + "_nll"].shape == () and result[split + "_nll"].dtype == np.float64
             assert float(result[split + "_nll"]) == 3
         assert result["b1"].shape == (1, 32, 128)
+        assert proof["batch_transport"] == replay.TRANSPORT[engine]
         if engine == "cpu_arm64":
             assert calls["forwards"] == 513
+        elif engine == "cpu_torch":
+            assert calls["evaluations"] == 32 and calls["forwards"] == 33
         else:
             assert calls["evaluations"] == 32 and calls["forwards"] == 1
-    if engine != "cpu_arm64":
+            assert calls["datasets"] == calls["indices"] == 2
+            assert calls["gathers"] == 32 and calls["uploads"] == 1
+    if engine == "cpu_torch":
+        assert selected == [engine]
+    elif engine != "cpu_arm64":
         assert calls["closed"] and selected == [(engine, dict(max_batch=16))]

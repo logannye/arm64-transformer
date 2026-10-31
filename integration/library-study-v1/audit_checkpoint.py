@@ -105,6 +105,7 @@ def load_replay(binding, job, manifest, capture, inventory, engine):
         and all(source[k] == value for k, value in expected.items())
         and source["engine"] == record["engine"]
         and record["engine"] == engine
+        and record["batch_transport"] == R.TRANSPORT[engine]
         and record["manifest"] == job["manifest"]
         and record["cell_receipt"] == job["cell_receipt"]
         and record["checkpoint"] == job["checkpoint"]

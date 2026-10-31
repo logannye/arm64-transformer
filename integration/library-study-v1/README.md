@@ -81,6 +81,8 @@ Current components:
   PyTorch double equations cross-check the first/last rows per split, matching
   the original reference contract. Accuracy, engine compatibility, own-engine
   replay and all 90 exact repeat pairs remain separate gates.
+  Own-engine B16 replay preserves measured full-row slicing/indexed resident
+  dataset transport and its strides; B1 uses the measured resident-input path.
 - `report.py` binds the complete campaign audit and produces a qualified
   performance summary only when every postrun gate passes. Ratios are paired
   by original seed. Hardware, workload, storage precision, selected internal
