@@ -174,6 +174,8 @@ def _loss(model, tokens, targets):
 
 
 class Backend:
+    model_type = Transformer
+
     def __init__(self, initial_flat, max_batch=16, max_length=CONTEXT):
         self.max_batch = _integer(max_batch, 1, 16, "max_batch")
         self.max_length = _integer(max_length, 1, CONTEXT, "max_length")
@@ -189,7 +191,7 @@ class Backend:
                 if mx.config.get(name, -1) != 0:
                     raise RuntimeError(f"Cached MLX configuration does not match {name}=0")
         self._compilation_probe = verify_compilation(mx)
-        self.model = Transformer(initial_flat)
+        self.model = self.model_type(initial_flat)
         self.optimizer = optim.Adam(
             learning_rate=LR, betas=(0.9, 0.999), eps=1e-8, bias_correction=True
         )
@@ -199,8 +201,10 @@ class Backend:
         self._pending = []
         self.step = 0
         loss_grad = nn.value_and_grad(self.model, _loss)
+        self._training_python_traces = 0
 
         def train(tokens, targets):
+            self._training_python_traces += 1
             (loss, logits), gradients = loss_grad(self.model, tokens, targets)
             self.optimizer.update(self.model, gradients)
             return loss, logits, gradients
