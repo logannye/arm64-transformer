@@ -127,7 +127,12 @@ class PortableTests(unittest.TestCase):
             cache_identity=marker,
             fixture_preparation=fixture,
             subprocess_contract=M.subprocess_contract(self.source / "test/test_mps.py"),
-            environment={**M.PINS, **P.CONTROLS, "TORCH_EXTENSIONS_DIR": str(self.cache)},
+            environment={
+                **M.PINS,
+                **P.CONTROLS,
+                "TORCH_EXTENSIONS_DIR": str(self.cache),
+                "TORCHINDUCTOR_CACHE_DIR": str(self.cache / M.INDUCTOR_CACHE_NAME),
+            },
         )
         self.plan_path = self.live / "plan.json"
         self.json_file(self.plan_path, self.plan)
@@ -403,6 +408,27 @@ class PortableTests(unittest.TestCase):
         )
         with self.assertRaises(ValueError):
             self.check()
+
+    def test_missing_or_external_inductor_cache_cannot_pass_portable_audit(self):
+        evidence = self.record["portable_evidence"]
+        row = evidence["plan"]
+        path = self.archived / row["path"]
+        for selected in (None, "/unrelated/cache"):
+            plan = M.read(path)
+            if selected is None:
+                plan["environment"].pop("TORCHINDUCTOR_CACHE_DIR", None)
+            else:
+                plan["environment"]["TORCHINDUCTOR_CACHE_DIR"] = selected
+            path.write_text(json.dumps(plan))
+            changed = M.binding(path)
+            for target in (row, evidence["original_plan"]):
+                target.update({key: changed[key] for key in ("sha256", "bytes")})
+            self.record["plan_sha256"] = changed["sha256"]
+            with (
+                self.subTest(cache=selected),
+                self.assertRaisesRegex(ValueError, "Frozen execution environment differs"),
+            ):
+                self.check()
 
     def test_changed_loaded_fixture(self):
         self.record["stock_fixture_loaded"]["sha256"] = "0" * 64

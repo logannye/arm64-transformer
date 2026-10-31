@@ -396,3 +396,17 @@ byte-equal saved command output. All 31 MLX suite-helper tests pass. The Python
 suite and model diagnostics did not start after this integrity failure; no pass
 is transferred to another run. The corrected MPS and MLX routes need a new
 capture and fresh execution, preserving all suite coverage and storage limits.
+
+The corrected-shell full MPS retry again runs all 10,357 methods, retaining
+one failure and one error in the same two child tests; all 27 original integration
+regressions still pass their unchanged upstream assertions. A direct authenticated
+import-only child succeeds. A separate metadata-only trace identifies the remaining
+environment difference: importing the unchanged test inventory adds
+`TORCHINDUCTOR_CACHE_DIR`. The producer now freezes that path before collection
+inside the existing monitored 1 GiB/64-file fixture cache. Live and portable audits
+reject missing or external cache paths. The 65 suite-helper and 27 portable-helper
+tests pass. The [failed run and diagnostics](mps-import-environment-failure.json)
+remain retained, and a fresh capture/execution is required. MLX conformance and the
+matched model screen continue independently under the immutable preceding capture;
+neither route may qualify the failed MPS run. The disk watchdog tracks nested
+sessions by PID, creation time and command, with a 6 GiB stop reserve.

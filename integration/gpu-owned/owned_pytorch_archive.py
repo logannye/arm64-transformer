@@ -357,7 +357,9 @@ def audit(root, record, manifest, runtime_receipt, producer, policy):
         and not any(k in environment for k in producer.ABSENT)
         and all(environment.get(k) == v for k, v in policy.CONTROLS.items())
         and not any(k in environment for k in policy.ABSENT_FLAGS)
-        and environment.get("TORCH_EXTENSIONS_DIR") == plan["cache"],
+        and environment.get("TORCH_EXTENSIONS_DIR") == plan["cache"]
+        and environment.get("TORCHINDUCTOR_CACHE_DIR")
+        == str(Path(plan["cache"]) / producer.INDUCTOR_CACHE_NAME),
         "Frozen execution environment differs",
     )
     require(

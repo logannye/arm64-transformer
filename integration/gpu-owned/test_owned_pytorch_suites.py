@@ -263,6 +263,28 @@ class ControlTests(unittest.TestCase):
         with patch.dict(os.environ, self.environment, clear=True):
             M.check_controls(P, self.cache)
 
+    def test_inductor_metadata_cache_is_frozen_inside_monitored_fixture(self):
+        environment = M.controls({"TORCHINDUCTOR_CACHE_DIR": "/unrelated/cache"}, P, self.cache)
+        self.assertEqual(
+            environment["TORCHINDUCTOR_CACHE_DIR"],
+            str(self.cache / "torchinductor-metadata"),
+        )
+        self.assertFalse(self.cache.exists())
+
+    def test_missing_or_external_inductor_metadata_cache_is_rejected(self):
+        for selected in (None, "/unrelated/cache", str(self.cache)):
+            environment = dict(self.environment)
+            if selected is None:
+                del environment["TORCHINDUCTOR_CACHE_DIR"]
+            else:
+                environment["TORCHINDUCTOR_CACHE_DIR"] = selected
+            with (
+                self.subTest(cache=selected),
+                patch.dict(os.environ, environment, clear=True),
+                self.assertRaisesRegex(ValueError, "Inductor metadata cache differs"),
+            ):
+                M.check_controls(P, self.cache)
+
     def test_sanitized_environment_survives_real_interpreter_startup_exactly(self):
         environment = M.controls(os.environ, P, self.cache)
         actual = json.loads(

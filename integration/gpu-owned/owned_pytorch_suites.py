@@ -83,6 +83,7 @@ ABSENT = (
     "PYTORCH_TEST_SKIP_FAST",
     "PYTORCH_TEST_SKIP_FAST_TESTS",
 )
+INDUCTOR_CACHE_NAME = "torchinductor-metadata"
 
 
 def require(value, message):
@@ -255,6 +256,11 @@ def controls(base, policy, cache):
     result = {key: value for key, value in base.items() if key in allowed}
     result.update(PINS)
     policy.configure_environment(result, cache)
+    # Importing the unchanged test inventory imports Inductor metadata. Its
+    # cache_dir() otherwise adds this variable after the environment is frozen,
+    # so the upstream warning-test children inherit an undeclared environment.
+    # Keep even metadata-only cache writes inside the monitored fixture bound.
+    result["TORCHINDUCTOR_CACHE_DIR"] = str(Path(cache).resolve() / INDUCTOR_CACHE_NAME)
     return result
 
 
@@ -262,6 +268,11 @@ def check_controls(policy, cache, *, fallback=False):
     expected = {**PINS, "PYTORCH_ENABLE_MPS_FALLBACK": "1" if fallback else "0"}
     require(all(os.environ.get(k) == v for k, v in expected.items()), "Runtime controls changed")
     require(not any(k in os.environ for k in ABSENT), "Runtime/test override is forbidden")
+    require(
+        os.environ.get("TORCHINDUCTOR_CACHE_DIR")
+        == str(Path(cache).resolve() / INDUCTOR_CACHE_NAME),
+        "Inductor metadata cache differs from the bounded fixture directory",
+    )
     allowed = {k for k in PINS if k.startswith("PYTHON")} | {"PYTHONPYCACHEPREFIX"}
     require(
         not any(k.startswith("PYTHON") and k not in allowed for k in os.environ),
