@@ -172,6 +172,7 @@ class CaptureTests(unittest.TestCase):
             REPLAY.captured_plan(self.capture, self.bind())
 
     def test_origin_adapter_uses_backend_engine_contract(self):
+        self.receipt_value["frameworks"] = {"pytorch": {"selection": {}}}
         numpy_file = self.root / "numpy.py"
         numpy_file.write_text("# simulated bound package\n")
         numpy = SimpleNamespace(__version__="1.26.4", __file__=str(numpy_file))

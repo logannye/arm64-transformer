@@ -50,7 +50,9 @@ def audit_origins(value, engine, capture, runtime, receipt):
     )
     numpy = value["numpy"]
     require(
-        numpy["version"] == "1.26.4" and numpy["path"] in runtime["layout"]["packages"]["numpy"],
+        numpy["version"]
+        == receipt["frameworks"]["pytorch"]["selection"].get("numpy_abi_version", "1.26.4")
+        and numpy["path"] in runtime["layout"]["packages"]["numpy"],
         "Captured NumPy differs",
     )
     imported = value["loaded_python_files"]

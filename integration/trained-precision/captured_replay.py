@@ -112,7 +112,8 @@ def origins(engine, authority, backend, inventory):
     import torch
 
     SUITE.require(
-        np.__version__ == "1.26.4"
+        np.__version__
+        == receipt["frameworks"]["pytorch"]["selection"].get("numpy_abi_version", "1.26.4")
         and str(Path(np.__file__).resolve()) in inventory["layout"]["packages"]["numpy"],
         "Captured NumPy version or origin differs",
     )

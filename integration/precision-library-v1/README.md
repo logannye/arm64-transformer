@@ -31,3 +31,20 @@ qualify a library repair or a formal comparison arm.
 
 This directory is prospective source preparation. No maintained runtime has
 loaded these files, and no performance or formal eligibility is established.
+
+`../gpu-owned/derive_precision_api.py` now authenticates each original full build,
+creates a bounded APFS clone, adds only the three Python files to source and
+runtime, and verifies the complete allowed manifest delta. Existing native,
+Python, stock-operator and test files are preserved byte for byte. The new
+`PRECISION-API.json` receipt confers no old qualification. The MLX copy has been
+derived and authenticated; no model or primitive has loaded it yet. PyTorch's
+copy awaits the hosted NumPy 2 build. Explicit capture selection records the
+API module and derivation separately from unchanged native patches.
+
+`../trained-precision/library_candidate.py` selects the model stages while calling
+only the package's generic precision APIs for repaired arithmetic. It reproduces
+CPU v2 and MPS 7 stages (LN1/QKV/attention) and MLX 15 stages (also FF1).
+Its prospective CPU source test requires byte-equal output and every parameter
+gradient against v2 on changed tokens, with only FP32 floating-point saved state,
+at each width selected by the hosted six-width CI loop. This test is separate
+from actual installed-package, GPU, historical-state and optimizer validation.

@@ -508,3 +508,14 @@ configuration. The explicit NumPy 2 suite contract retains all 1,053 Python case
 17,701 subtests, seven eligible skips, 305 C++ cases and 4,792 assertions. No old
 XML, receipt, exit status or qualification is rewritten. A fresh joint capture
 and complete execution remain required.
+
+The [library API derivation](library-api-derivations.json) now authenticates an
+additive full MLX package copy: three generic Python modules appear in both
+source and runtime, while all old native/Python/test members remain unchanged.
+Five derivation mutation checks and 26 capture checks pass. The copy is not yet
+loaded or qualified. Its native build remains 40978071574 and its new manifest
+is a separate identity. PyTorch's analogous copy waits for the NumPy 2 build.
+An explicit model adapter calls these package APIs with fixed CPU-v2/MPS-7/MLX-15
+stage selections. Its changed-token CPU forward/all-gradient reproduction check
+is submitted to hosted CI at all six process-selected widths. Device, model,
+full-suite and optimizer/checkpoint qualification remain pending.

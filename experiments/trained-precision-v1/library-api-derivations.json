@@ -1,0 +1,35 @@
+{
+  "schema": "maintained-library-precision-api-development-v1",
+  "status": "mlx_capsule_derived_not_loaded",
+  "contract": {
+    "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/integration/precision-library-v1/contract.json",
+    "sha256": "7b20e72aa969732a1348b4d01281f604dee8ba043433191ce4d71a1ce4604718",
+    "bytes": 1315
+  },
+  "mlx": {
+    "receipt": {
+      "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/mlx-precision-api-capsule-v1/PRECISION-API.json",
+      "sha256": "b3097ef9f62fc54319c39986e292e05a71af17068a000956b7d9d021061eb62e",
+      "bytes": 290665
+    },
+    "manifest": {
+      "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/mlx-precision-api-capsule-v1/MANIFEST.json",
+      "sha256": "da8bb681cb9e5ca1b33450386ee7ba307fd6ad29d15f4a555118cc03db1e89cb",
+      "bytes": 250263
+    },
+    "native_build_run": 40978071574,
+    "original_logical_bytes": 47941904,
+    "new_python_files": 6,
+    "old_source_binary_and_test_bytes_unchanged": true,
+    "native_compilation": false,
+    "model_or_primitive_execution": false,
+    "full_suites_qualified": false
+  },
+  "pytorch": {
+    "status": "awaiting_hosted_numpy2_native_build",
+    "run_id": 41158978641
+  },
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "admission_stream_opened": false
+}

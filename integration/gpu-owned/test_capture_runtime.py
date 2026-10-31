@@ -1,5 +1,6 @@
 """CPU-only capture controls. No installed runtime or modeling fixture is read."""
 
+import copy
 import hashlib
 import importlib.util
 import json
@@ -122,6 +123,84 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual(selected["pytorch"]["build_run"], 41158978641)
         self.assertEqual(selected["mlx"], original["mlx"])
         self.assertFalse(proof["formal_eligible"])
+
+    def precision_fixture(self, framework="mlx", *, mutate=False):
+        relative = "integration/gpu-owned/derive_precision_api.py"
+        helper = self.root / relative
+        helper.parent.mkdir(parents=True)
+        old = self.root / "original"
+        old.mkdir()
+        old_manifest = old / (
+            "runtime-manifest.json" if framework == "pytorch" else "MANIFEST.json"
+        )
+        old_manifest.write_text('{"original":true}\n')
+        capsule = self.root / "precision"
+        capsule.mkdir()
+        manifest = capsule / (
+            "runtime/runtime-manifest.json" if framework == "pytorch" else "MANIFEST.json"
+        )
+        manifest.parent.mkdir(exist_ok=True)
+        manifest.write_text('{"additive":true}\n')
+        receipt = capsule / "PRECISION-API.json"
+        receipt.write_text('{"proof":"fixture"}\n')
+        proof = dict(
+            framework=framework,
+            contract={"sha256": "c" * 64},
+            original=dict(
+                roots={"runtime" if framework == "pytorch" else "bundle": str(old)},
+                native_build_run=123,
+            ),
+        )
+        helper.write_text(
+            "def authenticate(capsule, digest):\n"
+            + (
+                "    p=capsule/'PRECISION-API.json';p.write_bytes(p.read_bytes()+b' ')\n"
+                if mutate
+                else ""
+            )
+            + "    return "
+            + repr(proof)
+            + ", {}\n"
+        )
+        source = {"files": {relative: capture.sha(helper)}}
+        selection = {
+            framework: dict(
+                runtime_manifest_sha256=capture.sha(old_manifest), build_run=123, patches=["b" * 64]
+            ),
+            "other": dict(untouched=True),
+        }
+        return helper, source, capsule, capture.sha(receipt), selection
+
+    def test_precision_capture_preserves_native_patches_and_explicitly_labels_added_api(self):
+        _, source, capsule, digest, selection = self.precision_fixture()
+        proof, binding = capture.precision_api_capsule(self.root, source, "mlx", capsule, digest)
+        selected = capture.precision_api_selection(selection, "mlx", capsule, proof, binding)
+        self.assertEqual(selected["mlx"]["patches"], selection["mlx"]["patches"])
+        self.assertEqual(selected["other"], selection["other"])
+        self.assertNotIn("precision_api", selection["mlx"])
+        self.assertEqual(selected["mlx"]["precision_api"]["module"], "mlx.nn.precise_fp32")
+        self.assertEqual(
+            selected["mlx"]["runtime_manifest_sha256"], capture.sha(capsule / "MANIFEST.json")
+        )
+        self.assertFalse(binding["formal_eligible"])
+        changed = copy.deepcopy(selection)
+        changed["mlx"]["build_run"] += 1
+        with self.assertRaisesRegex(ValueError, "native authority differs"):
+            capture.precision_api_selection(changed, "mlx", capsule, proof, binding)
+
+    def test_precision_capture_rejects_foreign_helper_framework_and_receipt_mutation(self):
+        helper, source, capsule, digest, _ = self.precision_fixture()
+        with self.assertRaisesRegex(ValueError, "framework differs"):
+            capture.precision_api_capsule(self.root, source, "pytorch", capsule, digest)
+        helper.write_text("raise RuntimeError('unbound helper executed')\n")
+        with self.assertRaisesRegex(ValueError, "Unbound precision API"):
+            capture.precision_api_capsule(self.root, source, "mlx", capsule, digest)
+        # Isolate the changing-receipt fixture in another temporary root.
+        with tempfile.TemporaryDirectory() as directory:
+            self.root = Path(directory).resolve()
+            _, source, capsule, digest, _ = self.precision_fixture(mutate=True)
+            with self.assertRaisesRegex(ValueError, "changed during authentication"):
+                capture.precision_api_capsule(self.root, source, "mlx", capsule, digest)
 
     def test_half_candidate_rejects_missing_binding_and_foreign_runtime(self):
         _, source, plan, digest, runtime = self.half_fixture()
