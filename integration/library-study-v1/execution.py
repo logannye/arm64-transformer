@@ -103,7 +103,7 @@ def create_backend(runtime, engine, initial, **limits):
         validate_capabilities(engine, backend.capabilities())
         runtime.origins(engine)
         if engine == "metal":
-            loaded_metal_library(runtime)
+            backend._selected_native_origin = loaded_metal_library(runtime)
         return backend
     except BaseException:
         backend.close()

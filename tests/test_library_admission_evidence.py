@@ -2,6 +2,8 @@
 
 import copy
 import importlib.util
+import io
+import zipfile
 from pathlib import Path
 
 import numpy as np
@@ -50,3 +52,17 @@ def test_reported_pass_cannot_replace_raw_accuracy_or_exact_identity(tmp_path):
     assert not E.decision(np.array([np.nan]), np.array([np.nan]), "exact")["passed"]
     with pytest.raises(ValueError, match="empty"):
         E.decision(np.array([]), np.array([]), "exact")
+
+
+def test_declared_large_array_is_rejected_before_numpy_allocation():
+    header = io.BytesIO()
+    np.lib.format.write_array_header_1_0(
+        header, dict(descr="<f4", fortran_order=False, shape=(E.MAX_BYTES,))
+    )
+    with io.BytesIO() as stream:
+        with zipfile.ZipFile(stream, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            for name in ("actual", "expected"):
+                archive.writestr(name + ".npy", header.getvalue())
+        stream.seek(0)
+        with pytest.raises(ValueError, match="bounds"):
+            E.decode_arrays(stream, ("actual", "expected"))

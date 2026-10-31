@@ -76,8 +76,6 @@ def save_pair(actual, expected, store, math_root):
 
 
 def load_pair(row, store, math_root):
-    import numpy as np
-
     C.require(
         set(row) == {"sha256", "bytes"}
         and type(row["bytes"]) is int
@@ -88,39 +86,48 @@ def load_pair(row, store, math_root):
         recipe = storage(math_root).reconstruct(store, row["sha256"], stream, max_bytes=MAX_BYTES)
         C.require(recipe["bytes"] == row["bytes"], "Raw pair byte count differs")
         stream.seek(0)
-        with zipfile.ZipFile(stream) as archive:
-            entries = archive.infolist()
-            C.require(
-                [e.filename for e in entries] == ["actual.npy", "expected.npy"]
-                and sum(e.file_size for e in entries) <= MAX_BYTES + 8192,
-                "Unexpected or oversized array inventory",
-            )
-            values = {}
-            for entry in entries:
-                with archive.open(entry) as raw:
-                    version = np.lib.format.read_magic(raw)
-                    headers = {
-                        (1, 0): np.lib.format.read_array_header_1_0,
-                        (2, 0): np.lib.format.read_array_header_2_0,
-                    }
-                    C.require(version in headers, "Unsupported numerical NPY header version")
-                    shape, fortran, dtype = headers[version](raw, max_header_size=4096)
-                    C.require(
-                        dtype in (np.float32, np.float64, np.int32, np.int64)
-                        and not fortran
-                        and all(type(n) is int and n >= 0 for n in shape),
-                        "Unexpected array type or layout",
-                    )
-                    size = math.prod(shape) * dtype.itemsize
-                    C.require(
-                        size <= MAX_BYTES and raw.tell() + size == entry.file_size,
-                        "NPY header exceeds actual array bounds",
-                    )
-                    raw.seek(0)
-                    values[entry.filename[:-4]] = np.load(
-                        raw, allow_pickle=False, max_header_size=4096
-                    )
+        values = decode_arrays(stream, ("actual", "expected"))
     return values["actual"], values["expected"]
+
+
+def decode_arrays(stream, names, *, max_bytes=MAX_BYTES):
+    """Check every numerical NPY header before allocating its declared array."""
+    import numpy as np
+
+    C.require(type(max_bytes) is int and 0 < max_bytes <= MAX_BYTES, "Wrong array budget")
+    with zipfile.ZipFile(stream) as archive:
+        entries = archive.infolist()
+        C.require(
+            len(entries) == len(names)
+            and {e.filename for e in entries} == {name + ".npy" for name in names}
+            and sum(e.file_size for e in entries) <= max_bytes + 4096 * len(names),
+            "Unexpected or oversized array inventory",
+        )
+        values, payload_bytes = {}, 0
+        for entry in entries:
+            with archive.open(entry) as raw:
+                version = np.lib.format.read_magic(raw)
+                headers = {
+                    (1, 0): np.lib.format.read_array_header_1_0,
+                    (2, 0): np.lib.format.read_array_header_2_0,
+                }
+                C.require(version in headers, "Unsupported numerical NPY header version")
+                shape, fortran, dtype = headers[version](raw, max_header_size=4096)
+                C.require(
+                    dtype in (np.float32, np.float64, np.int32, np.int64)
+                    and not fortran
+                    and all(type(n) is int and n >= 0 for n in shape),
+                    "Unexpected array type or layout",
+                )
+                size = math.prod(shape) * dtype.itemsize
+                payload_bytes += size
+                C.require(
+                    payload_bytes <= max_bytes and raw.tell() + size == entry.file_size,
+                    "NPY header exceeds actual array bounds",
+                )
+                raw.seek(0)
+                values[entry.filename[:-4]] = np.load(raw, allow_pickle=False, max_header_size=4096)
+    return values
 
 
 def audit_gate(specification, row, store, math_root):

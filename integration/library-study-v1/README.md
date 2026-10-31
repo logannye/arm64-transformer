@@ -42,6 +42,16 @@ Current components:
   content-addressed store. Independent decisions read the original arrays and
   keep the frozen tolerances. Oversized headers, missing members, changed bytes
   and substituted pass flags are rejected.
+- `context.py` and `worker.py` run the retained native/Metal/oracle development
+  groups on exposed stream 20261103. They use the exact numerical handlers with
+  explicit selected factories, fresh-process training and actual CPU tie fits.
+  The job schema rejects formal fields and alternate seed selection before
+  runtime activation. CPU malformed-input checks accept only their declared
+  rejection, so unrelated runtime failures cannot count as passes.
+- `audit_development.py` re-evaluates every retained raw comparison in those
+  groups and checks the complete fresh-process/tie denominator, source roles,
+  runtime origins, native assets and Metal selection. It grants no formal
+  admission or measurement authority.
 
 Complete prerequisite verification, admission/campaign dispatch and full saved
 checkpoint auditing must be implemented and validated before removing the
