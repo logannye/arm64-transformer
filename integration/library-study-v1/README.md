@@ -26,7 +26,9 @@ Current components:
   the exact frozen oracle source while retaining their independent NumPy/Torch
   environment. Candidate package paths are never activated by these auditors.
 - `qualify_suites.py` reaudits the complete NumPy 2 suite evidence using the
-  frozen MPS archive/stock-fixture and MLX inventory/descendant validators.
+  frozen MPS archive/stock-fixture and MLX inventory/descendant validators. It
+  uses the captured interpreter and authenticated paths for dependency metadata
+  discovery without importing tensor packages or executing numerical models.
 - `execution.py` fixes the actual maintained-library model stages and reference
   Metal shader, validates combined shader/define hashes and checks the live
   Metal host-library origin.

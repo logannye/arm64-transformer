@@ -1,7 +1,8 @@
 """Reaudit complete NumPy 2 suites from raw evidence without executing devices.
 
-Use the captured canonical interpreter with -I -S -B. Neither selected candidate package
-paths nor reserved operands are activated. Existing frozen component validators
+Use the captured canonical interpreter with -I -S -B. Captured search paths are
+used for dependency metadata only; tensor packages and reserved operands are
+never imported or opened. Existing frozen component validators
 retain the complete test inventories, stock fixture and descendant requirements.
 """
 
@@ -146,6 +147,11 @@ def execute(args):
     expected, expected_binding = mlx.suite_inventory(mlx_plan["suite_contract"])
     C.require(mlx_plan["suite_inventory"] == expected_binding, "Wrong MLX inventory")
     bundle, sources = mlx.test_source(authority, expected)
+    # The upstream auditor discovers pytest/TensorFlow metadata through sys.path.
+    # Authenticate the complete paths first, then resolve metadata without
+    # importing any numerical package. This is not the independent tensor oracle.
+    search_paths = [str(Path(capture["runtime_root"]) / p) for p in inventory["python_paths"]]
+    sys.path[:0] = [math["root"], *search_paths]
     C.require(
         mlx_plan["bundle"] == str(bundle)
         and mlx_plan["test_source_sha256"] == sources
@@ -195,8 +201,8 @@ def execute(args):
     from_source = load(control, "integration/library-study-v1/audit.py")
     origins = from_source.project_origins(math, dict(sys.modules))
     C.require(
-        "torch.nn.precise_fp32" not in sys.modules and "mlx.core" not in sys.modules,
-        "Suite audit must not activate the selected numerical candidate",
+        not any(n.split(".", 1)[0] in {"torch", "mlx", "numpy"} for n in sys.modules),
+        "Suite audit must not import numerical packages",
     )
     A.verify_role(control, control=True)
     A.verify_role(math)
