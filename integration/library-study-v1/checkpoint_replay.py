@@ -172,7 +172,12 @@ def replay_values(engine, parameters, fixture, *, runtime=None, assets=None):
             )[None].copy()
         elif model is not None:
             with torch.no_grad():
-                result["b1"] = model(torch.tensor(tokens.astype(np.int64))).numpy()
+                sample = (
+                    tensor_rows[:1, :32].contiguous()
+                    if oracle is None
+                    else torch.tensor(tokens.astype(np.int64))
+                )
+                result["b1"] = model(sample).numpy()
         else:
             result["b1"] = backend.to_numpy(backend.forward(backend.upload_inputs(tokens))).copy()
         if backend is not None:

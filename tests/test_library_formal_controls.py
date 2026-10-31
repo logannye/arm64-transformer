@@ -285,7 +285,7 @@ def test_checkpoint_replay_preserves_full_splits_own_loss_b1_and_cleanup(monkeyp
                 if fail:
                     raise ValueError("synthetic replay failure")
                 assert tokens.dtype == torch.int64
-                assert tokens.stride() == ((33, 1) if len(tokens) == 16 else (32, 1))
+                assert tokens.stride() == (33, 1)
                 return torch.full((len(tokens), 32, 128), 2, dtype=torch.float32)
 
         def model_type(selected_engine):
