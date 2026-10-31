@@ -81,6 +81,32 @@ ABSENT = (
     "PYTHONPYCACHEPREFIX",
 )
 GIB = 1024**3
+CANDIDATES = ("half-v3", "numpy2-v1")
+
+
+def candidate_profile(candidate="half-v3"):
+    require(candidate in CANDIDATES, "Unknown explicit candidate selection")
+    if candidate == "half-v3":
+        return dict(
+            folder="owned-pytorch-half-v3",
+            run=HOSTED_RUN,
+            head=HOSTED_HEAD,
+            contract=CONTRACT_SHA,
+            builder=BUILD_SHA,
+            verifier=VERIFIER_SHA,
+            receipt_schema="pytorch-owned-half-hosted-v3",
+            dependencies=DEPENDENCIES,
+        )
+    return dict(
+        folder="owned-pytorch-numpy2-v1",
+        run="41158978641",
+        head="a367b322eda2649309c1519017c0a2a14819b827",
+        contract="f2f5bd956e8665aa63cf88af17039d61694836ccc1ae9f7a510f91c5ab4e8811",
+        builder="dae51736be441849c1d4ef3cb9ee8d3c9441fc48140907401642fd6d6e18653e",
+        verifier="4c824d01b1c5242abafe8d2f7b78b656000fb94dd02a03cb7a6fab0005d3dcdc",
+        receipt_schema="pytorch-owned-numpy2-hosted-v1",
+        dependencies=Path("work/gpu-v4-owned/numpy2-dependencies-v1"),
+    )
 
 
 def require(ok, message):
@@ -496,12 +522,14 @@ def original_inventory(workspace):
     return rows, original, inventory
 
 
-def validate_hosted(receipt, contract, head):
-    require_hosted_selection()
-    require(head == HOSTED_HEAD, "The observed hosted source SHA must match the frozen selection")
+def validate_hosted(receipt, contract, head, candidate="half-v3"):
+    profile = require_hosted_selection(candidate)
     require(
-        receipt["schema"] == "pytorch-owned-half-hosted-v3"
-        and receipt["contract_sha256"] == CONTRACT_SHA
+        head == profile["head"], "The observed hosted source SHA must match the frozen selection"
+    )
+    require(
+        receipt["schema"] == profile["receipt_schema"]
+        and receipt["contract_sha256"] == profile["contract"]
         and receipt["source_revision"] == BASE
         and receipt["patch_sha256"] == contract["combined_patch_sha256"]
         and receipt["component_patches"] == contract["component_patches"],
@@ -509,7 +537,7 @@ def validate_hosted(receipt, contract, head):
     )
     require(
         receipt["github"]["GITHUB_REPOSITORY"] == "logannye/arm64-transformer"
-        and receipt["github"]["GITHUB_RUN_ID"] == HOSTED_RUN
+        and receipt["github"]["GITHUB_RUN_ID"] == profile["run"]
         and receipt["github"]["GITHUB_SHA"] == head,
         "Hosted origin does not match external selection",
     )
@@ -589,18 +617,21 @@ def validate_hosted(receipt, contract, head):
         },
         "Static source preservation proof differs",
     )
-    validate_v3_proofs(receipt, contract)
+    validate_v3_proofs(receipt, contract, candidate)
 
 
-def build_module():
-    path = Path(__file__).resolve().parents[2] / "validation/owned-pytorch-half-v3/hosted_build.py"
-    pinned(path, BUILD_SHA)
+def build_module(candidate="half-v3"):
+    profile = candidate_profile(candidate)
+    path = (
+        Path(__file__).resolve().parents[2] / "validation" / profile["folder"] / "hosted_build.py"
+    )
+    pinned(path, profile["builder"])
     return load(path, "half_v3_frozen_build_checks")
 
 
-def validate_v3_proofs(receipt, contract):
+def validate_v3_proofs(receipt, contract, candidate="half-v3"):
     """Require the v3 command checks and complete Half differential control."""
-    build = build_module()
+    build = build_module(candidate)
     require(receipt["build_environment"] == contract["build_environment"], "Build controls differ")
     build.validate_compilation(receipt["cmake_cache"])
     expected = set(contract["native_evidence_required"]["translation_units"])
@@ -649,10 +680,10 @@ def validate_v3_proofs(receipt, contract):
     require(original["raw_sha256"] == candidate["raw_sha256"], "Half bits or flags differ")
 
 
-def v3_artifact_inputs(artifact, receipt, contract):
+def v3_artifact_inputs(artifact, receipt, contract, candidate="half-v3"):
     """Authenticate retained command databases and actual probe output bytes."""
     rows = []
-    build = build_module()
+    build = build_module(candidate)
     for filename, expected in (
         ("early-compile-commands.json", receipt["early_compile_commands"]),
         (
@@ -688,16 +719,19 @@ def v3_artifact_inputs(artifact, receipt, contract):
     return rows
 
 
-def require_hosted_selection():
+def require_hosted_selection(candidate="half-v3"):
+    profile = candidate_profile(candidate)
     require(
-        isinstance(HOSTED_RUN, str) and re.fullmatch(r"[1-9][0-9]+", HOSTED_RUN),
+        isinstance(profile["run"], str) and re.fullmatch(r"[1-9][0-9]+", profile["run"]),
         "No observed hosted candidate run has been frozen",
     )
+    return profile
 
 
-def selection_contract():
-    folder = Path(__file__).resolve().parents[2] / "validation/owned-pytorch-half-v3"
-    pinned(folder / "contract.json", CONTRACT_SHA)
+def selection_contract(candidate="half-v3"):
+    profile = candidate_profile(candidate)
+    folder = Path(__file__).resolve().parents[2] / "validation" / profile["folder"]
+    pinned(folder / "contract.json", profile["contract"])
     contract = json_read(folder / "contract.json")
     for name, expected in contract["static_input_sha256"].items():
         pinned(folder / name, expected)
@@ -707,12 +741,12 @@ def selection_contract():
     return contract, inventory, static
 
 
-def focused_inventory(failed):
+def focused_inventory(failed, candidate="half-v3"):
     require(
         len(failed) == 27 and len({row["id"] for row in failed}) == 27,
         "Original 27 failed whole methods must be retained",
     )
-    _, inventory, _ = selection_contract()
+    _, inventory, _ = selection_contract(candidate)
     added = list(inventory["added_ids"]) + [
         "integrated_upstream_test_mps.TestAdvancedIndexing."
         "test_index_put_accumulate_nondeterministic_" + dtype
@@ -727,8 +761,8 @@ def focused_inventory(failed):
     ]
 
 
-def complete_inventory(original):
-    _, inventory, _ = selection_contract()
+def complete_inventory(original, candidate="half-v3"):
+    _, inventory, _ = selection_contract(candidate)
     require(
         original["planned_tests"] == inventory["original_ids"]
         and [row["id"] for row in original["tests"]["skipped"]] == inventory["retained_skip_ids"]
@@ -739,21 +773,21 @@ def complete_inventory(original):
     return inventory["required_ids"]
 
 
-def artifact_inputs(artifact, receipt_sha, head):
-    require_hosted_selection()
+def artifact_inputs(artifact, receipt_sha, head, candidate="half-v3"):
+    profile = require_hosted_selection(candidate)
     receipt_row = pinned(artifact / "receipt.json", receipt_sha)
-    contract_row = pinned(artifact / "contract.json", CONTRACT_SHA)
-    pinned(artifact / "hosted_build.py", BUILD_SHA)
-    pinned(artifact / "verify_runtime.py", VERIFIER_SHA)
+    contract_row = pinned(artifact / "contract.json", profile["contract"])
+    pinned(artifact / "hosted_build.py", profile["builder"])
+    pinned(artifact / "verify_runtime.py", profile["verifier"])
     receipt, contract = json_read(receipt_row["path"]), json_read(contract_row["path"])
-    validate_hosted(receipt, contract, head)
+    validate_hosted(receipt, contract, head, candidate)
     rows = [
         receipt_row,
         contract_row,
         binding(artifact / "hosted_build.py"),
         binding(artifact / "verify_runtime.py"),
     ]
-    rows.extend(v3_artifact_inputs(artifact, receipt, contract))
+    rows.extend(v3_artifact_inputs(artifact, receipt, contract, candidate))
     rows.append(pinned(artifact / "changes.patch", contract["combined_patch_sha256"]))
     for name, expected in contract["static_input_sha256"].items():
         rows.append(pinned(artifact / name, expected))
@@ -782,8 +816,30 @@ def artifact_inputs(artifact, receipt_sha, head):
             and value["mps_built"] is True,
             "Hosted import receipt differs",
         )
+        if candidate == "numpy2-v1":
+            validate_numpy2_bridge(value.get("numpy_abi"))
         rows.append(binding(artifact / name))
     return receipt, contract, rows
+
+
+def validate_numpy2_bridge(proof):
+    require(
+        isinstance(proof, dict)
+        and set(proof) == {"version", "module", "cases", "passed"}
+        and proof["version"] == "2.2.6"
+        and proof["passed"] is True
+        and isinstance(proof["module"], str)
+        and Path(proof["module"]).is_absolute(),
+        "Missing hosted native NumPy 2 bridge proof",
+    )
+    require(
+        proof["cases"]
+        == [
+            dict(dtype=dtype, shape=[3], shared_memory_verified=True, mutation_observed=True)
+            for dtype in ("<f4", "<f8", "<i4", "<i8")
+        ],
+        "Incomplete native NumPy 2 dtype/alias roundtrips",
+    )
 
 
 def output_path(workspace, output):
@@ -800,14 +856,16 @@ def output_path(workspace, output):
     return output
 
 
-def prepare(workspace, artifact, receipt_sha, head, output, *, expansion_reserve_gib=16):
-    require_hosted_selection()
+def prepare(
+    workspace, artifact, receipt_sha, head, output, *, expansion_reserve_gib=16, candidate="half-v3"
+):
+    profile = require_hosted_selection(candidate)
     output_path(workspace, output)
     require(re.fullmatch(r"[0-9a-f]{64}", receipt_sha), "Require external hosted receipt SHA256")
-    receipt, contract, inputs = artifact_inputs(artifact, receipt_sha, head)
+    receipt, contract, inputs = artifact_inputs(artifact, receipt_sha, head, candidate)
     bound_helpers, original, failed = original_inventory(workspace)
-    selected = focused_inventory(failed)
-    all_ids = complete_inventory(original)
+    selected = focused_inventory(failed, candidate)
+    all_ids = complete_inventory(original, candidate)
     source_manifest = json_read(artifact / "source-manifest.json")
     inputs.append(
         pinned(artifact / "source-manifest.json", receipt["source_archive"]["manifest_sha256"])
@@ -855,12 +913,13 @@ def prepare(workspace, artifact, receipt_sha, head, output, *, expansion_reserve
         shutil.disk_usage(workspace).free >= storage["minimum_initial_free_bytes"],
         "Insufficient disk reserve for authenticated expansion",
     )
-    dependencies = workspace / DEPENDENCIES
+    dependencies = workspace / profile["dependencies"]
     dependency_proof = verify_dependencies(dependencies, artifact / "wheels", contract)
     output.mkdir(parents=True, exist_ok=False)
     record = {
         "schema": SCHEMA,
         "protocol": PROTOCOL,
+        "candidate": candidate,
         "status": "preparing",
         "formal_eligible": False,
         "formal_fits": 0,
@@ -884,7 +943,7 @@ def prepare(workspace, artifact, receipt_sha, head, output, *, expansion_reserve
         )
         verify_tree(output / "source", source_manifest, source=True)
         verify_tree(output / "runtime", runtime_manifest, source=False)
-        local_contract, _, static = selection_contract()
+        local_contract, _, static = selection_contract(candidate)
         require(local_contract == contract, "Local and transported build contracts differ")
         static.validate_source(output / "source", contract, artifact)
         plan = {
@@ -948,8 +1007,9 @@ def prepare(workspace, artifact, receipt_sha, head, output, *, expansion_reserve
 
 
 def validate_inventory(plan, original, failed):
-    selected = focused_inventory(failed)
-    all_ids = complete_inventory(original)
+    candidate = plan.get("candidate", "half-v3")
+    selected = focused_inventory(failed, candidate)
+    all_ids = complete_inventory(original, candidate)
     require(
         plan["focused_inventory"] == selected
         and plan["workers"]
@@ -972,9 +1032,10 @@ def validate_inventory(plan, original, failed):
 
 
 def authenticate_plan(path, external_sha):
-    require_hosted_selection()
     pinned(path, external_sha)
     plan = json_read(path)
+    candidate = plan.get("candidate", "half-v3")
+    profile = require_hosted_selection(candidate)
     require(
         plan["schema"] == SCHEMA
         and plan["protocol"] == PROTOCOL
@@ -1000,13 +1061,13 @@ def authenticate_plan(path, external_sha):
         check_binding(row)
     workspace = Path(plan["workspace"])
     require(plan["helpers"] == helpers(workspace), "Pinned helper identity changed")
-    selection_contract()
+    selection_contract(candidate)
     reference = load(plan["helpers"]["reference"]["path"], "owned_candidate_retained_replay")
     original = json_read(plan["helpers"]["original"]["path"])
     failed = reference.failure_inventory(original)
     validate_inventory(plan, original, failed)
     receipt, contract, inputs = artifact_inputs(
-        Path(plan["artifact"]), plan["hosted_receipt_sha256"], plan["hosted_head"]
+        Path(plan["artifact"]), plan["hosted_receipt_sha256"], plan["hosted_head"], candidate
     )
     require(all(row in plan["inputs"] for row in inputs), "Artifact evidence absent from plan")
     proof = verify_dependencies(
@@ -1014,7 +1075,7 @@ def authenticate_plan(path, external_sha):
     )
     require(
         proof == plan["dependency_proof"]
-        and Path(plan["dependencies"]) == workspace / DEPENDENCIES,
+        and Path(plan["dependencies"]) == workspace / profile["dependencies"],
         "Dependency installation changed",
     )
     require(
@@ -1465,6 +1526,7 @@ def main():
         prepare_parser.add_argument("--" + name, type=Path, required=True)
     prepare_parser.add_argument("--receipt-sha256", required=True)
     prepare_parser.add_argument("--hosted-head", required=True)
+    prepare_parser.add_argument("--candidate", choices=CANDIDATES, default="half-v3")
     prepare_parser.add_argument("--expansion-reserve-gib", type=int, choices=(10, 16), default=16)
     rebound = sub.add_parser("rebind-plan")
     rebound.add_argument("--plan", type=Path, required=True)
@@ -1492,6 +1554,7 @@ def main():
             args.hosted_head,
             args.output.absolute(),
             expansion_reserve_gib=args.expansion_reserve_gib,
+            candidate=args.candidate,
         )
         print(json.dumps(result, indent=2))
         return 0

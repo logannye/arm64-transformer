@@ -258,14 +258,15 @@ def half_v3_selection(project, source, original, plan_path, plan_sha, torch_runt
     plan_binding = file_binding(plan_path)
     require(plan_binding["sha256"] == plan_sha, "Candidate plan changed after authentication")
     require(Path(plan["runtime"]) == torch_runtime, "Capture runtime differs from candidate plan")
-    contract, _, _ = candidate.selection_contract()
+    profile = candidate.candidate_profile(plan.get("candidate", "half-v3"))
+    contract, _, _ = candidate.selection_contract(plan.get("candidate", "half-v3"))
     selected = json.loads(json.dumps(original))
     selected["pytorch"] = {
         "kind": "project_maintained_full_source_build",
         "base": contract["source_revision"],
         "patches": [row["sha256"] for row in contract["component_patches"]],
         "combined_patch_sha256": contract["combined_patch_sha256"],
-        "build_run": int(candidate.HOSTED_RUN),
+        "build_run": int(profile["run"]),
         "runtime_manifest_sha256": plan["runtime_manifest"]["sha256"],
         "engines": ["cpu_torch", "mps"],
         "same_distribution_required": True,

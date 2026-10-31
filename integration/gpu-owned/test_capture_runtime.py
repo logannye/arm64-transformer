@@ -81,7 +81,9 @@ class CaptureTests(unittest.TestCase):
             "    plan=json.loads(raw)\n"
             + ("    Path(path).write_bytes(raw+b'\\n')\n" if mutate_plan else "")
             + "    return plan, None\n"
-            + "def selection_contract(): return "
+            + "def candidate_profile(candidate):\n"
+            + "    return {'run':'41158978641' if candidate=='numpy2-v1' else HOSTED_RUN}\n"
+            + "def selection_contract(candidate): return "
             + repr(contract)
             + ",None,None\n"
         )
@@ -106,6 +108,19 @@ class CaptureTests(unittest.TestCase):
         self.assertEqual(selected["pytorch"]["runtime_manifest_sha256"], "e" * 64)
         self.assertEqual(selected["pytorch"]["engines"], ["cpu_torch", "mps"])
         self.assertEqual(proof["plan"]["sha256"], digest)
+        self.assertFalse(proof["formal_eligible"])
+
+    def test_numpy2_capture_keeps_distinct_native_build_identity(self):
+        _, source, plan, _, runtime = self.half_fixture()
+        contents = json.loads(plan.read_text())
+        contents["candidate"] = "numpy2-v1"
+        plan.write_text(json.dumps(contents))
+        original = {"pytorch": {"old": True}, "mlx": {"unchanged": True}}
+        selected, proof = capture.half_v3_selection(
+            self.root, source, original, plan, capture.sha(plan), runtime
+        )
+        self.assertEqual(selected["pytorch"]["build_run"], 41158978641)
+        self.assertEqual(selected["mlx"], original["mlx"])
         self.assertFalse(proof["formal_eligible"])
 
     def test_half_candidate_rejects_missing_binding_and_foreign_runtime(self):

@@ -642,6 +642,69 @@ class CandidateContractTests(unittest.TestCase):
         self.assertEqual(env["PYTORCH_ENABLE_MPS_FALLBACK"], "0")
         self.assertEqual(env["PYTORCH_MPS_FAST_MATH"], "0")
 
+    def test_explicit_numpy2_candidate_retains_native_sources_inventory_and_prior_identity(self):
+        contract, inventory, _ = candidate.selection_contract("numpy2-v1")
+        _, original_inventory, _ = candidate.selection_contract()
+        self.assertEqual(inventory, original_inventory)
+        for key in (
+            "source_sha256",
+            "component_patches",
+            "combined_patch_sha256",
+            "build_environment",
+        ):
+            self.assertEqual(contract[key], self.contract[key])
+        self.assertEqual(candidate.candidate_profile()["run"], candidate.HOSTED_RUN)
+        selected = candidate.candidate_profile("numpy2-v1")
+        self.assertEqual(selected["run"], "41158978641")
+        self.assertNotEqual(selected["head"], self.head)
+        with self.assertRaises(ValueError):
+            candidate.candidate_profile("latest")
+
+    def test_numpy2_hosted_selection_rejects_cross_run_or_legacy_proofs(self):
+        profile = candidate.candidate_profile("numpy2-v1")
+        contract, _, _ = candidate.selection_contract("numpy2-v1")
+        receipt = copy.deepcopy(self.receipt)
+        receipt.update(schema=profile["receipt_schema"], contract_sha256=profile["contract"])
+        receipt["github"].update(GITHUB_RUN_ID=profile["run"], GITHUB_SHA=profile["head"])
+        candidate.validate_hosted(receipt, contract, profile["head"], "numpy2-v1")
+        with self.assertRaises(ValueError):
+            candidate.validate_hosted(self.receipt, contract, self.head, "numpy2-v1")
+        with self.assertRaises(ValueError):
+            candidate.validate_hosted(receipt, self.contract, profile["head"])
+        for field in ("GITHUB_RUN_ID", "GITHUB_SHA"):
+            changed = copy.deepcopy(receipt)
+            changed["github"][field] = self.receipt["github"][field]
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                candidate.validate_hosted(changed, contract, profile["head"], "numpy2-v1")
+
+    def test_numpy2_native_bridge_requires_all_real_dtype_alias_roundtrips(self):
+        proof = dict(
+            version="2.2.6",
+            module="/hosted/site-packages/numpy/__init__.py",
+            passed=True,
+            cases=[
+                dict(dtype=d, shape=[3], shared_memory_verified=True, mutation_observed=True)
+                for d in ("<f4", "<f8", "<i4", "<i8")
+            ],
+        )
+        candidate.validate_numpy2_bridge(proof)
+        mutations = [
+            lambda x: x.update(version="1.26.4"),
+            lambda x: x.update(passed=False),
+            lambda x: x["cases"].pop(),
+            lambda x: x["cases"].reverse(),
+            lambda x: x["cases"][0].update(shared_memory_verified=False),
+            lambda x: x["cases"][0].update(mutation_observed=False),
+            lambda x: x["cases"][0].update(shape=[2]),
+        ]
+        for mutate in mutations:
+            changed = copy.deepcopy(proof)
+            mutate(changed)
+            with self.assertRaises(ValueError):
+                candidate.validate_numpy2_bridge(changed)
+        with self.assertRaises(ValueError):
+            candidate.validate_numpy2_bridge(None)
+
     def test_unselected_hosted_run_fails_before_artifact_reads(self):
         with mock.patch.object(candidate, "HOSTED_RUN", None):
             with mock.patch.object(

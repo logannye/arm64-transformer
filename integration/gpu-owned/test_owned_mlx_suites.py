@@ -159,6 +159,84 @@ class ProvenanceTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name).resolve()
 
+    def test_numpy2_contract_preserves_complete_inventory(self):
+        original, _ = suite.suite_inventory("torch-dev-compat")
+        updated, _ = suite.suite_inventory("torch-dev-compat-numpy2")
+        self.assertEqual(updated, original)
+        self.assertEqual(
+            suite.numpy_version({"suite_contract": "torch-dev-compat-numpy2"}), "2.2.6"
+        )
+        self.assertEqual(suite.numpy_version({}), "1.26.4")
+        with self.assertRaises(ValueError):
+            suite.numpy_version({"suite_contract": "arbitrary"})
+
+    def driver_fixture(self):
+        dependencies = self.root / "site-packages"
+        bundle = self.root / "bundle"
+        for module, version in (
+            ("pytest", "9.1.1"),
+            ("tensorflow", "2.20.0"),
+            ("ml_dtypes", "0.5.3"),
+        ):
+            package = dependencies / module
+            package.mkdir(parents=True)
+            (package / "__init__.py").write_text("raise AssertionError('must not import')\n")
+            metadata = dependencies / (module + "-" + version + ".dist-info")
+            metadata.mkdir()
+            (metadata / "METADATA").write_text(f"Name: {module}\nVersion: {version}\n")
+        (bundle / "source").mkdir(parents=True)
+        (bundle / "source/pyproject.toml").write_text(
+            '[tool.pytest]\ntestpaths = ["python/tests"]\n'
+        )
+        runtime = {
+            "files": {
+                str(p).lstrip("/"): suite.sha256(p) for p in self.root.rglob("*") if p.is_file()
+            }
+        }
+        return dependencies, bundle, runtime
+
+    def test_driver_binds_upstream_config_and_requires_complete_dependencies_without_imports(self):
+        dependencies, bundle, runtime = self.driver_fixture()
+        result = suite.python_test_driver(runtime, bundle, [str(dependencies)])
+        self.assertEqual(result["root"], str(bundle / "source"))
+        self.assertEqual(result["dependencies"]["pytest"]["version"], "9.1.1")
+        self.assertEqual(set(result["dependencies"]), {"pytest", "tensorflow", "ml_dtypes"})
+        arguments = suite.python_arguments(bundle, self.root / "output")
+        self.assertEqual(
+            arguments[1:4],
+            ["--rootdir=" + str(bundle / "source"), "-c", str(bundle / "source/pyproject.toml")],
+        )
+        self.assertNotIn("-k", arguments)
+
+    def test_driver_rejects_old_pytest_even_if_all_its_bytes_are_bound(self):
+        dependencies, bundle, runtime = self.driver_fixture()
+        metadata = dependencies / "pytest-9.1.1.dist-info/METADATA"
+        metadata.write_text("Name: pytest\nVersion: 7.3.2\n")
+        runtime["files"][str(metadata).lstrip("/")] = suite.sha256(metadata)
+        with self.assertRaisesRegex(ValueError, "version differs: pytest"):
+            suite.python_test_driver(runtime, bundle, [str(dependencies)])
+
+    def test_driver_rejects_missing_support_package_and_changed_upstream_config(self):
+        dependencies, bundle, runtime = self.driver_fixture()
+        for path in (dependencies / "ml_dtypes/__init__.py", bundle / "source/pyproject.toml"):
+            with self.subTest(path=path):
+                saved = path.read_bytes()
+                path.write_bytes(saved + b"# changed\n")
+                with self.assertRaisesRegex(ValueError, "Unbound"):
+                    suite.python_test_driver(runtime, bundle, [str(dependencies)])
+                path.write_bytes(saved)
+        (dependencies / "tensorflow/__init__.py").unlink()
+        with self.assertRaisesRegex(ValueError, "Missing test dependency"):
+            suite.python_test_driver(runtime, bundle, [str(dependencies)])
+
+    def test_driver_rejects_shadow_package_without_authenticated_metadata(self):
+        dependencies, bundle, runtime = self.driver_fixture()
+        shadow = self.root / "shadow/pytest"
+        shadow.mkdir(parents=True)
+        (shadow / "__init__.py").write_text("# foreign pytest\n")
+        with self.assertRaisesRegex(ValueError, "Unbound test dependency"):
+            suite.python_test_driver(runtime, bundle, [str(shadow.parent), str(dependencies)])
+
     def test_duplicate_or_nonfinite_json_rejected(self):
         p = self.root / "value.json"
         for raw in ('{"x":1,"x":2}', '{"x":NaN}', '{"x":Infinity}'):

@@ -10,6 +10,7 @@ import copy
 import hashlib
 import importlib
 import importlib.machinery
+import importlib.metadata
 import json
 import math
 import os
@@ -32,6 +33,7 @@ PROTOCOL = "gpu-v4-owned-five-engine-v1"
 PRODUCER = "integration/gpu-owned/owned_mlx_suites.py"
 INVENTORY_SHA = "cff557d2b1d68857bc488e77e6672fb0fb386409e88ad6ca4e7fa31bd862d852"
 COMPAT_INVENTORY_SHA = "7e57d93ce0969f7c3be7ca7c7d137b7f0fdfeeda0b21547d7e7b1302d9fbd41a"
+SUITE_CONTRACTS = ("original", "torch-dev-compat", "torch-dev-compat-numpy2")
 SUITES = ("mlx_cpp", "mlx_python")
 SUBPROCESS_AST_SHA = "90a6406e042b09e83ed671864ad0cf30cefa2e6c4e148ca60d24ac26cbb6b433"
 BOOTSTRAP_FILES = {
@@ -188,7 +190,7 @@ def check_controls(*, descendant=False):
 
 
 def suite_inventory(suite_contract="original"):
-    require(suite_contract in {"original", "torch-dev-compat"}, "Unknown MLX suite contract")
+    require(suite_contract in SUITE_CONTRACTS, "Unknown MLX suite contract")
     filename, expected_sha = (
         ("owned-suite-inventory-v1.json", INVENTORY_SHA)
         if suite_contract == "original"
@@ -204,6 +206,69 @@ def suite_inventory(suite_contract="original"):
         "Wrong frozen suite inventory",
     )
     return value["mlx"], row
+
+
+def numpy_version(plan):
+    contract = plan.get("suite_contract", "original")
+    require(contract in SUITE_CONTRACTS, "Unknown MLX suite contract")
+    return "2.2.6" if contract == "torch-dev-compat-numpy2" else "1.26.4"
+
+
+def python_test_driver(runtime, bundle, paths=None):
+    """Bind the upstream config and complete installed test dependencies before collection."""
+    paths = sys.path if paths is None else paths
+    dependencies = {}
+    for module, distribution, version in (
+        ("pytest", "pytest", "9.1.1"),
+        ("tensorflow", "tensorflow", "2.20.0"),
+        ("ml_dtypes", "ml_dtypes", "0.5.3"),
+    ):
+        spec = importlib.machinery.PathFinder.find_spec(module, paths)
+        require(
+            spec is not None and isinstance(spec.origin, str), "Missing test dependency: " + module
+        )
+        source = binding(Path(spec.origin).resolve(strict=True))
+        require(
+            runtime["files"].get(source["path"].lstrip("/")) == source["sha256"],
+            "Unbound test dependency: " + module,
+        )
+        root = Path(source["path"]).parent.parent
+        matches = [
+            d
+            for d in importlib.metadata.distributions(path=[str(root)])
+            if d.metadata["Name"].replace("-", "_").lower() == distribution
+        ]
+        require(
+            len(matches) == 1 and matches[0].version == version,
+            "Test dependency version differs: " + module,
+        )
+        metadata = binding(Path(matches[0]._path) / "METADATA")
+        require(
+            runtime["files"].get(metadata["path"].lstrip("/")) == metadata["sha256"],
+            "Unbound test dependency metadata: " + module,
+        )
+        dependencies[module] = dict(version=version, source=source, metadata=metadata)
+    config = binding(bundle / "source/pyproject.toml")
+    require(
+        runtime["files"].get(config["path"].lstrip("/")) == config["sha256"],
+        "Unbound upstream pytest configuration",
+    )
+    return dict(root=str(bundle / "source"), config=config, dependencies=dependencies)
+
+
+def python_arguments(bundle, output):
+    return [
+        str(bundle / "source/python/tests"),
+        "--rootdir=" + str(bundle / "source"),
+        "-c",
+        str(bundle / "source/pyproject.toml"),
+        "-q",
+        "-ra",
+        "--durations=20",
+        "--junitxml=" + str(output / "python.xml"),
+        "-o",
+        "cache_dir=" + str(output / "pytest-cache"),
+    ]
 
 
 def verify_project_before_import(receipt):
@@ -538,7 +603,7 @@ def descendant(plan_path, plan_sha, parent_output, parent_pid, upstream):
         import numpy as np
 
         require(
-            np.__version__ == "1.26.4"
+            np.__version__ == numpy_version(plan)
             and str(Path(np.__file__).resolve()) in runtime["layout"]["packages"]["numpy"],
             "Descendant NumPy version/origin differs",
         )
@@ -607,7 +672,9 @@ def descendant(plan_path, plan_sha, parent_output, parent_pid, upstream):
     return int(record["returncode"])
 
 
-def validate_descendant_proofs(value, runtime, runtime_root, project, bundle):
+def validate_descendant_proofs(
+    value, runtime, runtime_root, project, bundle, *, expected_numpy="1.26.4"
+):
     """Check retained origin maps without opening live paths (archive-safe).
 
     The caller authenticates runtime/project maps and raw receipt bytes first.
@@ -642,7 +709,7 @@ def validate_descendant_proofs(value, runtime, runtime_root, project, bundle):
 
     numpy = value.get("numpy", {})
     require(
-        numpy.get("version") == "1.26.4"
+        numpy.get("version") == expected_numpy
         and numpy.get("path") in runtime["layout"]["packages"]["numpy"],
         "Descendant NumPy dependency differs",
     )
@@ -834,7 +901,12 @@ def audit_descendants(
         for phase in ("before", "after"):
             validator(value["compilation_" + phase])
         files = validate_descendant_proofs(
-            value, runtime, plan["runtime_root"], selected_receipt["project"], plan["bundle"]
+            value,
+            runtime,
+            plan["runtime_root"],
+            selected_receipt["project"],
+            plan["bundle"],
+            expected_numpy=numpy_version(plan),
         )
         for path, expected in files.items():
             pinned(path, expected)
@@ -877,7 +949,7 @@ def freeze(
         "formal_fits": 0,
         "suite_contract": suite_contract,
     }
-    authority, _, _, _ = bootstrap(plan)
+    authority, _, runtime, _ = bootstrap(plan)
     output_path(output, authority.verify()[0]["project"])
     expected, inventory_binding = suite_inventory(suite_contract)
     bundle, sources = test_source(authority, expected)
@@ -886,6 +958,7 @@ def freeze(
         bundle=str(bundle),
         test_source_sha256=sources,
         descendant_contract=subprocess_contract(bundle, expected),
+        python_test_driver=python_test_driver(runtime, bundle),
     )
     output.mkdir(parents=True, exist_ok=False)
     write_json(output / "plan.json", plan)
@@ -917,6 +990,10 @@ def authenticate_plan(path, expected_sha):
     require(
         plan["descendant_contract"] == subprocess_contract(bundle, expected),
         "Prospective descendant routing changed",
+    )
+    require(
+        plan["python_test_driver"] == python_test_driver(runtime, bundle),
+        "Prospective Python test driver changed",
     )
     return plan, authority, backend, runtime, selection, expected
 
@@ -1204,7 +1281,7 @@ def worker(plan_path, plan_sha, suite, output):
         bundle = Path(plan["bundle"])
         import numpy as np
 
-        require(np.__version__ == "1.26.4", "Joint runtime must use NumPy1.26.4")
+        require(np.__version__ == numpy_version(plan), "Joint runtime NumPy version differs")
         numpy_path = str(Path(np.__file__).resolve(strict=True))
         require(numpy_path in runtime["layout"]["packages"]["numpy"], "NumPy origin differs")
         import mlx.core as mx
@@ -1279,15 +1356,14 @@ def worker(plan_path, plan_sha, suite, output):
             )
             import pytest
 
-            arguments = [
-                str(bundle / "source/python/tests"),
-                "-q",
-                "-ra",
-                "--durations=20",
-                "--junitxml=" + str(output / "python.xml"),
-                "-o",
-                "cache_dir=" + str(output / "pytest-cache"),
-            ]
+            require(
+                pytest.__version__ == "9.1.1"
+                and str(pytest_source)
+                == plan["python_test_driver"]["dependencies"]["pytest"]["source"]["path"],
+                "Loaded pytest version/origin differs",
+            )
+            record["python_test_driver"] = python_test_driver(runtime, bundle)
+            arguments = python_arguments(bundle, output)
             record["suite_arguments"] = arguments
             os.chdir(bundle / "source")
             launcher = output / "archive-python"
@@ -1557,6 +1633,13 @@ def audit_execution(row, plan, plan_sha, expected, runtime, selected_receipt, pr
     )
     raw = receipt["raw"]
     if row["name"] == "mlx_python":
+        require(
+            receipt["python_test_driver"]
+            == plan["python_test_driver"]
+            == python_test_driver(runtime, Path(plan["bundle"]))
+            and receipt["suite_arguments"] == python_arguments(Path(plan["bundle"]), root),
+            "Retained upstream pytest configuration or arguments differ",
+        )
         stream = receipt.get("post_pytest_stream", {})
         require(
             stream.get("reason") == "upstream_pytest_unconfigure_clears_streams"
@@ -1707,7 +1790,7 @@ def main():
     for name in ("runtime-root", "runtime-inventory", "selection", "receipt", "output"):
         p.add_argument("--" + name, type=Path, required=True)
     p.add_argument("--receipt-sha256", required=True)
-    p.add_argument("--suite-contract", choices=("original", "torch-dev-compat"), default="original")
+    p.add_argument("--suite-contract", choices=SUITE_CONTRACTS, default="original")
     for name in ("run", "worker"):
         p = subs.add_parser(name)
         p.add_argument("--plan", type=Path, required=True)

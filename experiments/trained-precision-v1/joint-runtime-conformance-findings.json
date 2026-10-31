@@ -92,14 +92,27 @@
       "tensorflow",
       "ml_dtypes"
     ],
-    "native_build_required_for_numpy2_bridge": true
+    "native_build_required_for_numpy2_bridge": true,
+    "pytest_version": "7.3.2",
+    "observed_python_case_prefix": "work.gpu-v4-owned.mlx-test-compat-capsule-v1.source.python.tests",
+    "required_python_case_prefix": "python.tests",
+    "required_subtest_summary_observed": false
   },
   "corrective_route": {
     "hosted_build": "validation/owned-pytorch-numpy2-v1",
     "native_patch_unchanged": true,
     "numpy_version": "2.2.6",
     "reuse_installed_complete_mlx_test_dependencies": true,
-    "existing_skip_and_xfail_ids_unchanged": true
+    "existing_skip_and_xfail_ids_unchanged": true,
+    "python_test_driver": {
+      "pytest": "9.1.1",
+      "explicit_root": "selected MLX source root",
+      "explicit_configuration": "selected MLX source/pyproject.toml",
+      "tensorflow": "2.20.0",
+      "ml_dtypes": "0.5.3",
+      "configuration_and_dependency_files_runtime_bound": true,
+      "old_xml_renamed_or_requalified": false
+    }
   },
   "formal_eligible": false,
   "formal_fits": 0,

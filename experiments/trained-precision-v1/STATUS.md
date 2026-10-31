@@ -487,3 +487,24 @@ pass. The prospective generic precision API's CPU tests passed hosted Python and
 native CI at `1ed35f1b10873863453d7ee640a4cd6cf1934801` in
 [run 41157511140](https://github.com/logannye/arm64-transformer/actions/runs/41157511140).
 These are prototype operator checks, not installed-library or GPU qualification.
+
+The full NumPy 2 build is running at source
+`a367b322eda2649309c1519017c0a2a14819b827` in
+[run 41158978641](https://github.com/logannye/arm64-transformer/actions/runs/41158978641).
+The candidate verifier now has an explicit, independently pinned `numpy2-v1`
+selection; the preceding half-v3 selection is unchanged. It requires the same
+native source and test inventories, all hosted build/source/compiler proofs and
+four native NumPy dtype/alias roundtrips. Forty-five verifier mutation checks and
+24 capture checks pass. A selected run ID is not a successful build or qualification.
+
+The retained MLX Python run also used pytest 7.3.2, which missed the upstream
+`[tool.pytest]` configuration, prefixed case identities with the outer workspace
+and omitted the required subtest summary. The corrected producer requires
+pytest 9.1.1, the selected source root and the unchanged upstream configuration.
+It binds their actual files and metadata, together with the existing TensorFlow
+2.20.0 and ml_dtypes 0.5.3 packages, before collection. All 40 MLX helper checks
+pass, including rejection of old pytest, missing support packages and changed
+configuration. The explicit NumPy 2 suite contract retains all 1,053 Python cases,
+17,701 subtests, seven eligible skips, 305 C++ cases and 4,792 assertions. No old
+XML, receipt, exit status or qualification is rewritten. A fresh joint capture
+and complete execution remain required.
