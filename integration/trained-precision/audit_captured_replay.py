@@ -201,6 +201,35 @@ def audit(sidecar_path, sidecar_sha, capture_path, capture_sha):
     )
     for phase in ("before", "after"):
         audit_origins(sidecar["origins_" + phase], sidecar["engine"], capture, runtime, receipt)
+    if "library_model" in worker:
+        require("--library-api" in sidecar["command"], "Library API execution flag missing")
+        framework = "mlx" if sidecar["engine"] == "mlx" else "pytorch"
+        selected = receipt["frameworks"][framework]["selection"].get("precision_api", {})
+        proof = worker["library_api"]
+        require(
+            selected.get("module") == proof["module"]
+            and selected.get("derivation_receipt_sha256")
+            == capture["precision_api_derivations"][framework]["receipt"]["sha256"],
+            "Library API is absent from the captured selection",
+        )
+        loaded = sidecar["origins_after"]["loaded_python_files"]
+        require(
+            loaded.get(proof["module"], {}).get("path") == proof["module_path"],
+            "Actual loaded precision API differs from model proof",
+        )
+        prefix = proof["module"].rsplit(".", 1)[0]
+        for name in (
+            proof["module"],
+            prefix + "._fp32_precise_math",
+            prefix + "._fp32_precise_dense",
+        ):
+            require(name in loaded, "Missing loaded generic precision module")
+            known_file(loaded[name]["path"], runtime, capture["runtime_root"], receipt["project"])
+    else:
+        require(
+            "--library-api" not in sidecar["command"],
+            "Stock/diagnostic model mislabeled as library API",
+        )
     SUITE.pinned(sidecar_path, sidecar_sha)
     SUITE.pinned(capture_path, capture_sha)
     return dict(

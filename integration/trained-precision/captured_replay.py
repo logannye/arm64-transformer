@@ -36,8 +36,18 @@ def worker_arguments(args):
         "Framework candidate is GPU-only",
     )
     SUITE.require(
-        not args.framework_compiled or (args.engine == "mlx" and args.framework_policy is not None),
+        not args.framework_compiled
+        or (args.engine == "mlx" and (args.framework_policy is not None or args.library_api)),
         "Compilation requires an explicit MLX candidate",
+    )
+    SUITE.require(
+        not args.library_api
+        or (
+            not args.python_candidate
+            and args.framework_policy is None
+            and args.framework_compiled == (args.engine == "mlx")
+        ),
+        "Library API and old diagnostic candidate flags cannot be combined",
     )
     command = [
         str(ROOT / WORKER),
@@ -67,6 +77,8 @@ def worker_arguments(args):
         command.extend(["--framework-policy", str(args.framework_policy)])
     if args.framework_compiled:
         command.append("--framework-compiled")
+    if args.library_api:
+        command.append("--library-api")
     command.extend(["--case-offset", str(args.case_offset)])
     if args.case_limit is not None:
         command.extend(["--case-limit", str(args.case_limit)])
@@ -150,6 +162,14 @@ def run(args):
     capture, plan = captured_plan(args.capture, args.capture_sha256)
     authority, backend, inventory, _ = SUITE.bootstrap(plan)
     receipt, _ = authority.verify()
+    if args.library_api:
+        framework = "mlx" if args.engine == "mlx" else "pytorch"
+        selected = receipt["frameworks"][framework]["selection"]
+        SUITE.require(
+            selected.get("precision_api", {}).get("module")
+            == ("mlx.nn.precise_fp32" if framework == "mlx" else "torch.nn.precise_fp32"),
+            "Library model requires an explicitly captured maintained-package API",
+        )
     SUITE.output_path(args.output, receipt["project"])
     record = {
         "schema": "trained-precision-captured-runtime-replay-v1",
@@ -230,6 +250,7 @@ def parser():
     result.add_argument("--python-candidate", action="store_true")
     result.add_argument("--framework-policy", type=int, choices=(7, 15))
     result.add_argument("--framework-compiled", action="store_true")
+    result.add_argument("--library-api", action="store_true")
     result.add_argument("--case-offset", type=int, default=0)
     result.add_argument("--case-limit", type=int)
     return result

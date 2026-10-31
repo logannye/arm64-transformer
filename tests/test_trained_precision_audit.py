@@ -14,6 +14,46 @@ audit = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(audit)
 
 
+def test_library_api_identity_preserves_stage_and_stock_candidate_boundary():
+    result = dict(
+        engine="mps",
+        library_model="maintained-library-fp32-saved-model-v1",
+        framework_compiled=False,
+        python_candidate=None,
+        torch_diagnostic_policy=0,
+        library_api=dict(
+            model_identity="maintained-library-fp32-saved-model-v1",
+            module="torch.nn.precise_fp32",
+            module_path="/runtime/torch/nn/precise_fp32.py",
+            api_identity="fp32-saved-precision-api-v1",
+            precise_stages=["ln1", "qkv", "attention"],
+            state_dtype="float32",
+            stock_control=False,
+            formal_eligible=False,
+        ),
+    )
+    audit.validate_library_identity(result)
+    for mutation in (
+        lambda x: x["library_api"].update(stock_control=True),
+        lambda x: x["library_api"].update(state_dtype="float64"),
+        lambda x: x["library_api"]["precise_stages"].append("ff1"),
+        lambda x: x.update(framework_candidate_policy=7),
+        lambda x: x.update(engine="mlx"),
+        lambda x: x["library_api"].update(module="project.precision"),
+    ):
+        changed = copy.deepcopy(result)
+        mutation(changed)
+        with pytest.raises(ValueError):
+            audit.validate_library_identity(changed)
+    result.update(engine="mlx", framework_compiled=True)
+    result["library_api"].update(
+        module="mlx.nn.precise_fp32",
+        module_path="/runtime/python/mlx/nn/precise_fp32.py",
+        precise_stages=["ln1", "qkv", "attention", "ff1"],
+    )
+    audit.validate_library_identity(result)
+
+
 @pytest.fixture
 def replay(tmp_path):
     root, output = tmp_path / "inputs", tmp_path / "worker"

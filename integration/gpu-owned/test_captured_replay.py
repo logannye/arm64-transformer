@@ -70,6 +70,21 @@ class ArgumentsTests(unittest.TestCase):
         self.assertIn("--framework-compiled", command)
         self.assertEqual(command[command.index("--framework-policy") + 1], "15")
 
+    def test_library_api_is_separate_and_requires_compiled_mlx(self):
+        for engine in ("cpu_torch", "mps", "mlx"):
+            options = ["--library-api"] + (["--framework-compiled"] if engine == "mlx" else [])
+            command = REPLAY.worker_arguments(self.arguments(engine, *options))
+            self.assertIn("--library-api", command)
+            self.assertNotIn("--framework-policy", command)
+            self.assertNotIn("--python-candidate", command)
+        for engine, options in (
+            ("mlx", ["--library-api"]),
+            ("mps", ["--library-api", "--framework-policy", "7"]),
+            ("cpu_torch", ["--library-api", "--python-candidate"]),
+        ):
+            with self.subTest(engine=engine), self.assertRaises(ValueError):
+                REPLAY.worker_arguments(self.arguments(engine, *options))
+
     def test_rejects_cross_engine_candidate_flags(self):
         for engine, options in (
             ("mps", ["--python-candidate"]),

@@ -118,6 +118,7 @@ def source_inventory():
         ROOT / "integration/trained-precision/compensated_attention.py",
         ROOT / "integration/trained-precision/compensated_linear.py",
         ROOT / "integration/trained-precision/graph_evidence.py",
+        ROOT / "integration/trained-precision/library_candidate.py",
     ]
     return {str(p.relative_to(ROOT)): digest(p) for p in sorted(paths)}
 
@@ -265,7 +266,26 @@ def worker(args):
             raise ValueError("Separate Python candidate cannot change another engine/probe")
         if not args.python_candidate and args.python_candidate_version != 1:
             raise ValueError("A candidate version requires the separate Python candidate")
-        if args.framework_policy is not None:
+        if args.library_api:
+            if (
+                args.engine not in ("cpu_torch", "mps", "mlx")
+                or args.python_candidate
+                or args.torch_policy
+                or args.framework_policy is not None
+                or args.framework_compiled != (args.engine == "mlx")
+            ):
+                raise ValueError(
+                    "Library API requires a separately labeled CPU/MPS or compiled MLX arm"
+                )
+            module = load_module(
+                "library_candidate", ROOT / "integration/trained-precision/library_candidate.py"
+            )
+            receipt.update(
+                library_model=module.IDENTITY,
+                framework_compiled=args.framework_compiled,
+                framework_operation="gradient" if args.gradients else "forward",
+            )
+        elif args.framework_policy is not None:
             if args.engine not in ("mps", "mlx") or args.python_candidate or args.torch_policy:
                 raise ValueError("Framework diagnostic requires an explicit GPU candidate arm")
             if args.framework_compiled and args.engine != "mlx":
@@ -363,7 +383,11 @@ def worker(args):
         receipt["expected_cases"] = [c["id"] for c in cases]
         receipt["full_width_inventory"] = args.case_limit is None and args.case_offset == 0
         evaluator = None
-        if args.framework_policy is not None:
+        if args.library_api:
+            evaluator = module.Evaluator(
+                args.engine, gradients=args.gradients, compiled=args.framework_compiled
+            )
+        elif args.framework_policy is not None:
             evaluator = module.Evaluator(
                 args.engine,
                 args.framework_policy,
@@ -509,6 +533,10 @@ def worker(args):
                 ),
                 flush=True,
             )
+        if args.library_api:
+            receipt["library_api"] = {
+                key: value for key, value in evaluator.proof.items() if key != "graphs"
+            }
         if evaluator is not None and args.framework_compiled:
             proof = evaluator.proof
             receipt["compilation_configuration"] = proof["compilation_configuration"]
@@ -601,6 +629,7 @@ def main():
     run.add_argument("--python-candidate-version", type=int, choices=(1, 2), default=1)
     run.add_argument("--framework-policy", type=int, choices=(2, 3, 6, 7, 15))
     run.add_argument("--framework-compiled", action="store_true")
+    run.add_argument("--library-api", action="store_true")
     run.add_argument("--metal-shaders")
     run.add_argument("--metal-shaders-sha256")
     run.add_argument("--case-limit", type=int)

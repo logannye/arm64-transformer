@@ -949,7 +949,11 @@ def freeze(
         "formal_fits": 0,
         "suite_contract": suite_contract,
     }
-    authority, _, runtime, _ = bootstrap(plan)
+    authority, _, runtime, selected = bootstrap(plan)
+    require(
+        numpy_version(plan) == selected["pytorch"].get("numpy_abi_version", "1.26.4"),
+        "MLX suite contract differs from selected Torch NumPy ABI",
+    )
     output_path(output, authority.verify()[0]["project"])
     expected, inventory_binding = suite_inventory(suite_contract)
     bundle, sources = test_source(authority, expected)
@@ -982,6 +986,10 @@ def authenticate_plan(path, expected_sha):
     expected, identity = suite_inventory(plan.get("suite_contract", "original"))
     require(plan["suite_inventory"] == identity, "Suite inventory differs")
     authority, backend, runtime, selection = bootstrap(plan)
+    require(
+        numpy_version(plan) == selection["pytorch"].get("numpy_abi_version", "1.26.4"),
+        "MLX suite contract differs from selected Torch NumPy ABI",
+    )
     bundle, sources = test_source(authority, expected)
     require(
         plan["bundle"] == str(bundle) and plan["test_source_sha256"] == sources,

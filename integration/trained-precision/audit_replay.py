@@ -26,6 +26,33 @@ def require(condition, message):
         raise ValueError(message)
 
 
+def validate_library_identity(result):
+    engine = result["engine"]
+    require(engine in {"cpu_torch", "mps", "mlx"}, "Unknown library model engine")
+    proof = result.get("library_api", {})
+    expected_module = "mlx.nn.precise_fp32" if engine == "mlx" else "torch.nn.precise_fp32"
+    stages = ["ln1", "qkv", "attention"] + (["ff1"] if engine == "mlx" else [])
+    require(
+        result["library_model"]
+        == proof.get("model_identity")
+        == "maintained-library-fp32-saved-model-v1"
+        and proof.get("module") == expected_module
+        and proof.get("api_identity") == "fp32-saved-precision-api-v1"
+        and proof.get("precise_stages") == stages
+        and proof.get("state_dtype") == "float32"
+        and proof.get("stock_control") is False
+        and proof.get("formal_eligible") is False
+        and isinstance(proof.get("module_path"), str)
+        and Path(proof["module_path"]).is_absolute()
+        and result["framework_compiled"] is (engine == "mlx")
+        and "framework_candidate" not in result
+        and "framework_candidate_policy" not in result
+        and result.get("python_candidate") is None
+        and result.get("torch_diagnostic_policy", 0) == 0,
+        "Library model identity, stages or stock/candidate label differs",
+    )
+
+
 def checked(root, relative, expected):
     root = Path(root).resolve(strict=True)
     path = (root / relative).resolve(strict=True)
@@ -201,18 +228,21 @@ def audit_worker(output, receipt_sha, plan_path, plan_sha, evidence_root, raw_st
             "compensated-framework-model-diagnostic-v2": range(8),
             "compensated-framework-model-diagnostic-v3": range(8, 16),
         }
-        require(
-            result.get("framework_candidate") in policies
-            and type(result.get("framework_candidate_policy")) is int
-            and result["framework_candidate_policy"] in policies[result["framework_candidate"]],
-            "Framework candidate identity and policy differ",
-        )
+        if "library_model" in result:
+            validate_library_identity(result)
+        else:
+            require(
+                result.get("framework_candidate") in policies
+                and type(result.get("framework_candidate_policy")) is int
+                and result["framework_candidate_policy"] in policies[result["framework_candidate"]],
+                "Framework candidate identity and policy differ",
+            )
         require(
             result["framework_operation"]
             == ("gradient" if result["gradients_checked"] else "forward"),
             "Framework operation differs from the saved quantities",
         )
-        if result["framework_candidate_policy"] == 0:
+        if result.get("framework_candidate_policy") == 0:
             require(len(result["cases"]) == 1, "Control probe requires exactly one case")
             binding = result["ordinary_control_raw"]
             row = result["cases"][0]
@@ -346,6 +376,8 @@ def audit_worker(output, receipt_sha, plan_path, plan_sha, evidence_root, raw_st
         "metal_candidate_shader_sha256": result.get("metal_candidate_shader_sha256"),
         "framework_candidate": result.get("framework_candidate"),
         "framework_candidate_policy": result.get("framework_candidate_policy"),
+        "library_model": result.get("library_model"),
+        "library_api": result.get("library_api"),
         "framework_compiled": result.get("framework_compiled"),
         "framework_operation": result.get("framework_operation"),
         "ordinary_control_exact": control_exact,

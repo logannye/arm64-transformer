@@ -71,6 +71,7 @@ class ProvenanceTests(unittest.TestCase):
             engine="mps",
             width=512,
             pid=123,
+            command=["worker", "--engine", "mps"],
             origins_before={},
             origins_after={},
             **sources,
@@ -99,6 +100,63 @@ class ProvenanceTests(unittest.TestCase):
         self.assertFalse(result["numerics_independently_audited"])
         self.assertFalse(result["formal_eligible"])
         self.assertEqual(self.origins.call_count, 2)
+
+    def test_stock_worker_cannot_be_relabelled_as_an_installed_library_model(self):
+        self.value["command"].append("--library-api")
+        with self.assertRaisesRegex(ValueError, "mislabeled"):
+            self.run_audit()
+
+    def test_library_provenance_requires_explicit_selection_and_all_three_loaded_package_modules(
+        self,
+    ):
+        files, loaded = {}, {}
+        for name in ("precise_fp32", "_fp32_precise_dense", "_fp32_precise_math"):
+            path = self.root / ("runtime/torch/nn/" + name + ".py")
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("# authenticated package module\n")
+            bound = AUDIT.SUITE.binding(path)
+            files[str(path).lstrip("/")] = bound["sha256"]
+            loaded["torch.nn." + name] = {"path": str(path), "sha256": bound["sha256"]}
+        self.runtime.write_text(json.dumps(dict(files=files)))
+        receipt = json.loads(self.receipt.read_text())
+        receipt["frameworks"] = {
+            "pytorch": {
+                "selection": {
+                    "precision_api": {
+                        "module": "torch.nn.precise_fp32",
+                        "derivation_receipt_sha256": "d" * 64,
+                    }
+                }
+            }
+        }
+        self.receipt.write_text(json.dumps(receipt))
+        self.cap.update(
+            runtime_root="/",
+            runtime_inventory=AUDIT.SUITE.binding(self.runtime),
+            runtime_receipt=AUDIT.SUITE.binding(self.receipt),
+            precision_api_derivations={"pytorch": {"receipt": {"sha256": "d" * 64}}},
+        )
+        self.capture.write_text(json.dumps(self.cap))
+        self.value.update(
+            capture=AUDIT.SUITE.binding(self.capture),
+            runtime_receipt=self.cap["runtime_receipt"],
+            origins_after={"loaded_python_files": loaded},
+        )
+        self.value["command"].append("--library-api")
+        self.change_worker(
+            library_model="maintained-library-fp32-saved-model-v1",
+            library_api=dict(
+                module="torch.nn.precise_fp32", module_path=loaded["torch.nn.precise_fp32"]["path"]
+            ),
+        )
+        self.assertTrue(self.run_audit()["evidence_valid"])
+        saved = loaded.pop("torch.nn._fp32_precise_dense")
+        with self.assertRaisesRegex(ValueError, "Missing loaded generic"):
+            self.run_audit()
+        loaded["torch.nn._fp32_precise_dense"] = saved
+        Path(saved["path"]).write_text("# substituted implementation\n")
+        with self.assertRaises(ValueError):
+            self.run_audit()
 
     def test_complete_numerical_failure_remains_evidence_valid(self):
         self.change_worker(passed=False)

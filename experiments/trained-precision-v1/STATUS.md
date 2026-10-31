@@ -519,3 +519,19 @@ An explicit model adapter calls these package APIs with fixed CPU-v2/MPS-7/MLX-1
 stage selections. Its changed-token CPU forward/all-gradient reproduction check
 is submitted to hosted CI at all six process-selected widths. Device, model,
 full-suite and optimizer/checkpoint qualification remain pending.
+
+The library model now has a separate captured-runtime replay flag and preserves
+the existing same-byte input, dual-FP64, raw-array and byte-exact repeat gates.
+Independent audits reject mixed old/custom/library labels, changed model stages,
+a missing selected API, or absent/substituted loaded package modules. Seventeen
+replay-helper checks, eleven provenance checks and 29 independent array-auditor
+checks pass. The new numerical route has not yet executed. NumPy version claims
+now come from the explicitly selected native ABI; old captures retain 1.26.4.
+MLX suite preparation rejects an inconsistent Torch/NumPy suite selection.
+
+A real non-framework pytest probe with the complete MLX dependency root first
+and the retained Torch test dependencies second passes one method and all three
+subtests. Its XML uses the required `python.tests.test_probe.TestProbe` namespace.
+The first sandboxed probe remains failed because the installed rerun plugin
+could not open its ephemeral localhost socket; the authorized unrestricted probe
+passes. This is dependency/configuration evidence only, not MLX conformance.
