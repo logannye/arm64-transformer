@@ -456,3 +456,34 @@ watchdog retains a 6 GiB reserve across nested sessions. Actual suite results,
 maintained-library arithmetic repairs and all formal qualifications remain pending.
 Hosted Python and native CI both passed at `2c28aadc7340b3e317cba8078d7f1987986ad199`
 in [run 41154376946](https://github.com/logannye/arm64-transformer/actions/runs/41154376946).
+
+The fresh MPS worker executes all 10,357 methods successfully, with exactly the
+existing 744 skips and 382 expected failures, and passes its before/after runtime
+integrity checks. Its final gate still rejects eight existing empty reason
+strings. The authenticated `common_mps.py` source applies bare `unittest.skip` to
+exactly those eight already eligible FP16 IDs; a standard-library reproduction
+confirms that spelling records an empty string. The decoder now recognizes only
+those exact IDs under the two pinned test sources and rejects empty reasons
+elsewhere. No skip or expected-failure ID changes. The portable reader also now
+checks the launcher's source-bound generator rather than the obsolete shell form.
+The saved actual test inventory passes the corrected decoder, but the old failed
+producer receipt/exit remains unchanged and unqualified. The two affected helper
+suites each pass 28 tests.
+
+MLX C++ again passes all 305 cases and 4,792 assertions. Its complete Python
+execution reports 1,040 passes, four failures and nine skips. Three failures
+require NumPy 2-only APIs; the fourth is a retained padding-reference mismatch
+under NumPy 1.26. The two additional skips require TensorFlow and ml_dtypes, which
+are installed in the retained complete MLX dependency environment. The original
+seven-skip inventory is preserved, not expanded. The
+[complete findings](joint-runtime-conformance-findings.json) bind these outcomes.
+A new hosted build retains the same fourteen-file native source patch and changes
+only NumPy to 2.2.6 in its 45-wheel inventory, with actual native shared-memory
+NumPy roundtrips required after build. All 30 build-helper mutation checks pass.
+Fresh complete conformance and model validation remain required under that new
+ABI identity. Supplemental installed dependency roots can now be explicitly
+captured without shadowing the selected framework/NumPy roots; 23 capture checks
+pass. The prospective generic precision API's CPU tests passed hosted Python and
+native CI at `1ed35f1b10873863453d7ee640a4cd6cf1934801` in
+[run 41157511140](https://github.com/logannye/arm64-transformer/actions/runs/41157511140).
+These are prototype operator checks, not installed-library or GPU qualification.

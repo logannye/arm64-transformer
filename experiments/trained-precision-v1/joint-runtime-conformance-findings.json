@@ -1,0 +1,107 @@
+{
+  "schema": "joint-runtime-conformance-findings-v1",
+  "project_revision": "14bf87420e4415e48b0def3d300293450091261f",
+  "mps": {
+    "summary": {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v7/summary.json",
+      "sha256": "e0f8866192201a7a7d765a7345289b08b029a53912de232028d345d7f1d7f179",
+      "bytes": 2941
+    },
+    "receipt": {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v7/full/receipt.json",
+      "sha256": "fa363951673587980d6b6b55155ca1edd5ce173f2cb62f61547222e9e6266e2d",
+      "bytes": 2501408
+    },
+    "tests": {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v7/full/tests.json",
+      "sha256": "39da8c886158ff6b31e64bc75083f18b1a9c58368534b8374c6be86b1a9184c2",
+      "bytes": 2643779
+    },
+    "log": {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v7/full/tests.log",
+      "sha256": "8ee1f0d2ef3d35aecd6dbd33dad0d188e14d6315593f5140af58da1a91c58db6",
+      "bytes": 1774920
+    },
+    "methods": 10357,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 744,
+    "expected_failures": 382,
+    "integrity_after": true,
+    "complete": true,
+    "passed": false,
+    "qualification_failure": "Missing upstream skip reasons",
+    "empty_skip_reason_ids": [
+      "integrated_upstream_test_mps.TestConsistencyMPS.test_output_grad_match_nn_functional_conv1d_mps_float16",
+      "integrated_upstream_test_mps.TestConsistencyMPS.test_output_grad_match_nn_functional_conv2d_mps_float16",
+      "integrated_upstream_test_mps.TestConsistencyMPS.test_output_grad_match_nn_functional_conv3d_mps_float16",
+      "integrated_upstream_test_mps.TestConsistencyMPS.test_output_grad_match_nn_functional_conv_transpose1d_mps_float16",
+      "integrated_upstream_test_mps.TestConsistencyMPS.test_output_grad_match_nn_functional_conv_transpose2d_mps_float16",
+      "integrated_upstream_test_mps.TestConsistencyMPS.test_output_grad_match_nn_functional_conv_transpose3d_mps_float16",
+      "integrated_upstream_test_mps.TestConsistencyMPS.test_output_grad_match_nn_functional_pairwise_distance_mps_float16",
+      "integrated_upstream_test_mps.TestConsistencyMPS.test_output_grad_match_topk_mps_float16"
+    ],
+    "empty_reason_source_sha256": "423543780c00eb975382c657a0fa3f7bc4a22e8e639826839c4a29e272ab2027",
+    "empty_reason_source_ast_sha256": "0c51e73c508243017c49da6798199fd57e09cc995e17d6c9ee47fbd59928171c",
+    "portable_reader_fix": "Require the actual source-bound env-S launcher rather than the former shell launcher",
+    "old_attempt_requalified": false
+  },
+  "mlx": {
+    "summary": {
+      "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/half-v3-mlx-suites-device-v9/summary.json",
+      "sha256": "f16aa4fbc462e62d7e5fe774ed97a5bd5c6b5a53448ea86c0a09a22d4ae7ef97",
+      "bytes": 3437
+    },
+    "python_receipt": {
+      "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/half-v3-mlx-suites-device-v9/mlx_python/receipt.json",
+      "sha256": "8d6b8bc169609822bcaa13fc2556302f38fd086f99ff211834cc0eaae017d2eb",
+      "bytes": 1635955
+    },
+    "python_log": {
+      "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/half-v3-mlx-suites-device-v9/mlx_python/worker.log",
+      "sha256": "d39e01990111c63c2fadc1a78f361c357932f08795167fab8dbd50b3ea4c61c4",
+      "bytes": 12528
+    },
+    "python_xml": {
+      "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/half-v3-mlx-suites-device-v9/mlx_python/python.xml",
+      "sha256": "770b26a42c90e829204b5385a6913f9b849fd883a4254b4f8d00340b047b61c7",
+      "bytes": 173721
+    },
+    "cpp_cases": 305,
+    "cpp_assertions": 4792,
+    "cpp_passed": true,
+    "python_passed": 1040,
+    "python_failed": 4,
+    "python_skipped": 9,
+    "original_required_skips": 7,
+    "integrity_after": true,
+    "complete": false,
+    "failures": [
+      "test_compile_donates_input_buffer",
+      "test_floor_divide",
+      "test_pad_reflect_symmetric",
+      "test_unstack"
+    ],
+    "numpy2_api_missing": [
+      "asarray(copy=False)",
+      "__array_namespace_info__",
+      "unstack"
+    ],
+    "padding_reference_mismatch_preserved": true,
+    "missing_test_dependencies": [
+      "tensorflow",
+      "ml_dtypes"
+    ],
+    "native_build_required_for_numpy2_bridge": true
+  },
+  "corrective_route": {
+    "hosted_build": "validation/owned-pytorch-numpy2-v1",
+    "native_patch_unchanged": true,
+    "numpy_version": "2.2.6",
+    "reuse_installed_complete_mlx_test_dependencies": true,
+    "existing_skip_and_xfail_ids_unchanged": true
+  },
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "admission_stream_opened": false
+}

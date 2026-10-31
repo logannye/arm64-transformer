@@ -228,6 +228,24 @@ class CaptureTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Duplicate"):
             capture.import_roots(torch, torch, mlx, torch)
 
+    def test_supplemental_dependencies_follow_selected_packages_without_duplicates(self):
+        paths = [self.root / name for name in ("torch", "numpy", "mlx", "dependencies")]
+        for path in paths:
+            path.mkdir()
+        (paths[2] / "runtime/python").mkdir(parents=True)
+        extra = self.root / "supplemental"
+        extra.mkdir()
+        original = capture.import_roots(*paths)
+        self.assertEqual(
+            capture.import_roots(*paths, supplemental_dependencies=[extra]), original + [extra]
+        )
+        with self.assertRaisesRegex(ValueError, "Duplicate"):
+            capture.import_roots(*paths, supplemental_dependencies=[paths[-1]])
+        alias = self.root / "alias"
+        alias.symlink_to(extra, target_is_directory=True)
+        with self.assertRaises(ValueError):
+            capture.import_roots(*paths, supplemental_dependencies=[alias])
+
     def project(self, *, dirty=False, head="a" * 40, names=None):
         source = self.root / capture.PRODUCER
         source.parent.mkdir(parents=True)

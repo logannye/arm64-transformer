@@ -7,7 +7,6 @@ This does not select a new framework or suite inventory, or admit formal fits.
 
 import hashlib
 import re
-import shlex
 import shutil
 from pathlib import Path
 
@@ -496,7 +495,7 @@ def audit(root, record, manifest, runtime_receipt, producer, policy):
         plan, plan_path, record["plan_sha256"], original_output, process["pid"], runtime=runtime
     )
     require(
-        launcher == "#!/bin/sh\nexec " + shlex.join(command) + ' "$@"\n',
+        launcher == producer.child_launcher_source(command),
         "Conformance child launcher differs",
     )
     require(

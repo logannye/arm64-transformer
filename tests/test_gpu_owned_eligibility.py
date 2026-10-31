@@ -2,6 +2,7 @@
 
 import copy
 import json
+import unittest
 import xml.etree.ElementTree as ET
 
 import pytest
@@ -47,6 +48,46 @@ def mps():
 def test_full_mps_raw_inventory_passes_only_complete_original_selection(mps):
     contract, tests = mps
     assert gate.validate_mps(tests, contract)["cases"] == 10353
+
+
+def test_known_bare_decorator_reasons_preserve_the_exact_existing_skip_inventory(mps):
+    contract, tests = mps
+    original = [row["id"] for row in tests["skipped"]]
+    for row in tests["skipped"]:
+        if row["id"] in gate.UPSTREAM_EMPTY_SKIP_REASON_IDS:
+            row["reason"] = ""
+    assert sum(row["reason"] == "" for row in tests["skipped"]) == 8
+    assert gate.validate_mps(tests, contract)["skips"] == 744
+    assert [row["id"] for row in tests["skipped"]] == original
+
+
+def test_unknown_empty_skip_reason_or_foreign_source_still_fails(mps):
+    contract, tests = mps
+    row = next(
+        row for row in tests["skipped"] if row["id"] not in gate.UPSTREAM_EMPTY_SKIP_REASON_IDS
+    )
+    row["reason"] = ""
+    with pytest.raises(ValueError, match="Missing upstream skip reasons"):
+        gate.validate_mps(tests, contract)
+    row["reason"] = "retained upstream skip"
+    next(row for row in tests["skipped"] if row["id"] in gate.UPSTREAM_EMPTY_SKIP_REASON_IDS)[
+        "reason"
+    ] = ""
+    contract["pytorch"]["test_source_sha256"] = "0" * 64
+    with pytest.raises(ValueError, match="Missing upstream skip reasons"):
+        gate.validate_mps(tests, contract)
+
+
+def test_bare_unittest_skip_retains_an_empty_reason_without_executing_the_test():
+    class Case(unittest.TestCase):
+        @unittest.skip
+        def test_never_run(self):
+            raise AssertionError("A skipped method ran")
+
+    result = unittest.TestResult()
+    Case("test_never_run").run(result)
+    assert result.wasSuccessful() and len(result.skipped) == 1
+    assert result.skipped[0][1] == ""
 
 
 @pytest.mark.parametrize(

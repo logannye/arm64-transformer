@@ -161,13 +161,16 @@ def verify_actual_import_resolution(inventory, search_path=None):
         )
 
 
-def import_roots(torch_runtime, numpy_overlay, mlx_bundle, dependencies):
+def import_roots(
+    torch_runtime, numpy_overlay, mlx_bundle, dependencies, *, supplemental_dependencies=()
+):
     roots = [
         directory(torch_runtime),
         directory(numpy_overlay),
         directory(mlx_bundle / "runtime/python"),
         directory(mlx_bundle),
         directory(dependencies),
+        *(directory(path) for path in supplemental_dependencies),
     ]
     require(len(set(roots)) == len(roots), "Duplicate runtime root")
     return roots
@@ -326,10 +329,17 @@ def capture(
     half_v3_plan=None,
     half_v3_plan_sha256=None,
     mlx_test_compatibility_sha256=None,
+    supplemental_dependencies=(),
 ):
     require_launch()
     project = directory(project)
-    paths = import_roots(torch_runtime, numpy_overlay, mlx_bundle, dependencies)
+    paths = import_roots(
+        torch_runtime,
+        numpy_overlay,
+        mlx_bundle,
+        dependencies,
+        supplemental_dependencies=supplemental_dependencies,
+    )
     output = validate_output(output, [project, *paths, Path(sys.prefix), Path(sys.base_prefix)])
     prefix = output / "unused-bytecode-cache"
     require(not prefix.exists() and not prefix.is_symlink(), "Bytecode prefix must be unused")
@@ -342,6 +352,9 @@ def capture(
         "formal_fits": 0,
         "admission_stream_opened": False,
         "source_head": expected_head,
+        "supplemental_dependency_roots": [
+            str(directory(path)) for path in supplemental_dependencies
+        ],
         "producer": file_binding(Path(__file__).resolve()),
         "launch": {
             "executable": str(Path(sys.executable).resolve()),
@@ -489,6 +502,7 @@ def main():
     parser.add_argument("--half-v3-plan", type=Path)
     parser.add_argument("--half-v3-plan-sha256")
     parser.add_argument("--mlx-test-compatibility-sha256")
+    parser.add_argument("--supplemental-dependencies", type=Path, action="append", default=[])
     args = parser.parse_args()
     result = capture(
         args.project,
@@ -501,6 +515,7 @@ def main():
         half_v3_plan=args.half_v3_plan,
         half_v3_plan_sha256=args.half_v3_plan_sha256,
         mlx_test_compatibility_sha256=args.mlx_test_compatibility_sha256,
+        supplemental_dependencies=args.supplemental_dependencies,
     )
     print(
         json.dumps(

@@ -32,6 +32,7 @@ jobs:
           python -I -S -B -m unittest discover -s validation/owned-pytorch-half-v1 -p 'test_*.py'
           python -I -S -B -m unittest discover -s validation/owned-pytorch-half-v2 -p 'test_*.py'
           python -I -S -B -m unittest discover -s validation/owned-pytorch-half-v3 -p 'test_*.py'
+          python -I -S -B -m unittest discover -s validation/owned-pytorch-numpy2-v1 -p 'test_*.py'
           python -I -S -B -m unittest discover -s validation/trained-precision-hosted -p 'test_*.py'
           # Keep import-isolation checks in fresh processes. Array-audit tests
           # use installed NumPy; no test here executes a GPU framework.

@@ -29,6 +29,28 @@ PRODUCERS = {
     "mlx_python": "integration/gpu-owned/owned_mlx_suites.py",
 }
 MLX_SUBPROCESS_AST_SHA256 = "90a6406e042b09e83ed671864ad0cf30cefa2e6c4e148ca60d24ac26cbb6b433"
+# The pinned common_mps.py applies bare unittest.skip to these eight already
+# eligible FP16 gradient tests. Python records an empty reason for that spelling.
+# No new skip ID is allowed; all other reasons must remain nonempty strings.
+UPSTREAM_EMPTY_SKIP_REASON_IDS = frozenset(
+    "integrated_upstream_test_mps.TestConsistencyMPS.test_output_grad_match_"
+    + name
+    + "_mps_float16"
+    for name in (
+        "nn_functional_conv1d",
+        "nn_functional_conv2d",
+        "nn_functional_conv3d",
+        "nn_functional_conv_transpose1d",
+        "nn_functional_conv_transpose2d",
+        "nn_functional_conv_transpose3d",
+        "nn_functional_pairwise_distance",
+        "topk",
+    )
+)
+EMPTY_REASON_TEST_SOURCES = {
+    "7345b6e229aed240921460a3b598ffd1a47148ab4816aead0d405539a154a396",
+    "a7b6420664a9352dcb1fc7eb070744c4f1f869d7498d036e5d73ef83dab27bc7",
+}
 
 
 def suite_contract(path=None):
@@ -71,7 +93,20 @@ def validate_mps(tests, contract):
             and all(row["id"] in expected["test_ids"] and row["traceback"] for row in rows),
             "Missing or substituted MPS failure evidence",
         )
-    require(all(row["reason"] for row in tests["skipped"]), "Missing upstream skip reasons")
+    require(
+        all(
+            isinstance(row["reason"], str)
+            and (
+                row["reason"]
+                or (
+                    row["id"] in UPSTREAM_EMPTY_SKIP_REASON_IDS
+                    and expected["test_source_sha256"] in EMPTY_REASON_TEST_SOURCES
+                )
+            )
+            for row in tests["skipped"]
+        ),
+        "Missing upstream skip reasons",
+    )
     require(
         tests["failures"] == tests["errors"] == tests["unexpected_successes"] == []
         and tests["successful"] is True,

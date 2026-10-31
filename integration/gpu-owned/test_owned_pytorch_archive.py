@@ -177,9 +177,7 @@ class PortableTests(unittest.TestCase):
         cmd = M.child_command(
             self.plan, self.plan_path, plan_sha, self.output, 100, runtime=self.runtime
         )
-        (self.output / "owned-suite-python").write_text(
-            "#!/bin/sh\nexec " + shlex.join(cmd) + ' "$@"\n'
-        )
+        (self.output / "owned-suite-python").write_text(M.child_launcher_source(cmd))
         for index, invocation in enumerate(self.plan["subprocess_contract"]["invocations"]):
             folder = self.output / ("descendant-" + invocation["name"])
             folder.mkdir()
@@ -433,6 +431,24 @@ class PortableTests(unittest.TestCase):
     def test_changed_loaded_fixture(self):
         self.record["stock_fixture_loaded"]["sha256"] = "0" * 64
         with self.assertRaises(ValueError):
+            self.check()
+
+    def test_rebound_legacy_shell_launcher_is_rejected(self):
+        evidence = self.record["portable_evidence"]
+        row = evidence["launcher"]
+        path = self.archived / row["path"]
+        command = M.child_command(
+            self.plan,
+            self.plan_path,
+            self.record["plan_sha256"],
+            self.output,
+            100,
+            runtime=self.runtime,
+        )
+        path.write_text("#!/bin/sh\nexec " + shlex.join(command) + ' "$@"\n')
+        changed = M.binding(path)
+        row.update({key: changed[key] for key in ("sha256", "bytes")})
+        with self.assertRaisesRegex(ValueError, "Conformance child launcher differs"):
             self.check()
 
     def test_fixture_resource_observation(self):
