@@ -1,7 +1,7 @@
 {
   "schema": "trained-precision-half-v3-preparation-v1",
-  "status": "full_mps_run_retained_failed_import_environment_mlx_continues",
-  "project_revision": "2c28aadc7340b3e317cba8078d7f1987986ad199",
+  "status": "corrected_joint_conformance_running",
+  "project_revision": "14bf87420e4415e48b0def3d300293450091261f",
   "hosted_run": "41125186309",
   "hosted_project_revision": "11fd196ed3665178f389e9c25256c3561b14fe5f",
   "hosted_artifact_sha256": "a2b311ec1886804a9be6d348c5bbafb4276ce9b4730da13ae18a41a93b534741",
@@ -12,22 +12,22 @@
   "source_members": 146435,
   "source_symlinks": 21,
   "runtime_payload_files": 15707,
-  "capture_sha256": "dd2edd8c773ce35ef610b7395a57ff50799e4f5c6b5cc0b6b50a377e30c1c262",
-  "runtime_receipt_sha256": "5f4d1ccf72785aac91b32caa5f7f008e05fac66fd0e423c6d9a10481c7097a8e",
-  "focused_plan_sha256": "6e65f0f0aaa21ea1c6cf57ffb7f94e98f9989a68f07b26edef6d6d69115cebe3",
-  "full_suite_plan_sha256": "4bd50ae8aab54f98f4b0218b5deeb7695dc123eea98a1b696939322eb341b054",
+  "capture_sha256": "284415702f3ed30852746be525b8144830c2f0cb251b0d99423be1b710add572",
+  "runtime_receipt_sha256": "75da96acbafcb5fba8690b00d40804ba18b00898e094ca02516af854c82d502c",
+  "focused_plan_sha256": "0f28394e13f71df5d22f395ec7a93444de17e6af3ae302ede335a5b2e221772b",
+  "full_suite_plan_sha256": "271b15616cd6fa6a10b4f01d3a7008e345cfe7e63a727539da08a78ceaa9dd50",
   "focused_methods": 34,
   "full_suite_methods": 10357,
   "prepared_without_framework_import_or_compilation": true,
-  "stock_conformance_fixture_compiled": true,
-  "device_suites_executed": true,
+  "stock_conformance_fixture_compiled": null,
+  "device_suites_executed": null,
   "joint_runtime_qualified": false,
   "formal_eligible": false,
   "formal_fits": 0,
   "admission_stream_opened": false,
-  "local_evidence_directory": "work/captured-model-runtime-v4",
+  "local_evidence_directory": "work/captured-model-runtime-v6",
   "limits": "This capture binds corrected harness source to unchanged framework bytes. Full conformance, captured-model arithmetic, runtime qualification and formal eligibility remain separate requirements.",
-  "mlx_suite_plan_sha256": "304724f7d8e9377bba257c1a3775d09a2441762a1c25126538cd75b94e754bb5",
+  "mlx_suite_plan_sha256": "b4d7f50406eb2b70274e1cf5f2d626c292118fbc11080c33a785e125a9e07729",
   "mlx_cpp_cases": 305,
   "mlx_cpp_assertions": 4792,
   "mlx_python_cases": 1053,
@@ -44,8 +44,8 @@
     "mlx_suite_plan_sha256": "d7724421dc3a082c48a0e1aca9c94f9ea6bc6608fa3598ff1cf88f1bd71e271c",
     "device_workers_executed": 0
   },
-  "runtime_identity_sha256": "5698e6f6f07655d54f249533e28aabdfa75af51f768fc9ff0c49b4ca65d2d3cd",
-  "same_framework_bytes_as_superseded_capture": true,
+  "runtime_identity_sha256": "f50c56ad6f55cd383f51033a8622272ee2ba538a9fe430a4f457ab5cb1398e0f",
+  "same_framework_bytes_as_superseded_capture": false,
   "retained_launcher_failure": {
     "path": "work/aligned-framework-conformance-v2/stopped.json",
     "sha256": "a0670621cc6b1c2ece071ae257eff10d8cd78d4a277f5bd087547a5a731d35d7",
@@ -78,14 +78,24 @@
       "mlx_suite_plan_sha256": "0975b5ac29608946f37fb7b6c826db9b8b08f47273c4d8b97c49df20017a9c2c",
       "status": "full_mps_run_retained_failed_harness",
       "local_evidence_directory": "work/captured-model-runtime-v3"
+    },
+    {
+      "project_revision": "2c28aadc7340b3e317cba8078d7f1987986ad199",
+      "capture_sha256": "dd2edd8c773ce35ef610b7395a57ff50799e4f5c6b5cc0b6b50a377e30c1c262",
+      "runtime_receipt_sha256": "5f4d1ccf72785aac91b32caa5f7f008e05fac66fd0e423c6d9a10481c7097a8e",
+      "focused_plan_sha256": "6e65f0f0aaa21ea1c6cf57ffb7f94e98f9989a68f07b26edef6d6d69115cebe3",
+      "full_suite_plan_sha256": "4bd50ae8aab54f98f4b0218b5deeb7695dc123eea98a1b696939322eb341b054",
+      "mlx_suite_plan_sha256": "304724f7d8e9377bba257c1a3775d09a2441762a1c25126538cd75b94e754bb5",
+      "status": "full_mps_run_retained_failed_import_environment_mlx_continues",
+      "local_evidence_directory": "work/captured-model-runtime-v4"
     }
   ],
   "origin_mapping_repair": "origin-mapping-repair.json",
   "matched_screen_workers": 24,
-  "mps_tests_executed": 10357,
-  "mps_failures": 1,
-  "mps_errors": 1,
-  "conformance_execution_directory": "work/resumed-framework-development-v2",
+  "mps_tests_executed": null,
+  "mps_failures": null,
+  "mps_errors": null,
+  "conformance_execution_directory": "work/resumed-framework-validation-v5",
   "device_suites_started": true,
   "device_suites_complete": false,
   "expected_counts_are_not_execution_results": [
@@ -102,13 +112,23 @@
   "retained_failed_runs": [
     "mps-full-suite-harness-failure.json",
     "mlx-linkage-artifact-failure.json",
-    "mps-import-environment-failure.json"
+    "mps-import-environment-failure.json",
+    "mlx-test-compatibility-failure.json"
   ],
   "disk_watchdog": {
-    "plan": "work/resumed-framework-validation-v4-disk-watch/plan.json",
-    "plan_sha256": "0b0d9aa84232fe639bfbd5f6436835c42e4eda4ee3e2ac5deb906b066323c070",
+    "plan": "work/resumed-framework-validation-v5-disk-watch/plan.json",
+    "plan_sha256": "78b30db7826c68d696583111f2c59b66c4003f083fdc4fba269403949229a071",
     "stop_below_free_bytes": 6442450944,
     "nested_session_tracking": true,
     "file_deletions": false
-  }
+  },
+  "native_source_and_binary_bytes_reused": true,
+  "mlx_test_compatibility_capsule": {
+    "manifest_sha256": "6b645e5e783bab65c65e3eb8788d97c915b9dbf506cced619d824c05e09b95b4",
+    "receipt_sha256": "bd159eba74c2aa30ed43f70afb4b9b71e539ca3476aabd36d05fea8e2a791109",
+    "logical_original_bytes": 47940121,
+    "native_compilation": false,
+    "only_test_parser_modified": true
+  },
+  "captured_model_screen": "captured-model-screen.json"
 }

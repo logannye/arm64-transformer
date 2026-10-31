@@ -436,3 +436,23 @@ results pass separate inference/gradient, provenance and raw-array audits at bot
 wide widths; ordinary CPU controls retain failures on the same selected operands.
 This screen covers two historical width-512 cases and one width-1024 FF1 case,
 not a complete inventory, framework repair, all-width gate or performance result.
+
+The complete [captured-runtime screen](captured-model-screen.json) now retains
+24 cells and 48 independent provenance/raw audits. All 12 custom-candidate cells
+pass: CPU v2, MPS policy 7 and compiled MLX policy 15, each at both wide widths
+and in separate inference/gradient modes. Ordinary controls pass only the MPS
+width-512 gradient cell; the other 11 cells fail at the unchanged tolerances.
+Coverage remains exactly two exposed width-512 cases and the single width-1024
+FF1 regression. These observations do not transfer to another captured identity.
+
+The new test-compatible joint capture binds source
+`14bf87420e4415e48b0def3d300293450091261f` and runtime identity
+`f50c56ad6f55cd383f51033a8622272ee2ba538a9fe430a4f457ab5cb1398e0f`.
+The derived MLX capsule verifies unchanged native source/binary bytes and its
+47,940,121-byte original logical payload. Both full-suite preparations pass. A
+serial controller runs fresh complete MPS and MLX suites, then all 34 focused MPS
+cases, after the model screen and every identified descendant exit. Its separate
+watchdog retains a 6 GiB reserve across nested sessions. Actual suite results,
+maintained-library arithmetic repairs and all formal qualifications remain pending.
+Hosted Python and native CI both passed at `2c28aadc7340b3e317cba8078d7f1987986ad199`
+in [run 41154376946](https://github.com/logannye/arm64-transformer/actions/runs/41154376946).
