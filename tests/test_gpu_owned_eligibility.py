@@ -2,6 +2,7 @@
 
 import copy
 import json
+import unittest
 import xml.etree.ElementTree as ET
 
 import pytest
@@ -47,6 +48,46 @@ def mps():
 def test_full_mps_raw_inventory_passes_only_complete_original_selection(mps):
     contract, tests = mps
     assert gate.validate_mps(tests, contract)["cases"] == 10353
+
+
+def test_known_bare_decorator_reasons_preserve_the_exact_existing_skip_inventory(mps):
+    contract, tests = mps
+    original = [row["id"] for row in tests["skipped"]]
+    for row in tests["skipped"]:
+        if row["id"] in gate.UPSTREAM_EMPTY_SKIP_REASON_IDS:
+            row["reason"] = ""
+    assert sum(row["reason"] == "" for row in tests["skipped"]) == 8
+    assert gate.validate_mps(tests, contract)["skips"] == 744
+    assert [row["id"] for row in tests["skipped"]] == original
+
+
+def test_unknown_empty_skip_reason_or_foreign_source_still_fails(mps):
+    contract, tests = mps
+    row = next(
+        row for row in tests["skipped"] if row["id"] not in gate.UPSTREAM_EMPTY_SKIP_REASON_IDS
+    )
+    row["reason"] = ""
+    with pytest.raises(ValueError, match="Missing upstream skip reasons"):
+        gate.validate_mps(tests, contract)
+    row["reason"] = "retained upstream skip"
+    next(row for row in tests["skipped"] if row["id"] in gate.UPSTREAM_EMPTY_SKIP_REASON_IDS)[
+        "reason"
+    ] = ""
+    contract["pytorch"]["test_source_sha256"] = "0" * 64
+    with pytest.raises(ValueError, match="Missing upstream skip reasons"):
+        gate.validate_mps(tests, contract)
+
+
+def test_bare_unittest_skip_retains_an_empty_reason_without_executing_the_test():
+    class Case(unittest.TestCase):
+        @unittest.skip
+        def test_never_run(self):
+            raise AssertionError("A skipped method ran")
+
+    result = unittest.TestResult()
+    Case("test_never_run").run(result)
+    assert result.wasSuccessful() and len(result.skipped) == 1
+    assert result.skipped[0][1] == ""
 
 
 @pytest.mark.parametrize(
@@ -180,7 +221,7 @@ def test_eligibility_never_accepts_smoke_or_boolean_as_full_suites(tmp_path):
         gate.verify_eligibility(manifest, {"baseline": tmp_path})
 
 
-def test_generic_passing_mps_suite_cannot_bypass_unfinished_archive_audit(tmp_path):
+def test_generic_passing_mps_suite_cannot_bypass_required_archive_audit(tmp_path):
     record = {
         "schema": "gpu-owned-suite-execution-v1",
         "protocol": gate.OWNED.protocol,
@@ -191,3 +232,17 @@ def test_generic_passing_mps_suite_cannot_bypass_unfinished_archive_audit(tmp_pa
     }
     with pytest.raises(ValueError, match="MPS archive qualification remains blocked"):
         gate.validate_suite(record, tmp_path, {}, gate.suite_contract(), "pytorch_mps")
+
+
+def test_mps_archive_requires_external_runtime_authority(tmp_path):
+    with pytest.raises(ValueError, match="bound runtime authority"):
+        gate.validate_mps_archive({}, tmp_path, {}, None)
+
+
+def test_mps_archive_authenticates_validator_before_loading_it(tmp_path, monkeypatch):
+    def unexpected(*args, **kwargs):
+        raise AssertionError("Unbound source was executed")
+
+    monkeypatch.setattr(gate.runpy, "run_path", unexpected)
+    with pytest.raises(ValueError, match="selected project authority"):
+        gate.validate_mps_archive({}, tmp_path, {"bindings": {"source": {}}}, {})

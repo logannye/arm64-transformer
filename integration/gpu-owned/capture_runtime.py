@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import importlib
 import importlib.machinery
+import importlib.util
 import json
 import os
 import platform
@@ -160,13 +161,16 @@ def verify_actual_import_resolution(inventory, search_path=None):
         )
 
 
-def import_roots(torch_runtime, numpy_overlay, mlx_bundle, dependencies):
+def import_roots(
+    torch_runtime, numpy_overlay, mlx_bundle, dependencies, *, supplemental_dependencies=()
+):
     roots = [
         directory(torch_runtime),
         directory(numpy_overlay),
         directory(mlx_bundle / "runtime/python"),
         directory(mlx_bundle),
         directory(dependencies),
+        *(directory(path) for path in supplemental_dependencies),
     ]
     require(len(set(roots)) == len(roots), "Duplicate runtime root")
     return roots
@@ -239,10 +243,164 @@ def require_launch():
     )
 
 
-def capture(project, expected_head, torch_runtime, numpy_overlay, mlx_bundle, dependencies, output):
+def half_v3_selection(project, source, original, plan_path, plan_sha, torch_runtime):
+    """Authenticate a built development candidate; never change formal selection."""
+    require(plan_path is not None and plan_sha is not None, "Both candidate plan bindings required")
+    relative = "integration/gpu-owned/candidate_half_v3_validation.py"
+    path = project / relative
+    require(
+        file_binding(path)["sha256"] == source["files"].get(relative), "Unbound candidate helper"
+    )
+    spec = importlib.util.spec_from_file_location("captured_half_v3_candidate", path)
+    candidate = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(candidate)
+    plan, _ = candidate.authenticate_plan(plan_path, plan_sha)
+    plan_binding = file_binding(plan_path)
+    require(plan_binding["sha256"] == plan_sha, "Candidate plan changed after authentication")
+    require(Path(plan["runtime"]) == torch_runtime, "Capture runtime differs from candidate plan")
+    profile = candidate.candidate_profile(plan.get("candidate", "half-v3"))
+    contract, _, _ = candidate.selection_contract(plan.get("candidate", "half-v3"))
+    selected = json.loads(json.dumps(original))
+    selected["pytorch"] = {
+        "kind": "project_maintained_full_source_build",
+        "base": contract["source_revision"],
+        "patches": [row["sha256"] for row in contract["component_patches"]],
+        "combined_patch_sha256": contract["combined_patch_sha256"],
+        "build_run": int(profile["run"]),
+        "runtime_manifest_sha256": plan["runtime_manifest"]["sha256"],
+        "engines": ["cpu_torch", "mps"],
+        "same_distribution_required": True,
+    }
+    if plan.get("candidate") == "numpy2-v1":
+        selected["pytorch"]["numpy_abi_version"] = "2.2.6"
+    return selected, {
+        "plan": plan_binding,
+        "helper": file_binding(path),
+        "schema": candidate.SCHEMA,
+        "formal_eligible": False,
+        "scope": "New development runtime identity; historical formal selection unchanged",
+    }
+
+
+def mlx_test_compatibility_selection(project, source, original, mlx_bundle, receipt_sha):
+    """Reuse unchanged native bytes after one explicitly declared test-only fix."""
+    relative = "integration/gpu-owned/derive_mlx_test_compat.py"
+    helper = project / relative
+    require(
+        file_binding(helper)["sha256"] == source["files"].get(relative),
+        "Unbound MLX compatibility helper",
+    )
+    spec = importlib.util.spec_from_file_location("captured_mlx_test_compat", helper)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    proof = file_binding(mlx_bundle / "TEST-COMPATIBILITY.json")
+    manifest = file_binding(mlx_bundle / "MANIFEST.json")
+    require(proof["sha256"] == receipt_sha, "MLX compatibility receipt changed")
+    _, contract = module.authenticate(mlx_bundle, receipt_sha)
+    require(
+        file_binding(mlx_bundle / "TEST-COMPATIBILITY.json") == proof
+        and file_binding(mlx_bundle / "MANIFEST.json") == manifest,
+        "MLX compatibility authority changed during authentication",
+    )
+    require(
+        contract["original_manifest_sha256"] == original["mlx"]["runtime_manifest_sha256"]
+        and contract["native_build_run"] == original["mlx"]["build_run"],
+        "MLX compatibility native authority differs",
+    )
+    selected = json.loads(json.dumps(original))
+    selected["mlx"]["patches"].append(contract["patch_sha256"])
+    selected["mlx"]["runtime_manifest_sha256"] = manifest["sha256"]
+    selected["mlx"]["test_source_compatibility_receipt_sha256"] = receipt_sha
+    return selected, {
+        "receipt": proof,
+        "helper": file_binding(helper),
+        "native_compilation": False,
+        "scope": "Python test version parsing only; native sources and binaries unchanged",
+        "formal_eligible": False,
+    }
+
+
+def precision_api_capsule(project, source, framework, capsule, receipt_sha):
+    """Authenticate an additive Python library extension and its full native lineage."""
+    require(framework in {"pytorch", "mlx"}, "Unknown precision API framework")
+    relative = "integration/gpu-owned/derive_precision_api.py"
+    helper = project / relative
+    require(
+        file_binding(helper)["sha256"] == source["files"].get(relative),
+        "Unbound precision API derivation helper",
+    )
+    spec = importlib.util.spec_from_file_location("captured_precision_api", helper)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    receipt = file_binding(capsule / "PRECISION-API.json")
+    require(receipt["sha256"] == receipt_sha, "Precision API receipt changed")
+    proof, _ = module.authenticate(capsule, receipt_sha)
+    require(proof["framework"] == framework, "Precision API framework differs")
+    require(
+        file_binding(capsule / "PRECISION-API.json") == receipt,
+        "Precision API receipt changed during authentication",
+    )
+    return proof, dict(
+        receipt=receipt,
+        helper=file_binding(helper),
+        native_compilation=False,
+        formal_eligible=False,
+    )
+
+
+def precision_api_selection(original, framework, capsule, proof, binding):
+    roots = proof["original"]["roots"]
+    old_manifest = (
+        Path(roots["runtime"]) / "runtime-manifest.json"
+        if framework == "pytorch"
+        else Path(roots["bundle"]) / "MANIFEST.json"
+    )
+    require(
+        file_binding(old_manifest)["sha256"] == original[framework]["runtime_manifest_sha256"]
+        and proof["original"]["native_build_run"] == original[framework]["build_run"],
+        "Precision API native authority differs from selected baseline",
+    )
+    manifest = capsule / (
+        "runtime/runtime-manifest.json" if framework == "pytorch" else "MANIFEST.json"
+    )
+    selected = json.loads(json.dumps(original))
+    selected[framework]["runtime_manifest_sha256"] = file_binding(manifest)["sha256"]
+    selected[framework]["precision_api"] = dict(
+        module="torch.nn.precise_fp32" if framework == "pytorch" else "mlx.nn.precise_fp32",
+        contract_sha256=proof["contract"]["sha256"],
+        derivation_receipt_sha256=binding["receipt"]["sha256"],
+        stock_operators_unchanged=True,
+        formal_eligible=False,
+    )
+    return selected
+
+
+def capture(
+    project,
+    expected_head,
+    torch_runtime,
+    numpy_overlay,
+    mlx_bundle,
+    dependencies,
+    output,
+    *,
+    half_v3_plan=None,
+    half_v3_plan_sha256=None,
+    mlx_test_compatibility_sha256=None,
+    supplemental_dependencies=(),
+    torch_precision_api_root=None,
+    torch_precision_api_sha256=None,
+    mlx_precision_api_sha256=None,
+):
     require_launch()
     project = directory(project)
-    paths = import_roots(torch_runtime, numpy_overlay, mlx_bundle, dependencies)
+    paths = import_roots(
+        torch_runtime,
+        numpy_overlay,
+        mlx_bundle,
+        dependencies,
+        supplemental_dependencies=supplemental_dependencies,
+    )
     output = validate_output(output, [project, *paths, Path(sys.prefix), Path(sys.base_prefix)])
     prefix = output / "unused-bytecode-cache"
     require(not prefix.exists() and not prefix.is_symlink(), "Bytecode prefix must be unused")
@@ -255,6 +413,9 @@ def capture(project, expected_head, torch_runtime, numpy_overlay, mlx_bundle, de
         "formal_fits": 0,
         "admission_stream_opened": False,
         "source_head": expected_head,
+        "supplemental_dependency_roots": [
+            str(directory(path)) for path in supplemental_dependencies
+        ],
         "producer": file_binding(Path(__file__).resolve()),
         "launch": {
             "executable": str(Path(sys.executable).resolve()),
@@ -268,6 +429,50 @@ def capture(project, expected_head, torch_runtime, numpy_overlay, mlx_bundle, de
         source = source_inventory(project, expected_head)
         original_path = list(sys.path)
         owned, runtime, backend = load_control_plane(project, original_path)
+        selection = owned.FRAMEWORKS
+        precision = {}
+        require(
+            (torch_precision_api_root is None) == (torch_precision_api_sha256 is None),
+            "Both Torch precision capsule bindings required",
+        )
+        for name, capsule, digest in (
+            ("pytorch", torch_precision_api_root, torch_precision_api_sha256),
+            ("mlx", mlx_bundle, mlx_precision_api_sha256),
+        ):
+            if digest is not None:
+                capsule = directory(capsule)
+                if name == "pytorch":
+                    require(torch_runtime == capsule / "runtime", "Torch precision runtime differs")
+                precision[name] = (
+                    capsule,
+                    *precision_api_capsule(project, source, name, capsule, digest),
+                )
+        original_torch = (
+            Path(precision["pytorch"][1]["original"]["roots"]["runtime"])
+            if "pytorch" in precision
+            else torch_runtime
+        )
+        original_mlx = (
+            Path(precision["mlx"][1]["original"]["roots"]["bundle"])
+            if "mlx" in precision
+            else mlx_bundle
+        )
+        if half_v3_plan is not None or half_v3_plan_sha256 is not None:
+            selection, record["development_candidate"] = half_v3_selection(
+                project,
+                source,
+                selection,
+                half_v3_plan,
+                half_v3_plan_sha256,
+                original_torch,
+            )
+        if mlx_test_compatibility_sha256 is not None:
+            selection, record["mlx_test_compatibility"] = mlx_test_compatibility_selection(
+                project, source, selection, original_mlx, mlx_test_compatibility_sha256
+            )
+        for name, (capsule, proof, binding) in precision.items():
+            selection = precision_api_selection(selection, name, capsule, proof, binding)
+            record.setdefault("precision_api_derivations", {})[name] = binding
         proposed_path = [str(project), *map(str, paths), *original_path]
         inventory = runtime.discover_runtime(Path("/"), paths)
         verify_actual_import_resolution(inventory, proposed_path)
@@ -283,7 +488,6 @@ def capture(project, expected_head, torch_runtime, numpy_overlay, mlx_bundle, de
         )
         torch_manifest = file_binding(torch_runtime / "runtime-manifest.json")
         mlx_manifest = file_binding(mlx_bundle / "MANIFEST.json")
-        selection = owned.FRAMEWORKS
         for name, actual in (("pytorch", torch_manifest), ("mlx", mlx_manifest)):
             require(
                 actual["sha256"] == selection[name]["runtime_manifest_sha256"],
@@ -386,6 +590,13 @@ def main():
     ):
         parser.add_argument("--" + name, type=Path, required=True)
     parser.add_argument("--expected-head", required=True)
+    parser.add_argument("--half-v3-plan", type=Path)
+    parser.add_argument("--half-v3-plan-sha256")
+    parser.add_argument("--mlx-test-compatibility-sha256")
+    parser.add_argument("--supplemental-dependencies", type=Path, action="append", default=[])
+    parser.add_argument("--torch-precision-api-root", type=Path)
+    parser.add_argument("--torch-precision-api-sha256")
+    parser.add_argument("--mlx-precision-api-sha256")
     args = parser.parse_args()
     result = capture(
         args.project,
@@ -395,6 +606,13 @@ def main():
         args.mlx_bundle,
         args.dependencies,
         args.output,
+        half_v3_plan=args.half_v3_plan,
+        half_v3_plan_sha256=args.half_v3_plan_sha256,
+        mlx_test_compatibility_sha256=args.mlx_test_compatibility_sha256,
+        supplemental_dependencies=args.supplemental_dependencies,
+        torch_precision_api_root=args.torch_precision_api_root,
+        torch_precision_api_sha256=args.torch_precision_api_sha256,
+        mlx_precision_api_sha256=args.mlx_precision_api_sha256,
     )
     print(
         json.dumps(

@@ -61,6 +61,18 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(self.expected["cpp_case_count"], 305)
         self.assertEqual(self.expected["cpp_assertions"], 4792)
 
+    def test_compatibility_inventory_preserves_cases_assertions_and_eligibility(self):
+        selected, _ = suite.suite_inventory("torch-dev-compat")
+        old = copy.deepcopy(self.expected)
+        old["test_source_sha256"]["source/python/tests/test_array.py"] = (
+            "7924745a66a9ed113ec437b6e7cbf3d381feefaafb562c87ed2545c302398e02"
+        )
+        expected = copy.deepcopy(selected)
+        self.assertEqual(len(expected.pop("test_compatibility_contract_sha256")), 64)
+        self.assertEqual(expected, old)
+        with self.assertRaisesRegex(ValueError, "Unknown MLX suite contract"):
+            suite.suite_inventory("skip-nightly-tests")
+
     def test_complete_python_inventory_and_subtests(self):
         xml, log = self.python_files()
         result = suite.python_inventory(xml, log, self.expected)
@@ -147,12 +159,140 @@ class ProvenanceTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name).resolve()
 
+    def test_numpy2_contract_preserves_complete_inventory(self):
+        original, _ = suite.suite_inventory("torch-dev-compat")
+        updated, _ = suite.suite_inventory("torch-dev-compat-numpy2")
+        self.assertEqual(updated, original)
+        self.assertEqual(
+            suite.numpy_version({"suite_contract": "torch-dev-compat-numpy2"}), "2.2.6"
+        )
+        self.assertEqual(suite.numpy_version({}), "1.26.4")
+        with self.assertRaises(ValueError):
+            suite.numpy_version({"suite_contract": "arbitrary"})
+
+    def driver_fixture(self):
+        dependencies = self.root / "site-packages"
+        bundle = self.root / "bundle"
+        for module, version in (
+            ("pytest", "9.1.1"),
+            ("tensorflow", "2.20.0"),
+            ("ml_dtypes", "0.5.3"),
+        ):
+            package = dependencies / module
+            package.mkdir(parents=True)
+            (package / "__init__.py").write_text("raise AssertionError('must not import')\n")
+            metadata = dependencies / (module + "-" + version + ".dist-info")
+            metadata.mkdir()
+            (metadata / "METADATA").write_text(f"Name: {module}\nVersion: {version}\n")
+        (bundle / "source").mkdir(parents=True)
+        (bundle / "source/pyproject.toml").write_text(
+            '[tool.pytest]\ntestpaths = ["python/tests"]\n'
+        )
+        runtime = {
+            "files": {
+                str(p).lstrip("/"): suite.sha256(p) for p in self.root.rglob("*") if p.is_file()
+            }
+        }
+        return dependencies, bundle, runtime
+
+    def test_driver_binds_upstream_config_and_requires_complete_dependencies_without_imports(self):
+        dependencies, bundle, runtime = self.driver_fixture()
+        result = suite.python_test_driver(runtime, bundle, [str(dependencies)])
+        self.assertEqual(result["root"], str(bundle / "source"))
+        self.assertEqual(result["dependencies"]["pytest"]["version"], "9.1.1")
+        self.assertEqual(set(result["dependencies"]), {"pytest", "tensorflow", "ml_dtypes"})
+        arguments = suite.python_arguments(bundle, self.root / "output")
+        self.assertEqual(
+            arguments[1:4],
+            ["--rootdir=" + str(bundle / "source"), "-c", str(bundle / "source/pyproject.toml")],
+        )
+        self.assertNotIn("-k", arguments)
+
+    def test_driver_rejects_old_pytest_even_if_all_its_bytes_are_bound(self):
+        dependencies, bundle, runtime = self.driver_fixture()
+        metadata = dependencies / "pytest-9.1.1.dist-info/METADATA"
+        metadata.write_text("Name: pytest\nVersion: 7.3.2\n")
+        runtime["files"][str(metadata).lstrip("/")] = suite.sha256(metadata)
+        with self.assertRaisesRegex(ValueError, "version differs: pytest"):
+            suite.python_test_driver(runtime, bundle, [str(dependencies)])
+
+    def test_driver_rejects_missing_support_package_and_changed_upstream_config(self):
+        dependencies, bundle, runtime = self.driver_fixture()
+        for path in (dependencies / "ml_dtypes/__init__.py", bundle / "source/pyproject.toml"):
+            with self.subTest(path=path):
+                saved = path.read_bytes()
+                path.write_bytes(saved + b"# changed\n")
+                with self.assertRaisesRegex(ValueError, "Unbound"):
+                    suite.python_test_driver(runtime, bundle, [str(dependencies)])
+                path.write_bytes(saved)
+        (dependencies / "tensorflow/__init__.py").unlink()
+        with self.assertRaisesRegex(ValueError, "Missing test dependency"):
+            suite.python_test_driver(runtime, bundle, [str(dependencies)])
+
+    def test_driver_rejects_shadow_package_without_authenticated_metadata(self):
+        dependencies, bundle, runtime = self.driver_fixture()
+        shadow = self.root / "shadow/pytest"
+        shadow.mkdir(parents=True)
+        (shadow / "__init__.py").write_text("# foreign pytest\n")
+        with self.assertRaisesRegex(ValueError, "Unbound test dependency"):
+            suite.python_test_driver(runtime, bundle, [str(shadow.parent), str(dependencies)])
+
     def test_duplicate_or_nonfinite_json_rejected(self):
         p = self.root / "value.json"
         for raw in ('{"x":1,"x":2}', '{"x":NaN}', '{"x":Infinity}'):
             p.write_text(raw)
             with self.assertRaises(ValueError):
                 suite.read_json(p)
+
+    def test_completed_receipt_preserves_numerical_failure_but_rejects_incomplete(self):
+        complete = dict(complete=True, integrity_after=True, passed=False)
+        self.assertTrue(suite.completed_receipt(complete))
+        for changed in (
+            dict(complete=False),
+            dict(complete=1),
+            dict(integrity_after=False),
+            dict(error="collection failed"),
+            dict(integrity_error="postflight failed"),
+        ):
+            with self.subTest(changed=changed):
+                self.assertFalse(suite.completed_receipt({**complete, **changed}))
+
+    def test_post_pytest_probe_uses_new_verified_gpu_stream(self):
+        stream = SimpleNamespace(device="gpu", index=7)
+        mx = SimpleNamespace(
+            gpu="gpu",
+            default_device=lambda: "gpu",
+            metal=SimpleNamespace(is_available=lambda: True),
+            new_stream=mock.Mock(return_value=stream),
+            set_default_stream=mock.Mock(),
+            default_stream=mock.Mock(return_value=stream),
+        )
+        proof = suite.post_pytest_stream(mx)
+        self.assertTrue(proof["default_stream_verified"])
+        self.assertEqual(proof["stream_index"], 7)
+        mx.new_stream.assert_called_once_with("gpu")
+        mx.set_default_stream.assert_called_once_with(stream)
+        mx.default_device = lambda: "cpu"
+        with self.assertRaisesRegex(ValueError, "GPU default changed"):
+            suite.post_pytest_stream(mx)
+        mx.new_stream.assert_called_once()
+
+    def test_post_pytest_rejects_wrong_stream_or_default(self):
+        stream = SimpleNamespace(device="cpu", index=7)
+        mx = SimpleNamespace(
+            gpu="gpu",
+            default_device=lambda: "gpu",
+            metal=SimpleNamespace(is_available=lambda: True),
+            new_stream=lambda device: stream,
+            set_default_stream=mock.Mock(),
+            default_stream=lambda device: object(),
+        )
+        with self.assertRaisesRegex(ValueError, "Post-suite stream is not GPU"):
+            suite.post_pytest_stream(mx)
+        mx.set_default_stream.assert_not_called()
+        stream.device = "gpu"
+        with self.assertRaisesRegex(ValueError, "default stream differs"):
+            suite.post_pytest_stream(mx)
 
     def test_changed_source_receipt_and_symlink_rejected(self):
         p = self.root / "original"
@@ -383,6 +523,16 @@ class ProvenanceTests(unittest.TestCase):
         with mock.patch.object(suite.subprocess, "run", side_effect=otool):
             proof = suite.linkage(executable, library, self.root, "valid")
         self.assertEqual(proof["selected_libmlx"], str(library))
+        names = []
+        for kind in ("executable", "library"):
+            for flag, raw in proof[kind]["raw"].items():
+                path = self.root / raw["path"]
+                self.assertEqual(path.read_text(), proof[kind]["otool"][flag])
+                names.append(path.name.casefold())
+        self.assertEqual(len(set(names)), 4)
+        with mock.patch.object(suite.subprocess, "run", side_effect=otool):
+            with self.assertRaises(FileExistsError):
+                suite.linkage(executable, library, self.root, "valid")
         foreign = links + "\t/tmp/foreign.dylib (compatibility version 0.0.0)\n"
         with mock.patch.object(
             suite.subprocess,

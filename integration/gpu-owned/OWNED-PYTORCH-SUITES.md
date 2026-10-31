@@ -5,18 +5,27 @@
 complete maintained PyTorch distribution intended for both CPU and MPS study
 workers. This is framework eligibility evidence, not numerical admission or a
 formal fit. No GPU suite or native compilation was performed while implementing
-the adapter. **This adapter is prepared but not qualification-ready.** Owned MPS
-eligibility is explicitly blocked until a separately reviewed archive-safe audit
-validates its complete descendant, fixture, helper and source evidence. The
-generic full-test count check cannot qualify MPS in the meantime.
+the adapter and portable auditor. **No runtime is qualified by these source-level
+checks.** The eligibility gate requires complete portable MPS evidence in addition
+to the unchanged full test inventory. Generic passing counts cannot qualify MPS.
 
-The current version binds the original 10,353 test identities, their order, skips,
+The default contract binds the original 10,353 test identities, their order, skips,
 and expected failures through `owned-suite-inventory-v1.json`. All failures remain
-blocking. The four additional half-precision regressions in the prospective
-candidate produce a different 10,357-test inventory. That candidate requires an
-explicit prospective framework selection and suite-contract revision before it
-can use this qualification route. No filtering or automatic test-count adjustment
-is permitted, and old results are not promoted to a new runtime.
+blocking. An explicit `prepare --suite-contract half-v3` selects the separately
+pinned `owned-suite-inventory-half-v3.json`: the original IDs plus four FP16
+regressions, with unchanged skip and expected-failure identities. It requires the
+v3 base, ordered patches, combined patch and hosted build selection. An old
+runtime or a relabeled original plan cannot use it. No filtering or automatic
+test-count adjustment is permitted, and old results are not promoted.
+
+`capture_runtime.py --half-v3-plan ... --half-v3-plan-sha256 ...` can capture a
+fresh joint runtime only after the v3 candidate plan's complete source/runtime
+and hosted artifact authentication. It checks that the requested Torch payload
+is the same one in that plan, rechecks the plan after authentication, retains the
+existing MLX selection, and binds both CPU and MPS to the new Torch distribution.
+This captures development identity and leaves `gpu_owned_study.FRAMEWORKS` and
+the historical formal contract unchanged. A successor formal campaign still
+requires explicit qualification and selection of these new bytes.
 
 Preparation authenticates an externally SHA-bound complete source manifest and
 compares its base revision and combined patch with the selected native build. It
@@ -97,19 +106,31 @@ attention implementation.
 ## Evidence and invocation
 
 The parent checks raw full-suite results and invokes the same production
-eligibility validator as the prospective study. At this stopping point that
-validator explicitly rejects owned MPS qualification, even if all raw methods
-pass. The remaining archive auditor must independently revalidate relative raw
-bindings for both descendant receipts and the launcher; complete imported-file
-proofs, process intervals and parent identity; the bounded stock fixture and
-its generated native files; retained helper identities; and the full selected
-source manifest. No absolute local path may substitute for archived evidence.
-Until that code and its mutation tests are completed and reviewed, this producer
-cannot return a qualified passing study receipt. A worker's `passed` boolean cannot substitute
-for the expected test inventory, exact skip policy, raw results, source/runtime
-hashes, native module and library origins, complete child receipts or successful
-postflight checks. Failed and interrupted attempts retain available logs and
-receipts; they cannot produce passing eligibility. Formal fits remain zero.
+eligibility validator as the prospective study. `owned_pytorch_archive.py` retains
+relative, hash-bound copies of the frozen plan, runtime authorities, full source
+manifest, exact result helpers, stock fixture sources and headers, generated
+fixture cache, launcher and both child receipts. Each raw byte binding is checked
+before and after copying. Authority/source metadata are bounded to 256 MiB; the
+existing 2 GiB full-output bound and 1 GiB fixture-cache bound still apply.
+
+The archive auditor reads retained members under the supplied evidence root.
+Original absolute paths are identity labels, not fallback read locations. It
+rechecks the selected source revision and patch, fixture AST and source hashes,
+helper pins, compiler/cache identity, resource observations, exact isolated parent
+argv and child launcher, process intervals, parent identity, and complete native
+and Python import proofs. It rejects unbound extra portable members, symlinks,
+missing or altered files and weakened execution controls. The entire retained
+member set is rehashed at the end. Relocation tests delete the original inputs
+before auditing the copied archive.
+
+A worker's `passed` boolean cannot substitute for the expected test inventory,
+exact skip policy, raw results, source/runtime hashes, native module and library
+origins, complete child receipts or successful postflight checks. Failed and
+interrupted attempts retain available logs and receipts; they cannot produce
+passing eligibility. Formal fits remain zero. A new framework binary still needs
+a fresh capture and complete suite execution. The 10,357-test half candidate uses
+its own explicit prospective inventory; this does not revise the 10,353-test
+historical contract or promote old-runtime results.
 
 Use the retained interpreter for CPU-only tests:
 
@@ -126,11 +147,28 @@ The driver/reference paths select the already-retained immutable result helpers,
 not another framework implementation. The two external SHA256 arguments must
 come from verified publication/capture evidence.
 
-The 43 CPU-only regression checks pass, including actual fresh-process launcher
+The 60 producer checks and 26 portable-archive checks pass under the retained
+CPython 3.12 interpreter, including actual fresh-process launcher
 checks, source mutations, cache bounds, native-origin mutations, and unconditional
-interpreter restoration after a test-runner exception. Ruff passes for the new
-Python files. These tests do not validate native execution or complete the
-pending archive auditor.
+interpreter restoration after a test-runner exception. Retained Python import maps
+are checked against authenticated runtime, project, full-source and explicit
+fixture authorities without accessing their original paths. Child receipts must
+have distinct integer process identities and serial, finite intervals contained
+within the parent process. Missing origins, changed hashes, foreign imports and
+overlapping or escaped intervals are rejected. Ruff passes for the new
+Python files. These tests do not validate native execution or qualify a runtime.
+The original AST fingerprints bind CPython 3.12's AST
+representation; a different Python AST version does not inherit this check.
+
+File binding hashes an already-readable, unbuffered file descriptor. Its complete
+identity and timestamps must remain stable throughout hashing and match the
+final path. Initial placeholder materialization occurs before that interval;
+replacements, content changes and metadata changes during hashing are rejected.
+The explicit archive symlink format and the historical digest format are both
+authenticated, with literal link targets bound independently of target contents.
+The sanitized environment preserves macOS's `__CF_USER_TEXT_ENCODING` value,
+which the interpreter otherwise adds on startup. A real fresh-interpreter test
+requires exact environment equality; numerical and compiler controls are unchanged.
 
 Both `prepare` and `run` require the same sanitized environment constructed by
 `controls`, including its exact cache path and selected Ninja search path. The

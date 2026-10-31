@@ -1,0 +1,76 @@
+name: Owned PyTorch NumPy 2 ABI build
+on:
+  push:
+    branches: [codex/trained-state-precision]
+    paths:
+      - '.github/workflows/owned-pytorch-numpy2-v1.yml'
+      - 'validation/owned-pytorch-numpy2-v1/**'
+      - 'integration/gpu-owned/half-index-candidate-v1/**'
+  workflow_dispatch:
+    inputs:
+      runner_label:
+        description: macOS arm64 runner with at least 40 GiB free and offline Metal compiler
+        type: string
+        required: true
+        default: macos-26
+permissions:
+  contents: read
+concurrency:
+  group: pytorch-upstream-integration
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.repository == 'logannye/arm64-transformer'
+    runs-on: ${{ inputs.runner_label || 'macos-26' }}
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          path: study
+      - uses: actions/checkout@v4
+        with:
+          repository: pytorch/pytorch
+          ref: 71d2a08507ab47dd6b2fa9b66319d17ce2377de4
+          persist-credentials: false
+          path: pytorch-source
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12.10'
+          architecture: arm64
+      - name: Validate frozen candidate and orchestration without compilation
+        working-directory: study/validation/owned-pytorch-numpy2-v1
+        run: python -I -B -m unittest discover -s . -p 'test_hosted_build.py' -v
+      - name: Validate all 15 scalar FP16 ordering and storage regression tests
+        working-directory: study
+        run: >-
+          python -I -B -m unittest discover
+          -s integration/gpu-owned/half-index-candidate-v1 -p 'test_reference.py' -v
+      - name: Provision OpenMP from a binary bottle only
+        run: brew install --force-bottle libomp
+      - name: Build the complete candidate framework
+        run: >-
+          python study/validation/owned-pytorch-numpy2-v1/hosted_build.py
+          --source pytorch-source
+          --patch study/validation/owned-pytorch-numpy2-v1/changes.patch
+          --output owned-pytorch-numpy2-v1-result
+      - name: Retain candidate bytes, source, dependencies, logs and failures
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytorch-owned-numpy2-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            owned-pytorch-numpy2-v1-result/*.json
+            owned-pytorch-numpy2-v1-result/*.log
+            owned-pytorch-numpy2-v1-result/*.patch
+            owned-pytorch-numpy2-v1-result/*.py
+            owned-pytorch-numpy2-v1-result/*.txt
+            owned-pytorch-numpy2-v1-result/CMakeCache.txt
+            owned-pytorch-numpy2-v1-result/*.tar.gz
+            owned-pytorch-numpy2-v1-result/*.partial
+            owned-pytorch-numpy2-v1-result/wheels/
+            owned-pytorch-numpy2-v1-result/half-probe/
+            owned-pytorch-numpy2-v1-result/*.cpp
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0

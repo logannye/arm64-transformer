@@ -14,6 +14,7 @@ import runpy
 import shlex
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from types import SimpleNamespace
 
 from transformer.gpu_owned_study import HISTORICAL_AUDIT, validate_formal_selection
 from transformer.gpu_study import digest, identity, read_json, regular, require, verify_files
@@ -28,6 +29,28 @@ PRODUCERS = {
     "mlx_python": "integration/gpu-owned/owned_mlx_suites.py",
 }
 MLX_SUBPROCESS_AST_SHA256 = "90a6406e042b09e83ed671864ad0cf30cefa2e6c4e148ca60d24ac26cbb6b433"
+# The pinned common_mps.py applies bare unittest.skip to these eight already
+# eligible FP16 gradient tests. Python records an empty reason for that spelling.
+# No new skip ID is allowed; all other reasons must remain nonempty strings.
+UPSTREAM_EMPTY_SKIP_REASON_IDS = frozenset(
+    "integrated_upstream_test_mps.TestConsistencyMPS.test_output_grad_match_"
+    + name
+    + "_mps_float16"
+    for name in (
+        "nn_functional_conv1d",
+        "nn_functional_conv2d",
+        "nn_functional_conv3d",
+        "nn_functional_conv_transpose1d",
+        "nn_functional_conv_transpose2d",
+        "nn_functional_conv_transpose3d",
+        "nn_functional_pairwise_distance",
+        "topk",
+    )
+)
+EMPTY_REASON_TEST_SOURCES = {
+    "7345b6e229aed240921460a3b598ffd1a47148ab4816aead0d405539a154a396",
+    "a7b6420664a9352dcb1fc7eb070744c4f1f869d7498d036e5d73ef83dab27bc7",
+}
 
 
 def suite_contract(path=None):
@@ -70,7 +93,20 @@ def validate_mps(tests, contract):
             and all(row["id"] in expected["test_ids"] and row["traceback"] for row in rows),
             "Missing or substituted MPS failure evidence",
         )
-    require(all(row["reason"] for row in tests["skipped"]), "Missing upstream skip reasons")
+    require(
+        all(
+            isinstance(row["reason"], str)
+            and (
+                row["reason"]
+                or (
+                    row["id"] in UPSTREAM_EMPTY_SKIP_REASON_IDS
+                    and expected["test_source_sha256"] in EMPTY_REASON_TEST_SOURCES
+                )
+            )
+            for row in tests["skipped"]
+        ),
+        "Missing upstream skip reasons",
+    )
     require(
         tests["failures"] == tests["errors"] == tests["unexpected_successes"] == []
         and tests["successful"] is True,
@@ -315,6 +351,31 @@ def validate_mlx_descendants(record, root, manifest, runtime_receipt):
         _raw(root, item)
 
 
+def validate_mps_archive(record, root, manifest, runtime_receipt):
+    """Authenticate the portable auditor before reading any archived MPS inputs."""
+    require(isinstance(runtime_receipt, dict), "MPS archive needs bound runtime authority")
+    source = Path(__file__).resolve().parents[1]
+    names = {
+        "producer": PRODUCERS["pytorch_mps"],
+        "policy": "integration/gpu-owned/owned_pytorch_fixture.py",
+        "archive": "integration/gpu-owned/owned_pytorch_archive.py",
+    }
+    for name in names.values():
+        require(
+            manifest["bindings"]["source"].get(name) == digest(source / name),
+            "MPS archive validator is outside the selected project authority",
+        )
+    modules = {key: runpy.run_path(str(source / name)) for key, name in names.items()}
+    return modules["archive"]["audit"](
+        root,
+        record,
+        manifest,
+        runtime_receipt,
+        SimpleNamespace(**modules["producer"]),
+        SimpleNamespace(**modules["policy"]),
+    )
+
+
 def validate_suite(record, root, manifest, contract, name, runtime_receipt=None):
     require(
         name in SUITES
@@ -330,14 +391,10 @@ def validate_suite(record, root, manifest, contract, name, runtime_receipt=None)
         and "integrity_error" not in record,
         "Suite did not finish all runtime and evidence checks",
     )
-    if name == "pytorch_mps":
-        # Complete live-suite execution is insufficient for portable qualification.
-        # The MPS-specific archive auditor must independently recheck both upstream
-        # subprocesses, the stock fixture, helper/source inventories and raw native
-        # proofs. Do not let generic passing counts bypass that unfinished work.
+    if name == "pytorch_mps" and not record.get("portable_evidence"):
         raise ValueError(
-            "Owned MPS archive qualification remains blocked: complete descendant, "
-            "stock-fixture, helper and full-source re-audit is not implemented"
+            "Owned MPS archive qualification remains blocked: complete portable "
+            "descendant, stock-fixture, helper and full-source evidence is required"
         )
     binding = manifest["bindings"]
     selected = manifest["owned_frameworks"]
@@ -439,6 +496,8 @@ def validate_suite(record, root, manifest, contract, name, runtime_receipt=None)
         proof["before"].get("files") == proof["after"].get("files") == native,
         "Native origin evidence does not bind the retained artifacts",
     )
+    if name == "pytorch_mps":
+        validate_mps_archive(record, root, manifest, runtime_receipt)
     if name.startswith("mlx_"):
         from transformer.gpu_owned_backend import validate_compilation_probe
 

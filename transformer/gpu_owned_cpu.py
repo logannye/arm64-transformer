@@ -687,7 +687,7 @@ def verify_proof(
             isinstance(synthetic, dict)
             and isinstance(aliases, dict)
             and namespaces == {}
-            and set(synthetic) == {"torch.ops", "torch.classes"},
+            and {"torch.ops", "torch.classes"} <= set(synthetic),
             "CPU proof omits registered Torch synthetic namespaces",
         )
         require(
@@ -697,7 +697,14 @@ def verify_proof(
             == framework["module_count"],
             "CPU proof framework module inventory is incomplete or duplicated",
         )
+        from transformer.gpu_owned_origins import validate_torch_forwarding_proofs
+
         package = Path(module_origins["torch"]).parent
+        validate_torch_forwarding_proofs(
+            synthetic,
+            package,
+            lambda p: runtime[Path(p).relative_to(proof["runtime_root"]).as_posix()],
+        )
         for name, backing_name, label, cls in (
             ("torch.ops", "torch._ops", "_ops.py", "_Ops"),
             ("torch.classes", "torch._classes", "_classes.py", "_Classes"),

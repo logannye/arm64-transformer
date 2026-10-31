@@ -154,7 +154,19 @@ CPU compute thread. At width 32, forward takes 15.1 µs versus 53.2 µs.
 
 Widths 512 and 1024 favor PyTorch on time and are not fully numerically qualified:
 the retained audit finds native failures at width 1024 and PyTorch failures at
-both widths. These limitations remain unresolved. The
+both widths. Those historical runs remain unqualified. The current
+[trained-state repair work](experiments/trained-precision-v1/STATUS.md) has passing
+development candidates for all 89 exposed forward anchors and all 20 fresh
+logit/loss/gradient batches. The stronger native candidate also passes all 89
+historical gradient anchors on both M4/SME and hosted M1/NEON, with independent
+raw-array audits. Custom MPS also passes the complete historical gradient
+inventory. Compiled MLX's retained policy-7 failure was localized to an FF1/ReLU
+rounding error; its policy-15 replacement now passes the complete historical and
+existing-fresh inventories in separate inference and gradient audits. Native
+policy-15 training and saved-Adam restarts now replay exactly at both widths;
+all five development implementations pass the resulting 20 common-state probes
+in separate inference and gradient audits. Maintained-framework arithmetic
+repairs and full qualification remain unfinished. The
 [CPU report](experiments/width-sweep-v6/README.md) retains learning curves,
 quality, memory and prediction-level errors. Historical CPU measurements are
 separate from the new GPU development experiments.

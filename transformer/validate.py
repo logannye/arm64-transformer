@@ -46,6 +46,7 @@ SOURCE_FILES = (
     "native/attention.S",
     "native/softmax.S",
     "native/normalization.S",
+    "native/precision.S",
     "native/model.S",
     "native/runtime.S",
     "native/Makefile",
@@ -1358,7 +1359,9 @@ def check_runtime_shared_checkpoints(native, checks, fixture, directory):
     checks.require("runtime/shared_checkpoints_complete", True)
 
 
-def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE, *, native=None):
+def runtime_checks(
+    checks, directory, executable=DEFAULT_EXECUTABLE, *, native=None, precision_policy=0
+):
     from transformer.prepare import prepare_fixture
 
     directory = Path(directory).resolve()
@@ -1409,7 +1412,9 @@ def runtime_checks(checks, directory, executable=DEFAULT_EXECUTABLE, *, native=N
     policy = os.environ.get("ARM64_TRANSFORMER_BACKEND", "auto")
     for name in ("native", "native-repeat"):
         metadata = read_backend(directory / name / "backend.u64", policy=policy)
-        validate_runtime_backend(metadata, backend_config, policy=policy)
+        validate_runtime_backend(
+            metadata, backend_config, policy=policy, precision_policy=precision_policy
+        )
         checks.require(f"runtime/{name}/backend_dispatch_counts", True, metadata)
     checks.require(
         "runtime/backend_repeat_exact",
@@ -1560,6 +1565,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--runtime", action="store_true")
     parser.add_argument("--work-dir", type=Path)
+    parser.add_argument("--development-precision-policy", type=int, choices=range(16))
     args = parser.parse_args()
     if args.output.exists():
         parser.error("Audit output already exists; choose a fresh evidence path")
@@ -1569,6 +1575,8 @@ def main():
     error = None
     identity = None
     backend = None
+    compiled_precision = None
+    expected_precision = args.development_precision_policy or 0
     source_before = {
         name: sha256(ROOT / name) if (ROOT / name).is_file() else None for name in SOURCE_FILES
     }
@@ -1580,6 +1588,13 @@ def main():
     try:
         native = Native(args.library)
         identity = native.model_identity
+        precision_function = native.lib.tf_precision_policy
+        precision_function.argtypes, precision_function.restype = [], ct.c_uint64
+        compiled_precision = int(precision_function())
+        if compiled_precision != expected_precision:
+            raise ValueError(
+                "Compiled precision policy differs from the explicit validation policy"
+            )
         numerical_checks(native, checks)
         backend = native.backend_identity
         checks.require("backend/identity", backend is not None)
@@ -1591,7 +1606,13 @@ def main():
             backend["neon_forward_calls"] > 0 and backend["neon_backward_calls"] > 0,
         )
         if args.runtime:
-            runtime_checks(checks, args.work_dir, args.executable, native=native)
+            runtime_checks(
+                checks,
+                args.work_dir,
+                args.executable,
+                native=native,
+                precision_policy=expected_precision,
+            )
     except Exception as exc:
         error = f"{type(exc).__name__}: {exc}"
         checks.require("audit/exception", False, error)
@@ -1630,7 +1651,12 @@ def main():
     checks.require("audit/binaries_unchanged_during_checks", binary_before == binary_after)
     result = {
         "schema_version": 1,
-        "validation_contract": validation_contract(spec.WIDTH),
+        "validation_contract": (
+            validation_contract(spec.WIDTH)
+            if args.development_precision_policy is None
+            else "trained-precision-development-v1"
+        ),
+        "native_precision_policy": compiled_precision,
         "legacy_diagnostics": checks.diagnostics,
         "legacy_diagnostic_count": len(checks.diagnostics),
         "legacy_failed_checks": [

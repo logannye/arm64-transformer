@@ -119,6 +119,59 @@ class SourceTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 M.source_files(self.plan, self.selected)
 
+    def archive_source_link(self):
+        self.data["schema"] = "pytorch-owned-source-archive-v1"
+        self.data["files"]["test/test_mps.py"].update(kind="file", mode=0o644)
+        (self.source / "test/test_mps.py").chmod(0o644)
+        (self.source / "link").symlink_to("test/test_mps.py")
+        self.data["files"]["link"] = dict(kind="symlink", target="test/test_mps.py", mode=0o755)
+        self.save()
+
+    def test_archive_manifest_link_target_is_bound_without_following_it_as_a_file(self):
+        self.archive_source_link()
+        expected = M.hashlib.sha256(b"test/test_mps.py").hexdigest()
+        self.assertEqual(M.source_files(self.plan, self.selected)["link"], expected)
+        self.assertEqual(M.source_files(self.plan, self.selected, verify=False)["link"], expected)
+
+    def test_archive_link_replaced_by_regular_file_is_rejected(self):
+        self.archive_source_link()
+        (self.source / "link").unlink()
+        (self.source / "link").write_text("test/test_mps.py")
+        with self.assertRaisesRegex(ValueError, "symlink"):
+            M.source_files(self.plan, self.selected)
+
+    def test_archive_link_target_change_is_rejected(self):
+        self.archive_source_link()
+        (self.source / "link").unlink()
+        (self.source / "link").symlink_to("./test/test_mps.py")
+        with self.assertRaisesRegex(ValueError, "symlink changed"):
+            M.source_files(self.plan, self.selected)
+
+    def test_archive_link_escape_is_rejected_even_without_live_verification(self):
+        self.archive_source_link()
+        for target in ("../escape", "/outside", "test/../../escape"):
+            self.data["files"]["link"]["target"] = target
+            self.save()
+            with self.subTest(target=target), self.assertRaises(ValueError):
+                M.source_files(self.plan, self.selected, verify=False)
+
+    def test_archive_regular_file_mode_remains_bound(self):
+        self.archive_source_link()
+        (self.source / "test/test_mps.py").chmod(0o755)
+        with self.assertRaisesRegex(ValueError, "mode changed"):
+            M.source_files(self.plan, self.selected)
+
+    def test_legacy_digest_link_format_still_verifies(self):
+        raw = b"test/test_mps.py"
+        (self.source / "link").symlink_to(raw.decode())
+        self.data["files"]["link"] = dict(
+            type="symlink", bytes=len(raw), sha256=M.hashlib.sha256(raw).hexdigest()
+        )
+        self.save()
+        self.assertEqual(
+            M.source_files(self.plan, self.selected)["link"], self.data["files"]["link"]["sha256"]
+        )
+
 
 class FixtureTests(unittest.TestCase):
     def setUp(self):
@@ -210,6 +263,46 @@ class ControlTests(unittest.TestCase):
         with patch.dict(os.environ, self.environment, clear=True):
             M.check_controls(P, self.cache)
 
+    def test_inductor_metadata_cache_is_frozen_inside_monitored_fixture(self):
+        environment = M.controls({"TORCHINDUCTOR_CACHE_DIR": "/unrelated/cache"}, P, self.cache)
+        self.assertEqual(
+            environment["TORCHINDUCTOR_CACHE_DIR"],
+            str(self.cache / "torchinductor-metadata"),
+        )
+        self.assertFalse(self.cache.exists())
+
+    def test_missing_or_external_inductor_metadata_cache_is_rejected(self):
+        for selected in (None, "/unrelated/cache", str(self.cache)):
+            environment = dict(self.environment)
+            if selected is None:
+                del environment["TORCHINDUCTOR_CACHE_DIR"]
+            else:
+                environment["TORCHINDUCTOR_CACHE_DIR"] = selected
+            with (
+                self.subTest(cache=selected),
+                patch.dict(os.environ, environment, clear=True),
+                self.assertRaisesRegex(ValueError, "Inductor metadata cache differs"),
+            ):
+                M.check_controls(P, self.cache)
+
+    def test_sanitized_environment_survives_real_interpreter_startup_exactly(self):
+        environment = M.controls(os.environ, P, self.cache)
+        actual = json.loads(
+            subprocess.check_output(
+                [
+                    sys.executable,
+                    "-P",
+                    "-S",
+                    "-B",
+                    "-c",
+                    "import json,os;print(json.dumps(dict(os.environ)))",
+                ],
+                env=environment,
+                text=True,
+            )
+        )
+        self.assertEqual(actual, environment)
+
     def test_fallback_override_only_declared_child(self):
         with patch.dict(
             os.environ, {**self.environment, "PYTORCH_ENABLE_MPS_FALLBACK": "1"}, clear=True
@@ -254,6 +347,91 @@ class ControlTests(unittest.TestCase):
         link.symlink_to(path)
         with self.assertRaises(ValueError):
             M.binding(link)
+
+    def test_binding_rejects_mutation_during_the_descriptor_hash(self):
+        path = self.root / "a"
+        path.write_bytes(b"original")
+        original_digest = M.hashlib.file_digest
+
+        def mutate(stream, algorithm):
+            result = original_digest(stream, algorithm)
+            path.write_bytes(b"changed")
+            return result
+
+        with patch.object(M.hashlib, "file_digest", side_effect=mutate):
+            with self.assertRaisesRegex(ValueError, "changed while hashing"):
+                M.binding(path)
+
+    def test_binding_rejects_replacement_with_identical_bytes_during_hash(self):
+        path = self.root / "a"
+        path.write_bytes(b"original")
+        original_digest = M.hashlib.file_digest
+
+        def replace(stream, algorithm):
+            result = original_digest(stream, algorithm)
+            replacement = self.root / "replacement"
+            replacement.write_bytes(b"original")
+            replacement.replace(path)
+            return result
+
+        with patch.object(M.hashlib, "file_digest", side_effect=replace):
+            with self.assertRaisesRegex(ValueError, "changed while hashing"):
+                M.binding(path)
+
+    def test_binding_rejects_timestamp_change_during_hash(self):
+        path = self.root / "a"
+        path.write_bytes(b"original")
+        original_digest = M.hashlib.file_digest
+
+        def touch(stream, algorithm):
+            result = original_digest(stream, algorithm)
+            current = path.stat()
+            os.utime(path, ns=(current.st_atime_ns, current.st_mtime_ns + 1000000000))
+            return result
+
+        with patch.object(M.hashlib, "file_digest", side_effect=touch):
+            with self.assertRaisesRegex(ValueError, "changed while hashing"):
+                M.binding(path)
+
+    def test_materialization_before_hash_preserves_the_expected_binding(self):
+        path = self.root / "placeholder"
+        path.write_bytes(b"materialized bytes")
+        expected = M.binding(path)
+        original_open = Path.open
+
+        class MaterializingFile:
+            def __init__(self, stream):
+                self.stream = stream
+
+            def __getattr__(self, name):
+                return getattr(self.stream, name)
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                return self.stream.__exit__(*args)
+
+            def read(self, count):
+                result = self.stream.read(count)
+                current = path.stat()
+                os.utime(path, ns=(current.st_atime_ns, current.st_mtime_ns + 1000000000))
+                return result
+
+        def materialize(value, *args, **kwargs):
+            stream = original_open(value, *args, **kwargs)
+            return MaterializingFile(stream) if value == path else stream
+
+        with patch.object(Path, "open", materialize):
+            self.assertEqual(M.binding(path, expected), expected)
+
+    def test_zero_length_descriptor_needs_no_hydration_to_hash(self):
+        path = self.root / "empty-placeholder"
+        path.write_bytes(b"")
+        with patch.object(M.hashlib, "file_digest", side_effect=AssertionError("empty read")):
+            row = M.binding(path)
+        self.assertEqual(row["bytes"], 0)
+        self.assertEqual(row["sha256"], M.hashlib.sha256(b"").hexdigest())
 
     def test_duplicate_and_nonfinite_json(self):
         path = self.root / "a.json"
@@ -498,6 +676,59 @@ class NativeProofTests(unittest.TestCase):
             },
         }
 
+    def test_retained_python_map_is_checked_without_live_files(self):
+        self.runtime["files"]["deps/numpy/__init__.py"] = "b" * 64
+        self.runtime["layout"] = {"packages": {"numpy": ["/runtime/deps/numpy/__init__.py"]}}
+        imported = {
+            name: {"path": path, "sha256": "a" * 64}
+            for name, path in self.proof["framework_module_origins"]["pytorch"][
+                "module_origins"
+            ].items()
+        }
+        imported["numpy"] = {"path": "/runtime/deps/numpy/__init__.py", "sha256": "b" * 64}
+        project = {"root": "/absent-project", "files": {}}
+
+        def check(value):
+            M.validate_loaded_proof(
+                value, self.proof, self.runtime, self.root, project, "/absent-source", {}, {}
+            )
+
+        check(imported)
+        for mutation in ("foreign", "hash", "hash_type", "missing", "path"):
+            value = json.loads(json.dumps(imported))
+            if mutation == "foreign":
+                value["foreign"] = {"path": "/unbound/module.py", "sha256": "a" * 64}
+            elif mutation == "hash":
+                value["numpy"]["sha256"] = "a" * 64
+            elif mutation == "hash_type":
+                value["numpy"]["sha256"] = []
+            elif mutation == "missing":
+                del value["torch._C"]
+            else:
+                value["numpy"]["path"] = "/runtime/deps/../deps/numpy/__init__.py"
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                check(value)
+
+    def test_descendant_processes_must_be_serial_and_inside_parent(self):
+        children = [
+            dict(pid=2, parent_pid=1, started_unix=2, ended_unix=3),
+            dict(pid=3, parent_pid=1, started_unix=4, ended_unix=5),
+        ]
+        self.assertEqual(M.validate_descendant_intervals(children, 1, (1, 6)), [(2, 3), (4, 5)])
+        for key, value in (
+            ("pid", 2),
+            ("parent_pid", 9),
+            ("parent_pid", True),
+            ("started_unix", 2.5),
+            ("ended_unix", 7),
+            ("started_unix", float("nan")),
+            ("pid", True),
+        ):
+            mutant = json.loads(json.dumps(children))
+            mutant[1][key] = value
+            with self.subTest(key=key, value=value), self.assertRaises(ValueError):
+                M.validate_descendant_intervals(mutant, 1, (1, 6))
+
     def test_complete_proof(self):
         M.validate_native_proof(self.proof, self.runtime, self.root)
 
@@ -537,6 +768,179 @@ class NativeProofTests(unittest.TestCase):
         self.proof["framework_module_origins"]["pytorch"]["module_count"] = 4
         with self.assertRaises(ValueError):
             M.validate_native_proof(self.proof, self.runtime, self.root)
+
+
+class ProspectiveInventoryTests(unittest.TestCase):
+    def setUp(self):
+        self.plan = {"suite_contract": "half-v3"}
+        self.value = M.read(HERE / "owned-suite-inventory-half-v3.json")
+        wanted = self.value["prospective_selection"]
+        self.selected = {
+            "pytorch": {
+                key: wanted[key]
+                for key in ("base", "patches", "combined_patch_sha256", "build_run")
+            }
+        }
+
+    def test_all_old_ids_and_eligibility_retained_with_four_additions(self):
+        old = M.suite_inventory({})
+        new = M.suite_inventory(self.plan, self.selected)
+        original, successor = old["pytorch"], new["pytorch"]
+        additions = old["prospective_unselected_pytorch_additions"]
+        self.assertEqual(len(original["test_ids"]), 10353)
+        self.assertEqual(successor["test_ids"], sorted(original["test_ids"] + additions))
+        self.assertEqual(len(successor["test_ids"]), 10357)
+        for field in ("skip_ids", "expected_failure_ids"):
+            self.assertEqual(successor[field], original[field])
+        self.assertEqual(new["mlx"], old["mlx"])
+        self.assertFalse(new["formal_eligible"])
+
+    def test_numpy2_native_build_keeps_every_case_and_eligibility_with_distinct_selection(self):
+        old = M.suite_inventory(self.plan, self.selected)
+        selected = json.loads(json.dumps(self.selected))
+        selected["pytorch"].update(build_run=41158978641, numpy_abi_version="2.2.6")
+        plan = {"suite_contract": "numpy2-v1"}
+        new = M.suite_inventory(plan, selected)
+        self.assertEqual(new["pytorch"], old["pytorch"])
+        self.assertEqual(new["mlx"], old["mlx"])
+        self.assertNotEqual(new["prospective_selection"], old["prospective_selection"])
+        for change in (dict(build_run=41125186309), dict(numpy_abi_version="1.26.4")):
+            changed = json.loads(json.dumps(selected))
+            changed["pytorch"].update(change)
+            with self.assertRaises(ValueError):
+                M.suite_inventory(plan, changed)
+
+    def test_full_precision_source_requires_same_derivation_and_all_generic_api_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            source = root / "source"
+            api_root = HERE.parent / "precision-library-v1"
+            value = dict(
+                schema="pytorch-owned-source-archive-v1",
+                source_revision="a" * 40,
+                patch_sha256="b" * 64,
+                precision_api_derivation={"sha256": "c" * 64},
+                files={},
+            )
+            for origin, target in (
+                ("torch_api.py", "precise_fp32.py"),
+                ("_fp32_precise_math.py", "_fp32_precise_math.py"),
+                ("_fp32_precise_dense.py", "_fp32_precise_dense.py"),
+            ):
+                relative = "torch/nn/" + target
+                path = source / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes((api_root / origin).read_bytes())
+                path.chmod(0o644)
+                value["files"][relative] = dict(
+                    kind="file",
+                    mode=0o644,
+                    bytes=path.stat().st_size,
+                    sha256=M.binding(path)["sha256"],
+                )
+            manifest = root / "source-manifest.json"
+            manifest.write_text(json.dumps(value))
+            plan = dict(source_manifest=M.binding(manifest), source_root=str(source))
+            selected = {
+                "pytorch": dict(
+                    base="a" * 40,
+                    combined_patch_sha256="b" * 64,
+                    precision_api=dict(
+                        contract_sha256=M.binding(api_root / "contract.json")["sha256"],
+                        derivation_receipt_sha256="c" * 64,
+                    ),
+                )
+            }
+            self.assertEqual(len(M.source_files(plan, selected)), 3)
+            value["files"].pop("torch/nn/precise_fp32.py")
+            manifest.write_text(json.dumps(value))
+            plan["source_manifest"] = M.binding(manifest)
+            with self.assertRaisesRegex(ValueError, "Generic precision API missing"):
+                M.source_files(plan, selected)
+
+    def test_explicit_selection_required_and_old_build_rejected(self):
+        with self.assertRaises(ValueError):
+            M.suite_inventory(self.plan)
+        for field in ("base", "patches", "combined_patch_sha256", "build_run"):
+            changed = json.loads(json.dumps(self.selected))
+            changed["pytorch"][field] = "old build"
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                M.suite_inventory(self.plan, changed)
+
+    def test_unknown_inventory_and_changed_contract_bytes_rejected(self):
+        with self.assertRaises(ValueError):
+            M.inventory_spec({"suite_contract": "arbitrary"})
+        with patch.object(M, "HALF_V3_INVENTORY_SHA", "0" * 64):
+            with self.assertRaises(ValueError):
+                M.suite_inventory(self.plan, self.selected)
+
+
+class ChildLauncherTests(unittest.TestCase):
+    def test_descendant_audit_uses_authenticated_normalized_source_inventory(self):
+        with tempfile.TemporaryDirectory() as name:
+            root = Path(name).resolve()
+            files = {
+                "runtime": {},
+                "receipt": {},
+                "source": {"files": {"link": {"kind": "symlink", "target": "test.py"}}},
+                "selection": {"pytorch": {"base": "a" * 40}},
+            }
+            plan = {
+                "authority_inputs": {k: {"path": k} for k in ("inventory", "receipt", "selection")},
+                "source_manifest": {"path": "source"},
+                "subprocess_contract": {"invocations": []},
+            }
+            plan["authority_inputs"]["inventory"]["path"] = "runtime"
+            with (
+                patch.object(M, "binding"),
+                patch.object(M, "read", side_effect=lambda p: files[str(p)]),
+                patch.object(M, "source_files", return_value={"link": "b" * 64}) as normalized,
+            ):
+                self.assertEqual(M.check_descendants(root, plan, "c" * 64, 1, (0, 1)), [])
+                normalized.assert_called_once_with(plan, files["selection"], verify=False)
+
+    @unittest.skipIf(os.name == "nt", "POSIX conformance launcher")
+    def test_exec_preserves_environment_flags_and_literal_upstream_arguments(self):
+        with tempfile.TemporaryDirectory() as name:
+            root = Path(name).resolve()
+            python = str(Path(sys.executable).resolve())
+            code = (
+                "import json,os,sys;print(json.dumps(dict(environment=dict(os.environ),"
+                "arguments=sys.argv[1:],flags=[sys.flags.safe_path,sys.flags.no_site,"
+                "sys.flags.dont_write_bytecode,sys.flags.isolated,sys.flags.hash_randomization])))"
+            )
+            environment = {"PYTHONHASHSEED": "0", "FROZEN_TEST_CONTROL": "literal spaces $ ` !"}
+            baseline = json.loads(
+                subprocess.check_output(
+                    [python, "-P", "-S", "-B", "-c", code], env=environment, cwd=root, text=True
+                )
+            )
+            # macOS CPython may add its platform text-encoding variable at startup.
+            environment = baseline["environment"]
+            launcher = root / "owned launcher"
+            launcher.write_text(M.child_launcher_source([python, "-P", "-S", "-B", "-c", code]))
+            launcher.chmod(0o700)
+            arguments = ["-W", "always", "-c", "literal script with 'quotes' and $ symbols\n"]
+            observed = json.loads(
+                subprocess.check_output(
+                    [launcher, *arguments], env=environment, cwd=root, text=True
+                )
+            )
+            self.assertEqual(observed["environment"], environment)
+            self.assertEqual(observed["arguments"], arguments)
+            self.assertEqual(observed["flags"], [True, 1, 1, 0, 0])
+            self.assertNotIn("PWD", observed["environment"])
+            self.assertNotIn("SHLVL", observed["environment"])
+
+    def test_changed_startup_flags_or_unsafe_shebang_rejected(self):
+        for command in (
+            ["/python", "-I", "-S", "-B", "-c", "pass"],
+            ["relative-python", "-P", "-S", "-B", "-c", "pass"],
+            ["/python\nunsafe", "-P", "-S", "-B", "-c", "pass"],
+            ["/" + "x" * 300, "-P", "-S", "-B", "-c", "pass"],
+        ):
+            with self.subTest(command=command), self.assertRaises(ValueError):
+                M.child_launcher_source(command)
 
 
 if __name__ == "__main__":

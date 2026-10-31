@@ -10,7 +10,9 @@ import ast
 import hashlib
 import importlib.util
 import json
+import math
 import os
+import re
 import shlex
 import stat
 import subprocess
@@ -26,8 +28,13 @@ PROTOCOL = "gpu-v4-owned-five-engine-v1"
 PRODUCER = "integration/gpu-owned/owned_pytorch_suites.py"
 SHARED = "integration/gpu-owned/owned_mlx_suites.py"
 POLICY = "integration/gpu-owned/owned_pytorch_fixture.py"
+ARCHIVE = "integration/gpu-owned/owned_pytorch_archive.py"
 INVENTORY = "integration/gpu-owned/owned-suite-inventory-v1.json"
 INVENTORY_SHA = "cff557d2b1d68857bc488e77e6672fb0fb386409e88ad6ca4e7fa31bd862d852"
+HALF_V3_INVENTORY = "integration/gpu-owned/owned-suite-inventory-half-v3.json"
+HALF_V3_INVENTORY_SHA = "00d3a5c03b32a91cc28f24355c4a43045f044c77c8d06bcf765c75fbe8b8f639"
+NUMPY2_INVENTORY = "integration/gpu-owned/owned-suite-inventory-numpy2-v1.json"
+NUMPY2_INVENTORY_SHA = "7c7340492f0004c2f339aa96426fb951d962119330fbc94e567d601dfb8c4374"
 FALLBACK_AST_SHA = "3d8e80a2297c719dd126826912efaa594a2104a9f930addb4daf4c955d75439e"
 HELPERS = {
     "driver": (
@@ -78,6 +85,7 @@ ABSENT = (
     "PYTORCH_TEST_SKIP_FAST",
     "PYTORCH_TEST_SKIP_FAST_TESTS",
 )
+INDUCTOR_CACHE_NAME = "torchinductor-metadata"
 
 
 def require(value, message):
@@ -112,16 +120,43 @@ def read(path):
 def binding(path, expected=None):
     path = Path(path).absolute()
     require(path.resolve(strict=True) == path and not path.is_symlink(), "Noncanonical input")
-    before = path.stat()
-    require(stat.S_ISREG(before.st_mode), "Nonregular input")
-    row = {"path": str(path), "sha256": digest(path), "bytes": before.st_size}
-    after = path.stat()
+    initial = path.stat()
+    require(stat.S_ISREG(initial.st_mode), "Nonregular input")
+    # Opening a cloud placeholder can materialize it and update timestamps.
+    # Bind the readable file descriptor, then require complete stability for
+    # the whole hash and the final path. No content or identity change during
+    # that interval is accepted, even when its final digest would match.
+    with path.open("rb", buffering=0) as stream:
+        if initial.st_size:
+            stream.read(1)
+            stream.seek(0)
+        before = os.fstat(stream.fileno())
+        require(stat.S_ISREG(before.st_mode), "Nonregular input")
+        require(
+            all(
+                getattr(initial, k) == getattr(before, k)
+                for k in ("st_dev", "st_ino", "st_size", "st_mode")
+            ),
+            "Input identity changed while opening",
+        )
+        row = {
+            "path": str(path),
+            # A descriptor with verified zero length has no bytes to read.
+            # Reading an empty cloud placeholder can block on hydration.
+            "sha256": (
+                hashlib.file_digest(stream, "sha256") if before.st_size else hashlib.sha256(b"")
+            ).hexdigest(),
+            "bytes": before.st_size,
+        }
+        after = os.fstat(stream.fileno())
+    require(path.resolve(strict=True) == path and not path.is_symlink(), "Input path changed")
+    final = path.stat()
     require(
         all(
-            getattr(before, k) == getattr(after, k)
+            getattr(before, k) == getattr(after, k) == getattr(final, k)
             for k in ("st_dev", "st_ino", "st_size", "st_mode", "st_mtime_ns", "st_ctime_ns")
         ),
-        "Input changed while hashing",
+        "Input changed while hashing: " + str(path),
     )
     if expected is not None:
         require(row == expected, "Input binding differs")
@@ -151,6 +186,40 @@ def load(path, name):
     return module
 
 
+def inventory_spec(plan):
+    """Only explicit, source-pinned prospective inventories are executable."""
+    choice = plan.get("suite_contract", "original")
+    require(choice in {"original", "half-v3", "numpy2-v1"}, "Unknown prospective suite contract")
+    if choice == "numpy2-v1":
+        return NUMPY2_INVENTORY, NUMPY2_INVENTORY_SHA
+    if choice == "half-v3":
+        return HALF_V3_INVENTORY, HALF_V3_INVENTORY_SHA
+    return INVENTORY, INVENTORY_SHA
+
+
+def suite_inventory(plan, selected=None):
+    relative, expected_sha = inventory_spec(plan)
+    path = Path(__file__).resolve().parents[2] / relative
+    pinned(path, expected_sha)
+    value = read(path)
+    if plan.get("suite_contract", "original") in {"half-v3", "numpy2-v1"}:
+        require(selected is not None, "Half-v3 needs an authenticated framework selection")
+        wanted = value["prospective_selection"]
+        require(
+            all(
+                selected["pytorch"].get(key) == wanted[key]
+                for key in ("base", "patches", "combined_patch_sha256", "build_run")
+            ),
+            "Prospective suite cannot use an earlier or unselected framework",
+        )
+        if plan["suite_contract"] == "numpy2-v1":
+            require(
+                selected["pytorch"].get("numpy_abi_version") == wanted["numpy_abi_version"],
+                "Prospective suite NumPy ABI differs",
+            )
+    return value
+
+
 def helpers(plan):
     """Authenticate this entrypoint and shared bootstrap before any project import."""
     raw = plan["authority_inputs"]["receipt"]
@@ -160,15 +229,17 @@ def helpers(plan):
     root = Path(project["root"])
     require(root.resolve(strict=True) == root, "Noncanonical project")
     require((root / PRODUCER) == Path(__file__).resolve(), "Foreign producer path")
+    inventory, inventory_sha = inventory_spec(plan)
     for name in (
         PRODUCER,
         SHARED,
         POLICY,
-        INVENTORY,
+        ARCHIVE,
+        inventory,
         "integration/gpu-owned/stock_mps_fixture_fragments.py.txt",
     ):
         pinned(root / name, project["files"][name])
-    pinned(root / INVENTORY, INVENTORY_SHA)
+    pinned(root / inventory, inventory_sha)
     shared = load(root / SHARED, "owned_mps_shared_bootstrap")
     policy = load(root / POLICY, "owned_mps_fixture_policy")
     return shared, policy
@@ -182,6 +253,7 @@ def controls(base, policy, cache):
         "LANG",
         "LC_ALL",
         "LC_CTYPE",
+        "__CF_USER_TEXT_ENCODING",
         "USER",
         "LOGNAME",
         "SHELL",
@@ -193,6 +265,11 @@ def controls(base, policy, cache):
     result = {key: value for key, value in base.items() if key in allowed}
     result.update(PINS)
     policy.configure_environment(result, cache)
+    # Importing the unchanged test inventory imports Inductor metadata. Its
+    # cache_dir() otherwise adds this variable after the environment is frozen,
+    # so the upstream warning-test children inherit an undeclared environment.
+    # Keep even metadata-only cache writes inside the monitored fixture bound.
+    result["TORCHINDUCTOR_CACHE_DIR"] = str(Path(cache).resolve() / INDUCTOR_CACHE_NAME)
     return result
 
 
@@ -200,6 +277,11 @@ def check_controls(policy, cache, *, fallback=False):
     expected = {**PINS, "PYTORCH_ENABLE_MPS_FALLBACK": "1" if fallback else "0"}
     require(all(os.environ.get(k) == v for k, v in expected.items()), "Runtime controls changed")
     require(not any(k in os.environ for k in ABSENT), "Runtime/test override is forbidden")
+    require(
+        os.environ.get("TORCHINDUCTOR_CACHE_DIR")
+        == str(Path(cache).resolve() / INDUCTOR_CACHE_NAME),
+        "Inductor metadata cache differs from the bounded fixture directory",
+    )
     allowed = {k for k in PINS if k.startswith("PYTHON")} | {"PYTHONPYCACHEPREFIX"}
     require(
         not any(k.startswith("PYTHON") and k not in allowed for k in os.environ),
@@ -241,31 +323,47 @@ def source_files(plan, selection, *, verify=True):
     require(
         isinstance(value.get("files"), dict) and value["files"], "Missing full source inventory"
     )
+    api = selected.get("precision_api")
+    if api is not None:
+        require(
+            value.get("precision_api_derivation", {}).get("sha256")
+            == api.get("derivation_receipt_sha256"),
+            "Full source precision derivation differs",
+        )
+        contract_path = (
+            Path(__file__).resolve().parents[2] / "integration/precision-library-v1/contract.json"
+        )
+        pinned(contract_path, api["contract_sha256"])
+        contract = read(contract_path)
+        for source, target in (
+            ("torch_api.py", "torch/nn/precise_fp32.py"),
+            ("_fp32_precise_math.py", "torch/nn/_fp32_precise_math.py"),
+            ("_fp32_precise_dense.py", "torch/nn/_fp32_precise_dense.py"),
+        ):
+            require(
+                value["files"].get(target, {}).get("sha256") == contract["source_sha256"][source],
+                "Generic precision API missing or different in full source",
+            )
     root = Path(plan["source_root"])
     require(root.is_dir() and root.resolve(strict=True) == root, "Noncanonical full source root")
+    archive = load(Path(__file__).resolve().parents[2] / ARCHIVE, "owned_mps_source_identity")
     result = {}
     for name, item in value["files"].items():
         relative = safe_relative(name)
-        require(
-            isinstance(item, dict)
-            and isinstance(item.get("sha256"), str)
-            and len(item["sha256"]) == 64
-            and type(item.get("bytes")) is int
-            and item["bytes"] >= 0,
-            "Malformed full source file identity",
-        )
-        result[name] = item["sha256"]
+        identity = archive.source_member(name, item, value.get("schema"))
+        result[name] = identity["sha256"]
         if not verify:
             continue
         path = root / relative
-        if path.is_symlink():
+        if identity["kind"] == "symlink":
             require(
-                item.get("mode") == "120000" or item.get("type") == "symlink",
-                "Undeclared source symlink",
+                path.is_symlink() and path.resolve(strict=True).is_relative_to(root),
+                "Missing or escaped source symlink",
             )
             raw = os.readlink(path).encode()
             require(
-                len(raw) == item["bytes"] and hashlib.sha256(raw).hexdigest() == item["sha256"],
+                len(raw) == identity["bytes"]
+                and hashlib.sha256(raw).hexdigest() == identity["sha256"],
                 "Source symlink changed",
             )
         else:
@@ -274,6 +372,8 @@ def source_files(plan, selection, *, verify=True):
                 actual["sha256"] == item["sha256"] and actual["bytes"] == item["bytes"],
                 "Full source bytes changed: " + name,
             )
+            if value.get("schema") == "pytorch-owned-source-archive-v1":
+                require(stat.S_IMODE(path.stat().st_mode) == item["mode"], "Source mode changed")
     if verify:
         actual = set()
         for current, dirs, files in os.walk(root, followlinks=False):
@@ -386,9 +486,11 @@ def authenticate_plan(path, expected_sha, *, full_source=True):
     require(plan["producer"]["path"] == str(Path(__file__).resolve()), "Wrong suite producer")
     shared, policy = helpers(plan)
     authority, backend, runtime, selection = shared.bootstrap(plan)
-    expected = read(Path(__file__).with_name("owned-suite-inventory-v1.json"))
+    inventory, _ = inventory_spec(plan)
+    inventory_path = Path(__file__).resolve().parents[2] / inventory
+    expected = suite_inventory(plan, selection)
     require(
-        plan["inventory"] == binding(Path(__file__).with_name("owned-suite-inventory-v1.json")),
+        plan["inventory"] == binding(inventory_path),
         "Suite inventory changed",
     )
     sources = source_files(plan, selection, verify=full_source)
@@ -461,14 +563,16 @@ def freeze(args):
         "formal_admission_opened": False,
         "formal_fits": 0,
         "limits": dict(LIMITS),
+        "suite_contract": getattr(args, "suite_contract", "original"),
     }
     shared, policy = helpers(plan)
     authority, _, runtime, selected = shared.bootstrap(plan)
     receipt, _ = authority.verify()
     validate_output(args.output, protected_roots(plan, runtime, receipt))
-    inventory_path = Path(__file__).with_name("owned-suite-inventory-v1.json")
-    plan["inventory"] = pinned(inventory_path, INVENTORY_SHA)
-    expected = read(inventory_path)["pytorch"]
+    inventory, inventory_sha = inventory_spec(plan)
+    inventory_path = Path(__file__).resolve().parents[2] / inventory
+    plan["inventory"] = pinned(inventory_path, inventory_sha)
+    expected = suite_inventory(plan, selected)["pytorch"]
     files = source_files(plan, selected)
     require(
         files["test/test_mps.py"] == expected["test_source_sha256"], "Unselected full suite source"
@@ -602,7 +706,7 @@ def validate_native_proof(proof, runtime, root):
         and isinstance(synthetic, dict)
         and isinstance(aliases, dict)
         and framework["namespace_packages"] == {}
-        and set(synthetic) == {"torch.ops", "torch.classes"},
+        and {"torch.ops", "torch.classes"} <= set(synthetic),
         "Incomplete Torch namespace inventory",
     )
     require(
@@ -617,6 +721,11 @@ def validate_native_proof(proof, runtime, root):
         "Top-level/core origin binding differs",
     )
     package = Path(modules["torch"]).parent
+    origin = load(
+        Path(__file__).resolve().parents[2] / "transformer/gpu_owned_origins.py",
+        "retained_torch_forwarding_origins",
+    )
+    origin.validate_torch_forwarding_proofs(synthetic, package, known)
     core = modules["torch._C"]
     require(
         Path(core).parent == package and Path(core).name.startswith("_C.") and core.endswith(".so"),
@@ -650,6 +759,97 @@ def validate_native_proof(proof, runtime, root):
     return proof
 
 
+def validate_loaded_proof(
+    imported, native, runtime, runtime_root, project, source_root, sources, extra
+):
+    """Validate retained import identities without accessing their original paths."""
+    require(isinstance(imported, dict) and imported, "Missing retained Python import map")
+    roots = [
+        (Path(runtime_root), runtime["files"]),
+        (Path(project["root"]), project["files"]),
+        (Path(source_root), sources),
+    ]
+    for name, row in imported.items():
+        require(
+            isinstance(name, str)
+            and name
+            and isinstance(row, dict)
+            and set(row) == {"path", "sha256"},
+            "Malformed retained import map",
+        )
+        absolute = row["path"]
+        require(isinstance(absolute, str), "Missing retained import path")
+        path = Path(absolute)
+        require(
+            path.is_absolute() and str(path) == absolute and ".." not in path.parts,
+            "Noncanonical retained import path",
+        )
+        hashes = {
+            files[str(path.relative_to(root))]
+            for root, files in roots
+            if path.is_relative_to(root) and str(path.relative_to(root)) in files
+        }
+        if absolute in extra:
+            hashes.add(extra[absolute])
+        require(
+            len(hashes) == 1
+            and isinstance(row["sha256"], str)
+            and row["sha256"] in hashes
+            and re.fullmatch(r"[0-9a-f]{64}", row["sha256"]),
+            "Retained import is outside or differs from its authenticated authority",
+        )
+    framework = native["framework_module_origins"]["pytorch"]
+    for name, path in framework["module_origins"].items():
+        require(
+            imported.get(name, {}).get("path") == path,
+            "Native and Python module origin maps differ",
+        )
+    numpy_path = imported.get("numpy", {}).get("path")
+    require(
+        numpy_path in runtime["layout"]["packages"]["numpy"],
+        "Retained NumPy origin is absent or differs",
+    )
+    return imported
+
+
+def validate_descendant_intervals(proofs, parent_pid, parent_interval):
+    """Require unique child processes, parent containment and serial execution."""
+    require(type(parent_pid) is int and parent_pid > 0, "Invalid parent process")
+
+    def interval(value):
+        require(
+            len(value) == 2
+            and all(type(v) in (int, float) and math.isfinite(v) for v in value)
+            and value[0] <= value[1],
+            "Invalid retained process interval",
+        )
+        return value
+
+    parent_start, parent_end = interval(parent_interval)
+    pids, intervals = set(), []
+    for proof in proofs:
+        pid = proof["pid"]
+        require(
+            type(pid) is int
+            and pid > 0
+            and pid != parent_pid
+            and pid not in pids
+            and type(proof["parent_pid"]) is int
+            and proof["parent_pid"] == parent_pid,
+            "Duplicate or foreign descendant process",
+        )
+        pids.add(pid)
+        start, end = interval((proof["started_unix"], proof["ended_unix"]))
+        require(parent_start <= start <= end <= parent_end, "Descendant interval escaped parent")
+        intervals.append((start, end))
+    intervals.sort()
+    require(
+        all(a[1] <= b[0] for a, b in zip(intervals, intervals[1:])),
+        "Conformance descendants overlapped",
+    )
+    return intervals
+
+
 def worker_command(plan, path, sha, output, runtime):
     source = plan["producer"]
     code = (
@@ -676,10 +876,10 @@ def worker_command(plan, path, sha, output, runtime):
     ]
 
 
-def child_command(plan, plan_path, plan_sha, output, pid):
-    executable = read(plan["authority_inputs"]["inventory"]["path"])["layout"][
-        "interpreter_resolved"
-    ]
+def child_command(plan, plan_path, plan_sha, output, pid, *, runtime=None):
+    if runtime is None:
+        runtime = read(plan["authority_inputs"]["inventory"]["path"])
+    executable = runtime["layout"]["interpreter_resolved"]
     # The tiny stdlib launcher authenticates both entrypoint and plan before import.
     source = plan["producer"]
     names = {tuple(row["argv"]): row["name"] for row in plan["subprocess_contract"]["invocations"]}
@@ -703,6 +903,18 @@ def child_command(plan, plan_path, plan_sha, output, pid):
         + ",'--',*sys.argv[1:]];runpy.run_path(str(p),run_name='__main__')"
     )
     return [executable, "-P", "-S", "-B", "-c", code]
+
+
+def child_launcher_source(command):
+    """Preserve the frozen environment and startup flags without a shell hop."""
+    require(
+        len(command) == 6 and command[1:5] == ["-P", "-S", "-B", "-c"],
+        "Unexpected conformance child startup",
+    )
+    require(Path(command[0]).is_absolute(), "Canonical interpreter required")
+    shebang = "#!/usr/bin/env -S " + shlex.join(command[:4])
+    require(len(shebang.encode()) < 256 and "\n" not in shebang, "Unsafe launcher shebang")
+    return shebang + "\n" + command[5] + "\n"
 
 
 def descendant(plan_path, plan_sha, parent_output, parent_pid, upstream):
@@ -769,50 +981,84 @@ def descendant(plan_path, plan_sha, parent_output, parent_pid, upstream):
     return code
 
 
-def check_descendants(output, plan, plan_sha, pid):
+def validate_descendant_proof(
+    proof, plan, plan_sha, pid, bytecode_prefix, runtime, runtime_receipt, sources
+):
+    """Check a retained child without consulting its original paths."""
+    require(
+        proof["schema"] == "gpu-owned-mps-suite-descendant-v1"
+        and proof["protocol"] == PROTOCOL
+        and proof["producer"] == PRODUCER
+        and proof["plan_sha256"] == plan_sha
+        and proof["parent_pid"] == pid
+        and type(proof["pid"]) is int
+        and proof["pid"] > 0
+        and proof["pid"] != pid
+        and proof["complete"] is True
+        and type(proof["returncode"]) is int
+        and proof["returncode"] == 0
+        and proof["invocation"] in plan["subprocess_contract"]["invocations"]
+        and "error" not in proof
+        and "integrity_error" not in proof
+        and proof["formal_fits"] == 0
+        and proof["formal_admission_opened"] is False,
+        "Unqualified conformance subprocess proof",
+    )
+    require(
+        proof["runtime_receipt_sha256"] == plan["authority_inputs"]["receipt"]["sha256"],
+        "Conformance subprocess runtime differs",
+    )
+    require(
+        proof["bytecode_prefix"] == bytecode_prefix,
+        "Child bytecode policy differs",
+    )
+    validate_native_proof(proof["native_origin_verification"], runtime, plan["runtime_root"])
+    validate_loaded_proof(
+        proof.get("loaded_python_files"),
+        proof["native_origin_verification"],
+        runtime,
+        plan["runtime_root"],
+        runtime_receipt["project"],
+        plan["source_root"],
+        sources,
+        {},
+    )
+
+
+def check_descendants(output, plan, plan_sha, pid, parent_interval):
     runtime = read(plan["authority_inputs"]["inventory"]["path"])
     binding(plan["authority_inputs"]["inventory"]["path"], plan["authority_inputs"]["inventory"])
 
+    runtime_receipt = read(plan["authority_inputs"]["receipt"]["path"])
+    binding(plan["authority_inputs"]["receipt"]["path"], plan["authority_inputs"]["receipt"])
+    selected = plan["authority_inputs"]["selection"]
+    binding(selected["path"], selected)
+    # Use the same source-format normalization as preparation and the portable
+    # auditor: explicit symlinks bind their literal target rather than a raw
+    # sha256 field. The complete source tree is authenticated by the caller.
+    sources = source_files(plan, read(selected["path"]), verify=False)
     actual = sorted(p.name for p in output.glob("descendant-*"))
     expected = sorted("descendant-" + r["name"] for r in plan["subprocess_contract"]["invocations"])
     require(actual == expected, "Missing, duplicate or foreign conformance subprocess")
-    proofs = []
+    proofs, children = [], []
     for row in plan["subprocess_contract"]["invocations"]:
         path = output / ("descendant-" + row["name"]) / "receipt.json"
         proof = read(path)
-        require(
-            proof["schema"] == "gpu-owned-mps-suite-descendant-v1"
-            and proof["protocol"] == PROTOCOL
-            and proof["producer"] == PRODUCER
-            and proof["plan_sha256"] == plan_sha
-            and proof["parent_pid"] == pid
-            and type(proof["pid"]) is int
-            and proof["pid"] > 0
-            and proof["pid"] != pid
-            and proof["complete"] is True
-            and proof["returncode"] == 0
-            and proof["invocation"] == row
-            and "error" not in proof
-            and "integrity_error" not in proof
-            and proof["formal_fits"] == 0
-            and proof["formal_admission_opened"] is False,
-            "Unqualified conformance subprocess proof",
+        require(proof["invocation"] == row, "Conformance child order differs")
+        validate_descendant_proof(
+            proof,
+            plan,
+            plan_sha,
+            pid,
+            str(path.parent / "unused-bytecode-cache"),
+            runtime,
+            runtime_receipt,
+            sources,
         )
-        require(
-            proof["runtime_receipt_sha256"] == plan["authority_inputs"]["receipt"]["sha256"],
-            "Conformance subprocess runtime differs",
-        )
-        require(
-            proof["bytecode_prefix"] == str(path.parent / "unused-bytecode-cache")
-            and not Path(proof["bytecode_prefix"]).exists(),
-            "Child bytecode policy differs",
-        )
-        validate_native_proof(proof["native_origin_verification"], runtime, plan["runtime_root"])
-        require(
-            isinstance(proof.get("loaded_python_files"), dict) and proof["loaded_python_files"],
-            "Missing descendant Python origin inventory",
-        )
+        require(not Path(proof["bytecode_prefix"]).exists(), "Child cache was populated")
+        children.append(proof)
         proofs.append(binding(path))
+    validate_descendant_intervals(children, pid, parent_interval)
     return proofs
 
 
@@ -833,6 +1079,7 @@ def worker(path, sha, output):
         "name": "pytorch_mps",
         "producer": PRODUCER,
         "worker_pid": os.getpid(),
+        "started_unix": time.time(),
         "plan_sha256": sha,
         "complete": False,
         "passed": False,
@@ -885,9 +1132,7 @@ def worker(path, sha, output):
         original_executable = sys.executable
         launcher = output / "owned-suite-python"
         launcher.write_text(
-            "#!/bin/sh\nexec "
-            + shlex.join(child_command(plan, path, sha, output, os.getpid()))
-            + ' "$@"\n'
+            child_launcher_source(child_command(plan, path, sha, output, os.getpid()))
         )
         launcher.chmod(0o700)
         before = origins(backend, authority, runtime)
@@ -895,6 +1140,16 @@ def worker(path, sha, output):
         record["native_origin_verification"] = {"method": "loaded_images", "before": before}
         record["loaded_python_files_before"] = loaded_files(
             runtime, authority, receipt["project"], plan["source_root"], sources, extras
+        )
+        validate_loaded_proof(
+            record["loaded_python_files_before"],
+            before,
+            runtime,
+            authority.root,
+            receipt["project"],
+            plan["source_root"],
+            sources,
+            extras,
         )
         record["conditions_before"] = driver.conditions()
         write(output / "receipt.json", record)
@@ -909,7 +1164,9 @@ def worker(path, sha, output):
         record["conditions_after"] = driver.conditions()
         record["stock_fixture_loaded"] = policy.loaded_extension(module, Path(plan["cache"]))
         extras[record["stock_fixture_loaded"]["path"]] = record["stock_fixture_loaded"]["sha256"]
-        record["descendants"] = check_descendants(output, plan, sha, os.getpid())
+        record["descendants"] = check_descendants(
+            output, plan, sha, os.getpid(), (record["started_unix"], time.time())
+        )
         after = origins(backend, authority, runtime)
         require(
             before["files"] == after["files"], "Native framework images changed during full suite"
@@ -917,6 +1174,16 @@ def worker(path, sha, output):
         record["native_origin_verification"]["after"] = after
         record["loaded_python_files_after"] = loaded_files(
             runtime, authority, receipt["project"], plan["source_root"], sources, extras
+        )
+        validate_loaded_proof(
+            record["loaded_python_files_after"],
+            after,
+            runtime,
+            authority.root,
+            receipt["project"],
+            plan["source_root"],
+            sources,
+            extras,
         )
         executable = binding(Path(original_executable).resolve(strict=True))
         relative = str(Path(executable["path"]).relative_to(authority.root))
@@ -987,8 +1254,14 @@ def validate_execution(
         },
         "owned_frameworks": {"frameworks": selected, "runtime_receipt": path},
     }
-    validate_suite(record, worker_output, manifest, expected, "pytorch_mps")
-    check_descendants(worker_output, plan, record["plan_sha256"], execution["pid"])
+    validate_suite(record, worker_output, manifest, expected, "pytorch_mps", receipt)
+    check_descendants(
+        worker_output,
+        plan,
+        record["plan_sha256"],
+        execution["pid"],
+        (execution["started_unix"], execution["ended_unix"]),
+    )
     require(
         execution["returncode"] == 0 and not execution["timed_out"] and "error" not in execution,
         "Failed full-suite process",
@@ -1079,6 +1352,12 @@ def run(path, sha, output):
             and "integrity_error" not in record,
             "Incomplete full suite",
         )
+        archive = load(Path(__file__).resolve().parents[2] / ARCHIVE, "owned_mps_archive")
+        record["portable_evidence"] = archive.retain(
+            plan, path, worker_output, record, binding, LIMITS
+        )
+        write(worker_output / "receipt.json", record)
+        summary["receipt"] = binding(worker_output / "receipt.json")
         summary["complete"] = True
         validate_execution(
             record, worker_output, execution, plan, sha, authority, runtime, selected, expected
@@ -1108,6 +1387,9 @@ def main():
         p.add_argument("--" + name, type=Path, required=True)
     p.add_argument("--receipt-sha256", required=True)
     p.add_argument("--source-manifest-sha256", required=True)
+    p.add_argument(
+        "--suite-contract", choices=("original", "half-v3", "numpy2-v1"), default="original"
+    )
     for name in ("run", "worker"):
         p = subs.add_parser(name)
         p.add_argument("--plan", type=Path, required=True)

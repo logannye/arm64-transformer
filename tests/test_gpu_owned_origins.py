@@ -195,6 +195,35 @@ def test_native_alias_name_must_match(fixture):
 
 
 @pytest.mark.parametrize("fixture", ["pytorch"], indirect=True)
+def test_compiled_autograd_registered_name_uses_exact_extension_attribute(fixture):
+    key = "torch._C._dynamo.autograd_compiler"
+    module = fixture.module(key)
+    fixture.core._dynamo.compiled_autograd = module
+    assert key in verify(fixture)["native_aliases"]
+
+
+@pytest.mark.parametrize("fixture", ["pytorch"], indirect=True)
+@pytest.mark.parametrize("mutation", ["object", "name", "foreign_file", "missing", "other_key"])
+def test_compiled_autograd_mapping_keeps_identity_and_origin_checks(fixture, mutation):
+    key = "torch._C._dynamo.autograd_compiler"
+    module = fixture.module(key)
+    fixture.core._dynamo.compiled_autograd = module
+    if mutation == "object":
+        fixture.modules[key] = ModuleType(key)
+    elif mutation == "name":
+        module.__name__ = "torch._C._dynamo.compiled_autograd"
+    elif mutation == "foreign_file":
+        module.__file__ = str(fixture.file("torch/foreign.py"))
+    elif mutation == "missing":
+        del fixture.core._dynamo.compiled_autograd
+    else:
+        del fixture.modules[key]
+        fixture.modules[key + "_other"] = module
+    with pytest.raises(ValueError):
+        verify(fixture)
+
+
+@pytest.mark.parametrize("fixture", ["pytorch"], indirect=True)
 @pytest.mark.parametrize("mutation", ["singleton", "class", "constructor", "spec", "label"])
 def test_torch_synthetic_namespace_is_exactly_authenticated(fixture, mutation):
     module = fixture.modules["torch.ops"]
@@ -246,6 +275,103 @@ def test_no_framework_import_is_needed():
     with pytest.raises(ValueError, match="Empty framework origin payload"):
         origin.verify_loaded_framework_modules("pytorch", {}, {"files": {}}, "/", {})
     assert {key for key in sys.modules if key in {"torch", "mlx.core"}} == before
+
+
+def install_forwarder(f, key):
+    relative, class_name, target = origin.TORCH_FORWARDERS[key]
+    if key == "torch._VF":
+        body = (
+            "import types\n"
+            "class VFModule(types.ModuleType):\n"
+            "    def __init__(self, name):\n"
+            "        super().__init__(name)\n"
+            "        self.vf = torch._C._VariableFunctions\n"
+            "    def __getattr__(self, name):\n"
+            "        return getattr(self.vf, name)\n"
+        )
+        f.core._VariableFunctions = ModuleType("native_functions")
+    else:
+        body = (
+            "import types\n"
+            f"class {class_name}(types.ModuleType):\n"
+            "    def __init__(self, m, name):\n"
+            "        super().__init__(name)\n"
+            "        self.m = m\n"
+            "    @property\n"
+            "    def available(self):\n"
+            "        return True\n"
+            "    def __getattr__(self, name):\n"
+            "        return getattr(self.m, name)\n"
+        )
+    path = f.file("torch/" + relative, body.encode())
+    original = f.module(key, path)
+    vars(original)["torch"] = f.top
+    exec(compile(body, str(path), "exec"), vars(original))
+    cls = vars(original)[class_name]
+    module = cls(key) if target != "original_module" else cls(original, key)
+    f.modules[key] = module
+    parent = f.top
+    prefix = "torch"
+    for part in key.split(".")[1:-1]:
+        prefix += "." + part
+        if prefix not in f.modules:
+            nested = f.module(prefix, f.file(prefix.replace(".", "/") + "/__init__.py"))
+            setattr(parent, part, nested)
+        parent = f.modules[prefix]
+    setattr(parent, key.rsplit(".", 1)[1], module)
+    return module, original
+
+
+@pytest.mark.parametrize("fixture", ["pytorch"], indirect=True)
+@pytest.mark.parametrize("key", list(origin.TORCH_FORWARDERS))
+def test_declared_forwarding_modules_bind_original_source_and_objects(fixture, key):
+    install_forwarder(fixture, key)
+    proof = verify(fixture)
+    assert proof["synthetic_origins"][key]["source_code_verified"] is True
+    assert proof["module_count"] == len(fixture.modules)
+
+
+@pytest.mark.parametrize("fixture", ["pytorch"], indirect=True)
+@pytest.mark.parametrize("key", ["torch._VF", "torch.backends.quantized"])
+@pytest.mark.parametrize("mutation", ["method", "class", "target", "singleton", "source"])
+def test_forwarding_module_mutations_fail(fixture, key, mutation):
+    module, original = install_forwarder(fixture, key)
+    if mutation == "method":
+        type(module).__getattr__ = lambda self, name: None
+    elif mutation == "class":
+        type(module).__name__ = "OtherClass"
+    elif mutation == "target":
+        setattr(module, "vf" if key == "torch._VF" else "m", ModuleType("substitute"))
+    elif mutation == "singleton":
+        parent_name, attribute = key.rsplit(".", 1)
+        setattr(fixture.modules[parent_name], attribute, ModuleType(key))
+    else:
+        Path(original.__file__).write_text("changed source")
+    with pytest.raises(ValueError):
+        verify(fixture)
+
+
+def test_retained_forwarding_proof_rejects_unknown_scope_and_changed_source():
+    package = Path("/runtime/torch")
+    proof = {
+        "backing_module": "torch._VF",
+        "backing_file": str(package / "_VF.py"),
+        "backing_sha256": "a" * 64,
+        "exact_class": "torch._VF.VFModule",
+        "singleton_identity_verified": True,
+        "source_code_verified": True,
+        "forwarding_target": "torch._C._VariableFunctions",
+    }
+    origin.validate_torch_forwarding_proofs({"torch._VF": proof}, package, lambda p: "a" * 64)
+    for changed in (dict(proof, source_code_verified=False), dict(proof, backing_sha256="b" * 64)):
+        with pytest.raises(ValueError):
+            origin.validate_torch_forwarding_proofs(
+                {"torch._VF": changed}, package, lambda p: "a" * 64
+            )
+    with pytest.raises(ValueError):
+        origin.validate_torch_forwarding_proofs(
+            {"torch.unknown": proof}, package, lambda p: "a" * 64
+        )
 
 
 def test_native_alias_with_core_file_still_requires_object_identity(fixture):

@@ -1,0 +1,35 @@
+{
+  "schema": "maintained-fp32-precision-api-derivation-v1",
+  "identity": "fp32-saved-precision-api-v1",
+  "status": "development_only_unqualified",
+  "formal_eligible": false,
+  "native_compilation": false,
+  "native_source_or_binary_changes": false,
+  "existing_python_source_changes": false,
+  "test_source_or_eligibility_changes": false,
+  "stock_operator_changes": false,
+  "source_sha256": {
+    "torch_api.py": "9a03421501102bb62d344a03535f4be9899fa2465913700fd832eeeb03c62abf",
+    "mlx_api.py": "bc48c4b5b65e04139820309d2fe347a1f54077f7268900622303a934c0a182e1",
+    "_fp32_precise_dense.py": "08ad09430e49b0b2a43d5efc04b656ece8f4b4b35f5c56b211ef402377c5f2a1",
+    "_fp32_precise_math.py": "b4cd32b04eb1856f26bbd6a2416f77b04bf5a3a975310306117e55e8ce634a75"
+  },
+  "public_apis": [
+    "linear",
+    "layer_norm",
+    "scaled_dot_product_attention"
+  ],
+  "modules": {
+    "pytorch": "torch.nn.precise_fp32",
+    "mlx": "mlx.nn.precise_fp32"
+  },
+  "state_dtype": "float32",
+  "cpu_intermediate_dtype": "float64",
+  "gpu_intermediate_dtype": "float32",
+  "maximum_added_bytes": 131072,
+  "minimum_free_bytes": 17179869184,
+  "native_build_provenance_required": true,
+  "fresh_framework_suites_required": true,
+  "fresh_primitive_and_model_validation_required": true,
+  "qualification_transferred": false
+}

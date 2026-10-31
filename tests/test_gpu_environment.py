@@ -127,7 +127,10 @@ def test_replay_and_cpu_bridge_remove_inherited_presence_controls(tmp_path, monk
     monkeypatch.setattr(audit, "python_path", lambda *args, **kwargs: "frozen-python")
     monkeypatch.setattr(audit, "policy_path", lambda *args: tmp_path / "policy.json")
     roots = {"source": tmp_path, "cpu": tmp_path}
-    cpu.run_cpu_operation("cpu_torch", {}, roots, tmp_path / "input", tmp_path / "output", width=32)
+    manifest = study.planned_manifest()
+    cpu.run_cpu_operation(
+        "cpu_torch", manifest, roots, tmp_path / "input", tmp_path / "output", width=32
+    )
     audit.replay_engine(
         "mlx",
         roots,
@@ -135,7 +138,7 @@ def test_replay_and_cpu_bridge_remove_inherited_presence_controls(tmp_path, monk
         tmp_path / "fixture",
         tmp_path / "checkpoint",
         tmp_path / "replay",
-        manifest={},
+        manifest=manifest,
     )
     assert len(captured) == 2
 

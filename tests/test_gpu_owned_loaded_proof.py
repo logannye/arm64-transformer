@@ -99,6 +99,39 @@ class LoadedProofTests(unittest.TestCase):
                     proof, inputs = self.fixture(selected, both, project)
                     self.assertEqual(owned.validate_loaded_origin_proof(proof, **inputs), proof)
 
+    def test_declared_forwarding_proofs_are_bound_in_retained_runtime(self):
+        from transformer.gpu_owned_origins import TORCH_FORWARDERS
+
+        for name, (relative, cls, target) in TORCH_FORWARDERS.items():
+            with self.subTest(name=name):
+                proof, inputs = self.fixture("pytorch", both=False)
+                framework = proof["framework_module_origins"]["pytorch"]
+                package = framework["module_origins"]["torch"].removesuffix("/__init__.py")
+                path = package + "/" + relative
+                sha = hashlib.sha256(path.encode()).hexdigest()
+                key = path.removeprefix(inputs["runtime_root"] + "/")
+                inputs["inventory"]["files"][key] = sha
+                inputs["receipt"]["runtime_identity_sha256"] = owned.identity(
+                    inputs["inventory"]["files"]
+                )
+                record = {
+                    "backing_module": name,
+                    "backing_file": path,
+                    "backing_sha256": sha,
+                    "exact_class": name + "." + cls,
+                    "singleton_identity_verified": True,
+                    "source_code_verified": True,
+                    "forwarding_target": target,
+                }
+                framework["synthetic_origins"][name] = record
+                framework["module_count"] += 1
+                self.assertEqual(owned.validate_loaded_origin_proof(proof, **inputs), proof)
+                for flag in ("source_code_verified", "singleton_identity_verified"):
+                    record[flag] = 1
+                    with self.assertRaises(ValueError):
+                        owned.validate_loaded_origin_proof(proof, **inputs)
+                    record[flag] = True
+
     def test_validation_is_archive_safe_and_returns_independent_copy(self):
         proof, inputs = self.fixture()
         with (

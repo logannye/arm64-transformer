@@ -1,0 +1,82 @@
+{
+  "schema": "trained-precision-mps-import-environment-failure-v1",
+  "project_revision": "2c28aadc7340b3e317cba8078d7f1987986ad199",
+  "test_record": {
+    "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v6/full/tests.json",
+    "sha256": "4b2ebd0782c2008ddc715c4a2d7afe011216066118a4b04a50b2ecbd817456fc",
+    "bytes": 2652780
+  },
+  "worker_record": {
+    "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v6/full/receipt.json",
+    "sha256": "ffbda9463586d851ac97f5f31aa4eb107b0ab64854528f19fde69c1700ffd8f3",
+    "bytes": 1536931
+  },
+  "raw_log": {
+    "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v6/full/tests.log",
+    "sha256": "f95955c8983f03372d3ca4096c470b5cb777ffa7517097e7157c7836b8e25198",
+    "bytes": 1784067
+  },
+  "summary": {
+    "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v6/summary.json",
+    "sha256": "71a5cb6b0430025befa1af6e4f4154bdf2713164b6c16636f6cc9bad342264a4",
+    "bytes": 2149
+  },
+  "tests_run": 10357,
+  "failures": 1,
+  "errors": 1,
+  "skipped": 744,
+  "expected_failures": 382,
+  "previous_27_failed_tests_now_upstream_assertion_passes": [
+    "integrated_upstream_test_mps.TestConsistencyMPS.test_output_grad_match_combinations_mps_float16",
+    "integrated_upstream_test_mps.TestConsistencyMPS.test_output_grad_match_nn_functional_conv_transpose3d_mps_float32",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_False_shape_kind_production_bfloat16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_False_shape_kind_production_float16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_False_shape_kind_production_float32",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_False_shape_kind_small_bfloat16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_False_shape_kind_small_float16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_False_shape_kind_small_float32",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_True_shape_kind_production_bfloat16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_True_shape_kind_production_float16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_True_shape_kind_production_float32",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_True_shape_kind_small_bfloat16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_True_shape_kind_small_float16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_True_shape_kind_small_float32",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv_transpose3d_channels_last_3d",
+    "integrated_upstream_test_mps.TestMPS.test_bmm_strided_output_float32_case0",
+    "integrated_upstream_test_mps.TestMPS.test_bmm_strided_output_float32_case1",
+    "integrated_upstream_test_mps.TestMPS.test_bmm_strided_output_float32_case3",
+    "integrated_upstream_test_mps.TestMPS.test_bmm_strided_output_float32_case4",
+    "integrated_upstream_test_mps.TestMPS.test_bmm_strided_output_float32_case6",
+    "integrated_upstream_test_mps.TestMPS.test_bmm_strided_output_float32_case7",
+    "integrated_upstream_test_mps.TestMPS.test_gemv_strided_output_falls_back",
+    "integrated_upstream_test_mps.TestMPS.test_mm_strided_output_float32_case0",
+    "integrated_upstream_test_mps.TestMPS.test_mm_strided_output_float32_case2",
+    "integrated_upstream_test_mps.TestMPS.test_mm_strided_output_float32_case3",
+    "integrated_upstream_test_mps.TestMPS.test_mm_strided_output_float32_case5",
+    "integrated_upstream_test_mps.TestMPS.test_mm_strided_output_float32_case6"
+  ],
+  "remaining_failed_ids": [
+    "integrated_upstream_test_mps.TestFallbackWarning.test_no_warning_on_import",
+    "integrated_upstream_test_mps.TestFallbackWarning.test_warn_on_not_implemented_with_fallback"
+  ],
+  "exact_launcher_import_diagnostic": {
+    "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-child-launch-diagnostic-v1/result.json",
+    "sha256": "89f09d344c8b8c0f9e1109a71935faa56b83775038f35cbede99ddcc99ebcf56",
+    "bytes": 252
+  },
+  "metadata_import_environment_diagnostic": {
+    "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/suite-import-environment-diagnostic-v1/result.json",
+    "sha256": "2816ed336bcfafd08cbc3a7c7864602a38e04be640ef8e2fad5fb6caa32fa7be",
+    "bytes": 844
+  },
+  "cause": "Unchanged upstream test module import adds TORCHINDUCTOR_CACHE_DIR after the environment is frozen; exact-environment child authentication rejects it before test execution",
+  "repair": "Freeze a canonical torchinductor-metadata subdirectory inside the existing 1 GiB and 64-file monitored conformance cache; require the same binding in live and portable checks",
+  "fix_tests": {
+    "suite": 65,
+    "portable_archive": 27
+  },
+  "qualification": false,
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "admission_stream_opened": false
+}
