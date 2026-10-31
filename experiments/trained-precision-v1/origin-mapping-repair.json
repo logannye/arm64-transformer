@@ -1,0 +1,38 @@
+{
+  "schema": "trained-precision-origin-mapping-repair-v1",
+  "status": "source_corrected_device_validation_pending",
+  "failure_receipt": {
+    "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v3/full/receipt.json",
+    "sha256": "4a270e7224edcdd1aa3f7d42445dbeb1f00da27a6fb46a1a16d9e705eb22ee94",
+    "bytes": 741233
+  },
+  "process": {
+    "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v3/process.json",
+    "sha256": "33f68233a7f648035787184258bdde858e07071035430f9d8f393298f20e977a",
+    "bytes": 1274
+  },
+  "failed_before_test_execution": true,
+  "failed_module": "torch._C._dynamo.autograd_compiler",
+  "extension_attribute": "torch._C._dynamo.compiled_autograd",
+  "pytorch_base": "71d2a08507ab47dd6b2fa9b66319d17ce2377de4",
+  "source_evidence": [
+    {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-preparation/source/torch/csrc/dynamo/init.cpp",
+      "sha256": "46c3d45612e7d61cda359b9196b333c0d40318e5544b5b0c6e4667ed0b54e667",
+      "bytes": 25922
+    },
+    {
+      "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-preparation/source/torch/csrc/dynamo/python_compiled_autograd.cpp",
+      "sha256": "0a679002472f0e3553444d8c085130cc41b27712003a5a71e7aba42a452d9a0a",
+      "bytes": 45315
+    }
+  ],
+  "repair": "Resolve this exact spelling difference; require the authenticated native extension attribute to be the identical registered module and preserve all other origin checks",
+  "focused_checks": 73,
+  "new_origin_cases": 6,
+  "arithmetic_changed": false,
+  "framework_binary_changed": false,
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "admission_stream_opened": false
+}

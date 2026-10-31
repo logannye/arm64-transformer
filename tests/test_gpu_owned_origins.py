@@ -195,6 +195,35 @@ def test_native_alias_name_must_match(fixture):
 
 
 @pytest.mark.parametrize("fixture", ["pytorch"], indirect=True)
+def test_compiled_autograd_registered_name_uses_exact_extension_attribute(fixture):
+    key = "torch._C._dynamo.autograd_compiler"
+    module = fixture.module(key)
+    fixture.core._dynamo.compiled_autograd = module
+    assert key in verify(fixture)["native_aliases"]
+
+
+@pytest.mark.parametrize("fixture", ["pytorch"], indirect=True)
+@pytest.mark.parametrize("mutation", ["object", "name", "foreign_file", "missing", "other_key"])
+def test_compiled_autograd_mapping_keeps_identity_and_origin_checks(fixture, mutation):
+    key = "torch._C._dynamo.autograd_compiler"
+    module = fixture.module(key)
+    fixture.core._dynamo.compiled_autograd = module
+    if mutation == "object":
+        fixture.modules[key] = ModuleType(key)
+    elif mutation == "name":
+        module.__name__ = "torch._C._dynamo.compiled_autograd"
+    elif mutation == "foreign_file":
+        module.__file__ = str(fixture.file("torch/foreign.py"))
+    elif mutation == "missing":
+        del fixture.core._dynamo.compiled_autograd
+    else:
+        del fixture.modules[key]
+        fixture.modules[key + "_other"] = module
+    with pytest.raises(ValueError):
+        verify(fixture)
+
+
+@pytest.mark.parametrize("fixture", ["pytorch"], indirect=True)
 @pytest.mark.parametrize("mutation", ["singleton", "class", "constructor", "spec", "label"])
 def test_torch_synthetic_namespace_is_exactly_authenticated(fixture, mutation):
     module = fixture.modules["torch.ops"]

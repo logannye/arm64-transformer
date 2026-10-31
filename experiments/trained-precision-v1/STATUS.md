@@ -318,3 +318,24 @@ exact physical attribution. The latest receipt is
 `work/storage-cleanup-20261030/summary-v6.json`. All transformer raw evidence
 remains retained. The session disk guard stops the identified conformance process
 tree at 5.5 GiB free, preserving headroom above the 5 GiB operating floor.
+
+The resumed full MPS route collected the unchanged 10,357-method inventory but
+stopped before test execution when the origin checker rejected
+`torch._C._dynamo.autograd_compiler`. The pinned C++ source creates that module
+under this registered name and attaches the same object as
+`torch._C._dynamo.compiled_autograd`. The narrow checker correction resolves
+exactly that spelling difference and still requires object identity, declared
+module name and authenticated native-extension origin. Six new mutation cases
+and the related origin/loaded-proof tests pass (73 checks total). The failure
+and C++ source hashes are retained in [origin-mapping-repair.json](origin-mapping-repair.json).
+This changes provenance verification only. New capture and conformance execution
+remain required; no arithmetic or framework binary changed.
+
+The independent captured-replay provenance auditor has nine standard-library
+checks. It authenticates the original numerical receipt and loaded origins and
+explicitly requires a separate raw-array audit. Both hosted jobs also passed at
+`6f9e8be5af92b0bd49b58eff111b7ff6532ba798` in
+[run 41148065755](https://github.com/logannye/arm64-transformer/actions/runs/41148065755).
+The resumed controller enforces a 5.5 GiB stop threshold on its complete worker
+process group. Additional cleanup left about 12 GiB free; its local record is
+`work/storage-cleanup-20261030/additional-cleanup-final.json`.

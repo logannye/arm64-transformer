@@ -197,8 +197,18 @@ def verify_loaded_framework_modules(name, payload, inventory, root, modules=None
             continue
         # Extension-owned submodules must be the actual attribute reachable from
         # the authenticated extension even if they advertise its shared file.
+        # PyTorch's dynamo/init.cpp attaches the module created by
+        # python_compiled_autograd.cpp as `compiled_autograd`, while its
+        # PyModuleDef and sys.modules name are `autograd_compiler`.
+        # Resolve only that exact spelling difference; the actual extension
+        # attribute must still be the very same module object.
+        attribute_key = (
+            "torch._C._dynamo.compiled_autograd"
+            if name == "pytorch" and key == "torch._C._dynamo.autograd_compiler"
+            else key
+        )
         parent = core
-        for part in key[len(core_name) + 1 :].split("."):
+        for part in attribute_key[len(core_name) + 1 :].split("."):
             require(isinstance(parent, ModuleType), "Native framework module chain is invalid")
             parent = vars(parent).get(part)
         require(parent is module, f"Native framework submodule identity differs: {key}")
