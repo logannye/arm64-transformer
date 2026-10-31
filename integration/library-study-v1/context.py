@@ -1,7 +1,7 @@
 """Selected-library development gate context using frozen mathematical handlers.
 
-Only the exposed development stream is available here. Formal seed access stays
-closed until a separately implemented and authenticated admission route exists.
+Development uses the exposed stream. A reserved stream requires complete
+execution support and an independently verified frozen-manifest trust anchor.
 """
 
 import importlib.util
@@ -25,7 +25,9 @@ C = E.C
 DEVELOPMENT_SEED = 20261103
 
 
-def create(runtime, output, width, assets, raw_store, *, fresh_training, checkpoint_tie):
+def create(
+    runtime, output, width, assets, raw_store, *, fresh_training, checkpoint_tie, admission=None
+):
     import numpy as np
 
     from transformer import gpu_admission_checks as math
@@ -45,21 +47,31 @@ def create(runtime, output, width, assets, raw_store, *, fresh_training, checkpo
         "Canonical development output required",
     )
     runtime.recheck()
+    seed = DEVELOPMENT_SEED
+    if admission is not None:
+        frozen = load("frozen")
+        C.bound(admission)
+        grant = frozen.AdmissionPermission(admission["path"], admission["sha256"])
+        manifest = grant.checked()
+        C.require(
+            manifest["bindings"]["roles"] == runtime.roles
+            and manifest["bindings"]["capture"] == runtime.capture_binding,
+            "Admission permission belongs to another runtime/source",
+        )
+        seed = C.ADMISSION_SEED
 
     class LibraryContext(math.Context):
         def __init__(self):
             self.runtime, self.width, self.output = runtime, width, Path(output)
             self.backends, self.cache, self.counter, self.cpu_operations = {}, {}, 0, []
             self.native = None
-            self.study_context = SimpleNamespace(owned=False, admission_seed=DEVELOPMENT_SEED)
-            self.initial = dict(
-                parameters=Transformer(seed=DEVELOPMENT_SEED).flat_parameters(), step=0
-            )
+            self.study_context = SimpleNamespace(owned=False, admission_seed=seed)
+            self.initial = dict(parameters=Transformer(seed=seed).flat_parameters(), step=0)
             self.initial.update(
                 m=np.zeros_like(self.initial["parameters"]),
                 v=np.zeros_like(self.initial["parameters"]),
             )
-            self.rng = np.random.default_rng(np.random.SeedSequence([DEVELOPMENT_SEED, width, 99]))
+            self.rng = np.random.default_rng(np.random.SeedSequence([seed, width, 99]))
             self.tokens = self.rng.integers(0, 128, (16, 32), dtype=np.int32)
             self.tokens[:, ::3] = 65
             self.targets = self.rng.integers(0, 128, (16, 32), dtype=np.int32)

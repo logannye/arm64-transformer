@@ -39,6 +39,43 @@ def project_origins(role, modules):
     return result
 
 
+def validate_origins(proof, roles, capture, inventory, engine):
+    """Validate retained live origins without importing the selected runtime."""
+    from transformer.gpu_owned_backend import (
+        validate_compilation_probe,
+        validate_loaded_origin_proof,
+    )
+
+    C.require(
+        proof["runtime_identity_sha256"] == capture["runtime_identity_sha256"]
+        and proof["source_roles_sha256"] == C.identity(roles),
+        "Retained runtime/source identity differs",
+    )
+    receipt = C.read(C.bound(capture["runtime_receipt"]))
+    required = {"pytorch"} | ({"mlx"} if engine == "mlx" else set())
+    C.require(required <= set(proof), "Missing live framework origin proof")
+    for name in ("pytorch", "mlx"):
+        if name in proof:
+            validate_loaded_origin_proof(
+                proof[name],
+                inventory=inventory,
+                runtime_root=capture["runtime_root"],
+                receipt=receipt,
+            )
+    if engine == "mlx":
+        validate_compilation_probe(proof["compilation"])
+    spec = importlib.util.spec_from_file_location(
+        "library_saved_imports", HERE / "qualify_suites.py"
+    )
+    suite = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(suite)
+    suite.imports(
+        proof["loaded_python_files"],
+        dict(inventory, root=capture["runtime_root"]),
+        A.merged_project(roles),
+    )
+
+
 def execute(args):
     C.require(
         sys.flags.isolated and sys.flags.dont_write_bytecode, "Use independent audit Python -I -B"

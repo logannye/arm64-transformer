@@ -97,3 +97,29 @@ def test_unrelated_cpu_failure_cannot_count_as_malformed_input_rejection(
                 expected_rejection="Out-of-range CPU tokens",
             )
         )
+
+
+def test_reserved_permission_is_rejected_before_any_rng_is_opened(monkeypatch, tmp_path):
+    from transformer import spec
+
+    output = tmp_path / "output"
+    output.mkdir()
+    fake = tmp_path / "unqualified.json"
+    fake.write_text("{}")
+    monkeypatch.setenv("ARM64_TRANSFORMER_WIDTH", str(spec.WIDTH))
+
+    def forbidden(*a, **kw):
+        raise AssertionError("RNG must remain unopened")
+
+    monkeypatch.setattr(np.random, "default_rng", forbidden)
+    with pytest.raises(ValueError, match="not implemented"):
+        K.create(
+            SimpleNamespace(recheck=lambda: None),
+            output,
+            spec.WIDTH,
+            {},
+            tmp_path,
+            fresh_training=None,
+            checkpoint_tie=None,
+            admission=K.C.binding(fake),
+        )

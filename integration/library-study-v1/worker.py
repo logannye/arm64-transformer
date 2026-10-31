@@ -214,7 +214,7 @@ def repeat(job, runtime, output):
             backend.close()
 
 
-def tie(job, runtime, output):
+def tie(job, runtime, output, *, admission=None):
     import numpy as np
 
     from transformer.gpu_study_audit import parameter_count, read_array
@@ -222,7 +222,15 @@ def tie(job, runtime, output):
 
     engine, width = job["engine"], job["width"]
     C.require(engine in ("cpu_arm64", "cpu_torch"), "CPU tie engine required")
-    fixture = write_development_tie_fixture(output / "fixture", width)
+    if admission is None:
+        fixture = write_development_tie_fixture(output / "fixture", width)
+    else:
+        frozen = load("frozen")
+        grant = frozen.AdmissionPermission(admission["path"], admission["sha256"])
+        C.require(grant.checked()["bindings"]["roles"] == runtime.roles, "Foreign tie authority")
+        from transformer.gpu_study_cpu_admission import _write_tie_fixture
+
+        fixture = _write_tie_fixture(output / "fixture", width, C.ADMISSION_SEED)
     run = output / "run"
     if engine == "cpu_torch":
         from transformer.python_train import run as cpu_fit

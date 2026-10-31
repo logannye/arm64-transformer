@@ -139,6 +139,13 @@ def gpu_fit(fixture, output, engine, *, runtime, scope):
         after.astype("<f4").tofile(output / "inference_logits.f32")
         timings.tofile(output / "timings.f64")
         receipt["origins_after"] = runtime.origins(engine)
+        if engine == "mlx":
+            spec = importlib.util.spec_from_file_location(
+                "library_measured_graph", HERE / "worker.py"
+            )
+            worker = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(worker)
+            receipt["compiled_training"] = worker.training_graph(backend, output, runtime)
         if engine == "metal":
             receipt["metal_library_after"] = E.loaded_metal_library(runtime)
         runtime.recheck()

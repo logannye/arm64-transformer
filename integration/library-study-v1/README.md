@@ -13,8 +13,9 @@ blocks admission for every width and engine. Diagnostic framework primitive and
 wide three-step trajectory groups keep their original scope.
 
 Formal execution is currently closed. `contract.require_execution_support()`
-rejects it. No manifest, admission result, campaign or checkpoint-audit acceptance
-is created by the existing modules. Seeds 20261104, 20261108 and 20261112 remain
+rejects it before any reserved operands or measured fits. The new formal control
+path remains behind that block while its implementation is validated.
+Seeds 20261104, 20261108 and 20261112 remain
 unopened. This is an explicitly maintained-library experiment; standard-release
 framework acceptance and performance claims do not follow from its results.
 
@@ -63,10 +64,32 @@ Current components:
   `qualification_plan.py` requires the exact completed collector/cell inventories
   before scheduling all raw re-audits. A schedule or completion flag cannot
   qualify the study without executing those audits.
+- `qualify.py` executes the complete scheduled raw audits serially and requires
+  exact-source hosted push/PR checks. `frozen.py` authenticates that evidence,
+  both source roles, hardware, runtime and original fixtures before granting
+  permission to open reserved admission operands.
+- `admission_worker.py`, `audit_admission.py` and `admission.py` execute and
+  independently check every retained admission member, including full-model
+  accuracy at every width and the complete fresh-process/tie denominator.
+- `fit.py` and `campaign.py` select admitted numerical factories explicitly,
+  preserve the 180-cell rotation and stop subsequent fits after a failed fit,
+  power condition or exact repeat. Completed measurement is still unaudited.
+- `checkpoint_replay.py`, `audit_checkpoint.py` and `audit_campaign.py` retain
+  all five engines' validation/test/B1 outputs for both best and last states:
+  360 checkpoints. Independent NumPy FP64 equations cover all rows; independent
+  PyTorch double equations cross-check the first/last rows per split, matching
+  the original reference contract. Accuracy, engine compatibility, own-engine
+  replay and all 90 exact repeat pairs remain separate gates.
+- `report.py` binds the complete campaign audit and produces a qualified
+  performance summary only when every postrun gate passes. Ratios are paired
+  by original seed. Hardware, workload, storage precision, selected internal
+  arithmetic and maintained-framework scope remain explicit.
 
 Complete prerequisite verification, admission/campaign dispatch and full saved
-checkpoint auditing must be implemented and validated before removing the
-execution block. A future freeze must bind both source roles, exact runtime,
+checkpoint auditing must pass validation before removing the execution block.
+A future freeze must bind both source roles, exact runtime,
 native assets, all original fixture bytes, full prerequisite evidence and the
 retained admission inventory before opening seed 20261112. Preserve a 16 GiB
 disk reserve, bound raw-store growth and use one numerical worker at a time.
+Campaign preflight budgets both saved states and every replay without assuming
+compression or deduplication; shared raw members may save space afterward.
