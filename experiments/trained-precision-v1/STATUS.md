@@ -339,3 +339,17 @@ explicitly requires a separate raw-array audit. Both hosted jobs also passed at
 The resumed controller enforces a 5.5 GiB stop threshold on its complete worker
 process group. Additional cleanup left about 12 GiB free; its local record is
 `work/storage-cleanup-20261030/additional-cleanup-final.json`.
+
+The corrected capture and both full-suite preparations pass at
+`0640f2cd4912dbc22f925abcc085ca9fb3436fc9`; their exact identities are recorded
+in `half-v3-preparation.json`. The framework-byte identity remains
+`5698e6f6f07655d54f249533e28aabdfa75af51f768fc9ff0c49b4ca65d2d3cd`.
+The serial controller in `work/resumed-framework-validation-v2` runs the full
+MPS suite, full MLX suites, a matched 24-worker captured-runtime screen, then the
+34 focused MPS cases. The screen compares ordinary and custom candidate models
+on the same two width-512 historical cases and the width-1024 FF1 regression,
+with separate inference/gradient, provenance and raw-array audits. It cannot
+substitute for the complete historical/fresh inventories or all-width admission.
+These actual results remain pending. Source-level framework arithmetic repairs,
+optimized Metal qualification, a successor freeze and the 180-fit experiment
+remain open requirements.
