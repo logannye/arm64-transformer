@@ -790,5 +790,73 @@ class ProspectiveInventoryTests(unittest.TestCase):
                 M.suite_inventory(self.plan, self.selected)
 
 
+class ChildLauncherTests(unittest.TestCase):
+    def test_descendant_audit_uses_authenticated_normalized_source_inventory(self):
+        with tempfile.TemporaryDirectory() as name:
+            root = Path(name).resolve()
+            files = {
+                "runtime": {},
+                "receipt": {},
+                "source": {"files": {"link": {"kind": "symlink", "target": "test.py"}}},
+                "selection": {"pytorch": {"base": "a" * 40}},
+            }
+            plan = {
+                "authority_inputs": {k: {"path": k} for k in ("inventory", "receipt", "selection")},
+                "source_manifest": {"path": "source"},
+                "subprocess_contract": {"invocations": []},
+            }
+            plan["authority_inputs"]["inventory"]["path"] = "runtime"
+            with (
+                patch.object(M, "binding"),
+                patch.object(M, "read", side_effect=lambda p: files[str(p)]),
+                patch.object(M, "source_files", return_value={"link": "b" * 64}) as normalized,
+            ):
+                self.assertEqual(M.check_descendants(root, plan, "c" * 64, 1, (0, 1)), [])
+                normalized.assert_called_once_with(plan, files["selection"], verify=False)
+
+    @unittest.skipIf(os.name == "nt", "POSIX conformance launcher")
+    def test_exec_preserves_environment_flags_and_literal_upstream_arguments(self):
+        with tempfile.TemporaryDirectory() as name:
+            root = Path(name).resolve()
+            python = str(Path(sys.executable).resolve())
+            code = (
+                "import json,os,sys;print(json.dumps(dict(environment=dict(os.environ),"
+                "arguments=sys.argv[1:],flags=[sys.flags.safe_path,sys.flags.no_site,"
+                "sys.flags.dont_write_bytecode,sys.flags.isolated,sys.flags.hash_randomization])))"
+            )
+            environment = {"PYTHONHASHSEED": "0", "FROZEN_TEST_CONTROL": "literal spaces $ ` !"}
+            baseline = json.loads(
+                subprocess.check_output(
+                    [python, "-P", "-S", "-B", "-c", code], env=environment, cwd=root, text=True
+                )
+            )
+            # macOS CPython may add its platform text-encoding variable at startup.
+            environment = baseline["environment"]
+            launcher = root / "owned launcher"
+            launcher.write_text(M.child_launcher_source([python, "-P", "-S", "-B", "-c", code]))
+            launcher.chmod(0o700)
+            arguments = ["-W", "always", "-c", "literal script with 'quotes' and $ symbols\n"]
+            observed = json.loads(
+                subprocess.check_output(
+                    [launcher, *arguments], env=environment, cwd=root, text=True
+                )
+            )
+            self.assertEqual(observed["environment"], environment)
+            self.assertEqual(observed["arguments"], arguments)
+            self.assertEqual(observed["flags"], [True, 1, 1, 0, 0])
+            self.assertNotIn("PWD", observed["environment"])
+            self.assertNotIn("SHLVL", observed["environment"])
+
+    def test_changed_startup_flags_or_unsafe_shebang_rejected(self):
+        for command in (
+            ["/python", "-I", "-S", "-B", "-c", "pass"],
+            ["relative-python", "-P", "-S", "-B", "-c", "pass"],
+            ["/python\nunsafe", "-P", "-S", "-B", "-c", "pass"],
+            ["/" + "x" * 300, "-P", "-S", "-B", "-c", "pass"],
+        ):
+            with self.subTest(command=command), self.assertRaises(ValueError):
+                M.child_launcher_source(command)
+
+
 if __name__ == "__main__":
     unittest.main()

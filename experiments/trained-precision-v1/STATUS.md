@@ -367,3 +367,19 @@ conformance test or numerical model was executed by that diagnostic. Unit checks
 pass: 134 origin/backend/CPU tests plus ten forwarding subtests, 60 suite checks
 and 26 portable archive checks. The failed launches remain retained. A new
 capture is required before repeating the full suites under this verifier.
+
+The first complete MPS test execution under the corrected namespace checker ran
+all 10,357 methods in 365.314 seconds. All 27 previously failing integration IDs
+now pass their unchanged upstream assertions and are neither skipped nor expected
+failures. The run retains one failure and one error, both in fallback-warning
+subprocess tests. A standard-library reproduction shows that the shell launcher
+adds `PWD` and `SHLVL`, violating the exact environment contract. An `env -S`
+launcher preserves the selected interpreter, `-P -S -B`, literal arguments and
+exact frozen environment; its regression check passes on the actual host.
+The post-run audit separately exposed a raw symlink-manifest reader; that route
+now uses the existing authenticated normalization rather than indexing every
+raw record for `sha256`. The suite helper passes 63 tests and the portable
+archive helper passes 26. No upstream test, tolerance or skip changed.
+The [retained full-run record](mps-full-suite-harness-failure.json) remains failed
+and unqualified. The independent full MLX run and matched model diagnostics
+continue under the previous captured project while the new MPS retry is prepared.

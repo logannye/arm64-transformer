@@ -864,6 +864,18 @@ def child_command(plan, plan_path, plan_sha, output, pid, *, runtime=None):
     return [executable, "-P", "-S", "-B", "-c", code]
 
 
+def child_launcher_source(command):
+    """Preserve the frozen environment and startup flags without a shell hop."""
+    require(
+        len(command) == 6 and command[1:5] == ["-P", "-S", "-B", "-c"],
+        "Unexpected conformance child startup",
+    )
+    require(Path(command[0]).is_absolute(), "Canonical interpreter required")
+    shebang = "#!/usr/bin/env -S " + shlex.join(command[:4])
+    require(len(shebang.encode()) < 256 and "\n" not in shebang, "Unsafe launcher shebang")
+    return shebang + "\n" + command[5] + "\n"
+
+
 def descendant(plan_path, plan_sha, parent_output, parent_pid, upstream):
     require(os.getppid() == parent_pid, "Wrong conformance subprocess parent")
     pinned(plan_path, plan_sha)
@@ -978,11 +990,12 @@ def check_descendants(output, plan, plan_sha, pid, parent_interval):
 
     runtime_receipt = read(plan["authority_inputs"]["receipt"]["path"])
     binding(plan["authority_inputs"]["receipt"]["path"], plan["authority_inputs"]["receipt"])
-    binding(plan["source_manifest"]["path"], plan["source_manifest"])
-    sources = {
-        name: item["sha256"]
-        for name, item in read(plan["source_manifest"]["path"])["files"].items()
-    }
+    selected = plan["authority_inputs"]["selection"]
+    binding(selected["path"], selected)
+    # Use the same source-format normalization as preparation and the portable
+    # auditor: explicit symlinks bind their literal target rather than a raw
+    # sha256 field. The complete source tree is authenticated by the caller.
+    sources = source_files(plan, read(selected["path"]), verify=False)
     actual = sorted(p.name for p in output.glob("descendant-*"))
     expected = sorted("descendant-" + r["name"] for r in plan["subprocess_contract"]["invocations"])
     require(actual == expected, "Missing, duplicate or foreign conformance subprocess")
@@ -1078,9 +1091,7 @@ def worker(path, sha, output):
         original_executable = sys.executable
         launcher = output / "owned-suite-python"
         launcher.write_text(
-            "#!/bin/sh\nexec "
-            + shlex.join(child_command(plan, path, sha, output, os.getpid()))
-            + ' "$@"\n'
+            child_launcher_source(child_command(plan, path, sha, output, os.getpid()))
         )
         launcher.chmod(0o700)
         before = origins(backend, authority, runtime)
