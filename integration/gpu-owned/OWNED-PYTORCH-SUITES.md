@@ -77,6 +77,14 @@ operator replacement. The native extension and generated Ninja file are retained
 and checked after the suite. Any precompiled runtime header that the stock loader
 would delete is rejected before execution.
 
+The pinned stock extension loader emits its `-L` library argument without shell
+quoting. Preparation rejects runtime library paths requiring quoting before it
+creates a cache or launches a compiler. Install the authenticated package at a
+space-free path; do not patch the upstream test or loader to hide this failure.
+A fresh derivation must verify identical native, API and source file bytes and
+retain its new receipt/manifests. The previous failed suite remains failed, and
+the complete suite must run again under the new runtime identity.
+
 ## Conformance subprocesses and workload separation
 
 The full suite includes two source-bound subprocess calls. One tests an ordinary

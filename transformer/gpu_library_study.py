@@ -15,7 +15,7 @@ from transformer.gpu_study_context import LIBRARY_ADMISSION_SEED
 
 PROTOCOL = "gpu-v5-library-five-engine-v1"
 SELECTION = "experiments/gpu-v5-library/framework-selection.json"
-SELECTION_SHA256 = "18d987b4418778945ae48b0e19baa9f72782ea8c27ecd94fdbfe7dcf80070a4f"
+SELECTION_SHA256 = "f1fb641386e1a2cfd5afd49981618969c32b61f7b07a38704e7d347e42b77909"
 CPU_REVISION = "bcf0d5deb25c468ac1751d61f05caf75d23fd07e"
 REQUIRED_GATES = (
     "exact_runtime_source_binary_dependencies_and_api_derivations",

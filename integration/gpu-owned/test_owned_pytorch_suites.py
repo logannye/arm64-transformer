@@ -25,6 +25,16 @@ SPEC_P.loader.exec_module(P)
 
 
 class SourceTests(unittest.TestCase):
+    def test_stock_linker_rejects_unquoted_runtime_paths_before_any_cache_write(self):
+        for name in ("Torch Runtime", "torch$runtime", "torch;runtime", "torch'quoted"):
+            with self.subTest(name=name), self.assertRaisesRegex(RuntimeError, "unquoted -L"):
+                P.prepare(
+                    self.root / P.CACHE_NAME, self.source, self.root / name, {}, "0" * 64, "0" * 64
+                )
+            self.assertFalse((self.root / P.CACHE_NAME).exists())
+        safe = self.root / "torch-runtime"
+        self.assertEqual(P.require_stock_linker_path(safe), str(safe / "torch/lib"))
+
     def test_incomplete_worker_keeps_primary_error_without_missing_native_proof_masking(self):
         record = dict(
             complete=False,

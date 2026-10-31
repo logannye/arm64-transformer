@@ -43,8 +43,18 @@ exact parameters/moments/step around every warmup that takes an update.
 `experiments/gpu-v5-library/framework-selection.json` pins the full package
 selection, NumPy 2.2.6 ABI, source revisions, ordered native patches, hosted
 builds, runtime manifests and API derivation receipts. Its SHA-256 is
-`18d987b4418778945ae48b0e19baa9f72782ea8c27ecd94fdbfe7dcf80070a4f`.
+`f1fb641386e1a2cfd5afd49981618969c32b61f7b07a38704e7d347e42b77909`.
 The same PyTorch installation and native identity serve CPU and MPS.
+
+This is selection revision 2. Preserve the original selection at
+`experiments/gpu-v5-library/framework-selection-v1.json`. Its MPS full sweep
+executed all 10,357 methods but failed with 88 stock conformance extension errors:
+the unchanged upstream loader emitted an unquoted library path containing a
+space. Revision 2 places an independently authenticated byte-identical package
+at a path without spaces. Only the Torch derivation receipt and manifest identity
+change; every native, API and source payload file remains identical. The old
+failure and positive primitive evidence keep their original runtime identity.
+All required gates must be observed again for the new selection before admission.
 
 | Engine | Selected implementation |
 |---|---|

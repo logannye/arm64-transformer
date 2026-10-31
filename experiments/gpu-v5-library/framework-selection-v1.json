@@ -1,0 +1,54 @@
+{
+  "mlx": {
+    "base": "a21f892a6e8e83afb117cef1d1ceae3e82f48c32",
+    "build_run": 40978071574,
+    "combined_patch_state_required": true,
+    "engines": [
+      "mlx"
+    ],
+    "graph_compilation_required": true,
+    "kind": "project_maintained_full_source_build",
+    "patches": [
+      "9aecf0c9b0131fe0673493035fd3c47fba3e4ffb1cfc04d00a506702e1d1067c",
+      "b9787a423920641034f42e611f0d8529f6dd49022d094e280fa5ce52a38b7cc3",
+      "d61b0928b439b76819799368cb9c0ec29e185bc5acc36d9f72e3fa8b457a8674"
+    ],
+    "precision_api": {
+      "contract_sha256": "7b20e72aa969732a1348b4d01281f604dee8ba043433191ce4d71a1ce4604718",
+      "derivation_receipt_sha256": "bf3775e41880ecdc916e01235742daf8b7d91e9dec5f4d25a4de1d5b26a6d66e",
+      "formal_eligible": false,
+      "module": "mlx.nn.precise_fp32",
+      "stock_operators_unchanged": true
+    },
+    "runtime_manifest_sha256": "a4f744f30a69ad77bd962b74edfc0deefd26dc62d153d9e6dbbfe9757d663d9a",
+    "shader_mode": "jit-on",
+    "test_source_compatibility_receipt_sha256": "bd159eba74c2aa30ed43f70afb4b9b71e539ca3476aabd36d05fea8e2a791109",
+    "variant": "patched"
+  },
+  "pytorch": {
+    "base": "71d2a08507ab47dd6b2fa9b66319d17ce2377de4",
+    "build_run": 41158978641,
+    "combined_patch_sha256": "07128b3a9bbe39f4e423ef7e038f955c52cbc562d8edb9ed28c4baac59c49b3f",
+    "engines": [
+      "cpu_torch",
+      "mps"
+    ],
+    "kind": "project_maintained_full_source_build",
+    "numpy_abi_version": "2.2.6",
+    "patches": [
+      "3834dca844ea3de6b40467ce214b99bce83fa06dae2bc454623516dafc0fdd71",
+      "4e9c501353522821773cf8eafc92386b142ba24edca39a4d5a4c61cb68bc59a7",
+      "e071e76328c47e0666ef9013a5878d130289c1ce5ee677f1dea8608207161bb1",
+      "b365c370ae317e0fb046fb8bca1ca68527a9c59f824779bb382e66bdb7dc3f7a"
+    ],
+    "precision_api": {
+      "contract_sha256": "7b20e72aa969732a1348b4d01281f604dee8ba043433191ce4d71a1ce4604718",
+      "derivation_receipt_sha256": "687b359610831a63a548e38b1b3b7f726862a08acc885e8f78efa71a6af13017",
+      "formal_eligible": false,
+      "module": "torch.nn.precise_fp32",
+      "stock_operators_unchanged": true
+    },
+    "runtime_manifest_sha256": "d98d383ad1c35974b4f2bf3ab3acde66cb32f6bb8858d6d3ca86e5cf3dcb5283",
+    "same_distribution_required": true
+  }
+}

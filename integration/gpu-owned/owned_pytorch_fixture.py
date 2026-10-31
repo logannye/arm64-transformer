@@ -14,6 +14,7 @@ import ast
 import hashlib
 import json
 import os
+import shlex
 import shutil
 import stat
 import sysconfig
@@ -173,8 +174,20 @@ def require_bounds(value):
         raise RuntimeError("Stock test-extension execution requires at least 5 GiB free")
 
 
+def require_stock_linker_path(runtime):
+    """The pinned stock load_inline loader emits its -L argument without quoting."""
+    library = str((Path(runtime) / "torch/lib").absolute())
+    if shlex.quote(library) != library:
+        raise RuntimeError(
+            "The selected stock C++ extension loader emits an unquoted -L library path; "
+            "use an authenticated runtime root that does not require shell quoting"
+        )
+    return library
+
+
 def prepare(cache, source, runtime, source_files, test_source_sha, runtime_manifest_sha):
     cache, source, runtime = Path(cache), Path(source), Path(runtime)
+    require_stock_linker_path(runtime)
     if cache.name != CACHE_NAME or cache.is_symlink():
         raise RuntimeError("Use the dedicated task-owned pytorch-test-extensions directory")
     expected = verify_inputs(source, source_files, test_source_sha)
