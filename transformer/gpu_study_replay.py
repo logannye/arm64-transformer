@@ -12,7 +12,18 @@ import runpy
 from pathlib import Path
 
 
-def replay(engine, fixture_path, checkpoint, output, *, authority=None, authority_sha256=None):
+def replay(
+    engine,
+    fixture_path,
+    checkpoint,
+    output,
+    *,
+    authority=None,
+    authority_sha256=None,
+    library_api=False,
+):
+    if library_api and engine != "cpu_torch":
+        raise ValueError("Explicit library CPU replay requires cpu_torch")
     # Load only controls from the current script tree; numerical imports below
     # must continue resolving through the selected immutable CPU source tree.
     controls = runpy.run_path(str(Path(__file__).with_name("gpu_environment.py")))
@@ -48,7 +59,12 @@ def replay(engine, fixture_path, checkpoint, output, *, authority=None, authorit
 
         from transformer.reference import Transformer
 
-        model = Transformer().load_flat(parameters)
+        model_type = Transformer
+        if library_api:
+            from transformer.library_training import torch_model_type
+
+            model_type = torch_model_type("cpu_torch")
+        model = model_type().load_flat(parameters)
         if engine == "oracle":
             from transformer.precision_audit import FP64Transformer
 
@@ -145,6 +161,7 @@ def main():
     parser.add_argument("--output", required=True)
     parser.add_argument("--authority")
     parser.add_argument("--authority-sha256")
+    parser.add_argument("--library-api", action="store_true")
     args = parser.parse_args()
     replay(
         args.engine,
@@ -153,6 +170,7 @@ def main():
         args.output,
         authority=args.authority,
         authority_sha256=args.authority_sha256,
+        library_api=args.library_api,
     )
 
 

@@ -41,6 +41,15 @@ It does not establish numerical accuracy. Separate all-width FP64 model,
 common-state/optimizer, primitive, exposed-state replay, complete framework,
 repeatability and successor-admission gates remain required before 180 fits.
 
+The CPU fit, supplied-operand admission bridge and saved-checkpoint replay expose
+an explicit `--library-api` selection for this same maintained-package model.
+The fit records its API origin, stage table, FP32 storage and non-stock identity.
+Default invocations retain ordinary Torch arithmetic. The flag is rejected for
+the native arm and FP64 oracle. Legacy frozen-study launchers continue to reject
+the extra argument; this capability does not amend either historical protocol
+or grant successor admission. A successor must bind the revised CPU source,
+use the explicit selection for fit/admission/replay, and pass its own gates.
+
 Run one numerical process at a time. Each worker reserves 16 GiB beyond its
 bounded checkpoint allocation, checks the reserve before every update, writes
 no bytecode and builds no native framework. At width 1024 the full trajectory

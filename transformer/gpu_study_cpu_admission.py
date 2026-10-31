@@ -76,7 +76,9 @@ def run_cpu_operation(
             raise ValueError(expected_rejection)
 
 
-def execute(engine, operand_file, output_file):
+def execute(engine, operand_file, output_file, *, library_api=False):
+    if library_api and engine != "cpu_torch":
+        raise ValueError("Explicit library CPU selection requires cpu_torch")
     controls = runpy.run_path(str(Path(__file__).with_name("gpu_environment.py")))
     controls["require_environment"](controls["ENVIRONMENT"])
     import numpy as np
@@ -103,6 +105,7 @@ def execute(engine, operand_file, output_file):
                         "step": np.array(int(state["step"]) + 1, np.int64),
                     },
                     native=native,
+                    library_api=library_api,
                 )
                 state = {key: updated[key] for key in state}
             probe = _compute(
@@ -114,6 +117,7 @@ def execute(engine, operand_file, output_file):
                     "targets": values["targets"],
                 },
                 native=native,
+                library_api=library_api,
             )
             result.update(
                 {
@@ -122,12 +126,12 @@ def execute(engine, operand_file, output_file):
                 }
             )
     else:
-        result = _compute(engine, values, native=native)
+        result = _compute(engine, values, native=native, library_api=library_api)
     with Path(output_file).open("xb") as handle:
         np.savez(handle, **result)
 
 
-def _compute(engine, values, *, native=None):
+def _compute(engine, values, *, native=None, library_api=False):
     import numpy as np
     import torch
     from torch.nn import functional as F
@@ -135,6 +139,13 @@ def _compute(engine, values, *, native=None):
     from transformer import spec
     from transformer.reference import Transformer
 
+    model_type = Transformer
+    if library_api:
+        if engine != "cpu_torch":
+            raise ValueError("Explicit library CPU selection requires cpu_torch")
+        from transformer.library_training import torch_model_type
+
+        model_type = torch_model_type("cpu_torch")
     torch.set_num_threads(1)
     torch.use_deterministic_algorithms(True)
     values = dict(values)
@@ -161,7 +172,7 @@ def _compute(engine, values, *, native=None):
         result["backend_width"] = np.array(native.model_identity["width"], dtype=np.int64)
         result["backend_kind"] = np.array(1, dtype=np.int64)
     else:
-        probe = Transformer().load_flat(parameters)
+        probe = model_type().load_flat(parameters)
         if any(p.device.type != "cpu" for p in probe.parameters()):
             raise ValueError("Frozen CPU reference did not allocate CPU parameters")
         result["backend_width"] = np.array(spec.WIDTH, dtype=np.int64)
@@ -192,7 +203,7 @@ def _compute(engine, values, *, native=None):
             gradient *= np.float32(1.0) / np.float32(len(tokens))
             loss = total / len(tokens)
         else:
-            model = Transformer().load_flat(parameters)
+            model = model_type().load_flat(parameters)
             logits_t = model(torch.tensor(tokens.astype(np.int64)))
             loss_t = F.cross_entropy(
                 logits_t.reshape(-1, 128), torch.tensor(targets.astype(np.int64)).reshape(-1)
@@ -393,8 +404,9 @@ def main():
     parser.add_argument("--engine", choices=("cpu_arm64", "cpu_torch"), required=True)
     parser.add_argument("--input", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--library-api", action="store_true")
     args = parser.parse_args()
-    execute(args.engine, args.input, args.output)
+    execute(args.engine, args.input, args.output, library_api=args.library_api)
 
 
 if __name__ == "__main__":
