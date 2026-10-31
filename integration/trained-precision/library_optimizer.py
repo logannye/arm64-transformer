@@ -8,7 +8,6 @@ continuation from step 32. This neither opens admission nor measures a fit.
 import argparse
 import hashlib
 import importlib.util
-import io
 import json
 import os
 import shutil
@@ -250,6 +249,8 @@ def run(args):
     trainer = None
     try:
         record["origins_before"] = REPLAY.origins(args.engine, authority, backend, inventory)
+        api = library_training.selected_api(args.engine)
+        record["selected_api"] = dict(module=api.__name__, path=api.__file__, identity=api.IDENTITY)
         if args.engine == "cpu_torch":
             trainer = CPUTraining(initial)
         else:
@@ -308,14 +309,11 @@ def run(args):
             "Same-process optimizer replay differs",
         )
         if args.engine == "mlx":
-            import mlx.core as mx
-
-            graph = io.StringIO()
-            mx.export_to_dot(graph, trainer._last_loss)
             graph_path = args.output / "training-loss.dot"
-            graph_path.write_text(graph.getvalue())
+            require(isinstance(trainer._training_graph, str), "Training graph was not captured")
+            graph_path.write_text(trainer._training_graph)
             require(
-                "Compiled" in graph.getvalue() and trainer._training_python_traces == 1,
+                "Compiled" in trainer._training_graph and trainer._training_python_traces == 1,
                 "Training must execute one compiled graph without retracing Python",
             )
             record["compiled_training"] = dict(

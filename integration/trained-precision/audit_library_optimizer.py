@@ -82,6 +82,22 @@ def audit_worker(path, expected, capture_path, capture_sha):
     )
     for key in ("origins_before", "origins_after"):
         PROVENANCE.audit_origins(value[key], value["engine"], capture, runtime, receipt)
+    framework = "mlx" if value["engine"] == "mlx" else "pytorch"
+    choice = receipt["frameworks"][framework]["selection"]["precision_api"]
+    module = choice["module"]
+    require(
+        value["selected_api"]["module"] == module
+        and value["selected_api"]["identity"] == "fp32-saved-precision-api-v1"
+        and choice["stock_operators_unchanged"] is True
+        and choice["derivation_receipt_sha256"]
+        == capture["precision_api_derivations"][framework]["receipt"]["sha256"],
+        "Wrong selected optimizer model API",
+    )
+    loaded = value["origins_after"]["loaded_python_files"]
+    require(loaded[module]["path"] == value["selected_api"]["path"], "Wrong loaded model API")
+    prefix = module.rsplit(".", 1)[0]
+    for name in (module, prefix + "._fp32_precise_math", prefix + "._fp32_precise_dense"):
+        PROVENANCE.known_file(loaded[name]["path"], runtime, capture["runtime_root"], project)
     fixture_bound = value["fixture"]
     SUITE.binding(fixture_bound["path"], fixture_bound)
     fixture = SUITE.read_json(fixture_bound["path"])

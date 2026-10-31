@@ -52,10 +52,12 @@ class DerivationTests(unittest.TestCase):
 
     @staticmethod
     def clone(command, **kwargs):
-        assert command[:2] == ["/bin/cp", "-cR"] and kwargs == {"check": True}
+        assert (
+            command[0] == "/bin/cp" and command[1] in ("-cR", "-RX") and kwargs == {"check": True}
+        )
         shutil.copytree(command[2], command[3])
 
-    def produce(self, framework):
+    def produce(self, framework, copy_method="apfs"):
         original, authority, proof = self.fixture(framework)
         output = self.root / "derived"
         with (
@@ -70,8 +72,31 @@ class DerivationTests(unittest.TestCase):
                 return_value=shutil._ntuple_diskusage(128 * 1024**3, 0, 128 * 1024**3),
             ),
         ):
-            receipt = derive.derive(framework, authority, derive.SUITE.sha256(authority), output)
+            receipt = derive.derive(
+                framework,
+                authority,
+                derive.SUITE.sha256(authority),
+                output,
+                copy_method=copy_method,
+            )
         return original, proof, output, receipt
+
+    def test_byte_copy_retains_every_native_source_test_and_mode(self):
+        original, proof, output, receipt = self.produce("pytorch", "bytes_without_xattrs")
+        with mock.patch.object(derive, "authority", return_value=proof):
+            value, manifests = derive.authenticate(output, receipt["sha256"])
+        self.assertEqual(value["copy_method"], "bytes_without_xattrs")
+        for kind, manifest in proof["manifests"].items():
+            for name, row in manifest["files"].items():
+                self.assertEqual(
+                    (original / kind / name).read_bytes(), (output / kind / name).read_bytes()
+                )
+                self.assertEqual(manifests[kind]["files"][name], row)
+
+    def test_unknown_copy_method_is_rejected_before_authority_or_copy(self):
+        with mock.patch.object(derive, "authority", side_effect=AssertionError("authority read")):
+            with self.assertRaisesRegex(ValueError, "copy method"):
+                derive.derive("pytorch", None, None, None, copy_method="unbound")
 
     def test_both_package_derivations_are_additive_and_retain_all_original_members(self):
         for framework in ("pytorch", "mlx"):

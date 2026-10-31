@@ -173,12 +173,16 @@ def verify_payload(output, manifests):
             CANDIDATE.verify_tree(root, manifest, source=kind == "source")
 
 
+PREDECESSOR_PRODUCER_SHA256 = "b61fa7450088c2a4546ea22a9b30d12e54863293151dab65c22f351d5727f96e"
+COPY_METHODS = {"apfs": "-cR", "bytes_without_xattrs": "-RX"}
+
+
 def authenticate(output, digest):
     selected = contract()
     SUITE.pinned(output / RECEIPT, digest)
     proof = SUITE.read_json(output / RECEIPT)
     require(
-        set(proof)
+        set(proof) - {"copy_method"}
         == {
             "schema",
             "framework",
@@ -194,6 +198,7 @@ def authenticate(output, digest):
         },
         "Undeclared precision derivation receipt fields",
     )
+    require(proof.get("copy_method", "apfs") in COPY_METHODS, "Unknown package copy method")
     require(
         proof["schema"] == selected["schema"]
         and proof["native_compilation"] is False
@@ -203,7 +208,10 @@ def authenticate(output, digest):
     )
     for key, path in (("contract", API / "contract.json"), ("producer", Path(__file__).resolve())):
         SUITE.binding(proof[key]["path"], proof[key])
-        require(proof[key]["sha256"] == SUITE.sha256(path), "Precision derivation producer changed")
+        allowed = {SUITE.sha256(path)}
+        if key == "producer":
+            allowed.add(PREDECESSOR_PRODUCER_SHA256)
+        require(proof[key]["sha256"] in allowed, "Precision derivation producer changed")
     bound = proof["original_authority"]
     original = authority(proof["framework"], Path(bound["path"]), bound["sha256"])
     SUITE.binding(bound["path"], bound)
@@ -230,7 +238,8 @@ def authenticate(output, digest):
     return proof, expected
 
 
-def derive(framework, original_path, original_sha, output):
+def derive(framework, original_path, original_sha, output, *, copy_method="apfs"):
+    require(copy_method in COPY_METHODS, "Unknown package copy method")
     selected = contract()
     original = authority(framework, original_path, original_sha)
     require(
@@ -263,11 +272,16 @@ def derive(framework, original_path, original_sha, output):
         "Insufficient disk reserve for bounded clone",
     )
     if framework == "mlx":
-        subprocess.run(["/bin/cp", "-cR", original["roots"]["bundle"], str(output)], check=True)
+        subprocess.run(
+            ["/bin/cp", COPY_METHODS[copy_method], original["roots"]["bundle"], str(output)],
+            check=True,
+        )
     else:
         output.mkdir()
         for kind, root in original["roots"].items():
-            subprocess.run(["/bin/cp", "-cR", root, str(output / kind)], check=True)
+            subprocess.run(
+                ["/bin/cp", COPY_METHODS[copy_method], root, str(output / kind)], check=True
+            )
         SUITE.write_json(output / "source-manifest.json", original["manifests"]["source"])
     verify_payload(output, original["manifests"])
     for name, source in extra.items():
@@ -290,6 +304,7 @@ def derive(framework, original_path, original_sha, output):
         formal_eligible=False,
         qualification_transferred=False,
         logical_clone_bytes=logical,
+        copy_method=copy_method,
     )
     SUITE.write_json(output / RECEIPT, proof)
     manifests = expected_manifests(original, output, framework, selected)
@@ -308,6 +323,7 @@ def main():
     prepare.add_argument("--original-authority", type=Path, required=True)
     prepare.add_argument("--original-sha256", required=True)
     prepare.add_argument("--output", type=Path, required=True)
+    prepare.add_argument("--copy-method", choices=tuple(COPY_METHODS), default="apfs")
     audit = sub.add_parser("authenticate")
     audit.add_argument("--output", type=Path, required=True)
     audit.add_argument("--receipt-sha256", required=True)
@@ -318,6 +334,7 @@ def main():
             args.original_authority.resolve(strict=True),
             args.original_sha256,
             args.output.absolute(),
+            copy_method=args.copy_method,
         )
     else:
         authenticate(args.output.resolve(strict=True), args.receipt_sha256)
