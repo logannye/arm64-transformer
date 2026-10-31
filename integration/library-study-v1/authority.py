@@ -173,9 +173,11 @@ def activate(roles, capture_binding):
     # remain inactive until their own complete discovery and hashes authenticate.
     sys.path.insert(0, str(source))
     from transformer.gpu_owned_backend import authenticate_runtime
-    from transformer.gpu_study_runtime import verify_runtime
 
-    verify_runtime(capture["runtime_root"], runtime)
+    # authenticate_runtime performs complete runtime discovery, hashes every
+    # discovered file, and validates both framework payloads before returning.
+    # Keep that single authentication before exposing dependency import paths;
+    # consecutive extra full scans here do not authenticate another boundary.
     authority = authenticate_runtime(
         capture["runtime_root"],
         runtime,
@@ -183,7 +185,6 @@ def activate(roles, capture_binding):
         capture["runtime_receipt"]["path"],
         capture["runtime_receipt"]["sha256"],
     )
-    authority.verify()
     paths = [
         str(source),
         *[str(Path(capture["runtime_root"]) / p) for p in runtime["python_paths"]],

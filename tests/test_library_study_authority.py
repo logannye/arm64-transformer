@@ -3,8 +3,9 @@
 import copy
 import importlib.util
 import os
+import sys
 from pathlib import Path
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
 from unittest import mock
 
 import pytest
@@ -119,3 +120,85 @@ def test_independent_oracle_cannot_resolve_an_editable_shadow_checkout(tmp_path)
         audit.project_origins(
             role, {"transformer.reference": SimpleNamespace(__file__=str(source))}
         )
+
+
+@pytest.mark.parametrize("tamper", [False, True])
+def test_activation_authenticates_bytes_before_exposing_dependency_paths(
+    tmp_path, monkeypatch, tamper
+):
+    math, control, dependency = (tmp_path / n for n in ("math", "control", "dependency"))
+    for directory in (math, control, dependency):
+        directory.mkdir()
+    payload = dependency / "payload.bin"
+    payload.write_bytes(b"selected runtime bytes")
+    payload_binding = C.binding(payload)
+    roles = {
+        name: dict(root=str(root), revision="0" * 40, files={})
+        for name, root in (("control", control), ("math", math))
+    }
+
+    def write(name, value):
+        path = tmp_path / (name + ".json")
+        C.write(path, value)
+        return C.binding(path)
+
+    capture = dict(
+        schema="gpu-owned-runtime-capture-v1",
+        status="identity_captured_not_qualified",
+        formal_eligible=False,
+        formal_fits=0,
+        admission_stream_opened=False,
+        runtime_root=str(tmp_path),
+        runtime_inventory=write("inventory", dict(python_paths=["dependency"])),
+        runtime_receipt=write("receipt", dict(project=dict(root=str(math), files={}))),
+        framework_selection=write("selection", C.comparison()["framework_selection"]),
+    )
+    binding = write("capture", capture)
+    process = SimpleNamespace(
+        flags=SimpleNamespace(
+            safe_path=True, no_site=True, dont_write_bytecode=True, optimize=0, hash_randomization=0
+        ),
+        modules={},
+        path=["trusted-stdlib"],
+        pycache_prefix=str(tmp_path / "unused"),
+    )
+    monkeypatch.setattr(A, "sys", process)
+    monkeypatch.setattr(
+        A,
+        "os",
+        SimpleNamespace(
+            environ={"PYTHONHASHSEED": "0", "PYTHONDONTWRITEBYTECODE": "1"}, path=os.path
+        ),
+    )
+    checked_roles, authentications = [], []
+    monkeypatch.setattr(A, "verify_role", lambda role, **kw: checked_roles.append(role))
+    authority = object()
+
+    def authenticate(*args):
+        assert str(dependency) not in process.path
+        assert checked_roles == [roles["control"], roles["math"]]
+        C.bound(payload_binding)
+        authentications.append(args)
+        return authority
+
+    modules = {
+        "transformer": {},
+        "transformer.gpu_owned_backend": dict(authenticate_runtime=authenticate),
+        "transformer.gpu_environment": dict(require_environment=lambda value: None),
+        "transformer.gpu_study": dict(ENVIRONMENT={}),
+    }
+    for name, attributes in modules.items():
+        module = ModuleType(name)
+        module.__dict__.update(attributes)
+        monkeypatch.setitem(sys.modules, name, module)
+    if tamper:
+        payload.write_bytes(b"changed runtime bytes!")
+        with pytest.raises(ValueError, match="bytes changed"):
+            A.activate(roles, binding)
+        assert str(dependency) not in process.path
+        assert not authentications
+    else:
+        runtime = A.activate(roles, binding)
+        assert runtime.authority is authority
+        assert len(authentications) == 1
+        assert str(dependency) in process.path
