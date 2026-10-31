@@ -258,7 +258,24 @@ class ProvenanceTests(unittest.TestCase):
                 self.assertFalse(suite.completed_receipt({**complete, **changed}))
 
     def test_post_pytest_probe_uses_new_verified_gpu_stream(self):
-        stream = SimpleNamespace(device="gpu", index=7)
+        class Device:
+            def __repr__(self):
+                return "Device(gpu, 0)"
+
+            def __eq__(self, other):
+                return other == "gpu"
+
+        class Stream:
+            __slots__ = ("device",)
+
+            def __init__(self):
+                self.device = Device()
+
+            def __repr__(self):
+                return "Stream(Device(gpu, 0), 7)"
+
+        stream = Stream()
+        self.assertFalse(hasattr(stream, "index"))
         mx = SimpleNamespace(
             gpu="gpu",
             default_device=lambda: "gpu",
@@ -270,6 +287,16 @@ class ProvenanceTests(unittest.TestCase):
         proof = suite.post_pytest_stream(mx)
         self.assertTrue(proof["default_stream_verified"])
         self.assertEqual(proof["stream_index"], 7)
+        suite.validate_post_pytest_stream(proof)
+        for mutation in (
+            dict(stream_index=True),
+            dict(stream_index=8),
+            dict(stream_repr="Stream(Device(cpu, 0), 7)"),
+            dict(stream_repr="Stream(Device(gpu, 0), -1)"),
+            dict(device_repr="Device(gpu, 1)"),
+        ):
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                suite.validate_post_pytest_stream({**proof, **mutation})
         mx.new_stream.assert_called_once_with("gpu")
         mx.set_default_stream.assert_called_once_with(stream)
         mx.default_device = lambda: "cpu"

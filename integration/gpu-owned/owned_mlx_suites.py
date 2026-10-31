@@ -1103,6 +1103,34 @@ def completed_receipt(receipt):
     )
 
 
+def stream_repr_index(stream_repr, device_repr):
+    # This pinned source build exports Stream.device, __repr__ and __eq__;
+    # its C++ index field is not a Python attribute. The representation comes
+    # from the source-bound operator<< in mlx/utils.cpp.
+    require(
+        isinstance(stream_repr, str) and isinstance(device_repr, str), "Missing stream identity"
+    )
+    match = re.fullmatch(r"Stream\((Device\(gpu, [0-9]+\)), ([0-9]+)\)", stream_repr)
+    require(match is not None and match[1] == device_repr, "Post-suite stream identity differs")
+    return int(match[2])
+
+
+def validate_post_pytest_stream(stream):
+    require(
+        stream.get("reason") == "upstream_pytest_unconfigure_clears_streams"
+        and stream.get("new_gpu_stream") is True
+        and stream.get("default_stream_verified") is True
+        and type(stream.get("stream_index")) is int
+        and stream["stream_index"] >= 0,
+        "Missing post-pytest GPU stream proof",
+    )
+    require(
+        stream_repr_index(stream.get("stream_repr"), stream.get("device_repr"))
+        == stream["stream_index"],
+        "Post-suite stream index differs",
+    )
+
+
 def post_pytest_stream(mx):
     """The source-bound pytest_unconfigure deliberately clears all streams."""
     require(mx.default_device() == mx.gpu and mx.metal.is_available(), "GPU default changed")
@@ -1110,12 +1138,17 @@ def post_pytest_stream(mx):
     require(stream.device == mx.gpu, "Post-suite stream is not GPU")
     mx.set_default_stream(stream)
     require(mx.default_stream(mx.gpu) == stream, "Post-suite default stream differs")
-    return {
+    stream_repr, device_repr = repr(stream), repr(stream.device)
+    result = {
         "reason": "upstream_pytest_unconfigure_clears_streams",
         "new_gpu_stream": True,
-        "stream_index": stream.index,
+        "stream_index": stream_repr_index(stream_repr, device_repr),
+        "stream_repr": stream_repr,
+        "device_repr": device_repr,
         "default_stream_verified": True,
     }
+    validate_post_pytest_stream(result)
+    return result
 
 
 def stop(child, own_group=True):
@@ -1649,14 +1682,7 @@ def audit_execution(row, plan, plan_sha, expected, runtime, selected_receipt, pr
             "Retained upstream pytest configuration or arguments differ",
         )
         stream = receipt.get("post_pytest_stream", {})
-        require(
-            stream.get("reason") == "upstream_pytest_unconfigure_clears_streams"
-            and stream.get("new_gpu_stream") is True
-            and stream.get("default_stream_verified") is True
-            and type(stream.get("stream_index")) is int
-            and stream["stream_index"] >= 0,
-            "Missing post-pytest GPU stream proof",
-        )
+        validate_post_pytest_stream(stream)
         require(
             process["pid"] == execution["pid"]
             and process["command"] == execution["command"]

@@ -25,6 +25,19 @@ SPEC_P.loader.exec_module(P)
 
 
 class SourceTests(unittest.TestCase):
+    def test_incomplete_worker_keeps_primary_error_without_missing_native_proof_masking(self):
+        record = dict(
+            complete=False,
+            integrity_after=True,
+            error="Authority file changed during read: example (st_ctime_ns)",
+        )
+        with self.assertRaisesRegex(ValueError, "Authority file changed.*st_ctime_ns"):
+            M.require_complete_worker(record)
+        M.require_complete_worker(dict(complete=True, integrity_after=True, passed=False))
+        for mutation in (dict(complete=1), dict(integrity_after=False), dict(error=None)):
+            with self.subTest(mutation=mutation), self.assertRaises(ValueError):
+                M.require_complete_worker({"complete": True, "integrity_after": True, **mutation})
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

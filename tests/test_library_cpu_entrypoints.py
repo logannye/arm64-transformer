@@ -13,6 +13,7 @@ import numpy as np
 import pytest
 
 from transformer import gpu_study_cpu_admission, gpu_study_replay, prepare, python_train
+from transformer.gpu_environment import ENVIRONMENT
 from transformer.library_training import torch_model_type
 from transformer.reference import Transformer
 
@@ -32,6 +33,11 @@ def module_at(name, relative, package=False):
 
 @pytest.fixture
 def explicit_api(monkeypatch):
+    for name, value in ENVIRONMENT.items():
+        if value is None:
+            monkeypatch.delenv(name, raising=False)
+        else:
+            monkeypatch.setenv(name, value)
     api = module_at("entrypoint_api", "integration/precision-library-v1/torch_api.py", True)
     monkeypatch.setitem(sys.modules, "torch.nn.precise_fp32", api)
     return api

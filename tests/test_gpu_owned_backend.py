@@ -261,8 +261,39 @@ def test_file_mutation_during_read_is_detected(tmp_path):
         return value
 
     with mock.patch.object(owned, "digest", side_effect=change):
-        with pytest.raises(ValueError, match="during read"):
+        with pytest.raises(ValueError, match="during read") as caught:
             owned._file(path)
+    assert str(path) in str(caught.value) and "st_size" in str(caught.value)
+
+
+def test_metadata_only_race_remains_rejected_and_identifies_the_field(tmp_path):
+    path = tmp_path.resolve() / "unchanged-bytes"
+    path.write_bytes(b"same bytes")
+    original_stat, original_digest = Path.stat, owned.digest
+    hashed = False
+
+    def digest(p):
+        nonlocal hashed
+        value = original_digest(p)
+        hashed = True
+        return value
+
+    def stat(p, *args, **kwargs):
+        result = original_stat(p, *args, **kwargs)
+        if p != path or not hashed:
+            return result
+        fields = ("st_dev", "st_ino", "st_mode", "st_size", "st_mtime_ns", "st_ctime_ns")
+        values = {key: getattr(result, key) for key in fields}
+        values["st_ctime_ns"] += 1
+        return SimpleNamespace(**values)
+
+    with (
+        mock.patch.object(owned, "digest", side_effect=digest),
+        mock.patch.object(Path, "stat", stat),
+    ):
+        with pytest.raises(ValueError, match="st_ctime_ns") as caught:
+            owned._file(path)
+    assert str(path) in str(caught.value)
 
 
 def compilation_probe():

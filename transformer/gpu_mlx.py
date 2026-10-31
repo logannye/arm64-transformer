@@ -554,10 +554,22 @@ class Backend:
         }
 
     def capabilities(self):
+        versions = {}
+        for package in ("mlx", "mlx-metal"):
+            try:
+                versions[package] = importlib.metadata.version(package)
+            except importlib.metadata.PackageNotFoundError:
+                # Full source bundles are authenticated by their source/native
+                # manifests. They must not invent installed-wheel metadata.
+                versions[package] = None
         return {
             "backend": "mlx",
-            "mlx": importlib.metadata.version("mlx"),
-            "mlx_metal": importlib.metadata.version("mlx-metal"),
+            "mlx": versions["mlx"],
+            "mlx_metal": versions["mlx-metal"],
+            "version_authority": (
+                "Installed wheel metadata when present; authenticated source/native manifests "
+                "are required for full source bundles"
+            ),
             "device": str(mx.gpu),
             "device_info": mx.device_info(),
             "implementation": "compiled standard MLX fast LayerNorm/SDPA/autodiff/Adam",

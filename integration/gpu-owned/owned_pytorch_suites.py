@@ -1268,6 +1268,21 @@ def validate_execution(
     )
 
 
+def require_complete_worker(record):
+    require(
+        record.get("complete") is True
+        and record.get("integrity_after") is True
+        and "error" not in record
+        and "integrity_error" not in record,
+        "Incomplete full suite: "
+        + str(
+            record.get("error")
+            or record.get("integrity_error")
+            or "coverage or integrity did not complete"
+        ),
+    )
+
+
 def run(path, sha, output):
     sys.pycache_prefix = str(output / "supervisor-unused-bytecode-cache")
     context = authenticate_plan(path, sha)
@@ -1331,13 +1346,14 @@ def run(path, sha, output):
             record["worker_pid"] == execution["pid"] and record["plan_sha256"] == sha,
             "Foreign worker receipt",
         )
+        record["process"] = execution
+        write(worker_output / "receipt.json", record)
+        summary["receipt"] = binding(worker_output / "receipt.json")
+        require_complete_worker(record)
         for phase in ("before", "after"):
             validate_native_proof(
                 record["native_origin_verification"][phase], runtime, plan["runtime_root"]
             )
-        record["process"] = execution
-        write(worker_output / "receipt.json", record)
-        summary["receipt"] = binding(worker_output / "receipt.json")
         for row in record["raw"].values():
             safe_relative(row["path"])
             require(
@@ -1345,13 +1361,6 @@ def run(path, sha, output):
                 and (worker_output / row["path"]).stat().st_size == row["bytes"],
                 "Raw suite output changed",
             )
-        require(
-            record["complete"] is True
-            and record["integrity_after"] is True
-            and "error" not in record
-            and "integrity_error" not in record,
-            "Incomplete full suite",
-        )
         archive = load(Path(__file__).resolve().parents[2] / ARCHIVE, "owned_mps_archive")
         record["portable_evidence"] = archive.retain(
             plan, path, worker_output, record, binding, LIMITS

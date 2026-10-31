@@ -142,9 +142,10 @@ def _file(path, expected=None):
     result = {"path": str(path), "sha256": digest(path), "bytes": before.st_size}
     after = path.stat()
     fields = ("st_dev", "st_ino", "st_mode", "st_size", "st_mtime_ns", "st_ctime_ns")
+    changed = [key for key in fields if getattr(before, key) != getattr(after, key)]
     require(
-        all(getattr(before, k) == getattr(after, k) for k in fields),
-        "Authority file changed during read",
+        not changed,
+        f"Authority file changed during read: {path} ({', '.join(changed)})",
     )
     if expected is not None:
         require(result == expected, "Authority file binding changed")
