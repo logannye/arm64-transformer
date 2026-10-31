@@ -173,7 +173,13 @@ def verify_payload(output, manifests):
             CANDIDATE.verify_tree(root, manifest, source=kind == "source")
 
 
-PREDECESSOR_PRODUCER_SHA256 = "b61fa7450088c2a4546ea22a9b30d12e54863293151dab65c22f351d5727f96e"
+PREDECESSOR_PRODUCER_SHA256 = {
+    # Exact frozen predecessors: original APFS derivation and explicit copy-mode
+    # derivation. Their receipts still require the complete original authority,
+    # unchanged API contract, every payload file and all recorded source bytes.
+    "b61fa7450088c2a4546ea22a9b30d12e54863293151dab65c22f351d5727f96e",
+    "c73ef97d94bbfed75caa22432916f76655b37d25944a6497bc0acd711aac6b6a",
+}
 COPY_METHODS = {"apfs": "-cR", "bytes_without_xattrs": "-RX"}
 
 
@@ -210,17 +216,22 @@ def authenticate(output, digest):
         SUITE.binding(proof[key]["path"], proof[key])
         allowed = {SUITE.sha256(path)}
         if key == "producer":
-            allowed.add(PREDECESSOR_PRODUCER_SHA256)
+            allowed.update(PREDECESSOR_PRODUCER_SHA256)
         require(proof[key]["sha256"] in allowed, "Precision derivation producer changed")
     bound = proof["original_authority"]
     original = authority(proof["framework"], Path(bound["path"]), bound["sha256"])
     SUITE.binding(bound["path"], bound)
     require(original == proof["original"], "Original maintained-build authority changed")
     extra = additions(proof["framework"], selected)
-    require(
-        proof["added_sources"] == {name: SUITE.binding(source) for name, source in extra.items()},
-        "API source bindings differ",
-    )
+    require(set(proof["added_sources"]) == set(extra), "API source inventory differs")
+    for name, source in extra.items():
+        retained = proof["added_sources"][name]
+        SUITE.binding(retained["path"], retained)
+        current = SUITE.binding(source)
+        require(
+            all(retained[key] == current[key] for key in ("sha256", "bytes")),
+            "API source bindings differ",
+        )
     logical = sum(
         item["bytes"]
         for manifest in original["manifests"].values()

@@ -98,6 +98,31 @@ class DerivationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "copy method"):
                 derive.derive("pytorch", None, None, None, copy_method="unbound")
 
+    def test_retained_source_paths_may_differ_only_with_identical_authenticated_bytes(self):
+        _, original, output, receipt = self.produce("mlx")
+        value = derive.SUITE.read_json(receipt["path"])
+        for name, bound in value["added_sources"].items():
+            frozen = self.root / "frozen-producer-checkout" / name
+            frozen.parent.mkdir(parents=True, exist_ok=True)
+            frozen.write_bytes(Path(bound["path"]).read_bytes())
+            value["added_sources"][name] = derive.SUITE.binding(frozen)
+        derive.SUITE.write_json(receipt["path"], value)
+        manifests = derive.expected_manifests(original, output, "mlx", derive.contract())
+        for kind, manifest in manifests.items():
+            derive.SUITE.write_json(derive.manifest_path(output, kind), manifest)
+        with mock.patch.object(derive, "authority", return_value=original):
+            derive.authenticate(output, derive.SUITE.sha256(receipt["path"]))
+        name = next(iter(value["added_sources"]))
+        frozen = Path(value["added_sources"][name]["path"])
+        frozen.write_bytes(frozen.read_bytes() + b"# changed source\n")
+        value["added_sources"][name] = derive.SUITE.binding(frozen)
+        derive.SUITE.write_json(receipt["path"], value)
+        with (
+            mock.patch.object(derive, "authority", return_value=original),
+            self.assertRaisesRegex(ValueError, "API source bindings differ"),
+        ):
+            derive.authenticate(output, derive.SUITE.sha256(receipt["path"]))
+
     def test_both_package_derivations_are_additive_and_retain_all_original_members(self):
         for framework in ("pytorch", "mlx"):
             with self.subTest(framework=framework), tempfile.TemporaryDirectory() as directory:
