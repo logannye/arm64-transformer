@@ -38,7 +38,12 @@ OWNED = StudyContext(
     True,
 )
 CONTEXTS = (STANDARD, OWNED)
-RESERVED_SEEDS = frozenset(context.admission_seed for context in CONTEXTS)
+# The maintained-library successor is prospective and has no executable context
+# yet. Reserve its operands now, before implementing its admission route.
+LIBRARY_ADMISSION_SEED = 20261112
+RESERVED_SEEDS = frozenset(
+    {*(context.admission_seed for context in CONTEXTS), LIBRARY_ADMISSION_SEED}
+)
 
 
 def resolve_context(manifest=None, context=None):

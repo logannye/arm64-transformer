@@ -1,0 +1,20 @@
+{
+  "schema": "maintained-library-metal-selection-v1",
+  "policy": 1,
+  "scope": "reference shader path, both training and inference",
+  "recipe": {
+    "path": "integration/trained-precision/metal_candidates.py",
+    "sha256": "8d16ccaa36539289a1b2e7a08ac7956898e3b49b78a5c704de90b9f2217e0e27"
+  },
+  "baseline_shader": {
+    "path": "native/metal/kernels.metal",
+    "sha256": "ffaf40db62f16ea492065e9aecb4cbb9724b2c77bff349c362796a670639c0c0"
+  },
+  "selected_shader": {
+    "path": "native/metal/precision-normalization-v1.metal",
+    "sha256": "1df2879328a5e3493e3203f762ce8606002c397ec028754534c4f4cf4a547035",
+    "bytes": 17812
+  },
+  "optimized_kernel_policy": "reference schema 2; every optimization disabled",
+  "formal_eligible": false
+}
