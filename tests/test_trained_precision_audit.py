@@ -54,6 +54,42 @@ def test_library_api_identity_preserves_stage_and_stock_candidate_boundary():
     audit.validate_library_identity(result)
 
 
+def test_collection_keeps_library_identity_without_mixing_per_process_compilation_counters():
+    module_spec = importlib.util.spec_from_file_location(
+        "library_collection_identity", PATH.with_name("audit_collection.py")
+    )
+    collection = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(collection)
+    receipt = dict(
+        engine="mlx",
+        library_model="maintained-library-fp32-saved-model-v1",
+        framework_compiled=True,
+        python_candidate=None,
+        library_api=dict(
+            model_identity="maintained-library-fp32-saved-model-v1",
+            module="mlx.nn.precise_fp32",
+            module_path="/runtime/python/mlx/nn/precise_fp32.py",
+            api_identity="fp32-saved-precision-api-v1",
+            precise_stages=["ln1", "qkv", "attention", "ff1"],
+            state_dtype="float32",
+            stock_control=False,
+            formal_eligible=False,
+            executions=32,
+            python_trace_count=1,
+            compilation_configuration={"graph_dot": "node1"},
+        ),
+    )
+    expected = collection.implementation(receipt)
+    changed = copy.deepcopy(receipt)
+    changed["library_api"].update(executions=14, compilation_configuration={"graph_dot": "node2"})
+    assert collection.implementation(changed) == expected
+    changed["library_api"]["module_path"] = "/different/package/precise_fp32.py"
+    assert collection.implementation(changed) != expected
+    changed["library_api"]["precise_stages"].pop()
+    with pytest.raises(ValueError):
+        collection.implementation(changed)
+
+
 @pytest.fixture
 def replay(tmp_path):
     root, output = tmp_path / "inputs", tmp_path / "worker"

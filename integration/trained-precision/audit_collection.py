@@ -47,9 +47,25 @@ def implementation(receipt):
         "framework_candidate_policy",
         "framework_compiled",
         "framework_operation",
+        "library_model",
     ):
         if key in receipt:
             identity[key] = receipt[key]
+    if "library_model" in receipt:
+        RAW.validate_library_identity(receipt)
+        identity["library_api"] = {
+            key: receipt["library_api"][key]
+            for key in (
+                "module",
+                "module_path",
+                "api_identity",
+                "model_identity",
+                "precise_stages",
+                "state_dtype",
+                "stock_control",
+                "formal_eligible",
+            )
+        }
     return identity
 
 

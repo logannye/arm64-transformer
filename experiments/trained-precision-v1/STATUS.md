@@ -596,3 +596,10 @@ all returned derivatives and exact repeated execution remain required. This
 changes no library arithmetic or API package bytes and precedes any actual
 captured primitive execution. The NumPy 2 preparation supervisor is running
 under the frozen full-suite/provenance source with a 16 GiB reserve.
+
+Sharded replay collection now preserves the explicit library model and stable
+package/API/stage identity. Per-process graph node IDs and execution counts stay
+inside each worker's independently checked compilation proof, rather than
+incorrectly making otherwise identical shards different implementations. A
+changed package path or wrong stage set is rejected; all 30 raw/collection-audit
+checks pass. This is prospective audit plumbing, with no new numerical outcome.
