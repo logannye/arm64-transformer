@@ -8,6 +8,8 @@ import ast
 import importlib.util
 import sys
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pytest
 import torch
@@ -107,3 +109,43 @@ def test_stock_backend_keeps_original_model_default(engine):
 def test_training_factory_rejects_unselected_engines(engine):
     with pytest.raises(ValueError, match="GPU engine"):
         library_training.create_gpu_backend(engine, None)
+
+
+def test_mlx_training_graph_capture_preserves_each_shape_without_device_arrays(monkeypatch):
+    class Base:
+        def __init__(self, initial):
+            self._state = object()
+
+        def _submit(self, *values):
+            return "submitted"
+
+    def export(stream, value):
+        stream.write("Compiled " + value)
+
+    exporter = Mock(side_effect=export)
+    mx = SimpleNamespace(export_to_dot=exporter)
+    monkeypatch.setitem(sys.modules, "mlx", SimpleNamespace(core=mx))
+    monkeypatch.setitem(sys.modules, "mlx.core", mx)
+    monkeypatch.setattr(
+        library_training.importlib, "import_module", lambda name: SimpleNamespace(Backend=Base)
+    )
+    monkeypatch.setattr(library_training, "mlx_model_type", lambda: object)
+    monkeypatch.setattr(library_training, "adapter", lambda: None)
+    monkeypatch.setattr(library_training, "selected_api", lambda engine: None)
+    backend = library_training.create_gpu_backend("mlx", None)
+    for b in (1, 3, 16):
+        for t in (3, 32):
+            for repetition in range(2):
+                assert (
+                    backend._submit(
+                        f"{b},{t},{repetition}",
+                        SimpleNamespace(shape=(b, t, 128)),
+                        None,
+                        backend._state,
+                    )
+                    == "submitted"
+                )
+    assert exporter.call_count == 6 and len(backend._training_graphs) == 6
+    assert backend._training_graph == "Compiled 1,3,0"
+    assert backend._training_graphs["b16-t32"] == "Compiled 16,32,0"
+    assert isinstance(backend._training_graph, str)

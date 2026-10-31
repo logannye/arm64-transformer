@@ -96,15 +96,21 @@ def create_gpu_backend(engine, initial, **limits):
 
     class LibraryBackend(base):
         _training_graph = None
+        _training_graphs = None
 
         def _submit(self, *values):
             if engine == "mlx" and len(values) == 4 and values[3] is self._state:
-                if self._training_graph is None:
+                shape = f"b{values[1].shape[0]}-t{values[1].shape[1]}"
+                if self._training_graphs is None:
+                    self._training_graphs = {}
+                if shape not in self._training_graphs:
                     import mlx.core as mx
 
                     graph = io.StringIO()
                     mx.export_to_dot(graph, values[0])
-                    self._training_graph = graph.getvalue()
+                    self._training_graphs[shape] = graph.getvalue()
+                    if self._training_graph is None:
+                        self._training_graph = self._training_graphs[shape]
             return super()._submit(*values)
 
         def capabilities(self):

@@ -24,7 +24,10 @@ six-update training cover every batch/length pair. Every training execution
 restores exact starting parameters/moments/step and checks final checkpoint
 restoration and forward replay. All ten executions and both fresh processes
 must agree byte for byte. MLX retains the actual compiled training graph and
-requires one Python training trace across changed inputs and state restoration.
+requires one Python training trace for each of the six declared shapes, with no
+additional trace across repeated inputs and state restoration. All six actual
+training graphs are retained; a single fixed-shape optimizer trajectory still
+requires exactly one trace.
 
 `audit_library_repeatability.py` independently authenticates both workers,
 their exact artifact inventories, captured module origins and selected APIs.
@@ -34,6 +37,8 @@ NumPy FP64 forward and analytic backward, checks agreement with Torch FP64
 autograd, evaluates checkpoint logits and compares raw arrays across processes.
 It does not import or execute the selected candidate implementation. The audit
 requires the width environment variable to match before importing model layout.
+Complete, exactly repeated numerical failures remain independently auditable as
+negative results. They do not qualify the pair.
 
 Every declared case is mandatory, with existing tolerances: forward 2e-5 +
 2e-4|reference|, gradients 3e-5 + 3e-3|reference|, independent FP64 oracles

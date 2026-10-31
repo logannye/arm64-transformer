@@ -34,7 +34,6 @@ def check_repetitions(case, arrays):
     require(
         case["complete"]
         and case["exact_passed"]
-        and case["accuracy_passed"]
         and [e["execution"] for e in case["executions"]] == list(range(10)),
         "Incomplete ten-execution case",
     )
@@ -63,7 +62,6 @@ def audit_worker(path, expected, capture_path, capture_sha):
         value["schema"] == "maintained-library-repeatability-development-v1"
         and value["protocol"] == "trained-precision-development-v1"
         and value["complete"]
-        and value["passed"]
         and value["integrity_after"]
         and value["formal_eligible"] is False
         and value["formal_fits"] == 0
@@ -137,7 +135,6 @@ def audit_worker(path, expected, capture_path, capture_sha):
         and worker["repetitions"] == 10
         and worker["complete"]
         and worker["exact_passed"]
-        and worker["accuracy_passed"]
         and worker["source_unchanged"]
         and not worker["cleanup_errors"]
         and worker["inventory_complete"]
@@ -193,26 +190,43 @@ def audit_worker(path, expected, capture_path, capture_sha):
         else:
             require(capabilities["deterministic_algorithms"] is True, "Strict MPS required")
     if value["engine"] == "mlx":
-        graph = worker["compiled_training"]
-        raw = (directory / graph["graph"]).read_bytes()
+        compiled = worker["compiled_training"]
+        shapes = {f"b{b}-t{t}" for b in (1, 3, 16) for t in (3, 32)}
         require(
-            graph["graph"] == "training-loss.dot"
-            and graph["python_trace_count"] == 1
-            and SUITE.sha256(directory / graph["graph"]) == graph["sha256"]
-            and len(raw) == graph["bytes"]
-            and b"Compiled" in raw,
-            "Missing compiled training graph",
+            compiled["python_trace_count"] == len(shapes)
+            and compiled["python_trace_shapes"] == dict.fromkeys(shapes, 1)
+            and set(compiled["graphs"]) == shapes,
+            "Missing per-shape compiled training proof",
         )
+        for shape, graph in compiled["graphs"].items():
+            raw = (directory / graph["graph"]).read_bytes()
+            require(
+                graph["graph"] == f"training-loss-{shape}.dot"
+                and SUITE.sha256(directory / graph["graph"]) == graph["sha256"]
+                and len(raw) == graph["bytes"]
+                and b"Compiled" in raw,
+                "Missing compiled training graph",
+            )
     embeddings = {c["name"]: c for c in embedding_cases(value["width"]) if c["supported"]}
     rows = []
     for case in worker["cases"]:
         require(case["first_arrays"] == case["name"] + "/first.npz", "Wrong first-array path")
         arrays = read_arrays(directory / case["first_arrays"])
+        require(
+            all(v.dtype == (np.int64 if k == "step" else np.float32) for k, v in arrays.items()),
+            "Retained model state or output storage differs",
+        )
         check_repetitions(case, arrays)
         checks = {}
         if case["name"] in embeddings:
+            import torch
+
             tokens, table, dy = embedding_operands(value["width"], embeddings[case["name"]])
             fixture = read_arrays(directory / case["name"] / "fixture.npz")
+            require(
+                set(fixture) == {"tokens", "table", "cotangent"},
+                "Embedding fixture inventory differs",
+            )
             for key, array in (("tokens", tokens), ("table", table), ("cotangent", dy)):
                 require(
                     array_identity(fixture[key]) == array_identity(array),
@@ -224,6 +238,12 @@ def audit_worker(path, expected, capture_path, capture_sha):
                 k: accuracy(arrays[k], gold[k], "gradient" if k == "gradient" else "forward")
                 for k in gold
             }
+            weight = torch.tensor(table, dtype=torch.float64, requires_grad=True)
+            output = torch.nn.functional.embedding(torch.tensor(tokens.astype(np.int64)), weight)
+            (output * torch.tensor(dy, dtype=torch.float64)).sum().backward()
+            checks["independent_embedding_oracle"] = accuracy(
+                weight.grad.numpy(), gold["gradient"], "oracle"
+            )
         else:
             shape = case["name"].split("/")[1]
             batch, length = (int(s[1:]) for s in shape.split("-"))
@@ -265,12 +285,17 @@ def audit_worker(path, expected, capture_path, capture_sha):
                 passed=all(c["passed"] for c in checks.values()),
             )
         )
+    numerics_passed = all(r["passed"] for r in rows)
+    require(
+        worker["accuracy_passed"] == numerics_passed and value["passed"] == numerics_passed,
+        "Worker numerical decision differs from independent raw audit",
+    )
     SUITE.pinned(path, expected)
     return value, dict(
         worker=SUITE.binding(path),
         cases=rows,
         tolerances=TOLERANCES,
-        numerics_passed=all(r["passed"] for r in rows),
+        numerics_passed=numerics_passed,
     )
 
 

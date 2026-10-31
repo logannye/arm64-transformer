@@ -298,6 +298,29 @@ def prepare(runtime_root, python_paths, runtime_receipt, runtime_receipt_sha256,
     return plan
 
 
+def library_training_graphs(backend, destination):
+    """Retain one actual compiled graph and one Python trace per declared shape."""
+    expected = {f"b{b}-t{t}" for b in (1, 3, 16) for t in (3, 32)}
+    require(
+        backend._training_trace_shapes == dict.fromkeys(expected, 1)
+        and backend._training_python_traces == len(expected)
+        and set(backend._training_graphs or {}) == expected,
+        "Actual training must compile once per declared shape without repeated tracing",
+    )
+    graphs = {}
+    for shape, graph in sorted(backend._training_graphs.items()):
+        require(isinstance(graph, str) and "Compiled" in graph, "Missing compiled training graph")
+        path = Path(destination) / f"training-loss-{shape}.dot"
+        with path.open("x") as stream:
+            stream.write(graph)
+        graphs[shape] = {"graph": path.name, "sha256": digest(path), "bytes": path.stat().st_size}
+    return {
+        "graphs": graphs,
+        "python_trace_shapes": dict(backend._training_trace_shapes),
+        "python_trace_count": backend._training_python_traces,
+    }
+
+
 def run_worker(engine, width, destination, *, authority, backend_factory=None, namespace=None):
     """The retained complete diagnostic, using authenticated unchanged backends."""
     authority.verify()
@@ -576,22 +599,7 @@ def run_worker(engine, width, destination, *, authority, backend_factory=None, n
         if backend is not None:
             try:
                 if namespace[0] == "trained-precision-development-v1" and engine == "mlx":
-                    graph = backend._training_graph
-                    require(
-                        isinstance(graph, str)
-                        and "Compiled" in graph
-                        and backend._training_python_traces == 1,
-                        "Actual training graph must compile once across repeated updates",
-                    )
-                    graph_path = destination / "training-loss.dot"
-                    with graph_path.open("x") as stream:
-                        stream.write(graph)
-                    report["compiled_training"] = {
-                        "graph": "training-loss.dot",
-                        "sha256": digest(graph_path),
-                        "bytes": graph_path.stat().st_size,
-                        "python_trace_count": backend._training_python_traces,
-                    }
+                    report["compiled_training"] = library_training_graphs(backend, destination)
                 report["capabilities_after"] = backend.capabilities()
                 authority.verify()
                 report["storage_after"] = check_storage(Path(destination).parent)

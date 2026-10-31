@@ -51,6 +51,28 @@ def test_independent_auditor_requires_raw_bytes_for_all_ten_repetitions():
             AUDITOR.check_repetitions(broken, arrays)
     with pytest.raises(ValueError, match="ten-execution"):
         AUDITOR.check_repetitions(dict(case, executions=case["executions"][:-1]), arrays)
+    # A complete numerical failure still has independently checkable raw repeats.
+    AUDITOR.check_repetitions(dict(case, accuracy_passed=False), arrays)
+
+
+def test_compiled_training_proof_requires_one_trace_and_graph_for_every_shape(tmp_path):
+    shapes = {f"b{b}-t{t}": 1 for b in (1, 3, 16) for t in (3, 32)}
+    backend = SimpleNamespace(
+        _training_trace_shapes=shapes,
+        _training_python_traces=6,
+        _training_graphs={s: f"Compiled {s}" for s in shapes},
+    )
+    result = gpu_owned_repeatability.library_training_graphs(backend, tmp_path)
+    assert result["python_trace_shapes"] == shapes and len(result["graphs"]) == 6
+    for shape, bound in result["graphs"].items():
+        assert (tmp_path / bound["graph"]).read_text() == f"Compiled {shape}"
+    backend._training_trace_shapes = dict(shapes, **{"b1-t3": 2})
+    with pytest.raises(ValueError, match="once per declared shape"):
+        gpu_owned_repeatability.library_training_graphs(backend, tmp_path)
+    backend._training_trace_shapes = shapes
+    backend._training_graphs = {"b1-t3": "Compiled first shape only"}
+    with pytest.raises(ValueError, match="once per declared shape"):
+        gpu_owned_repeatability.library_training_graphs(backend, tmp_path)
 
 
 @pytest.mark.parametrize("explicit", [False, True])

@@ -202,9 +202,12 @@ class Backend:
         self.step = 0
         loss_grad = nn.value_and_grad(self.model, _loss)
         self._training_python_traces = 0
+        self._training_trace_shapes = {}
 
         def train(tokens, targets):
             self._training_python_traces += 1
+            shape = f"b{tokens.shape[0]}-t{tokens.shape[1]}"
+            self._training_trace_shapes[shape] = self._training_trace_shapes.get(shape, 0) + 1
             (loss, logits), gradients = loss_grad(self.model, tokens, targets)
             self.optimizer.update(self.model, gradients)
             return loss, logits, gradients
