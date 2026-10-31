@@ -76,6 +76,51 @@ class TransportTests(unittest.TestCase):
                 )
                 self.assertEqual(proof["files"], 1)
 
+    def test_reuse_authenticates_complete_source_without_copy_or_qualification(self):
+        source = self.root / "work/gpu-v4-owned/original/source"
+        source.mkdir(parents=True)
+        path = source / "source.py"
+        path.write_bytes(b"unchanged source\n")
+        path.chmod(0o644)
+        before = path.stat()
+        manifest = {
+            "files": {
+                "source.py": dict(
+                    kind="file", mode=0o644, sha256=candidate.digest(path), bytes=before.st_size
+                )
+            }
+        }
+        proof = candidate.verify_reusable_source(source, manifest, self.root)
+        self.assertEqual(proof["source_bytes_copied"], 0)
+        self.assertFalse(proof["source_modified"])
+        self.assertFalse(proof["qualification_transferred"])
+        self.assertEqual(path.stat().st_mtime_ns, before.st_mtime_ns)
+        path.write_bytes(b"different source\n")
+        with self.assertRaises(ValueError):
+            candidate.verify_reusable_source(source, manifest, self.root)
+
+    def test_reuse_rejects_unowned_source_paths_and_extra_unbound_files(self):
+        source = self.root / "work/gpu-v4-owned/original/source"
+        source.mkdir(parents=True)
+        path = source / "source.py"
+        path.write_bytes(b"source\n")
+        path.chmod(0o644)
+        manifest = {
+            "files": {
+                "source.py": dict(
+                    kind="file",
+                    mode=0o644,
+                    sha256=candidate.digest(path),
+                    bytes=path.stat().st_size,
+                )
+            }
+        }
+        (source / "extra.py").write_bytes(b"unbound code\n")
+        with self.assertRaises(ValueError):
+            candidate.verify_reusable_source(source, manifest, self.root)
+        with self.assertRaisesRegex(ValueError, "canonical existing owned"):
+            candidate.verify_reusable_source(self.root, manifest, self.root)
+
     def test_empty_placeholder_binding_requires_no_content_read(self):
         path = self.root / "empty"
         path.write_bytes(b"")

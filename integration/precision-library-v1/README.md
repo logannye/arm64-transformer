@@ -48,3 +48,12 @@ Its prospective CPU source test requires byte-equal output and every parameter
 gradient against v2 on changed tokens, with only FP32 floating-point saved state,
 at each width selected by the hosted six-width CI loop. This test is separate
 from actual installed-package, GPU, historical-state and optimizer validation.
+
+`validate_runtime.py` and `audit_runtime.py` prepare a separate all-width primitive
+execution/audit route under an explicitly captured package selection. They retain
+both FP64 references and raw FP32 outputs/derivatives, exact repeats, changed
+inputs, noncontiguous operands and rejected malformed inputs. CPU/MPS use saved
+state hooks; MLX records its actual compiled graphs and changed-input trace proof
+without claiming a saved-tensor hook. No real package/device execution has yet
+occurred. Prototype tests of the gate and both independent oracles run on hosted
+CI for all six widths; they cannot confer captured-package qualification.

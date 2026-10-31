@@ -535,3 +535,26 @@ subtests. Its XML uses the required `python.tests.test_probe.TestProbe` namespac
 The first sandboxed probe remains failed because the installed rerun plugin
 could not open its ephemeral localhost socket; the authorized unrestricted probe
 passes. This is dependency/configuration evidence only, not MLX conformance.
+
+The prospective installed-package primitive gate now covers all six widths and
+CPU/MPS/compiled-MLX execution. Each of three generic operations has two changed
+operand sets, every derivative, dual independent FP64 references, exact replay,
+noncontiguous inputs and malformed-input rejection. CPU/MPS saved-tensor hooks
+check FP32/device state. MLX requires actual compiled graphs, one trace over four
+changed/repeated calls, natural GPU execution and FP32 outputs/derivatives; it
+explicitly does not claim a runtime saved-tensor hook. Raw evidence is bounded
+to 512 MiB per worker with the existing lossless shared store and 6 GiB operating
+reserve. A separate auditor checks actual package origins, case/width layouts,
+raw decisions and graph/trace bindings. Hosted prototype tests now exercise
+these equations and audits at every process-selected width. The actual captured
+primitive gate has not run yet.
+
+Source preparation can now reuse an existing owned source tree only after its
+complete contents match the new hosted source manifest. This copies zero source
+bytes, transfers no qualification and retains full reauthentication and the
+existing expansion reserve. All 47 candidate-verifier checks pass. The hosted
+Python job at `e2fdb56b2efecf71b5970a93ef051601634b8205` failed in synthetic
+derivation tests because that runner had less than the production 16 GiB free
+reserve. A test-only free-space fixture at `915091e7b5e5cca601043d7c3dc28394505ae52a`
+fixes the byte-sized unit fixture; the real reserve and its rejection test remain
+unchanged. The failed run is retained; no validation is transferred.

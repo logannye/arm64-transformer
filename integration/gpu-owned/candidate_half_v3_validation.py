@@ -857,7 +857,15 @@ def output_path(workspace, output):
 
 
 def prepare(
-    workspace, artifact, receipt_sha, head, output, *, expansion_reserve_gib=16, candidate="half-v3"
+    workspace,
+    artifact,
+    receipt_sha,
+    head,
+    output,
+    *,
+    expansion_reserve_gib=16,
+    candidate="half-v3",
+    reuse_source=None,
 ):
     profile = require_hosted_selection(candidate)
     output_path(workspace, output)
@@ -915,6 +923,12 @@ def prepare(
     )
     dependencies = workspace / profile["dependencies"]
     dependency_proof = verify_dependencies(dependencies, artifact / "wheels", contract)
+    source_root = output / "source" if reuse_source is None else reuse_source
+    reused = (
+        None
+        if reuse_source is None
+        else verify_reusable_source(source_root, source_manifest, workspace)
+    )
     output.mkdir(parents=True, exist_ok=False)
     record = {
         "schema": SCHEMA,
@@ -925,15 +939,22 @@ def prepare(
         "formal_fits": 0,
         "admission_stream_opened": False,
         "expansion_storage_budget": storage,
+        "reused_source": reused,
     }
     write(output / "preparation.json", record, new=True)
     try:
-        expand_verified(
-            artifact / receipt["source_archive"]["file"],
-            output,
-            source=True,
-            minimum_free_bytes=storage["reserve_bytes"],
-        )
+        if reuse_source is None:
+            expand_verified(
+                artifact / receipt["source_archive"]["file"],
+                output,
+                source=True,
+                minimum_free_bytes=storage["reserve_bytes"],
+            )
+        else:
+            # Keep the externally authenticated source manifest byte-identical.
+            # No source copy or mutation, and no old qualification, is involved.
+            with (output / "source-manifest.json").open("xb") as stream:
+                stream.write(source_meta["source-manifest.json"])
         expand_verified(
             runtime_archive, output, source=False, minimum_free_bytes=storage["reserve_bytes"]
         )
@@ -941,11 +962,11 @@ def prepare(
             shutil.disk_usage(output).free >= storage["reserve_bytes"],
             "Expansion operating reserve exhausted",
         )
-        verify_tree(output / "source", source_manifest, source=True)
+        verify_tree(source_root, source_manifest, source=True)
         verify_tree(output / "runtime", runtime_manifest, source=False)
         local_contract, _, static = selection_contract(candidate)
         require(local_contract == contract, "Local and transported build contracts differ")
-        static.validate_source(output / "source", contract, artifact)
+        static.validate_source(source_root, contract, artifact)
         plan = {
             **record,
             "status": "frozen_development_only",
@@ -953,7 +974,7 @@ def prepare(
             "artifact": str(artifact),
             "hosted_receipt_sha256": receipt_sha,
             "hosted_head": head,
-            "source": str(output / "source"),
+            "source": str(source_root),
             "runtime": str(output / "runtime"),
             "dependencies": str(dependencies),
             "dependency_proof": dependency_proof,
@@ -1004,6 +1025,24 @@ def prepare(
     finally:
         write(output / "preparation.json", record)
     return record
+
+
+def verify_reusable_source(source, manifest, workspace):
+    no_symlink(source)
+    require(
+        source.is_absolute()
+        and source.resolve(strict=True) == source
+        and source.is_relative_to(workspace / "work/gpu-v4-owned"),
+        "Require a canonical existing owned source tree",
+    )
+    proof = verify_tree(source, manifest, source=True)
+    return dict(
+        path=str(source),
+        verified_tree=proof,
+        source_bytes_copied=0,
+        source_modified=False,
+        qualification_transferred=False,
+    )
 
 
 def validate_inventory(plan, original, failed):
@@ -1084,8 +1123,18 @@ def authenticate_plan(path, external_sha):
         "Expanded manifest binding differs",
     )
     for kind in ("source", "runtime"):
+        if kind == "source" and plan.get("reused_source") is not None:
+            continue  # The complete source tree is authenticated once below.
         verify_tree(
             Path(plan[kind]), json_read(plan[kind + "_manifest"]["path"]), source=kind == "source"
+        )
+    if plan.get("reused_source") is not None:
+        require(
+            plan["reused_source"]
+            == verify_reusable_source(
+                Path(plan["source"]), json_read(plan["source_manifest"]["path"]), workspace
+            ),
+            "Reused source tree changed",
         )
     storage = plan["expansion_storage_budget"]
     require(storage["reserve_bytes"] in (10 * GIB, 16 * GIB), "Undeclared retained reserve")
@@ -1527,6 +1576,7 @@ def main():
     prepare_parser.add_argument("--receipt-sha256", required=True)
     prepare_parser.add_argument("--hosted-head", required=True)
     prepare_parser.add_argument("--candidate", choices=CANDIDATES, default="half-v3")
+    prepare_parser.add_argument("--reuse-source", type=Path)
     prepare_parser.add_argument("--expansion-reserve-gib", type=int, choices=(10, 16), default=16)
     rebound = sub.add_parser("rebind-plan")
     rebound.add_argument("--plan", type=Path, required=True)
@@ -1555,6 +1605,7 @@ def main():
             args.output.absolute(),
             expansion_reserve_gib=args.expansion_reserve_gib,
             candidate=args.candidate,
+            reuse_source=(args.reuse_source.resolve(strict=True) if args.reuse_source else None),
         )
         print(json.dumps(result, indent=2))
         return 0
