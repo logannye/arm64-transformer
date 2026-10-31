@@ -1,6 +1,6 @@
 {
   "schema": "maintained-library-precision-api-development-v1",
-  "status": "mlx_capsule_derived_not_loaded",
+  "status": "superseded_before_execution_pending_frozen_producer_refresh",
   "contract": {
     "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/integration/precision-library-v1/contract.json",
     "sha256": "7b20e72aa969732a1348b4d01281f604dee8ba043433191ce4d71a1ce4604718",
@@ -23,7 +23,10 @@
     "old_source_binary_and_test_bytes_unchanged": true,
     "native_compilation": false,
     "model_or_primitive_execution": false,
-    "full_suites_qualified": false
+    "full_suites_qualified": false,
+    "current_source_compatible": false,
+    "superseded_before_execution": true,
+    "reason": "Freeze producer path and authenticate byte-identical original candidate verifiers across later project checkouts"
   },
   "pytorch": {
     "status": "awaiting_hosted_numpy2_native_build",

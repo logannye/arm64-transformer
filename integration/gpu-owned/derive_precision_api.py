@@ -64,7 +64,7 @@ def authority(framework, path, digest):
     """Authenticate complete native/source lineage through the original producer."""
     SUITE.pinned(path, digest)
     if framework == "pytorch":
-        plan, _ = CANDIDATE.authenticate_plan(path, digest)
+        plan, _ = authenticate_candidate_plan(path, digest)
         manifests = {
             kind: SUITE.read_json(plan[kind + "_manifest"]["path"])
             for kind in ("source", "runtime")
@@ -72,6 +72,7 @@ def authority(framework, path, digest):
         return dict(
             roots={kind: plan[kind] for kind in manifests},
             manifests=manifests,
+            candidate_driver=plan["driver"],
             native_build_run=int(
                 CANDIDATE.candidate_profile(plan.get("candidate", "half-v3"))["run"]
             ),
@@ -85,6 +86,19 @@ def authority(framework, path, digest):
         manifests={"bundle": manifest},
         native_build_run=selected["native_build_run"],
     )
+
+
+def authenticate_candidate_plan(path, digest):
+    """A frozen plan keeps its own byte-identical verifier across project checkouts."""
+    SUITE.pinned(path, digest)
+    driver = SUITE.read_json(path)["driver"]
+    CANDIDATE.check_binding(driver)
+    require(
+        driver["sha256"] == SUITE.sha256(Path(CANDIDATE.__file__).resolve()),
+        "Original candidate verifier source differs",
+    )
+    original = load("precision_original_candidate_driver", Path(driver["path"]))
+    return original.authenticate_plan(path, digest)
 
 
 def row(path, kind):

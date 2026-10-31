@@ -795,6 +795,69 @@ class ProspectiveInventoryTests(unittest.TestCase):
         self.assertEqual(new["mlx"], old["mlx"])
         self.assertFalse(new["formal_eligible"])
 
+    def test_numpy2_native_build_keeps_every_case_and_eligibility_with_distinct_selection(self):
+        old = M.suite_inventory(self.plan, self.selected)
+        selected = json.loads(json.dumps(self.selected))
+        selected["pytorch"].update(build_run=41158978641, numpy_abi_version="2.2.6")
+        plan = {"suite_contract": "numpy2-v1"}
+        new = M.suite_inventory(plan, selected)
+        self.assertEqual(new["pytorch"], old["pytorch"])
+        self.assertEqual(new["mlx"], old["mlx"])
+        self.assertNotEqual(new["prospective_selection"], old["prospective_selection"])
+        for change in (dict(build_run=41125186309), dict(numpy_abi_version="1.26.4")):
+            changed = json.loads(json.dumps(selected))
+            changed["pytorch"].update(change)
+            with self.assertRaises(ValueError):
+                M.suite_inventory(plan, changed)
+
+    def test_full_precision_source_requires_same_derivation_and_all_generic_api_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            source = root / "source"
+            api_root = HERE.parent / "precision-library-v1"
+            value = dict(
+                schema="pytorch-owned-source-archive-v1",
+                source_revision="a" * 40,
+                patch_sha256="b" * 64,
+                precision_api_derivation={"sha256": "c" * 64},
+                files={},
+            )
+            for origin, target in (
+                ("torch_api.py", "precise_fp32.py"),
+                ("_fp32_precise_math.py", "_fp32_precise_math.py"),
+                ("_fp32_precise_dense.py", "_fp32_precise_dense.py"),
+            ):
+                relative = "torch/nn/" + target
+                path = source / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes((api_root / origin).read_bytes())
+                path.chmod(0o644)
+                value["files"][relative] = dict(
+                    kind="file",
+                    mode=0o644,
+                    bytes=path.stat().st_size,
+                    sha256=M.binding(path)["sha256"],
+                )
+            manifest = root / "source-manifest.json"
+            manifest.write_text(json.dumps(value))
+            plan = dict(source_manifest=M.binding(manifest), source_root=str(source))
+            selected = {
+                "pytorch": dict(
+                    base="a" * 40,
+                    combined_patch_sha256="b" * 64,
+                    precision_api=dict(
+                        contract_sha256=M.binding(api_root / "contract.json")["sha256"],
+                        derivation_receipt_sha256="c" * 64,
+                    ),
+                )
+            }
+            self.assertEqual(len(M.source_files(plan, selected)), 3)
+            value["files"].pop("torch/nn/precise_fp32.py")
+            manifest.write_text(json.dumps(value))
+            plan["source_manifest"] = M.binding(manifest)
+            with self.assertRaisesRegex(ValueError, "Generic precision API missing"):
+                M.source_files(plan, selected)
+
     def test_explicit_selection_required_and_old_build_rejected(self):
         with self.assertRaises(ValueError):
             M.suite_inventory(self.plan)

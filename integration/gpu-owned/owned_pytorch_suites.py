@@ -33,6 +33,8 @@ INVENTORY = "integration/gpu-owned/owned-suite-inventory-v1.json"
 INVENTORY_SHA = "cff557d2b1d68857bc488e77e6672fb0fb386409e88ad6ca4e7fa31bd862d852"
 HALF_V3_INVENTORY = "integration/gpu-owned/owned-suite-inventory-half-v3.json"
 HALF_V3_INVENTORY_SHA = "00d3a5c03b32a91cc28f24355c4a43045f044c77c8d06bcf765c75fbe8b8f639"
+NUMPY2_INVENTORY = "integration/gpu-owned/owned-suite-inventory-numpy2-v1.json"
+NUMPY2_INVENTORY_SHA = "7c7340492f0004c2f339aa96426fb951d962119330fbc94e567d601dfb8c4374"
 FALLBACK_AST_SHA = "3d8e80a2297c719dd126826912efaa594a2104a9f930addb4daf4c955d75439e"
 HELPERS = {
     "driver": (
@@ -187,7 +189,9 @@ def load(path, name):
 def inventory_spec(plan):
     """Only explicit, source-pinned prospective inventories are executable."""
     choice = plan.get("suite_contract", "original")
-    require(choice in {"original", "half-v3"}, "Unknown prospective suite contract")
+    require(choice in {"original", "half-v3", "numpy2-v1"}, "Unknown prospective suite contract")
+    if choice == "numpy2-v1":
+        return NUMPY2_INVENTORY, NUMPY2_INVENTORY_SHA
     if choice == "half-v3":
         return HALF_V3_INVENTORY, HALF_V3_INVENTORY_SHA
     return INVENTORY, INVENTORY_SHA
@@ -198,7 +202,7 @@ def suite_inventory(plan, selected=None):
     path = Path(__file__).resolve().parents[2] / relative
     pinned(path, expected_sha)
     value = read(path)
-    if plan.get("suite_contract", "original") == "half-v3":
+    if plan.get("suite_contract", "original") in {"half-v3", "numpy2-v1"}:
         require(selected is not None, "Half-v3 needs an authenticated framework selection")
         wanted = value["prospective_selection"]
         require(
@@ -206,8 +210,13 @@ def suite_inventory(plan, selected=None):
                 selected["pytorch"].get(key) == wanted[key]
                 for key in ("base", "patches", "combined_patch_sha256", "build_run")
             ),
-            "Half-v3 suite cannot use an earlier or unselected framework",
+            "Prospective suite cannot use an earlier or unselected framework",
         )
+        if plan["suite_contract"] == "numpy2-v1":
+            require(
+                selected["pytorch"].get("numpy_abi_version") == wanted["numpy_abi_version"],
+                "Prospective suite NumPy ABI differs",
+            )
     return value
 
 
@@ -314,6 +323,27 @@ def source_files(plan, selection, *, verify=True):
     require(
         isinstance(value.get("files"), dict) and value["files"], "Missing full source inventory"
     )
+    api = selected.get("precision_api")
+    if api is not None:
+        require(
+            value.get("precision_api_derivation", {}).get("sha256")
+            == api.get("derivation_receipt_sha256"),
+            "Full source precision derivation differs",
+        )
+        contract_path = (
+            Path(__file__).resolve().parents[2] / "integration/precision-library-v1/contract.json"
+        )
+        pinned(contract_path, api["contract_sha256"])
+        contract = read(contract_path)
+        for source, target in (
+            ("torch_api.py", "torch/nn/precise_fp32.py"),
+            ("_fp32_precise_math.py", "torch/nn/_fp32_precise_math.py"),
+            ("_fp32_precise_dense.py", "torch/nn/_fp32_precise_dense.py"),
+        ):
+            require(
+                value["files"].get(target, {}).get("sha256") == contract["source_sha256"][source],
+                "Generic precision API missing or different in full source",
+            )
     root = Path(plan["source_root"])
     require(root.is_dir() and root.resolve(strict=True) == root, "Noncanonical full source root")
     archive = load(Path(__file__).resolve().parents[2] / ARCHIVE, "owned_mps_source_identity")
@@ -1357,7 +1387,9 @@ def main():
         p.add_argument("--" + name, type=Path, required=True)
     p.add_argument("--receipt-sha256", required=True)
     p.add_argument("--source-manifest-sha256", required=True)
-    p.add_argument("--suite-contract", choices=("original", "half-v3"), default="original")
+    p.add_argument(
+        "--suite-contract", choices=("original", "half-v3", "numpy2-v1"), default="original"
+    )
     for name in ("run", "worker"):
         p = subs.add_parser(name)
         p.add_argument("--plan", type=Path, required=True)

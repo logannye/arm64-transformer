@@ -558,3 +558,22 @@ derivation tests because that runner had less than the production 16 GiB free
 reserve. A test-only free-space fixture at `915091e7b5e5cca601043d7c3dc28394505ae52a`
 fixes the byte-sized unit fixture; the real reserve and its rejection test remain
 unchanged. The failed run is retained; no validation is transferred.
+
+The complete MPS suite now has an explicit `numpy2-v1` contract pinned to native
+run 41158978641 and NumPy 2.2.6. Its 10,357 method IDs, 744 skip IDs, 382 expected
+failure IDs, all assertion sources and existing tolerances exactly match the
+half-v3 inventory. Full source checks additionally require the same precision
+API derivation and all three frozen generic API modules. All 67 MPS helper and
+28 portable-reader checks pass. A frozen plan may use its original verifier
+from another checkout only when that verifier's actual bytes equal the current
+trusted verifier; changed verifier source is rejected before loading. All six
+package-derivation checks pass.
+
+The first unused MLX API copy is superseded before any primitive/model execution
+so the refreshed derivation producer can be frozen in an immutable checkout.
+Its old receipt is retained as an unqualified preparation record. The waiting
+NumPy 2 preparation supervisor was stopped before downloading any artifact to
+bind these prospective fixes; the hosted build and serial device validation
+continue. Routine hosted validation now cancels superseded jobs per event and
+branch/PR, preserving separate latest push and PR checks and the dedicated
+long native build's independent concurrency group.

@@ -92,6 +92,21 @@ class DerivationTests(unittest.TestCase):
                             (old_root / name).read_bytes(), (new_root / name).read_bytes()
                         )
 
+    def test_candidate_authority_uses_only_byte_identical_frozen_verifier(self):
+        trusted, frozen = self.root / "trusted.py", self.root / "frozen.py"
+        code = b"def authenticate_plan(path, digest): return {'authenticated':True}, None\n"
+        trusted.write_bytes(code)
+        frozen.write_bytes(code)
+        plan = self.root / "plan.json"
+        derive.SUITE.write_json(plan, dict(driver=derive.SUITE.binding(frozen)))
+        with mock.patch.object(derive.CANDIDATE, "__file__", str(trusted)):
+            result, _ = derive.authenticate_candidate_plan(plan, derive.SUITE.sha256(plan))
+            self.assertTrue(result["authenticated"])
+            frozen.write_bytes(b"raise AssertionError('unbound verifier executed')\n")
+            derive.SUITE.write_json(plan, dict(driver=derive.SUITE.binding(frozen)))
+            with self.assertRaisesRegex(ValueError, "verifier source differs"):
+                derive.authenticate_candidate_plan(plan, derive.SUITE.sha256(plan))
+
     def test_mutated_native_test_stock_operator_or_new_api_is_rejected(self):
         _, proof, output, receipt = self.produce("pytorch")
         for name in (
