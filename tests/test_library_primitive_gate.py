@@ -57,15 +57,22 @@ def test_cpu_prototype_wide_primitive_and_every_derivative_matches_independent_o
             ("output", "gradient0", "gradient1", "gradient2"), observed, strict=True
         ):
             arrays[label + "_" + name] = value
-    result = GATE.checks(np, arrays)
+    arrays.update({"input" + str(i): value for i, value in enumerate(values)})
+    arrays["upstream"] = upstream
+    probability_basis = operation == "scaled_dot_product_attention" and index == 1
+    result = GATE.checks(np, arrays, probability_basis=probability_basis)
     assert all(
         row["agreement"] and row["dual_oracle"] and row["exact_replay"] for row in result.values()
     )
-    arrays.update({"input" + str(i): value for i, value in enumerate(values)})
-    arrays["upstream"] = upstream
     AUDIT.validate_shapes(arrays, spec.WIDTH, operation)
-    _, independently_checked = AUDIT.arrays_decision(arrays)
+    _, independently_checked = AUDIT.arrays_decision(arrays, probability_basis=probability_basis)
     assert independently_checked == result
+    if probability_basis:
+        assert result["probabilities"]["atol"] == 2e-7
+        assert result["probabilities"]["rtol"] == 2e-6
+        arrays["input2"][0, 0, 0, 0] = 0.5
+        with pytest.raises(ValueError, match="probability basis"):
+            AUDIT.arrays_decision(arrays, probability_basis=True)
     arrays["input0"] = arrays["input0"][..., :-1]
     with pytest.raises(ValueError):
         AUDIT.validate_shapes(arrays, spec.WIDTH, operation)

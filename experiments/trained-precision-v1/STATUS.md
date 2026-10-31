@@ -577,3 +577,22 @@ bind these prospective fixes; the hosted build and serial device validation
 continue. Routine hosted validation now cancels superseded jobs per event and
 branch/PR, preserving separate latest push and PR checks and the dedicated
 long native build's independent concurrency group.
+
+Hosted Python and macOS arm64 native CI both pass at
+`56b927a7bbda4e47a1915f4f874aec4fa5ac9fbd` in
+[run 41160555792](https://github.com/logannye/arm64-transformer/actions/runs/41160555792).
+This includes the new CPU primitive/dual-oracle checks and byte-equal complete
+model forward/all-gradient reproduction at all six process-selected widths.
+The exact installed Native/NumPy 2 runtime and real GPU checks remain separate.
+The refreshed MLX API copy is authenticated from immutable source
+`41d78aec3e5fa826b3048263ae3950a14cb04233`; it has not been loaded numerically.
+
+The prospective primitive gate also now observes actual attention probabilities
+through the public operation: its second value operand is an identity padded to
+head width, so the first T output columns equal the probabilities. Independent
+auditing requires that exact basis and preserves the existing 2e-7/2e-6 absolute/
+relative probability tolerance. The first operand set retains arbitrary values;
+all returned derivatives and exact repeated execution remain required. This
+changes no library arithmetic or API package bytes and precedes any actual
+captured primitive execution. The NumPy 2 preparation supervisor is running
+under the frozen full-suite/provenance source with a 16 GiB reserve.

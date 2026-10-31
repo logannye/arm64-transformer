@@ -50,6 +50,13 @@ def operands(np, width, operation, index):
     values = [rng.normal(0, 0.15, shape).astype("f4") for shape in shapes]
     if operation == "layer_norm":
         values[1] += 1
+    if operation == "scaled_dot_product_attention" and index == 1:
+        # With V equal to an identity padded to head width, the actual output's
+        # first T columns are the attention probabilities. This observes the
+        # public operation without replacing it or inspecting a private graph.
+        values[2].fill(0)
+        for position in range(values[2].shape[-2]):
+            values[2][..., position, position] = 1
     return values, rng.normal(0, 0.15, output_shape).astype("f4")
 
 
@@ -132,7 +139,7 @@ def torch_execution(torch, np, api, operation, values, upstream, device, noncont
     return arrays, dict(saved_tensors=saved, noncontiguous_operands=noncontiguous)
 
 
-def checks(np, arrays):
+def checks(np, arrays, *, probability_basis=False):
     result = {}
     for name in ("output", "gradient0", "gradient1", "gradient2"):
         actual, repeat = arrays["actual_" + name], arrays["repeat_" + name]
@@ -158,6 +165,21 @@ def checks(np, arrays):
             max_absolute_error=float(np.max(np.abs(actual - numpy64))),
             atol=atol,
             rtol=rtol,
+        )
+    if probability_basis:
+        length = arrays["input2"].shape[-2]
+        values = [
+            arrays[label + "_output"][..., :length]
+            for label in ("actual", "repeat", "numpy64", "torch64")
+        ]
+        actual, repeat, numpy64, torch64 = values
+        result["probabilities"] = dict(
+            agreement=bool(np.allclose(actual, numpy64, atol=2e-7, rtol=2e-6)),
+            dual_oracle=bool(np.allclose(torch64, numpy64, atol=1e-10, rtol=1e-10)),
+            exact_replay=actual.tobytes() == repeat.tobytes(),
+            max_absolute_error=float(np.max(np.abs(actual - numpy64))),
+            atol=2e-7,
+            rtol=2e-6,
         )
     return result
 
@@ -349,10 +371,11 @@ def run(args):
                     changed_output=changed,
                     raw=raw,
                     passed=False,
+                    probability_basis=operation == "scaled_dot_product_attention" and index == 1,
                 )
                 record["cases"].append(row)
                 require(changed, "Changed operands did not change primitive output")
-                result = checks(np, arrays)
+                result = checks(np, arrays, probability_basis=row["probability_basis"])
                 row.update(
                     checks=result,
                     passed=all(

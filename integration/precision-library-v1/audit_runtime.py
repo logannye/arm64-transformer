@@ -26,7 +26,7 @@ SUITE = PROVENANCE.SUITE
 require = SUITE.require
 
 
-def arrays_decision(arrays):
+def arrays_decision(arrays, *, probability_basis=False):
     names = ("output", "gradient0", "gradient1", "gradient2")
     expected = {
         f"{label}_{name}" for label in ("actual", "repeat", "numpy64", "torch64") for name in names
@@ -67,6 +67,23 @@ def arrays_decision(arrays):
             max_absolute_error=float(np.max(np.abs(a - n))),
             atol=atol,
             rtol=rtol,
+        )
+    if probability_basis:
+        v = arrays["input2"]
+        length = v.shape[-2]
+        identity = np.broadcast_to(np.eye(length, v.shape[-1], dtype="f4"), v.shape)
+        require(v.tobytes() == identity.tobytes(), "Attention probability basis differs")
+        a, r, n, t = [
+            arrays[label + "_output"][..., :length]
+            for label in ("actual", "repeat", "numpy64", "torch64")
+        ]
+        checks["probabilities"] = dict(
+            agreement=bool(np.all(np.abs(a - n) <= 2e-7 + 2e-6 * np.abs(n))),
+            dual_oracle=bool(np.all(np.abs(t - n) <= 1e-10 + 1e-10 * np.abs(n))),
+            exact_replay=a.tobytes() == r.tobytes(),
+            max_absolute_error=float(np.max(np.abs(a - n))),
+            atol=2e-7,
+            rtol=2e-6,
         )
     return inputs, checks
 
@@ -188,7 +205,11 @@ def audit(receipt_path, receipt_sha, capture_path, capture_sha, raw_store):
             arrays = {name: archive[name] for name in archive.files}
         require(len(arrays) == len(archive.files), "Duplicate primitive array member")
         validate_shapes(arrays, result["width"], row["operation"])
-        inputs, checks = arrays_decision(arrays)
+        probability_basis = row["operation"] == "scaled_dot_product_attention" and row["index"] == 1
+        require(
+            row["probability_basis"] is probability_basis, "Missing actual probability observation"
+        )
+        inputs, checks = arrays_decision(arrays, probability_basis=probability_basis)
         require(checks == row["checks"], "Primitive decision differs from raw arrays")
         prior = outputs.get(row["operation"])
         current = arrays["actual_output"].tobytes()
