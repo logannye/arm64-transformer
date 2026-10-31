@@ -118,7 +118,16 @@ def audit_origins(value, engine, capture, runtime, receipt):
             native_origins_before=mlx,
             native_origins_after=mlx,
         )
-        SUITE.validate_descendant_proofs(child, runtime, root, receipt["project"], bundle)
+        SUITE.validate_descendant_proofs(
+            child,
+            runtime,
+            root,
+            receipt["project"],
+            bundle,
+            expected_numpy=receipt["frameworks"]["pytorch"]["selection"].get(
+                "numpy_abi_version", "1.26.4"
+            ),
+        )
         # This validates the changing-input compiled probe, not just a flag.
         previous = list(sys.path)
         try:

@@ -6,6 +6,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -14,6 +15,66 @@ SPEC = importlib.util.spec_from_file_location(
 )
 AUDIT = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(AUDIT)
+
+
+class NumPyAbiForwardingTests(unittest.TestCase):
+    def test_mlx_descendant_audit_uses_the_exact_captured_numpy_abi(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            source = root / "numpy.py"
+            source.write_text("# retained NumPy origin\n")
+            binding = AUDIT.SUITE.binding(source)
+            runtime = dict(
+                files={str(source).lstrip("/"): binding["sha256"]},
+                layout=dict(packages=dict(numpy=[str(source)])),
+            )
+            project = dict(root=str(root / "project"), files={})
+            capture = dict(runtime_root="/", runtime_identity_sha256="c" * 64)
+            native = dict(
+                module_origins={},
+                framework_module_origins={"pytorch": {}, "mlx": {}},
+                native_libraries=[],
+            )
+            value = dict(
+                runtime_identity_sha256="c" * 64,
+                loaded_python_files={"numpy": dict(path=str(source), sha256=binding["sha256"])},
+                pytorch=copy.deepcopy(native),
+                mlx=copy.deepcopy(native),
+                compilation={},
+            )
+            for version, selection in (("1.26.4", {}), ("2.2.6", {"numpy_abi_version": "2.2.6"})):
+                with self.subTest(version=version):
+                    value["numpy"] = dict(version=version, path=str(source))
+                    receipt = dict(
+                        project=project,
+                        frameworks=dict(
+                            pytorch=dict(selection=selection),
+                            mlx=dict(payload_root=str(root / "mlx-bundle")),
+                        ),
+                    )
+
+                    def descendant(child, *args, expected_numpy="1.26.4"):
+                        self.assertEqual(child["numpy"]["version"], expected_numpy)
+
+                    with (
+                        mock.patch.object(AUDIT.MPS, "validate_native_proof"),
+                        mock.patch.object(AUDIT.MPS, "validate_loaded_proof"),
+                        mock.patch.object(
+                            AUDIT.SUITE, "validate_descendant_proofs", side_effect=descendant
+                        ) as check,
+                        mock.patch.object(
+                            AUDIT,
+                            "load",
+                            return_value=SimpleNamespace(validate_compilation_probe=mock.Mock()),
+                        ),
+                    ):
+                        AUDIT.audit_origins(value, "mlx", capture, runtime, receipt)
+                        self.assertEqual(check.call_args.kwargs["expected_numpy"], version)
+                    if version == "2.2.6":
+                        changed = copy.deepcopy(value)
+                        changed["numpy"]["version"] = "1.26.4"
+                        with self.assertRaisesRegex(ValueError, "Captured NumPy differs"):
+                            AUDIT.audit_origins(changed, "mlx", capture, runtime, receipt)
 
 
 class ProvenanceTests(unittest.TestCase):
