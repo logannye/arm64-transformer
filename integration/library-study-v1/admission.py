@@ -111,7 +111,7 @@ def execute(args):
     spec = importlib.util.spec_from_file_location("admission_controller_environment", path)
     suite = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(suite)
-    environment = suite.controls(dict(os.environ))
+    environment = A.execution_environment(suite.controls(dict(os.environ)))
     rows = []
     initial_raw = (
         int(

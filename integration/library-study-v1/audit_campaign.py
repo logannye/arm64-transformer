@@ -97,7 +97,7 @@ def execute(args):
     spec = importlib.util.spec_from_file_location("postrun_environment", path)
     suite = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(suite)
-    env = suite.controls(dict(os.environ))
+    env = CAM.A.execution_environment(suite.controls(dict(os.environ)))
     result = dict(
         schema="frozen-library-campaign-audit-v1",
         manifest=manifest_binding,

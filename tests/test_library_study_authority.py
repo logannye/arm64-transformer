@@ -76,6 +76,26 @@ def test_source_hash_rejects_metadata_races_even_when_bytes_are_unchanged(tmp_pa
     assert path.read_bytes() == b"unchanged source"
 
 
+def test_execution_environment_completes_frozen_pins_without_mutating_parent():
+    parent = {
+        "ARM64_TRANSFORMER_BACKEND": "neon",
+        "PYTORCH_MPS_PREFER_METAL": "0",
+        "MLX_DISABLE_COMPILE": "0",
+        "OMP_NUM_THREADS": "8",
+        "METAL_DEBUG_ERROR_MODE": "0",
+    }
+    unchanged = parent.copy()
+    child = A.execution_environment(parent)
+    assert parent == unchanged
+    assert child["ARM64_TRANSFORMER_BACKEND"] == "auto"
+    assert child["METAL_DEBUG_ERROR_MODE"] == "0"
+    for name, value in C.comparison()["environment"].items():
+        if value is None:
+            assert name not in child
+        else:
+            assert child[name] == value
+
+
 def test_two_source_roles_allow_only_explicitly_sealed_files(tmp_path):
     control, math = tmp_path / "control", tmp_path / "math"
     control.mkdir()

@@ -107,6 +107,17 @@ def merged_project(roles):
     return dict(root=str(root), files=dict(sorted(files.items())))
 
 
+def execution_environment(sanitized):
+    """Complete sanitized child controls with every prospectively frozen pin."""
+    result = dict(sanitized)
+    for name, value in C.comparison()["environment"].items():
+        if value is None:
+            result.pop(name, None)
+        else:
+            result[name] = value
+    return result
+
+
 def activate(roles, capture_binding):
     """Authenticate before paths/imports; never install, build or generate operands."""
     C.require(

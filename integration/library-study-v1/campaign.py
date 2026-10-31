@@ -100,7 +100,7 @@ def execute(args):
     spec = importlib.util.spec_from_file_location("campaign_environment", env_path)
     suite = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(suite)
-    environment = suite.controls(dict(os.environ))
+    environment = A.execution_environment(suite.controls(dict(os.environ)))
     output.mkdir()
     result = dict(
         schema="frozen-library-formal-campaign-v1",
