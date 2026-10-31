@@ -52,6 +52,17 @@ Current components:
   groups and checks the complete fresh-process/tie denominator, source roles,
   runtime origins, native assets and Metal selection. It grants no formal
   admission or measurement authority.
+- `common_native_metal.py` and its independent auditor apply the same 15-case
+  common-state and identical-gradient matrix to the other two engines. Together
+  with the 18 framework cells this covers 30 engine/width cells and 450 cases:
+  CPU states 0/8/64 at B1/B3/B16 and Adam states 0/64 for 1/2/10 fixed updates.
+- `fixtures.py` authenticates the 18 original input fixtures and all 126 files
+  against the published compact metadata. It transfers fixture identity only.
+- `audit_dispatch.py` gives primitive, optimizer, provenance and collection raw
+  audits the frozen project source and independent installed numerical packages.
+  `qualification_plan.py` requires the exact completed collector/cell inventories
+  before scheduling all raw re-audits. A schedule or completion flag cannot
+  qualify the study without executing those audits.
 
 Complete prerequisite verification, admission/campaign dispatch and full saved
 checkpoint auditing must be implemented and validated before removing the

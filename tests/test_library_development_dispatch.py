@@ -40,5 +40,11 @@ def test_development_route_rejects_formal_fields_before_runtime_activation():
     with pytest.raises(ValueError, match="selected engine"):
         W.validate_job(dict(job, kind="checkpoint_tie", engine="mps"))
     assert W.CONTEXT.DEVELOPMENT_SEED == 20261103
+    common = dict(job, kind="native_metal_common_state", engine="metal", trajectory={})
+    assert W.validate_job(common) is common
+    with pytest.raises(ValueError, match="selected engine"):
+        W.validate_job(dict(common, engine="mps"))
+    with pytest.raises(ValueError, match="fields differ"):
+        W.validate_job({k: v for k, v in common.items() if k != "trajectory"})
     with pytest.raises(ValueError, match="not implemented"):
         W.C.require_execution_support()

@@ -27,7 +27,7 @@ A, E, N, RAW, CONTEXT = (
 )
 C = A.C
 SCHEMA = "frozen-library-development-job-v1"
-KINDS = {"native_metal_gates", "repeat_training", "checkpoint_tie"}
+KINDS = {"native_metal_gates", "repeat_training", "checkpoint_tie", "native_metal_common_state"}
 
 
 def validate_job(job):
@@ -53,6 +53,9 @@ def validate_job(job):
             if job["kind"] == "checkpoint_tie"
             else ("cpu_arm64", "cpu_torch", "metal", "mps", "mlx")
         )
+        if job["kind"] == "native_metal_common_state":
+            engines = ("cpu_arm64", "metal")
+            keys.add("trajectory")
         C.require(job.get("engine") in engines, "Unknown selected engine")
     if job["kind"] == "repeat_training":
         keys.add("operands")
@@ -479,9 +482,10 @@ def execute(path, expected):
     )
     try:
         receipt["origins_before"] = runtime.origins(job.get("engine", "metal"))
-        function = dict(native_metal_gates=gates, repeat_training=repeat, checkpoint_tie=tie)[
-            job["kind"]
-        ]
+        functions = dict(native_metal_gates=gates, repeat_training=repeat, checkpoint_tie=tie)
+        if job["kind"] == "native_metal_common_state":
+            functions[job["kind"]] = load("common_native_metal").run
+        function = functions[job["kind"]]
         receipt["outputs"] = function(job, runtime, output)
         receipt["origins_after"] = runtime.origins(job.get("engine", "metal"))
         runtime.recheck()
@@ -495,7 +499,15 @@ def execute(path, expected):
     print(
         json.dumps(dict(complete=receipt["complete"], integrity_after=receipt["integrity_after"]))
     )
-    return 0 if receipt["complete"] and receipt["integrity_after"] else 1
+    return (
+        0
+        if (
+            receipt["complete"]
+            and receipt["integrity_after"]
+            and receipt["outputs"].get("passed", True)
+        )
+        else 1
+    )
 
 
 if __name__ == "__main__":
