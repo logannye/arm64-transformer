@@ -144,3 +144,15 @@ The complete maintained-framework builds, full upstream suites, archive-safe MPS
 qualification, fresh runtime capture, prospective formal contract and all-engine
 checkpoint audit remain separate requirements. A development pass clears none
 of those gates by itself.
+
+`audit_captured_replay.py` separately authenticates a captured replay's provenance:
+the external capture and sidecar hashes, the original numerical receipt, the
+captured producer/worker sources, and loaded Python/native origins before and
+after execution. It validates the retained MLX compilation probe and preserves
+completed numerical failures as evidence-valid failures. It imports no numerical
+framework and does not rerun the numerical worker. Run it with explicit
+`--sidecar`, `--sidecar-sha256`, `--capture` and `--capture-sha256` arguments.
+The existing raw collection audit must additionally recompute the numerical
+results; the provenance audit explicitly records that it has not done so.
+Nine standard-library tests cover source/input mutations, spliced workers,
+incomplete runtime checks, numerical failures and external file authority.
