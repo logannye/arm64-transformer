@@ -61,6 +61,14 @@ class DerivationTests(unittest.TestCase):
         with (
             mock.patch.object(derive, "authority", return_value=proof),
             mock.patch.object(derive.subprocess, "run", side_effect=self.clone),
+            # Byte-sized synthetic copies must not depend on the CI runner's
+            # free space. The production 16 GiB floor remains unchanged and
+            # has a separate rejection test below.
+            mock.patch.object(
+                derive.shutil,
+                "disk_usage",
+                return_value=shutil._ntuple_diskusage(128 * 1024**3, 0, 128 * 1024**3),
+            ),
         ):
             receipt = derive.derive(framework, authority, derive.SUITE.sha256(authority), output)
         return original, proof, output, receipt
