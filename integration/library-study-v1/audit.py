@@ -52,6 +52,12 @@ def validate_origins(proof, roles, capture, inventory, engine):
         "Retained runtime/source identity differs",
     )
     receipt = C.read(C.bound(capture["runtime_receipt"]))
+    C.require(
+        proof["numpy"]["version"]
+        == receipt["frameworks"]["pytorch"]["selection"]["numpy_abi_version"]
+        and proof["numpy"]["path"] in inventory["layout"]["packages"]["numpy"],
+        "Retained NumPy ABI or module origin differs",
+    )
     required = {"pytorch"} | ({"mlx"} if engine == "mlx" else set())
     C.require(required <= set(proof), "Missing live framework origin proof")
     for name in ("pytorch", "mlx"):
@@ -74,6 +80,30 @@ def validate_origins(proof, roles, capture, inventory, engine):
         dict(inventory, root=capture["runtime_root"]),
         A.merged_project(roles),
     )
+
+
+def training_graph(role, proof, output):
+    """Reopen the actual training DOT transport and its single-trace assertion."""
+    C.require(
+        type(proof["python_trace_count"]) is int and proof["python_trace_count"] == 1,
+        "Actual MLX training must trace exactly once",
+    )
+    path = C.bound(proof["graph"])
+    C.require(
+        path == Path(output) / "compiled-training" / proof["transport"]["path"]
+        and proof["graph"]["sha256"] == proof["transport"]["sha256"]
+        and proof["graph"]["bytes"] == proof["transport"]["bytes"],
+        "Training graph path or transport differs",
+    )
+    relative = "integration/trained-precision/graph_evidence.py"
+    source = Path(role["root"]) / relative
+    C.require(C.binding(source)["sha256"] == role["files"][relative], "Unbound graph verifier")
+    spec = importlib.util.spec_from_file_location("frozen_training_graph_verifier", source)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    text = module.read(path, proof["transport"])
+    C.require("Compiled" in text, "Actual compiled training primitive is absent")
+    return dict(verified=True, graph=proof["graph"], python_trace_count=1)
 
 
 def execute(args):

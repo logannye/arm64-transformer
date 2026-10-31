@@ -62,3 +62,50 @@ def test_full_repeatability_requires_both_exactness_and_accuracy():
             Q.require_result(
                 job, dict(evidence_valid=True, exact_passed=exact, numerics_passed=accurate)
             )
+
+
+@pytest.mark.parametrize("mutation", [None, "job_attempt", "job_source", "run_event"])
+def test_hosted_acceptance_cannot_mix_revisions_attempts_or_duplicate_event_runs(
+    tmp_path, mutation
+):
+    revision, records = "a" * 40, []
+    for index, event in enumerate(("push", "pull_request")):
+        run = dict(
+            id=100 + index,
+            name="Validation",
+            head_sha=revision,
+            status="completed",
+            conclusion="success",
+            event=event,
+            repository=dict(full_name="logannye/arm64-transformer"),
+            run_attempt=2,
+        )
+        jobs = dict(
+            jobs=[
+                dict(
+                    name=name,
+                    status="completed",
+                    conclusion="success",
+                    run_id=run["id"],
+                    head_sha=revision,
+                    run_attempt=2,
+                )
+                for name in ("python", "native")
+            ]
+        )
+        if index == 1:
+            if mutation == "job_attempt":
+                jobs["jobs"][0]["run_attempt"] = 1
+            elif mutation == "job_source":
+                jobs["jobs"][0]["head_sha"] = "b" * 40
+            elif mutation == "run_event":
+                run["event"] = "push"
+        run_path, jobs_path = tmp_path / f"run-{index}.json", tmp_path / f"jobs-{index}.json"
+        Q.C.write(run_path, run)
+        Q.C.write(jobs_path, jobs)
+        records.append(dict(run=Q.C.binding(run_path), jobs=Q.C.binding(jobs_path)))
+    if mutation is None:
+        Q.ci_evidence(records, revision)
+    else:
+        with pytest.raises(ValueError, match="provenance differs|Duplicate"):
+            Q.ci_evidence(records, revision)

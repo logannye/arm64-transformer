@@ -171,6 +171,11 @@ def execute(args):
     for engine in WORKER.ENGINES:
         states = []
         for saved in children[(engine, "repeat_training")]:
+            if engine == "mlx":
+                task = F.PLAN.load(saved["job"])
+                ORIGINS.training_graph(
+                    roles["math"], saved["outputs"]["compiled_training"], task["output"]
+                )
             bound = saved["outputs"]["state"]
             C.bound(bound)
             with Path(bound["path"]).open("rb") as stream:

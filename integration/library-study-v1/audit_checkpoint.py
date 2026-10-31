@@ -92,7 +92,7 @@ def measured_arrays(cell, directory):
     )
 
 
-def load_replay(binding, job, manifest, capture, inventory):
+def load_replay(binding, job, manifest, capture, inventory, engine):
     record = F.PLAN.load(binding)
     source = F.PLAN.load(record["job"])
     expected = {
@@ -101,8 +101,10 @@ def load_replay(binding, job, manifest, capture, inventory):
     C.require(
         record["schema"] == "frozen-library-checkpoint-replay-v1"
         and record["complete"] is True
+        and source["schema"] == "frozen-library-checkpoint-job-v1"
         and all(source[k] == value for k, value in expected.items())
         and source["engine"] == record["engine"]
+        and record["engine"] == engine
         and record["manifest"] == job["manifest"]
         and record["cell_receipt"] == job["cell_receipt"]
         and record["checkpoint"] == job["checkpoint"]
@@ -115,7 +117,6 @@ def load_replay(binding, job, manifest, capture, inventory):
         "Foreign checkpoint replay",
     )
     roles = manifest["bindings"]["roles"]
-    engine = record["engine"]
     if engine == "oracle":
         C.require(
             record["auditor_project_origins"] and record["oracle_versions"],
@@ -186,6 +187,7 @@ def numerical(arrays, info, rows, checkpoint, own_engine, directory):
             double.dtype == np.float64 and double.shape == (2, 32, 128), "Wrong double cross-check"
         )
         oracle[split] = compare(double, gold[[0, -1]], 1e-10, 1e-10)
+        gold_nll = np.array(quality(gold, rows[split][:, 1:])["nll"], np.float64)
         for engine in R.ENGINES:
             comparisons[f"{engine}/{split}"] = compare(arrays[engine][split], gold)
             differences[f"{engine}/{split}"] = prediction_delta(
@@ -196,6 +198,7 @@ def numerical(arrays, info, rows, checkpoint, own_engine, directory):
                 loss.dtype == np.float64 and loss.shape == () and np.isfinite(loss) and loss >= 0,
                 "Invalid own-engine replay NLL",
             )
+            comparisons[f"{engine}/{split}_nll"] = compare(loss, gold_nll)
         for left, right in itertools.combinations(R.ENGINES, 2):
             compatibility[f"{left}/{right}/{split}"] = compare(
                 arrays[left][split], arrays[right][split]
@@ -302,19 +305,7 @@ def execute(path, digest):
     info = measured_arrays(cell, directory)
     if cell["engine"] == "mlx":
         runtime = C.read(directory / "runtime.json")
-        graph = runtime["compiled_training"]
-        C.bound(graph["graph"])
-        spec = importlib.util.spec_from_file_location(
-            "postrun_training_graph",
-            Path(roles["math"]["root"]) / "integration/trained-precision/graph_evidence.py",
-        )
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        text = module.read(Path(graph["graph"]["path"]), graph["transport"])
-        C.require(
-            graph["python_trace_count"] == 1 and "Compiled" in text,
-            "Missing actual measured MLX training graph",
-        )
+        ORIGINS.training_graph(roles["math"], runtime["compiled_training"], directory)
     fixture = next(
         r
         for r in F.PLAN.load(manifest["bindings"]["fixtures"])["fixtures"]
@@ -323,7 +314,7 @@ def execute(path, digest):
     from transformer.prepare import load_fixture
 
     arrays = {
-        engine: load_replay(binding, job, manifest, capture, inventory)
+        engine: load_replay(binding, job, manifest, capture, inventory, engine)
         for engine, binding in job["replays"].items()
     }
     result = numerical(

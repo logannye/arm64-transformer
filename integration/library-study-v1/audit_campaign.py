@@ -82,7 +82,6 @@ def execute(args):
     )
     output.mkdir()
     sys.path.insert(0, roles["math"]["root"])
-    from transformer.gpu_environment import child_environment
     from transformer.gpu_study import valid_conditions
 
     # Audit power checks authenticate the measurement records, never time replay.
@@ -94,7 +93,11 @@ def execute(args):
         ),
         "Invalid measured power conditions",
     )
-    env = child_environment(manifest["comparison"]["environment"])
+    path = Path(roles["math"]["root"]) / "integration/gpu-owned/owned_mlx_suites.py"
+    spec = importlib.util.spec_from_file_location("postrun_environment", path)
+    suite = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(suite)
+    env = suite.controls(dict(os.environ))
     result = dict(
         schema="frozen-library-campaign-audit-v1",
         manifest=manifest_binding,

@@ -18,7 +18,7 @@ SPEC.loader.exec_module(A)
 C = A.C
 
 
-def test_frozen_numerical_source_plan_retains_every_gate_and_fit():
+def test_frozen_numerical_source_plan_retains_every_gate_and_fit(monkeypatch):
     plan = C.plan()
     assert C.validate_plan(plan) is plan
     assert (
@@ -32,9 +32,11 @@ def test_frozen_numerical_source_plan_retains_every_gate_and_fit():
         broken[field] = True
         with pytest.raises(ValueError, match="contract changed"):
             C.validate_plan(broken)
+    assert plan["formal_execution_supported"] is C.EXECUTION_SUPPORTED
+    monkeypatch.setattr(C, "EXECUTION_SUPPORTED", False)
     with pytest.raises(ValueError, match="not implemented"):
         C.require_execution_support()
-    assert not plan["formal_execution_supported"] and not plan["formal_eligible"]
+    assert not plan["formal_eligible"]
 
 
 def test_control_metadata_rejects_duplicates_nonfinite_values_and_aliases(tmp_path):

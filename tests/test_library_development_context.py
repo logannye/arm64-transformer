@@ -112,7 +112,7 @@ def test_reserved_permission_is_rejected_before_any_rng_is_opened(monkeypatch, t
         raise AssertionError("RNG must remain unopened")
 
     monkeypatch.setattr(np.random, "default_rng", forbidden)
-    with pytest.raises(ValueError, match="not implemented"):
+    with pytest.raises(ValueError, match="not implemented|bindings are incomplete"):
         K.create(
             SimpleNamespace(recheck=lambda: None),
             output,

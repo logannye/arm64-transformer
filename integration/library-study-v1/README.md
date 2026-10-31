@@ -12,11 +12,12 @@ All 2,088 admission groups and 9,858 members remain present. Full-model accuracy
 blocks admission for every width and engine. Diagnostic framework primitive and
 wide three-step trajectory groups keep their original scope.
 
-Formal execution is currently closed. `contract.require_execution_support()`
-rejects it before any reserved operands or measured fits. The new formal control
-path remains behind that block while its implementation is validated.
-Seeds 20261104, 20261108 and 20261112 remain
-unopened. This is an explicitly maintained-library experiment; standard-release
+The formal route is implemented. Implementation support grants no eligibility:
+`frozen.verify()` requires all exact-source raw prerequisites, hosted checks,
+original fixtures, hardware and runtime authority before any reserved operands
+or measured fits. A prospective plan or user-supplied pass flag cannot open it.
+Seeds 20261104, 20261108 and 20261112 remain unopened at this revision.
+This is an explicitly maintained-library experiment; standard-release
 framework acceptance and performance claims do not follow from its results.
 
 Current components:
@@ -38,7 +39,7 @@ Current components:
   Artifact identity does not transfer an earlier numerical qualification.
 - `measurement.py` preserves the existing GPU workload and timing boundaries,
   restored warmup, strict checkpoint ties, exact replay and cleanup. It has no
-  formal CLI. A formal scope is rejected while execution remains closed.
+  formal CLI. Its formal caller must authenticate frozen admission first.
 - `evidence.py` retains lossless compressed raw pairs in the existing shared
   content-addressed store. Independent decisions read the original arrays and
   keep the frozen tolerances. Oversized headers, missing members, changed bytes
@@ -86,8 +87,8 @@ Current components:
   arithmetic and maintained-framework scope remain explicit.
 
 Complete prerequisite verification, admission/campaign dispatch and full saved
-checkpoint auditing must pass validation before removing the execution block.
-A future freeze must bind both source roles, exact runtime,
+checkpoint auditing require the exact revision's validation. A future freeze
+must bind both source roles, exact runtime,
 native assets, all original fixture bytes, full prerequisite evidence and the
 retained admission inventory before opening seed 20261112. Preserve a 16 GiB
 disk reserve, bound raw-store growth and use one numerical worker at a time.

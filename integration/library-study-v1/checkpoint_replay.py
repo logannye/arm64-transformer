@@ -82,6 +82,7 @@ def replay_values(engine, parameters, fixture, *, runtime=None, assets=None):
     from transformer import spec
 
     torch.set_num_threads(1)
+    torch.set_num_interop_threads(1)
     torch.use_deterministic_algorithms(True)
     native, backend, model, oracle = None, None, None, None
     if engine == "cpu_arm64":

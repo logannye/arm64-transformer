@@ -13,7 +13,7 @@ W = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(W)
 
 
-def test_development_route_rejects_formal_fields_before_runtime_activation():
+def test_development_route_rejects_formal_fields_before_runtime_activation(monkeypatch):
     job = dict(
         schema=W.SCHEMA,
         kind="native_metal_gates",
@@ -46,5 +46,6 @@ def test_development_route_rejects_formal_fields_before_runtime_activation():
         W.validate_job(dict(common, engine="mps"))
     with pytest.raises(ValueError, match="fields differ"):
         W.validate_job({k: v for k, v in common.items() if k != "trajectory"})
+    monkeypatch.setattr(W.C, "EXECUTION_SUPPORTED", False)
     with pytest.raises(ValueError, match="not implemented"):
         W.C.require_execution_support()

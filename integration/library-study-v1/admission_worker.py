@@ -245,6 +245,10 @@ def width(job, runtime, output, manifest):
             row["cpu_operations"] = context.cpu_operations[first_cpu:]
             C.write(output / "groups" / (row["id"].replace("/", "--") + ".json"), row)
             rows.append(row)
+        # Diagnostic errors may retire a backend. Re-authenticate the selected
+        # factories before final origins without turning a diagnostic into a
+        # missing-capability failure or waiving any earlier blocking result.
+        selected_backends = {e: context.backend(e) for e in ("metal", "mps", "mlx")}
         return dict(
             groups=rows,
             expected_inventory=inventory,
@@ -255,9 +259,9 @@ def width(job, runtime, output, manifest):
             child_proofs=context.child_proofs,
             capabilities={
                 e: W.E.validate_capabilities(e, b.capabilities())
-                for e, b in context.backends.items()
+                for e, b in selected_backends.items()
             },
-            metal_library_origin=context.backends["metal"]._selected_native_origin,
+            metal_library_origin=selected_backends["metal"]._selected_native_origin,
         )
     except BaseException:
         C.write(

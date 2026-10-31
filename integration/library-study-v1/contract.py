@@ -23,8 +23,9 @@ BASE_INVENTORY_SHA256 = "fe9ac1c29d896e5512fe5bacfa0e40771f0c533b05508d7c46bb43f
 MAX_JSON_BYTES = 128 * 1024**2
 MIN_FREE_BYTES = 16 * 1024**3
 MAX_RAW_GROWTH_BYTES = 32 * 1024**3
-# No route may open reserved operands until the dedicated implementation exists.
-EXECUTION_SUPPORTED = False
+# Implementation support grants no eligibility. Frozen authority still requires
+# every exact-source raw prerequisite and hosted check before reserved RNGs.
+EXECUTION_SUPPORTED = True
 
 
 def require(condition, message):

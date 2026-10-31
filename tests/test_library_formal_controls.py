@@ -79,14 +79,18 @@ def replay_arrays():
             if engine == "oracle":
                 value[split + "_torch_fp64"] = np.zeros((2, 32, 128), np.float64)
             else:
-                value[split + "_nll"] = np.array(1.0, np.float64)
+                value[split + "_nll"] = np.array(np.log(128), np.float64)
         arrays[engine] = value
     return arrays
 
 
 def test_all_coordinate_gate_keeps_accuracy_compatibility_and_exact_replay_separate(tmp_path):
     arrays = replay_arrays()
-    info = dict(best_epoch=1, history=np.ones((8, 3)), logits=arrays["cpu_torch"]["test"].copy())
+    info = dict(
+        best_epoch=1,
+        history=np.full((8, 3), np.log(128)),
+        logits=arrays["cpu_torch"]["test"].copy(),
+    )
     rows = {name: np.zeros((256, 33), np.int32) for name in ("validation", "test")}
     result = AUDIT.numerical(arrays, info, rows, "best.f32", "cpu_torch", tmp_path)
     assert result["passed"] and result["quality"]["tokens"] == 8192
@@ -106,11 +110,15 @@ def test_all_coordinate_gate_keeps_accuracy_compatibility_and_exact_replay_separ
 def test_last_checkpoint_compares_to_last_epoch_and_double_oracle_failure_is_blocking(tmp_path):
     arrays = replay_arrays()
     rows = {name: np.zeros((256, 33), np.int32) for name in ("validation", "test")}
-    info = dict(best_epoch=1, history=np.ones((8, 3)), logits=arrays["cpu_torch"]["test"].copy())
+    info = dict(
+        best_epoch=1,
+        history=np.full((8, 3), np.log(128)),
+        logits=arrays["cpu_torch"]["test"].copy(),
+    )
     info["history"][-1, 1] = 2
     result = AUDIT.numerical(arrays, info, rows, "last.f32", "cpu_torch", tmp_path)
     assert not result["passed"] and not result["integrity"]["own_validation_history_exact"]
-    arrays["cpu_torch"]["validation_nll"] = np.array(2, np.float64)
+    info["history"][-1, 1] = np.log(128)
     assert AUDIT.numerical(arrays, info, rows, "last.f32", "cpu_torch", tmp_path)["passed"]
     arrays["oracle"]["validation_torch_fp64"][1, 31, 127] = 1e-8
     result = AUDIT.numerical(arrays, info, rows, "last.f32", "cpu_torch", tmp_path)
@@ -171,3 +179,100 @@ def test_summary_uses_all_six_fits_and_paired_seed_ratios():
     assert [r["seed"] for r in native["paired_seeds"]] == [42, 43, 44]
     with pytest.raises(ValueError, match="denominator"):
         report.summarize(rows[:-1])
+
+
+def test_actual_training_graph_reopens_bound_transport_and_rejects_trace_or_path_changes(tmp_path):
+    audit = load("audit")
+    relative = "integration/trained-precision/graph_evidence.py"
+    source = ROOT / relative
+    spec = importlib.util.spec_from_file_location("test_postrun_graph_transport", source)
+    transport = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(transport)
+    role = dict(root=str(ROOT), files={relative: audit.C.binding(source)["sha256"]})
+    destination = tmp_path / "compiled-training"
+    destination.mkdir()
+    row = transport.write(destination, "gradient", "digraph { a [label=Compiled]; }")
+    proof = dict(
+        graph=audit.C.binding(destination / row["path"]), transport=row, python_trace_count=1
+    )
+    assert audit.training_graph(role, proof, tmp_path)["verified"]
+    with pytest.raises(ValueError, match="exactly once"):
+        audit.training_graph(role, dict(proof, python_trace_count=2), tmp_path)
+    with pytest.raises(ValueError, match="path or transport"):
+        audit.training_graph(role, proof, tmp_path / "substituted")
+    (destination / row["path"]).write_text("digraph { wrong; }")
+    with pytest.raises(ValueError, match="changed"):
+        audit.training_graph(role, proof, tmp_path)
+
+
+@pytest.mark.parametrize("engine", ["cpu_arm64", "mps", "mlx", "metal"])
+@pytest.mark.parametrize("fail", [False, True])
+def test_checkpoint_replay_preserves_full_splits_own_loss_b1_and_cleanup(monkeypatch, engine, fail):
+    import torch
+
+    from transformer import validate
+
+    replay = load("checkpoint_replay")
+    monkeypatch.setattr(torch, "set_num_threads", lambda n: None)
+    monkeypatch.setattr(torch, "set_num_interop_threads", lambda n: None)
+    calls = dict(evaluations=0, forwards=0, closed=False)
+
+    class Backend:
+        def upload_inputs(self, tokens, targets=None):
+            return tokens
+
+        def evaluate(self, batch):
+            calls["evaluations"] += 1
+            if fail:
+                raise ValueError("synthetic replay failure")
+            return np.array(3, np.float32), np.full((len(batch), 32, 128), 2, np.float32)
+
+        def forward(self, *args):
+            calls["forwards"] += 1
+            if fail:
+                raise ValueError("synthetic replay failure")
+            return np.full((1, 32, 128), 2, np.float32)
+
+        def to_numpy(self, value):
+            return value
+
+        def capabilities(self):
+            return {}
+
+        def close(self):
+            calls["closed"] = True
+
+    backend = Backend()
+    selected = []
+
+    def create(runtime, selected_engine, parameters, **limits):
+        selected.append((selected_engine, limits))
+        return backend
+
+    if engine == "cpu_arm64":
+        monkeypatch.setattr(replay.W.N, "load", lambda *args: backend)
+        monkeypatch.setattr(validate, "workspace_tensor", lambda value, name: value[0])
+        backend.call = lambda *args: 3.0
+    else:
+        monkeypatch.setattr(replay.E, "create_backend", create)
+        monkeypatch.setattr(replay.E, "validate_capabilities", lambda e, c: c)
+        monkeypatch.setattr(replay.E, "loaded_metal_library", lambda r: {})
+    rows = dict(validation=np.zeros((256, 33), np.int32), test=np.zeros((256, 33), np.int32))
+    if fail:
+        with pytest.raises(ValueError, match="synthetic replay failure"):
+            replay.replay_values(engine, np.zeros(7, np.float32), rows, runtime=None, assets={})
+    else:
+        result, _ = replay.replay_values(
+            engine, np.zeros(7, np.float32), rows, runtime=None, assets={}
+        )
+        for split in ("validation", "test"):
+            assert result[split].shape == (256, 32, 128) and result[split].dtype == np.float32
+            assert result[split + "_nll"].shape == () and result[split + "_nll"].dtype == np.float64
+            assert float(result[split + "_nll"]) == 3
+        assert result["b1"].shape == (1, 32, 128)
+        if engine == "cpu_arm64":
+            assert calls["forwards"] == 513
+        else:
+            assert calls["evaluations"] == 32 and calls["forwards"] == 1
+    if engine != "cpu_arm64":
+        assert calls["closed"] and selected == [(engine, dict(max_batch=16))]
