@@ -130,6 +130,73 @@ class CaptureTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "changed after authentication"):
             capture.half_v3_selection(self.root, source, {}, plan, digest, runtime)
 
+    def mlx_compat_fixture(self, *, mutate_receipt=False):
+        relative = "integration/gpu-owned/derive_mlx_test_compat.py"
+        helper = self.root / relative
+        helper.parent.mkdir(parents=True)
+        helper.write_text(
+            "from pathlib import Path\n"
+            "def authenticate(bundle, expected):\n"
+            + (
+                "    p=bundle/'TEST-COMPATIBILITY.json';p.write_bytes(p.read_bytes()+b' ')\n"
+                if mutate_receipt
+                else ""
+            )
+            + "    return {}, {'original_manifest_sha256':'"
+            + "a" * 64
+            + "', 'native_build_run':123, 'patch_sha256':'"
+            + "c" * 64
+            + "'}\n"
+        )
+        bundle = self.root / "mlx"
+        bundle.mkdir()
+        (bundle / "MANIFEST.json").write_text('{"new":"manifest"}')
+        proof = bundle / "TEST-COMPATIBILITY.json"
+        proof.write_text('{"test_only":true}')
+        source = {"files": {relative: capture.sha(helper)}}
+        original = {
+            "pytorch": {"unchanged": True},
+            "mlx": {"runtime_manifest_sha256": "a" * 64, "build_run": 123, "patches": ["b" * 64]},
+        }
+        return helper, source, original, bundle, capture.sha(proof)
+
+    def test_mlx_test_derivation_is_explicit_and_preserves_native_build_identity(self):
+        _, source, original, bundle, sha = self.mlx_compat_fixture()
+        selected, proof = capture.mlx_test_compatibility_selection(
+            self.root, source, original, bundle, sha
+        )
+        self.assertEqual(selected["pytorch"], original["pytorch"])
+        self.assertEqual(original["mlx"]["patches"], ["b" * 64])
+        self.assertEqual(selected["mlx"]["patches"], ["b" * 64, "c" * 64])
+        self.assertEqual(selected["mlx"]["build_run"], 123)
+        self.assertEqual(
+            selected["mlx"]["runtime_manifest_sha256"], capture.sha(bundle / "MANIFEST.json")
+        )
+        self.assertFalse(proof["native_compilation"])
+        self.assertFalse(proof["formal_eligible"])
+
+    def test_mlx_compat_helper_is_authenticated_before_execution(self):
+        helper, source, original, bundle, sha = self.mlx_compat_fixture()
+        helper.write_text("raise RuntimeError('unbound helper ran')")
+        with self.assertRaisesRegex(ValueError, "Unbound MLX compatibility helper"):
+            capture.mlx_test_compatibility_selection(self.root, source, original, bundle, sha)
+
+    def test_mlx_compat_rejects_foreign_native_authority(self):
+        _, source, original, bundle, sha = self.mlx_compat_fixture()
+        original["mlx"]["build_run"] = 124
+        with self.assertRaisesRegex(ValueError, "native authority differs"):
+            capture.mlx_test_compatibility_selection(self.root, source, original, bundle, sha)
+
+    def test_mlx_compat_rechecks_receipt_after_authentication(self):
+        _, source, original, bundle, sha = self.mlx_compat_fixture(mutate_receipt=True)
+        with self.assertRaisesRegex(ValueError, "authority changed during authentication"):
+            capture.mlx_test_compatibility_selection(self.root, source, original, bundle, sha)
+
+    def test_mlx_compat_rejects_wrong_external_receipt_hash(self):
+        _, source, original, bundle, _ = self.mlx_compat_fixture()
+        with self.assertRaisesRegex(ValueError, "receipt changed"):
+            capture.mlx_test_compatibility_selection(self.root, source, original, bundle, "0" * 64)
+
     def test_binding_rejects_replacement_during_read(self):
         path = self.root / "input"
         path.write_bytes(b"before")

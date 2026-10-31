@@ -1,0 +1,67 @@
+{
+  "schema": "trained-precision-mlx-test-compatibility-failure-v1",
+  "project_revision": "2c28aadc7340b3e317cba8078d7f1987986ad199",
+  "summary": {
+    "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/half-v3-mlx-suites-device-v8/summary.json",
+    "bytes": 3387,
+    "sha256": "3eda5cc5aebe9adb152b35d8867b98ae570252f10f4fa617eecaf56182131cdd"
+  },
+  "cpp_receipt": {
+    "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/half-v3-mlx-suites-device-v8/mlx_cpp/receipt.json",
+    "bytes": 938828,
+    "sha256": "126975eaac9cde11a8587ecf3813c442e7d8ef103ccbcaa7e099ac466d6824ec"
+  },
+  "cpp_log": {
+    "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/half-v3-mlx-suites-device-v8/mlx_cpp/cpp.log",
+    "bytes": 378,
+    "sha256": "953f3acb29525dc6302fbe2a743e3592ea41a13a648efb89bfc7b0a1ecb26153"
+  },
+  "cpp_cases": 305,
+  "cpp_assertions": 4792,
+  "cpp_passed": true,
+  "python_receipt": {
+    "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/half-v3-mlx-suites-device-v8/mlx_python/receipt.json",
+    "bytes": 1192778,
+    "sha256": "6408817956d5ae9a300cda370637910d658ff99b854a2b6f27301904dfa2b6ad"
+  },
+  "python_log": {
+    "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/half-v3-mlx-suites-device-v8/mlx_python/worker.log",
+    "bytes": 834,
+    "sha256": "31577da1b17087a03d481167b6e450607b62dc6488f05f9480a2af3038306051"
+  },
+  "python_xml": {
+    "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/half-v3-mlx-suites-device-v8/mlx_python/python.xml",
+    "bytes": 547,
+    "sha256": "7cc818745bfa947cbdee25fcb700801aae62f8c0c04b6cd7d00500367ac95364"
+  },
+  "python_methods_executed": 0,
+  "python_collection_errors": 1,
+  "python_cause": "Original MLX test module integer parser rejects PyTorch prerelease patch component 0a0",
+  "postflight_cause": "Unchanged upstream pytest_unconfigure clears streams before the wrapper compilation probe",
+  "parent_summary_correction": "The old parent complete=true flag does not establish complete worker evidence; corrected producer requires every worker complete and integrity_after flag",
+  "retained_model_launcher_failure": {
+    "record": {
+      "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/resumed-framework-development-v2/stopped.json",
+      "bytes": 1147,
+      "sha256": "6707742ef0b661fd8835157aafc1ebead194512a21219aab8ccecffa761d8420"
+    },
+    "log": {
+      "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/resumed-framework-development-v2/cpu_torch-512-ordinary-forward.log",
+      "bytes": 927,
+      "sha256": "b6440b3890377f539cd8f6dfdc7d0ff4acc28a877236116c039d194ab9dc0907"
+    },
+    "model_executed": false,
+    "cause": "Output was outside required work/gpu-v4-owned namespace; a separate corrected controller retains new numerical results"
+  },
+  "mps_cache_environment_fixed_metadata_diagnostic": {
+    "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/suite-import-environment-diagnostic-v2/result.json",
+    "bytes": 612,
+    "sha256": "52af6c2f30bf9b1994ae91e85b412310285499917774930b031718a0692a960e"
+  },
+  "native_compilation_required": false,
+  "test_methods_assertions_eligibility_unchanged": true,
+  "qualification": false,
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "admission_stream_opened": false
+}

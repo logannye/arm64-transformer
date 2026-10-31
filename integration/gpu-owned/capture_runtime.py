@@ -276,6 +276,44 @@ def half_v3_selection(project, source, original, plan_path, plan_sha, torch_runt
     }
 
 
+def mlx_test_compatibility_selection(project, source, original, mlx_bundle, receipt_sha):
+    """Reuse unchanged native bytes after one explicitly declared test-only fix."""
+    relative = "integration/gpu-owned/derive_mlx_test_compat.py"
+    helper = project / relative
+    require(
+        file_binding(helper)["sha256"] == source["files"].get(relative),
+        "Unbound MLX compatibility helper",
+    )
+    spec = importlib.util.spec_from_file_location("captured_mlx_test_compat", helper)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    proof = file_binding(mlx_bundle / "TEST-COMPATIBILITY.json")
+    manifest = file_binding(mlx_bundle / "MANIFEST.json")
+    require(proof["sha256"] == receipt_sha, "MLX compatibility receipt changed")
+    _, contract = module.authenticate(mlx_bundle, receipt_sha)
+    require(
+        file_binding(mlx_bundle / "TEST-COMPATIBILITY.json") == proof
+        and file_binding(mlx_bundle / "MANIFEST.json") == manifest,
+        "MLX compatibility authority changed during authentication",
+    )
+    require(
+        contract["original_manifest_sha256"] == original["mlx"]["runtime_manifest_sha256"]
+        and contract["native_build_run"] == original["mlx"]["build_run"],
+        "MLX compatibility native authority differs",
+    )
+    selected = json.loads(json.dumps(original))
+    selected["mlx"]["patches"].append(contract["patch_sha256"])
+    selected["mlx"]["runtime_manifest_sha256"] = manifest["sha256"]
+    selected["mlx"]["test_source_compatibility_receipt_sha256"] = receipt_sha
+    return selected, {
+        "receipt": proof,
+        "helper": file_binding(helper),
+        "native_compilation": False,
+        "scope": "Python test version parsing only; native sources and binaries unchanged",
+        "formal_eligible": False,
+    }
+
+
 def capture(
     project,
     expected_head,
@@ -287,6 +325,7 @@ def capture(
     *,
     half_v3_plan=None,
     half_v3_plan_sha256=None,
+    mlx_test_compatibility_sha256=None,
 ):
     require_launch()
     project = directory(project)
@@ -325,6 +364,10 @@ def capture(
                 half_v3_plan,
                 half_v3_plan_sha256,
                 torch_runtime,
+            )
+        if mlx_test_compatibility_sha256 is not None:
+            selection, record["mlx_test_compatibility"] = mlx_test_compatibility_selection(
+                project, source, selection, mlx_bundle, mlx_test_compatibility_sha256
             )
         proposed_path = [str(project), *map(str, paths), *original_path]
         inventory = runtime.discover_runtime(Path("/"), paths)
@@ -445,6 +488,7 @@ def main():
     parser.add_argument("--expected-head", required=True)
     parser.add_argument("--half-v3-plan", type=Path)
     parser.add_argument("--half-v3-plan-sha256")
+    parser.add_argument("--mlx-test-compatibility-sha256")
     args = parser.parse_args()
     result = capture(
         args.project,
@@ -456,6 +500,7 @@ def main():
         args.output,
         half_v3_plan=args.half_v3_plan,
         half_v3_plan_sha256=args.half_v3_plan_sha256,
+        mlx_test_compatibility_sha256=args.mlx_test_compatibility_sha256,
     )
     print(
         json.dumps(

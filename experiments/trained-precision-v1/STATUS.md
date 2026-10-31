@@ -410,3 +410,29 @@ remain retained, and a fresh capture/execution is required. MLX conformance and 
 matched model screen continue independently under the immutable preceding capture;
 neither route may qualify the failed MPS run. The disk watchdog tracks nested
 sessions by PID, creation time and command, with a 6 GiB stop reserve.
+
+The fresh MLX C++ route passes all 305 cases and 4,792 assertions, including
+its corrected linkage-file audit. Python collection then fails before any test
+method: the original `test_array.py` parser cannot convert PyTorch's `0a0` patch
+component to an integer. The upstream pytest teardown also clears all streams,
+so a subsequent compilation probe needs its own newly verified GPU stream. The
+[retained record](mlx-test-compatibility-failure.json) preserves both failures
+and the old parent's misleading `complete=true` flag; the corrected producer
+requires complete, integrity-checked workers for a complete parent summary.
+
+The explicit [test-only compatibility patch](../../integration/gpu-owned/mlx-test-compat-v1/README.md)
+uses `packaging.version.Version.release`, preserving all test bodies, decorators,
+assertions, eligibility and the complete inventory. Its derivation tool requires
+byte-identical native sources, libraries, shaders and original build provenance.
+It creates a new capsule and manifest with an APFS clone and performs no native
+build. Ten capsule/parser mutation tests, 22 capture tests, seven capture-review
+tests and 35 MLX suite-helper tests pass. Fresh full conformance remains required.
+
+The bounded MPS cache fix survives actual unchanged test-module import and
+collection with no environment additions or changes. The matched captured-runtime
+model screen now runs in the required owned-development output namespace, after
+retaining a failed launcher that executed no model. Its early CPU candidate
+results pass separate inference/gradient, provenance and raw-array audits at both
+wide widths; ordinary CPU controls retain failures on the same selected operands.
+This screen covers two historical width-512 cases and one width-1024 FF1 case,
+not a complete inventory, framework repair, all-width gate or performance result.

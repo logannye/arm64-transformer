@@ -61,6 +61,18 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(self.expected["cpp_case_count"], 305)
         self.assertEqual(self.expected["cpp_assertions"], 4792)
 
+    def test_compatibility_inventory_preserves_cases_assertions_and_eligibility(self):
+        selected, _ = suite.suite_inventory("torch-dev-compat")
+        old = copy.deepcopy(self.expected)
+        old["test_source_sha256"]["source/python/tests/test_array.py"] = (
+            "7924745a66a9ed113ec437b6e7cbf3d381feefaafb562c87ed2545c302398e02"
+        )
+        expected = copy.deepcopy(selected)
+        self.assertEqual(len(expected.pop("test_compatibility_contract_sha256")), 64)
+        self.assertEqual(expected, old)
+        with self.assertRaisesRegex(ValueError, "Unknown MLX suite contract"):
+            suite.suite_inventory("skip-nightly-tests")
+
     def test_complete_python_inventory_and_subtests(self):
         xml, log = self.python_files()
         result = suite.python_inventory(xml, log, self.expected)
@@ -153,6 +165,56 @@ class ProvenanceTests(unittest.TestCase):
             p.write_text(raw)
             with self.assertRaises(ValueError):
                 suite.read_json(p)
+
+    def test_completed_receipt_preserves_numerical_failure_but_rejects_incomplete(self):
+        complete = dict(complete=True, integrity_after=True, passed=False)
+        self.assertTrue(suite.completed_receipt(complete))
+        for changed in (
+            dict(complete=False),
+            dict(complete=1),
+            dict(integrity_after=False),
+            dict(error="collection failed"),
+            dict(integrity_error="postflight failed"),
+        ):
+            with self.subTest(changed=changed):
+                self.assertFalse(suite.completed_receipt({**complete, **changed}))
+
+    def test_post_pytest_probe_uses_new_verified_gpu_stream(self):
+        stream = SimpleNamespace(device="gpu", index=7)
+        mx = SimpleNamespace(
+            gpu="gpu",
+            default_device=lambda: "gpu",
+            metal=SimpleNamespace(is_available=lambda: True),
+            new_stream=mock.Mock(return_value=stream),
+            set_default_stream=mock.Mock(),
+            default_stream=mock.Mock(return_value=stream),
+        )
+        proof = suite.post_pytest_stream(mx)
+        self.assertTrue(proof["default_stream_verified"])
+        self.assertEqual(proof["stream_index"], 7)
+        mx.new_stream.assert_called_once_with("gpu")
+        mx.set_default_stream.assert_called_once_with(stream)
+        mx.default_device = lambda: "cpu"
+        with self.assertRaisesRegex(ValueError, "GPU default changed"):
+            suite.post_pytest_stream(mx)
+        mx.new_stream.assert_called_once()
+
+    def test_post_pytest_rejects_wrong_stream_or_default(self):
+        stream = SimpleNamespace(device="cpu", index=7)
+        mx = SimpleNamespace(
+            gpu="gpu",
+            default_device=lambda: "gpu",
+            metal=SimpleNamespace(is_available=lambda: True),
+            new_stream=lambda device: stream,
+            set_default_stream=mock.Mock(),
+            default_stream=lambda device: object(),
+        )
+        with self.assertRaisesRegex(ValueError, "Post-suite stream is not GPU"):
+            suite.post_pytest_stream(mx)
+        mx.set_default_stream.assert_not_called()
+        stream.device = "gpu"
+        with self.assertRaisesRegex(ValueError, "default stream differs"):
+            suite.post_pytest_stream(mx)
 
     def test_changed_source_receipt_and_symlink_rejected(self):
         p = self.root / "original"

@@ -31,6 +31,7 @@ PLAN_SCHEMA = "gpu-owned-mlx-suite-plan-v1"
 PROTOCOL = "gpu-v4-owned-five-engine-v1"
 PRODUCER = "integration/gpu-owned/owned_mlx_suites.py"
 INVENTORY_SHA = "cff557d2b1d68857bc488e77e6672fb0fb386409e88ad6ca4e7fa31bd862d852"
+COMPAT_INVENTORY_SHA = "7e57d93ce0969f7c3be7ca7c7d137b7f0fdfeeda0b21547d7e7b1302d9fbd41a"
 SUITES = ("mlx_cpp", "mlx_python")
 SUBPROCESS_AST_SHA = "90a6406e042b09e83ed671864ad0cf30cefa2e6c4e148ca60d24ac26cbb6b433"
 BOOTSTRAP_FILES = {
@@ -186,9 +187,15 @@ def check_controls(*, descendant=False):
         require(os.environ.get("DEVICE") == "gpu", "Unchanged descendant must request GPU")
 
 
-def suite_inventory():
-    path = Path(__file__).with_name("owned-suite-inventory-v1.json").resolve()
-    row = pinned(path, INVENTORY_SHA)
+def suite_inventory(suite_contract="original"):
+    require(suite_contract in {"original", "torch-dev-compat"}, "Unknown MLX suite contract")
+    filename, expected_sha = (
+        ("owned-suite-inventory-v1.json", INVENTORY_SHA)
+        if suite_contract == "original"
+        else ("owned-suite-inventory-mlx-compat-v1.json", COMPAT_INVENTORY_SHA)
+    )
+    path = Path(__file__).with_name(filename).resolve()
+    row = pinned(path, expected_sha)
     value = read_json(path)
     require(
         value["schema"] == "gpu-owned-suite-inventory-v1"
@@ -840,7 +847,16 @@ def audit_descendants(
     return rows
 
 
-def freeze(runtime_root, runtime_inventory, selection, receipt, receipt_sha, output):
+def freeze(
+    runtime_root,
+    runtime_inventory,
+    selection,
+    receipt,
+    receipt_sha,
+    output,
+    *,
+    suite_contract="original",
+):
     sys.pycache_prefix = str(output.with_name(output.name + ".unused-python-cache"))
     check_controls()
     require(not output.exists(), "Preparation output must be new")
@@ -859,10 +875,11 @@ def freeze(runtime_root, runtime_inventory, selection, receipt, receipt_sha, out
         "suite_order": list(SUITES),
         "formal_admission_opened": False,
         "formal_fits": 0,
+        "suite_contract": suite_contract,
     }
     authority, _, _, _ = bootstrap(plan)
     output_path(output, authority.verify()[0]["project"])
-    expected, inventory_binding = suite_inventory()
+    expected, inventory_binding = suite_inventory(suite_contract)
     bundle, sources = test_source(authority, expected)
     plan.update(
         suite_inventory=inventory_binding,
@@ -889,7 +906,7 @@ def authenticate_plan(path, expected_sha):
     )
     binding(plan["producer"]["path"], plan["producer"])
     require(plan["producer"]["path"] == str(Path(__file__).resolve()), "Foreign suite producer")
-    expected, identity = suite_inventory()
+    expected, identity = suite_inventory(plan.get("suite_contract", "original"))
     require(plan["suite_inventory"] == identity, "Suite inventory differs")
     authority, backend, runtime, selection = bootstrap(plan)
     bundle, sources = test_source(authority, expected)
@@ -989,6 +1006,31 @@ def raw_binding(path, root):
     row = binding(path)
     row["path"] = str(Path(row["path"]).relative_to(root))
     return row
+
+
+def completed_receipt(receipt):
+    """Full coverage/integrity is separate from a numerical pass."""
+    return (
+        receipt.get("complete") is True
+        and receipt.get("integrity_after") is True
+        and "error" not in receipt
+        and "integrity_error" not in receipt
+    )
+
+
+def post_pytest_stream(mx):
+    """The source-bound pytest_unconfigure deliberately clears all streams."""
+    require(mx.default_device() == mx.gpu and mx.metal.is_available(), "GPU default changed")
+    stream = mx.new_stream(mx.gpu)
+    require(stream.device == mx.gpu, "Post-suite stream is not GPU")
+    mx.set_default_stream(stream)
+    require(mx.default_stream(mx.gpu) == stream, "Post-suite default stream differs")
+    return {
+        "reason": "upstream_pytest_unconfigure_clears_streams",
+        "new_gpu_stream": True,
+        "stream_index": stream.index,
+        "default_stream_verified": True,
+    }
 
 
 def stop(child, own_group=True):
@@ -1268,6 +1310,10 @@ def worker(plan_path, plan_sha, suite, output):
                 code = int(pytest.main(arguments))
             finally:
                 sys.executable = actual_executable
+                # The unchanged upstream conftest clears streams even on a
+                # collection error. Recreate only the postflight probe's stream;
+                # retain the actual test outcome and require GPU first.
+                record["post_pytest_stream"] = post_pytest_stream(mx)
             record["descendant_routing"]["children"] = audit_descendants(
                 output,
                 os.getpid(),
@@ -1511,6 +1557,15 @@ def audit_execution(row, plan, plan_sha, expected, runtime, selected_receipt, pr
     )
     raw = receipt["raw"]
     if row["name"] == "mlx_python":
+        stream = receipt.get("post_pytest_stream", {})
+        require(
+            stream.get("reason") == "upstream_pytest_unconfigure_clears_streams"
+            and stream.get("new_gpu_stream") is True
+            and stream.get("default_stream_verified") is True
+            and type(stream.get("stream_index")) is int
+            and stream["stream_index"] >= 0,
+            "Missing post-pytest GPU stream proof",
+        )
         require(
             process["pid"] == execution["pid"]
             and process["command"] == execution["command"]
@@ -1607,11 +1662,12 @@ def run(plan_path, plan_sha, output):
                 timeout=LIMITS[suite + "_seconds"] + LIMITS["wrapper_grace_seconds"],
                 output=output,
             )
-            row = {"name": suite, "launcher": execution, "passed": False}
+            row = {"name": suite, "launcher": execution, "complete": False, "passed": False}
             summary["suites"].append(row)
             receipt_path = destination / "receipt.json"
             if receipt_path.exists():
                 row["receipt"] = binding(receipt_path)
+                row["complete"] = completed_receipt(read_json(receipt_path))
                 row["passed"] = audit_execution(
                     row,
                     plan,
@@ -1633,7 +1689,10 @@ def run(plan_path, plan_sha, output):
                 selected_receipt,
                 backend.validate_compilation_probe,
             )
-        summary.update(complete=True, passed=all(row["passed"] for row in summary["suites"]))
+        summary.update(
+            complete=all(row["complete"] for row in summary["suites"]),
+            passed=all(row["passed"] for row in summary["suites"]),
+        )
     except BaseException:
         summary["error"] = traceback.format_exc()
     finally:
@@ -1648,6 +1707,7 @@ def main():
     for name in ("runtime-root", "runtime-inventory", "selection", "receipt", "output"):
         p.add_argument("--" + name, type=Path, required=True)
     p.add_argument("--receipt-sha256", required=True)
+    p.add_argument("--suite-contract", choices=("original", "torch-dev-compat"), default="original")
     for name in ("run", "worker"):
         p = subs.add_parser(name)
         p.add_argument("--plan", type=Path, required=True)
@@ -1679,6 +1739,7 @@ def main():
             args.receipt.resolve(strict=True),
             args.receipt_sha256,
             args.output.absolute(),
+            suite_contract=args.suite_contract,
         )
         print(json.dumps(result, indent=2))
         return 0
