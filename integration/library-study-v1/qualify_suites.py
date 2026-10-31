@@ -1,6 +1,6 @@
 """Reaudit complete NumPy 2 suites from raw evidence without executing devices.
 
-Use the independently installed audit Python. Neither selected candidate package
+Use the captured canonical interpreter with -I -S -B. Neither selected candidate package
 paths nor reserved operands are activated. Existing frozen component validators
 retain the complete test inventories, stock fixture and descendant requirements.
 """
@@ -47,7 +47,10 @@ def imports(saved, inventory, project):
 
 
 def execute(args):
-    C.require(sys.flags.isolated and sys.flags.dont_write_bytecode, "Use audit Python -I -B")
+    C.require(
+        sys.flags.isolated and sys.flags.no_site and sys.flags.dont_write_bytecode,
+        "Use captured canonical Python -I -S -B",
+    )
     C.require(
         not any(n.split(".", 1)[0] in {"transformer", "torch", "mlx"} for n in sys.modules),
         "Fresh independent audit process required",
