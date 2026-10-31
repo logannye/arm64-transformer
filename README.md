@@ -162,8 +162,11 @@ historical gradient anchors on both M4/SME and hosted M1/NEON, with independent
 raw-array audits. Custom MPS also passes the complete historical gradient
 inventory. Compiled MLX's retained policy-7 failure was localized to an FF1/ReLU
 rounding error; its policy-15 replacement now passes the complete historical and
-existing-fresh inventories in separate inference and gradient audits. New
-training/restart checks and full framework qualification remain in progress. The
+existing-fresh inventories in separate inference and gradient audits. Native
+policy-15 training and saved-Adam restarts now replay exactly at both widths;
+all five development implementations pass the resulting 20 common-state probes
+in separate inference and gradient audits. Maintained-framework arithmetic
+repairs and full qualification remain unfinished. The
 [CPU report](experiments/width-sweep-v6/README.md) retains learning curves,
 quality, memory and prediction-level errors. Historical CPU measurements are
 separate from the new GPU development experiments.

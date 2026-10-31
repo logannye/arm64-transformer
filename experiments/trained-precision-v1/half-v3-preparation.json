@@ -1,7 +1,7 @@
 {
   "schema": "trained-precision-half-v3-preparation-v1",
   "status": "prepared_not_device_qualified",
-  "project_revision": "697bc9c05e792e31571a5fbff5fa4ae0a8b22c81",
+  "project_revision": "29fffcc7b3f38c476fd9d73ed89448464a7d4423",
   "hosted_run": "41125186309",
   "hosted_project_revision": "11fd196ed3665178f389e9c25256c3561b14fe5f",
   "hosted_artifact_sha256": "a2b311ec1886804a9be6d348c5bbafb4276ce9b4730da13ae18a41a93b534741",
@@ -12,10 +12,10 @@
   "source_members": 146435,
   "source_symlinks": 21,
   "runtime_payload_files": 15707,
-  "capture_sha256": "4a6636634c33588db1fd85722a6b665c0ffccc4cc8a7d802b41eb41da741019b",
-  "runtime_receipt_sha256": "b53a6a93bf100c40ceb562a30f85d72c0d3b77fc6079a7909a1202aa4a22aaca",
-  "focused_plan_sha256": "888d453a1ab6f12bb18dadf5a87a8e92b280f11bd137f267727d9a9c9e16d87f",
-  "full_suite_plan_sha256": "226f55fbc36e7d15cdca3737d40636f2c263f369b19d02b91a85e4a7b5c154d5",
+  "capture_sha256": "309edb6946c8de83f13097847f63700b14a8321c6b5e4d5654e1d9906b236651",
+  "runtime_receipt_sha256": "1a74620de657ad76db1cb2f71400e46bbb35dbf8f83a708b8d3b8d31396b2ea1",
+  "focused_plan_sha256": "71b000ed2000d51ac15caca4c4723ba99f192cb5ac5532fffde58bf4be689c76",
+  "full_suite_plan_sha256": "a5f738353e2322d98bb181f3c9ea1b558da688a1b162edd55ac28a5be7a5e3a8",
   "focused_methods": 34,
   "full_suite_methods": 10357,
   "prepared_without_framework_import_or_compilation": true,
@@ -25,14 +25,31 @@
   "formal_eligible": false,
   "formal_fits": 0,
   "admission_stream_opened": false,
-  "local_evidence_directory": "work/hosted-half-v3-validated",
+  "local_evidence_directory": "work/captured-model-runtime-v1",
   "limits": "Prepared identities only; source/runtime qualification and arithmetic repair remain separate",
-  "mlx_suite_plan_sha256": "d7724421dc3a082c48a0e1aca9c94f9ea6bc6608fa3598ff1cf88f1bd71e271c",
+  "mlx_suite_plan_sha256": "4e9635324ed3124a8171666d4cb49c2b735fc7e772be71547bccb9acb1a682be",
   "mlx_cpp_cases": 305,
   "mlx_cpp_assertions": 4792,
   "mlx_python_cases": 1053,
   "mlx_python_passing_subtests": 17701,
   "mlx_python_skip_identities_unchanged": 7,
   "mlx_added_gpu_regressions": 27,
-  "mlx_test_source_files": 73
+  "mlx_test_source_files": 73,
+  "superseded_preparation": {
+    "project_revision": "697bc9c05e792e31571a5fbff5fa4ae0a8b22c81",
+    "capture_sha256": "4a6636634c33588db1fd85722a6b665c0ffccc4cc8a7d802b41eb41da741019b",
+    "runtime_receipt_sha256": "b53a6a93bf100c40ceb562a30f85d72c0d3b77fc6079a7909a1202aa4a22aaca",
+    "focused_plan_sha256": "888d453a1ab6f12bb18dadf5a87a8e92b280f11bd137f267727d9a9c9e16d87f",
+    "full_suite_plan_sha256": "226f55fbc36e7d15cdca3737d40636f2c263f369b19d02b91a85e4a7b5c154d5",
+    "mlx_suite_plan_sha256": "d7724421dc3a082c48a0e1aca9c94f9ea6bc6608fa3598ff1cf88f1bd71e271c",
+    "device_workers_executed": 0
+  },
+  "runtime_identity_sha256": "5698e6f6f07655d54f249533e28aabdfa75af51f768fc9ff0c49b4ca65d2d3cd",
+  "same_framework_bytes_as_superseded_capture": true,
+  "retained_launcher_failure": {
+    "path": "work/aligned-framework-conformance-v2/stopped.json",
+    "sha256": "a0670621cc6b1c2ece071ae257eff10d8cd78d4a277f5bd087547a5a731d35d7",
+    "device_workers_executed": 0,
+    "reason": "Focused MPS adapter rejected MLX-only environment controls before starting workers"
+  }
 }
