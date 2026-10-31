@@ -298,7 +298,7 @@ def prepare(runtime_root, python_paths, runtime_receipt, runtime_receipt_sha256,
     return plan
 
 
-def run_worker(engine, width, destination, *, authority):
+def run_worker(engine, width, destination, *, authority, backend_factory=None, namespace=None):
     """The retained complete diagnostic, using authenticated unchanged backends."""
     authority.verify()
     check_storage(Path(destination).parent)
@@ -328,6 +328,19 @@ def run_worker(engine, width, destination, *, authority):
         tokens_for,
     )
 
+    if backend_factory is None:
+        require(namespace is None, "Stock worker namespace cannot change")
+        backend_factory = create_runtime_backend
+        namespace = (OWNED.protocol, OWNED.repeatability_contract)
+    else:
+        require(
+            namespace
+            == (
+                "trained-precision-development-v1",
+                "maintained-library-repeatability-development-v1",
+            ),
+            "Explicit backend factory requires the separate development namespace",
+        )
     stages = list(STAGES)
     authority.verify()
     runtime_identity_sha256 = identity(json.loads(authority.inventory_json)["files"])
@@ -342,10 +355,10 @@ def run_worker(engine, width, destination, *, authority):
     from transformer.reference import Transformer
 
     initial = Transformer(seed=SEED).flat_parameters()
-    backend = create_runtime_backend(engine, initial, authority=authority)
+    backend = backend_factory(engine, initial, authority=authority)
     report = {
-        "contract": OWNED.repeatability_contract,
-        "protocol": OWNED.protocol,
+        "contract": namespace[1],
+        "protocol": namespace[0],
         "runtime_receipt_sha256": authority.receipt_sha256,
         "scope": "development_only",
         "engine": engine,
@@ -385,7 +398,7 @@ def run_worker(engine, width, destination, *, authority):
             # fresh ordinary backend isolates the next declared case; its failed
             # predecessor and skipped repetitions remain explicit failures.
             backend = None
-            backend = create_runtime_backend(engine, initial, authority=authority)
+            backend = backend_factory(engine, initial, authority=authority)
             backend.load_state(initial_state)
             recovery["fresh_backend"] = True
             _write_json(destination / result["name"] / "result.json", result)
@@ -562,6 +575,23 @@ def run_worker(engine, width, destination, *, authority):
     finally:
         if backend is not None:
             try:
+                if namespace[0] == "trained-precision-development-v1" and engine == "mlx":
+                    graph = backend._training_graph
+                    require(
+                        isinstance(graph, str)
+                        and "Compiled" in graph
+                        and backend._training_python_traces == 1,
+                        "Actual training graph must compile once across repeated updates",
+                    )
+                    graph_path = destination / "training-loss.dot"
+                    with graph_path.open("x") as stream:
+                        stream.write(graph)
+                    report["compiled_training"] = {
+                        "graph": "training-loss.dot",
+                        "sha256": digest(graph_path),
+                        "bytes": graph_path.stat().st_size,
+                        "python_trace_count": backend._training_python_traces,
+                    }
                 report["capabilities_after"] = backend.capabilities()
                 authority.verify()
                 report["storage_after"] = check_storage(Path(destination).parent)
