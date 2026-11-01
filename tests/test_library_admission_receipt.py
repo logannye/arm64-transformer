@@ -141,9 +141,10 @@ def test_only_recorded_children_and_unchanged_science_can_be_recovered(monkeypat
             "/failed": failed,
             "/stopped": stopped,
             "/job": dict(raw_store="/raw"),
+            "/old": previous,
         }[b["path"]],
     )
-    monkeypatch.setattr(W.F, "read", lambda *args: previous)
+    monkeypatch.setattr(W.F, "read", lambda *args: pytest.fail("Current validator on old source"))
     monkeypatch.setattr(W.A, "verify_role", lambda role, **kw: role)
     if mutation is None:
         assert W.child_recovery(job, manifest) == (recovery, previous)

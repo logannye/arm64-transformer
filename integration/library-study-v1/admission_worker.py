@@ -42,7 +42,7 @@ def child_recovery(job, manifest):
     recovery = F.PLAN.load(binding)
     failed = F.PLAN.load(recovery["failed_parent"])
     stopped = F.PLAN.load(recovery["stopped"])
-    previous = F.read(recovery["manifest"]["path"], recovery["manifest"]["sha256"])
+    previous = F.PLAN.load(recovery["manifest"])
     old, new = previous["bindings"], manifest["bindings"]
     producer = A.verify_role(old["roles"]["control"], control=True)
     C.require(
