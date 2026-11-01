@@ -198,7 +198,16 @@ differences. Matching CPU order and improving FP64 accuracy are distinct goals.
 The [diagnostics and repair notes](integration/gpu-owned/MPS-REPAIR-NOTES.md)
 retain raw evidence and distinguish source candidates from validated fixes.
 
-**The new study is still at 0 of 180 fits.** The retained broad MPS failures
+The maintained-library successor now has an approved
+[staged completion amendment](experiments/gpu-v5-library-phase1/AMENDMENT.md):
+**120 first-phase fits at widths 32–256**, with all five engines, three seeds,
+two repeats and every required checkpoint/oracle comparison. At amendment,
+formal progress is **0/120**; the **60 fits at widths 512/1024 are deferred**.
+The original six-width contract and its positive and negative evidence remain
+preserved. First-phase acceptance will not claim completion of the original
+180-fit study or qualification of the deferred widths.
+
+**The earlier owned-study route remains at 0 of 180 fits.** Its retained broad MPS failures
 remain blocking. Rebuilt frameworks must pass integration and full-workload
 checks before identity-bound admission, fresh CPU anchors, formal fits and the
 checkpoint audit. Reserved owned-study stream `20261108` remains unopened.

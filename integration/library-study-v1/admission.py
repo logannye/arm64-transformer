@@ -21,7 +21,7 @@ def load(name):
 
 A, F, Q = (load(n) for n in ("authority", "frozen", "qualify"))
 C = A.C
-WIDTHS = (32, 64, 128, 256, 512, 1024)
+WIDTHS = C.WIDTHS
 COMPLETED_WIDTH_BINDINGS = {
     32: "17d9aee5125310e6a7301b6eb74a948e0604f8d809652204e53f7055f1b8eb63",
     64: "26c7dd11e683824f7300dcc7d1b64c07aa70b28788057a316adea006f0f66b18",
@@ -48,16 +48,29 @@ def reuse_source(manifest, width, binding):
         and producer["revision"] == "143c58c400151ef4ef834bf9c56da5ce91e7eaed"
         and old["roles"]["math"] == new["roles"]["math"]
         and all(old[k] == new[k] for k in ("capture", "fixtures", "native_assets", "hardware"))
+        and previous["protocol"] == C.ORIGINAL_PROTOCOL
+        and manifest["protocol"] == C.PROTOCOL
+        and previous["comparison"] == C.original_comparison()
+        and manifest["comparison"] == C.comparison()
         and all(
             previous[k] == manifest[k]
             for k in previous
-            if k not in ("bindings", "source_roles", "frozen_utc")
+            if k not in ("bindings", "source_roles", "frozen_utc", "protocol", "comparison")
         ),
         "Completed admission reuse changed scientific, runtime or source identity",
     )
     allowed = {
         "integration/library-study-v1/" + name
-        for name in ("admission.py", "admission_worker.py", "audit_admission.py")
+        for name in (
+            "admission.py",
+            "admission_worker.py",
+            "audit_admission.py",
+            "contract.py",
+            "qualification_plan.py",
+            "campaign.py",
+            "audit_campaign.py",
+            "report.py",
+        )
     }
     current = new["roles"]["control"]
     C.require(

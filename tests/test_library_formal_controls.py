@@ -53,7 +53,7 @@ def test_repeats_ignore_only_timing_and_reject_checkpoint_or_loss_changes(tmp_pa
 
 def test_storage_budget_retains_both_checkpoints_and_all_five_arms():
     estimate = CAM.storage_estimate()
-    raw = 360 * 2 * 256 * 32 * 128 * (5 * 4 + 8)
+    raw = 240 * 2 * 256 * 32 * 128 * (5 * 4 + 8)
     assert estimate["components_bytes"]["five_engine_and_fp64_best_and_last"] == raw
     assert estimate["required_free_bytes"] > raw
 
@@ -171,7 +171,7 @@ def test_summary_uses_all_six_fits_and_paired_seed_ratios():
             )
         )
     result = report.summarize(rows)
-    assert len(result["groups"]) == len(result["cpu_torch_relative"]) == 30
+    assert len(result["groups"]) == len(result["cpu_torch_relative"]) == 20
     native = next(r for r in result["cpu_torch_relative"] if r["engine"] == "cpu_arm64")
     assert (
         native["median_paired_training_speedup"] == native["median_paired_resident_b1_speedup"] == 2

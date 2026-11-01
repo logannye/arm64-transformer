@@ -1,4 +1,4 @@
-"""Measure the original 180-cell rotation, one admitted fresh process at a time."""
+"""Measure the amended scope in original rotation, one admitted process at a time."""
 
 import argparse
 import importlib.util
@@ -29,12 +29,14 @@ C = A.C
 
 def storage_estimate():
     """Reserve both best and last checkpoint replay, with no compression credit."""
-    parameters = sum(8 * w * w + 301 * w + 128 for w in (32, 64, 128, 256, 512, 1024))
+    comparison = C.comparison()
+    fits = len(comparison["cells"])
+    parameters = sum(8 * w * w + 301 * w + 128 for w in comparison["workload"]["widths"])
     parts = dict(
         four_parameter_states=30 * 4 * 4 * parameters,
-        saved_test_logits=180 * 256 * 32 * 128 * 4,
-        five_engine_and_fp64_best_and_last=360 * 2 * 256 * 32 * 128 * (5 * 4 + 8),
-        metadata_and_graphs=180 * 16 * 1024**2 + 360 * 1024**2,
+        saved_test_logits=fits * 256 * 32 * 128 * 4,
+        five_engine_and_fp64_best_and_last=(2 * fits) * 2 * 256 * 32 * 128 * (5 * 4 + 8),
+        metadata_and_graphs=fits * 16 * 1024**2 + (2 * fits) * 1024**2,
     )
     return dict(
         scope="conservative_uncompressed_estimate_not_reservation",
@@ -108,7 +110,8 @@ def execute(args):
         admission=admission_binding,
         status="measurement_running",
         storage_estimate=estimate,
-        planned_fits=180,
+        planned_fits=len(manifest["comparison"]["cells"]),
+        scope_amendment=manifest["comparison"]["scope_amendment"],
         attempted_fits=0,
         completed_fits=0,
         cells=[dict(cell=c, status="pending") for c in manifest["comparison"]["cells"]],
@@ -226,7 +229,8 @@ def execute(args):
     result["status"] = "measurement_failed" if failure else "measurement_complete_unaudited"
     C.write(output / "campaign.json", result)
     C.require(
-        not failure and result["completed_fits"] == 180 and result["attempted_fits"] == 180,
+        not failure
+        and result["completed_fits"] == result["attempted_fits"] == result["planned_fits"],
         "Formal campaign incomplete; partial evidence retained",
     )
     return result

@@ -73,7 +73,10 @@ def reuse_context(binding, capture):
     )
     old_comparison = previous.C.comparison()
     old_comparison["model_selection"]["cpu_torch"]["stages"].append("ff1")
-    C.require(old_comparison == C.comparison(), "Changes exceed the approved CPU FF1 selection")
+    C.require(
+        old_comparison == C.original_comparison(),
+        "Changes exceed the approved CPU FF1 selection",
+    )
     replacements = {
         "integration/trained-precision/audit_replay.py": (
             (
@@ -438,7 +441,9 @@ def build(inputs, capture, inventories, raw_store, *, reuse=None):
         inventories=inventories,
         raw_store=str(raw_store),
         reuse=reuse_binding,
-        jobs=jobs,
+        jobs=[j for j in jobs if j["width"] in C.WIDTHS],
+        scope_amendment=C.comparison()["scope_amendment"],
+        retained_deferred_job_count=sum(j["width"] in C.DEFERRED_WIDTHS for j in jobs),
         acceptance="every scheduled raw audit must execute and pass its declared requirement",
         formal_eligible=False,
         formal_fits=0,

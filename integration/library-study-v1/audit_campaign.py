@@ -1,4 +1,4 @@
-"""Serial all-origin, all-engine best-and-last checkpoint audit after 180 fits."""
+"""Audit every scoped fit's best/last checkpoints on all five engines and oracles."""
 
 import argparse
 import importlib.util
@@ -33,7 +33,10 @@ def ledger(binding, manifest, manifest_binding, admission):
         and value["status"] == "measurement_complete_unaudited"
         and value["scientific_acceptance"] is False
         and type(value["completed_fits"]) is type(value["attempted_fits"]) is int
-        and value["completed_fits"] == value["attempted_fits"] == value["planned_fits"] == 180
+        and value["completed_fits"]
+        == value["attempted_fits"]
+        == value["planned_fits"]
+        == len(manifest["comparison"]["cells"])
         and [r["cell"] for r in value["cells"]] == manifest["comparison"]["cells"],
         "Foreign or incomplete formal campaign",
     )
@@ -90,7 +93,10 @@ def prepare_replays(campaign, output, manifest_binding, admission, raw_store):
                 )
             )
     C.require(
-        len(cases) == 360 and len(groups) == 30 and all(len(j) == 60 for j in groups.values()),
+        [r["cell"] for r in campaign["cells"]] == C.comparison()["cells"]
+        and len(cases) == 2 * len(campaign["cells"])
+        and len(groups) == len(C.WIDTHS) * len(R.ENGINES)
+        and all(len(j) == 60 for j in groups.values()),
         "Full best-and-last, five-engine replay denominator required",
     )
     return cases, groups
@@ -105,6 +111,8 @@ def execute(args):
     manifest_binding, admission = C.binding(args.manifest), C.binding(args.admission)
     C.require(manifest_binding["sha256"] == args.manifest_sha256, "Manifest trust anchor differs")
     manifest = F.read(args.manifest, args.manifest_sha256)
+    fits = len(manifest["comparison"]["cells"])
+    test_predictions = manifest["comparison"]["planned_test_token_predictions"]
     AD.verify(manifest, manifest_binding, admission)
     campaign_binding = C.binding(args.campaign)
     campaign = ledger(campaign_binding, manifest, manifest_binding, admission)
@@ -151,12 +159,13 @@ def execute(args):
         manifest=manifest_binding,
         admission=admission,
         campaign=campaign_binding,
-        planned_fits=180,
-        completed_fits=180,
-        planned_checkpoints=360,
+        planned_fits=fits,
+        completed_fits=fits,
+        planned_checkpoints=2 * fits,
+        scope_amendment=manifest["comparison"]["scope_amendment"],
         audited_checkpoints=0,
         reports=[],
-        planned_test_token_predictions=1474560,
+        planned_test_token_predictions=test_predictions,
         scientific_acceptance=False,
     )
     C.write(output / "started.json", result)
@@ -215,7 +224,8 @@ def execute(args):
             )
             selected_replays[record["job"]["path"]] = record["receipt"]
     C.require(
-        len(selected_replays) == 1800, "All five engines must replay every best and last checkpoint"
+        len(selected_replays) == 2 * fits * len(R.ENGINES),
+        "All five engines must replay every best and last checkpoint",
     )
     for case in cases:
         row, checkpoint = case["row"], case["checkpoint"]
@@ -301,9 +311,9 @@ def execute(args):
     result.update(
         complete=True,
         repeat_checks=repeats,
-        scientific_acceptance=len(repeats) == 90
+        scientific_acceptance=len(repeats) == fits // 2
         and all(r["passed"] for r in repeats)
-        and len(result["reports"]) == 360
+        and len(result["reports"]) == 2 * fits
         and all(r["passed"] for r in result["reports"]),
         audited_test_token_predictions=sum(
             F.PLAN.load(r["report"])["quality"]["tokens"]
@@ -312,7 +322,7 @@ def execute(args):
         ),
     )
     C.require(
-        result["audited_test_token_predictions"] == 1474560,
+        result["audited_test_token_predictions"] == test_predictions,
         "Postrun prediction denominator differs",
     )
     ledger(campaign_binding, manifest, manifest_binding, admission)

@@ -167,13 +167,15 @@ def test_completed_width_reuse_preserves_original_contract_and_source(monkeypatc
         },
     )
     previous = dict(
-        protocol="frozen",
+        protocol=A.C.ORIGINAL_PROTOCOL,
+        comparison=A.C.original_comparison(),
         bindings=dict(
             roles=dict(control=producer, math=dict(root="/math")),
             **{k: k for k in ("capture", "fixtures", "native_assets", "hardware")},
         ),
     )
     manifest = copy.deepcopy(previous)
+    manifest.update(protocol=A.C.PROTOCOL, comparison=A.C.comparison())
     manifest["bindings"]["roles"]["control"]["files"][
         "integration/library-study-v1/admission.py"
     ] = "isolated"

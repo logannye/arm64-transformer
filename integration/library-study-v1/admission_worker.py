@@ -94,7 +94,7 @@ def validate_job(job):
     C.require(
         set(job) == keys
         and type(job["width"]) is int
-        and job["width"] in W.N.WIDTHS
+        and job["width"] in C.WIDTHS
         and type(job["parent_pid"]) is int
         and job["parent_pid"] > 0,
         "Frozen admission job fields or width differ",

@@ -15,7 +15,7 @@ C, F, AD = AUDIT.C, AUDIT.F, AUDIT.AD
 def summarize(reports):
     groups, ratios = [], []
     engines = AUDIT.R.ENGINES
-    for width in (32, 64, 128, 256, 512, 1024):
+    for width in C.WIDTHS:
         for engine in engines:
             selected = [
                 r for r in reports if r["cell"]["width"] == width and r["cell"]["engine"] == engine
@@ -85,6 +85,8 @@ def execute(args):
     manifest_binding = C.binding(args.manifest)
     C.require(manifest_binding["sha256"] == args.manifest_sha256, "Manifest trust anchor differs")
     manifest = F.read(args.manifest, args.manifest_sha256)
+    fits = len(manifest["comparison"]["cells"])
+    test_predictions = manifest["comparison"]["planned_test_token_predictions"]
     binding = C.binding(args.audit)
     C.require(binding["sha256"] == args.audit_sha256, "Campaign audit trust anchor differs")
     audit = F.PLAN.load(binding)
@@ -99,11 +101,11 @@ def execute(args):
         audit["schema"] == "frozen-library-campaign-audit-v1"
         and audit["manifest"] == manifest_binding
         and audit["complete"] is True
-        and audit["audited_checkpoints"] == 360
-        and audit["completed_fits"] == 180
-        and audit["audited_test_token_predictions"] == 1474560
+        and audit["audited_checkpoints"] == 2 * fits
+        and audit["completed_fits"] == fits
+        and audit["audited_test_token_predictions"] == test_predictions
         and [(r["cell"], r["checkpoint"]) for r in audit["reports"]] == expected
-        and len(audit["repeat_checks"]) == 90,
+        and len(audit["repeat_checks"]) == fits // 2,
         "Incomplete campaign audit",
     )
     checked = []
@@ -132,13 +134,15 @@ def execute(args):
         audit=binding,
         protocol=C.PROTOCOL,
         scientific_acceptance=accepted,
-        formal_fits=180,
-        checkpoints=360,
-        test_token_predictions=1474560,
+        formal_fits=fits,
+        checkpoints=2 * fits,
+        test_token_predictions=test_predictions,
+        scope_amendment=manifest["comparison"]["scope_amendment"],
         hardware=manifest["bindings"]["hardware"],
         scope=(
             "Project-maintained five-engine FP32-storage transformer; original ASCII, "
-            "T32, B16 workload; resident B1 forward latency"
+            "T32, B16 workload; resident B1 forward latency; phase 1 widths 32–256 only. "
+            "Widths 512/1024 and 60 fits are deferred, not accepted. Original study incomplete."
         ),
         framework_selection=manifest["comparison"]["framework_selection"],
         model_selection=manifest["comparison"]["model_selection"],
@@ -168,8 +172,9 @@ def execute(args):
         "",
         result["scope"],
         "",
-        f"Scientific acceptance: **{accepted}**. Audited: 180 fits, 360 checkpoints, "
-        "90 repeat pairs and 1,474,560 test predictions.",
+        f"First-phase scientific acceptance: **{accepted}**. Audited: {fits} fits, "
+        f"{2 * fits} checkpoints, {fits // 2} repeat pairs "
+        f"and {test_predictions:,} test predictions.",
         "",
         "All model state uses FP32 storage. The selected CPU and GPU precision operators "
         "use the internal arithmetic declared in the frozen model selection. Framework builds "

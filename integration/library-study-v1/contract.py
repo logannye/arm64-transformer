@@ -12,13 +12,17 @@ import stat
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-PROTOCOL = "gpu-v5-library-five-engine-v3"
+ORIGINAL_PROTOCOL = "gpu-v5-library-five-engine-v3"
+PROTOCOL = "gpu-v5-library-five-engine-v4-phase1"
+WIDTHS = (32, 64, 128, 256)
+DEFERRED_WIDTHS = (512, 1024)
 SCHEMA = "frozen-library-comparison-v1"
 MATH_REVISION = "bd2cd2823038729779a217ee5b084fa06191d3a9"
 CPU_REVISION = MATH_REVISION
 ADMISSION_SEED = 20261112
 CONTRACT_SHA256 = "25b5847326ef7aee4a6580423a49c2812006cbfb6aa8ad84a365930015591714"
-INVENTORY_SHA256 = "db137963932394562e28b35b2522a82d082c54fca9438e31f52d79ce9b83ae14"
+ORIGINAL_INVENTORY_SHA256 = "db137963932394562e28b35b2522a82d082c54fca9438e31f52d79ce9b83ae14"
+INVENTORY_SHA256 = "508a41d7c4bff4ef8332efd0ba651dd63328bdb8bef2e86ad23f5063d06f8ee4"
 BASE_INVENTORY_SHA256 = "fe9ac1c29d896e5512fe5bacfa0e40771f0c533b05508d7c46bb43f08d364f3f"
 MAX_JSON_BYTES = 128 * 1024**2
 MIN_FREE_BYTES = 16 * 1024**3
@@ -123,11 +127,11 @@ def write(path, value):
         stream.write(json.dumps(value, indent=2, allow_nan=False) + "\n")
 
 
-def comparison():
+def original_comparison():
     value = read(HERE / "comparison-contract.json", CONTRACT_SHA256)
     require(
-        identity(value["gate_inventory"]) == INVENTORY_SHA256
-        and value["gate_inventory_sha256"] == INVENTORY_SHA256
+        identity(value["gate_inventory"]) == ORIGINAL_INVENTORY_SHA256
+        and value["gate_inventory_sha256"] == ORIGINAL_INVENTORY_SHA256
         and value["base_inventory_sha256"] == BASE_INVENTORY_SHA256,
         "Admission inventory changed",
     )
@@ -145,6 +149,49 @@ def comparison():
         and sum(c["engine"].startswith("cpu_") for c in value["cells"]) == 72
         and value["planned_test_token_predictions"] == 1474560,
         "Fit or test-prediction denominator changed",
+    )
+    return value
+
+
+def comparison():
+    """Apply only the approved staged-width amendment to the retained original."""
+    value = original_comparison()
+    original_fits = value["planned_fits"]
+    value["cells"] = [c for c in value["cells"] if c["width"] in WIDTHS]
+    value["gate_inventory"] = [
+        g for g in value["gate_inventory"] if int(g["id"].split("/")[1]) in WIDTHS
+    ]
+    value["gate_inventory_sha256"] = identity(value["gate_inventory"])
+    require(value["gate_inventory_sha256"] == INVENTORY_SHA256, "First-phase inventory changed")
+    value["workload"]["widths"] = list(WIDTHS)
+    value["planned_fits"] = len(value["cells"])
+    value["planned_test_token_predictions"] = (
+        len(value["cells"]) * value["workload"]["test_targets"]
+    )
+    value["required_gates"] = [
+        g.replace("all_18_", "all_12_").replace("all_width", "scoped_width")
+        for g in value["required_gates"]
+        if g != "complete_exposed_trained_state_library_forward_every_gradient_replays"
+    ]
+    # Hosted source CI still exercises every supported width; only the campaign
+    # and its numerical qualification/admission/audit inventories are scoped.
+    value["required_gates"][1] = "current_source_hosted_python_and_native_checks_all_widths"
+    value["scope_amendment"] = dict(
+        protocol=PROTOCOL,
+        original_protocol=ORIGINAL_PROTOCOL,
+        original_contract_sha256=CONTRACT_SHA256,
+        original_gate_inventory_sha256=ORIGINAL_INVENTORY_SHA256,
+        original_planned_fits=original_fits,
+        phase=1,
+        widths=list(WIDTHS),
+        deferred_widths=list(DEFERRED_WIDTHS),
+        deferred_fits=original_fits - len(value["cells"]),
+        original_study_complete=False,
+        selection_basis=(
+            "user-approved staged delivery after development and partial admission; "
+            "zero formal fits"
+        ),
+        deferred_evidence="retain all positive and negative evidence; no acceptance transfer",
     )
     return value
 

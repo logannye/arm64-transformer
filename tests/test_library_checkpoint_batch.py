@@ -97,7 +97,7 @@ def test_batch_rejects_duplicate_parameters_even_with_distinct_job_paths(tmp_pat
         B.jobs(value)
 
 
-def test_full_original_matrix_retains_360_checkpoints_and_1800_selected_replays(
+def test_complete_first_phase_retains_240_checkpoints_and_1200_selected_replays(
     tmp_path, monkeypatch
 ):
     cells = C.comparison()["cells"]
@@ -110,8 +110,8 @@ def test_full_original_matrix_retains_360_checkpoints_and_1800_selected_replays(
     output = tmp_path / "output"
     output.mkdir()
     cases, groups = AUDIT.prepare_replays(campaign, output, {}, {}, str(tmp_path / "raw"))
-    assert len(cases) == 360 and len(groups) == 30
-    assert len({b["path"] for group in groups.values() for b in group}) == 1800
+    assert len(cases) == 240 and len(groups) == 20
+    assert len({b["path"] for group in groups.values() for b in group}) == 1200
     assert [(r["row"]["cell"], r["checkpoint"]) for r in cases] == [
         (cell, checkpoint) for cell in cells for checkpoint in ("best.f32", "last.f32")
     ]
