@@ -27,11 +27,15 @@ A, F, RAW, E, WORKER, ORIGINS = (
 C = A.C
 
 
-def worker_identity(record, job, manifest, capture, inventory):
+def worker_identity(record, job, manifest, capture, inventory, *, started_only=False):
+    C.require(
+        not started_only or job["kind"] == "diagnostic_probe",
+        "Only an isolated diagnostic may have start-only failure evidence",
+    )
     C.require(
         record["schema"] == "frozen-library-admission-worker-v1"
-        and record["complete"] is True
-        and record["integrity_after"] is True
+        and record["complete"] is (not started_only)
+        and record["integrity_after"] is (not started_only)
         and record["formal_eligible"] is False
         and type(record["formal_fits"]) is int
         and record["formal_fits"] == 0
@@ -55,16 +59,17 @@ def worker_identity(record, job, manifest, capture, inventory):
 
     receipt = F.PLAN.load(capture["runtime_receipt"])
     roles = manifest["bindings"]["roles"]
-    ORIGINS.validate_validation(
-        record.get("runtime_validation_final"),
-        roles,
-        capture,
-        inventory,
-        pid=record["pid"],
-        final=True,
-    )
+    if not started_only:
+        ORIGINS.validate_validation(
+            record.get("runtime_validation_final"),
+            roles,
+            capture,
+            inventory,
+            pid=record["pid"],
+            final=True,
+        )
     imports = load("qualify_suites").imports
-    for phase in ("before", "after"):
+    for phase in ("before",) if started_only else ("before", "after"):
         proof = record["origins_" + phase]
         ORIGINS.validate_validation(
             proof.get("runtime_validation"), roles, capture, inventory, pid=record["pid"]
@@ -89,6 +94,107 @@ def worker_identity(record, job, manifest, capture, inventory):
             dict(inventory, root=capture["runtime_root"]),
             A.merged_project(roles),
         )
+
+
+def audit_diagnostic(row, spec, record, job, manifest, capture, inventory):
+    """A native abort is negative evidence, never a completed numerical worker."""
+    C.require(
+        WORKER.isolated_diagnostic(row["id"])
+        and spec["family"] == "diagnostic_precision"
+        and spec["blocking"] is False,
+        "Diagnostic isolation cannot waive another gate",
+    )
+    proof = row["diagnostic_child"]
+    task = F.PLAN.load(proof["job"])
+    WORKER.validate_job(task)
+    started = F.PLAN.load(proof["started"])
+    C.bound(proof["log"])
+    C.require(
+        task["kind"] == "diagnostic_probe"
+        and task["gate"] == row["id"]
+        and task["manifest"] == job["manifest"]
+        and task["width"] == job["width"]
+        and task["parent_pid"] == record["pid"]
+        and task["raw_store"] == job["raw_store"]
+        and task["raw_start_bytes"] == job["raw_start_bytes"]
+        and started["job"] == proof["job"]
+        and started["pid"] == proof["pid"]
+        and started["diagnostic_gate"] == row["id"]
+        and Path(proof["started"]["path"]) == Path(task["output"]) / "started.json"
+        and proof["argv"]
+        == [
+            inventory["layout"]["interpreter"],
+            "-P",
+            "-S",
+            "-B",
+            str(
+                Path(manifest["bindings"]["roles"]["control"]["root"])
+                / "integration/library-study-v1/admission_worker.py"
+            ),
+            "--job",
+            proof["job"]["path"],
+            "--job-sha256",
+            proof["job"]["sha256"],
+        ],
+        "Foreign diagnostic process, source, operands or job",
+    )
+    worker_identity(started, task, manifest, capture, inventory, started_only=True)
+    from transformer.gpu_admission_checks import _private_fixtures
+
+    C.bound(started["diagnostic_operands"])
+    with Path(started["diagnostic_operands"]["path"]).open("rb") as stream:
+        operands = RAW.decode_arrays(stream, ("qkv", "dy"))
+    case = next(
+        c
+        for c in _private_fixtures(job["width"], "attention", C.ADMISSION_SEED)
+        if c["name"] == "random_t1"
+    )
+    C.require(
+        all(
+            v.dtype == case[k].dtype
+            and v.shape == case[k].shape
+            and v.tobytes() == case[k].tobytes()
+            for k, v in operands.items()
+        ),
+        "Isolated diagnostic changed the frozen operands",
+    )
+    if WORKER.native_diagnostic_abort(proof, job["width"]):
+        C.require(
+            "receipt" not in proof
+            and not (Path(task["output"]) / "result.json").exists()
+            and row.get("status") == "runtime_error"
+            and row["passed"] is False
+            and row["members"] == row["decisions"] == {},
+            "Native diagnostic abort cannot be accepted numerical evidence",
+        )
+    else:
+        C.require(proof["returncode"] == 0, "Unrecognized diagnostic process failure")
+        saved = F.PLAN.load(proof["receipt"])
+        C.require(
+            saved["job"] == proof["job"]
+            and saved["pid"] == proof["pid"]
+            and saved["diagnostic_operands"] == started["diagnostic_operands"]
+            and saved["origins_before"] == started["origins_before"],
+            "Diagnostic receipt differs from its authenticated start",
+        )
+        worker_identity(saved, task, manifest, capture, inventory)
+        if "diagnostic_error" in saved["outputs"]:
+            error = saved["outputs"]["diagnostic_error"]
+            C.require(
+                row.get("status") == "runtime_error"
+                and error["gate"] == row["id"]
+                and error["exception_type"]
+                and error["traceback"]
+                and F.PLAN.load(row["error"])["message"] == error["message"],
+                "Missing isolated diagnostic exception evidence",
+            )
+        else:
+            C.require(
+                row.get("status") != "runtime_error"
+                and row["members"] == saved["outputs"]["members"],
+                "Isolated diagnostic raw pairs changed",
+            )
+    return proof["pid"]
 
 
 def audit_children(record, job, manifest, capture, inventory, np):
@@ -344,7 +450,16 @@ def execute(args):
         "Incomplete admission denominator",
     )
     checked = []
+    diagnostic_pids = []
     for row, spec in zip(outputs["groups"], specs, strict=True):
+        C.require(
+            ("diagnostic_child" in row) is WORKER.isolated_diagnostic(row["id"]),
+            "Missing or unexpected isolated diagnostic evidence",
+        )
+        if "diagnostic_child" in row:
+            diagnostic_pids.append(
+                audit_diagnostic(row, spec, record, job, manifest, capture, inventory)
+            )
         if row.get("status") == "runtime_error":
             C.require(
                 spec["family"] == "diagnostic_precision"
@@ -369,6 +484,11 @@ def execute(args):
         child_pids = repair["original_audit"]["child_pids"]
     else:
         child_pids = audit_children(record, job, manifest, capture, inventory, np)
+    C.require(
+        len(set(diagnostic_pids)) == len(diagnostic_pids)
+        and not set(diagnostic_pids).intersection([record["pid"], *child_pids]),
+        "Diagnostic process overlaps required repeat/restart processes",
+    )
     blocking = all(r["passed"] for r in checked if r["blocking"])
     C.require(
         outputs["blocking_passed"] is blocking, "Blocking admission result differs from raw members"
@@ -389,6 +509,7 @@ def execute(args):
         manifest=C.binding(args.manifest),
         receipt=C.binding(args.receipt),
         child_pids=child_pids,
+        diagnostic_pids=diagnostic_pids,
         device_repair=repair,
         auditor_project_origins=proof,
         formal_eligible=False,

@@ -4,6 +4,7 @@ import argparse
 import importlib.util
 import json
 import os
+import resource
 import shutil
 import signal
 import subprocess
@@ -32,10 +33,24 @@ DEVICE_REPAIR_ID = "mlx/32/control/device_execution"
 DEVICE_REPAIR_RECEIPT_SHA256 = "7345e16db79fe944bee4a27cd7e5bb354b152d818ad66df8a567048a74f5e477"
 
 
+def isolated_diagnostic(gate):
+    return gate in {f"mlx/{width}/framework_attention/random_t1" for width in (256, 512, 1024)}
+
+
+def native_diagnostic_abort(proof, width):
+    """Recognize only the reproduced SDPA view-offset assertion, never other exits."""
+    C.bound(proof["log"])
+    log = Path(proof["log"]["path"]).read_text()
+    return proof["returncode"] == -signal.SIGABRT and (
+        f"failed assertion `offset({16 * width}) must be < [buffer length]({12 * width}).'" in log
+    )
+
+
 def validate_job(job):
     C.require_execution_support()
     C.require(
-        job["schema"] == SCHEMA and job["kind"] in ("width", "repeat_training", "checkpoint_tie"),
+        job["schema"] == SCHEMA
+        and job["kind"] in ("width", "repeat_training", "checkpoint_tie", "diagnostic_probe"),
         "Unknown frozen admission job",
     )
     keys = {
@@ -48,7 +63,15 @@ def validate_job(job):
         "parent_pid",
         "raw_start_bytes",
     }
-    if job["kind"] != "width":
+    if job["kind"] == "diagnostic_probe":
+        keys.update(("engine", "gate"))
+        C.require(
+            job["engine"] == "mlx"
+            and job["gate"] == f"mlx/{job['width']}/framework_attention/random_t1"
+            and isolated_diagnostic(job["gate"]),
+            "Only the diagnosed nonblocking MLX probe may be isolated",
+        )
+    elif job["kind"] != "width":
         keys.add("engine")
         C.require(
             job["engine"] in (ENGINES if job["kind"] == "repeat_training" else ENGINES[:2]),
@@ -79,10 +102,12 @@ def validate_job(job):
     return job
 
 
-def child(context, engine, kind, job):
+def child(context, engine, kind, job, *, gate=None):
     output = context.path(kind + "-admission-child").with_suffix("")
     task = {k: job[k] for k in ("schema", "manifest", "width", "raw_store", "raw_start_bytes")}
     task.update(kind=kind, engine=engine, output=str(output), parent_pid=os.getpid())
+    if kind == "diagnostic_probe":
+        task["gate"] = gate
     if kind == "repeat_training":
         from transformer.gpu_admission_checks import _npz
 
@@ -92,6 +117,7 @@ def child(context, engine, kind, job):
             {**context.initial, "tokens": context.tokens[:3], "targets": context.targets[:3]},
         )
         task["operands"] = C.binding(operands)
+    validate_job(task)
     path, log = output.with_suffix(".job.json"), output.with_suffix(".log")
     C.write(path, task)
     argv = [
@@ -130,6 +156,26 @@ def child(context, engine, kind, job):
                 os.killpg(process.pid, signal.SIGKILL)
                 process.wait()
             raise
+    proof = dict(
+        job=C.binding(path),
+        pid=process.pid,
+        returncode=process.returncode,
+        argv=argv,
+        log=C.binding(log),
+    )
+    if kind == "diagnostic_probe":
+        proof["started"] = C.binding(output / "started.json")
+        started_record = F.PLAN.load(proof["started"])
+        C.require(
+            started_record["job"] == proof["job"]
+            and started_record["pid"] == process.pid
+            and started_record["parent_pid"] == os.getpid()
+            and started_record["diagnostic_gate"] == gate,
+            "Diagnostic did not reach the authenticated primitive call",
+        )
+        if native_diagnostic_abort(proof, job["width"]):
+            C.require(not (output / "result.json").exists(), "Aborted probe has a final receipt")
+            return None, proof
     C.require(process.returncode == 0, "Fresh admission child failed; retain its evidence")
     result_path = output / "result.json"
     result = C.read(result_path)
@@ -143,17 +189,59 @@ def child(context, engine, kind, job):
         and result["admission_stream_opened"] is True,
         "Foreign/incomplete admission child",
     )
-    context.child_proofs.append(
-        dict(
-            receipt=C.binding(result_path),
-            job=C.binding(path),
-            pid=process.pid,
-            returncode=process.returncode,
-            argv=argv,
-            log=C.binding(log),
-        )
-    )
+    proof["receipt"] = C.binding(result_path)
+    if kind == "diagnostic_probe":
+        return result["outputs"], proof
+    context.child_proofs.append(proof)
     return result["outputs"]
+
+
+def diagnostic(job, runtime, output, manifest, record):
+    from transformer.gpu_admission_checks import _fixture_family, _npz
+
+    context = CONTEXT.create(
+        runtime,
+        output,
+        job["width"],
+        manifest["bindings"]["native_assets"],
+        job["raw_store"],
+        fresh_training=None,
+        checkpoint_tie=None,
+        admission=job["manifest"],
+    )
+    try:
+        case = _fixture_family(context, "attention")["random_t1"]
+        context.backend("mlx")
+        operands = output / "diagnostic-operands.npz"
+        _npz(operands, {k: case[k] for k in ("qkv", "dy")})
+        record.update(
+            diagnostic_gate=job["gate"],
+            diagnostic_operands=C.binding(operands),
+            origins_before=runtime.origins("mlx"),
+        )
+        C.write(output / "started.json", record)
+        try:
+            pairs = context.produce("mlx", "framework_attention", "random_t1")
+        except Exception as error:
+            return dict(
+                diagnostic_error=dict(
+                    gate=job["gate"],
+                    exception_type=type(error).__name__,
+                    message=str(error) or repr(error),
+                    traceback=traceback.format_exc(),
+                )
+            )
+        # Storage errors and failed final guards remain blocking infrastructure failures.
+        return dict(
+            members={
+                name: RAW.save_pair(
+                    actual, expected, job["raw_store"], runtime.roles["math"]["root"]
+                )
+                for name, (actual, expected) in pairs.items()
+            }
+        )
+    finally:
+        context.close()
 
 
 def width(job, runtime, output, manifest):
@@ -213,15 +301,39 @@ def width(job, runtime, output, manifest):
             )
             engine, _, family, *suffix = specification["id"].split("/")
             first_cpu = len(context.cpu_operations)
+            diagnostic_proof = None
+            if isolated_diagnostic(specification["id"]):
+                C.require(
+                    specification["family"] == "diagnostic_precision"
+                    and specification["blocking"] is False,
+                    "Cannot isolate a required numerical gate as a diagnostic",
+                )
+                # Setup, disk, provenance and unexpected process errors must escape
+                # the suppressible diagnostic-operation handler below.
+                diagnosed, diagnostic_proof = child(
+                    context, engine, "diagnostic_probe", job, gate=specification["id"]
+                )
+                if diagnosed is not None and "members" in diagnosed:
+                    isolated_pairs = {
+                        name: RAW.load_pair(bound, job["raw_store"], runtime.roles["math"]["root"])
+                        for name, bound in diagnosed["members"].items()
+                    }
             try:
-                pairs = context.produce(engine, family, "/".join(suffix))
+                if diagnostic_proof is None:
+                    pairs = context.produce(engine, family, "/".join(suffix))
+                elif diagnosed is None:
+                    raise RuntimeError("Isolated MLX SDPA native buffer-offset assertion (SIGABRT)")
+                elif "diagnostic_error" in diagnosed:
+                    raise RuntimeError(diagnosed["diagnostic_error"]["message"])
+                else:
+                    pairs = isolated_pairs
             except Exception as error:
                 C.require(
                     specification["family"] == "diagnostic_precision"
                     and specification["blocking"] is False,
                     "Blocking admission operation failed",
                 )
-                failed = context.backends.pop(engine, None)
+                failed = context.backends.pop(engine, None) if diagnostic_proof is None else None
                 evidence = dict(
                     gate=specification["id"],
                     exception_type=type(error).__name__,
@@ -263,6 +375,8 @@ def width(job, runtime, output, manifest):
                     )
                 row["passed"] = all(d["passed"] for d in row["decisions"].values())
             row["cpu_operations"] = context.cpu_operations[first_cpu:]
+            if diagnostic_proof is not None:
+                row["diagnostic_child"] = diagnostic_proof
             C.write(output / "groups" / (row["id"].replace("/", "--") + ".json"), row)
             rows.append(row)
         # Diagnostic errors may retire a backend. Re-authenticate the selected
@@ -314,6 +428,8 @@ def width(job, runtime, output, manifest):
 def execute(path, expected):
     C.require_execution_support()
     job = validate_job(C.read(path, expected))
+    if job["kind"] == "diagnostic_probe":
+        resource.setrlimit(resource.RLIMIT_CORE, (0, 0))
     C.require(
         job["parent_pid"] == os.getppid()
         and os.environ.get("ARM64_TRANSFORMER_WIDTH") == str(job["width"]),
@@ -357,6 +473,8 @@ def execute(path, expected):
             result = width(job, runtime, output, manifest)
         elif job["kind"] == "repeat_training":
             result = W.repeat(derived, runtime, output)
+        elif job["kind"] == "diagnostic_probe":
+            result = diagnostic(job, runtime, output, manifest, record)
         else:
             result = W.tie(derived, runtime, output, admission=job["manifest"])
         record["outputs"] = result

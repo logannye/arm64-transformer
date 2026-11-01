@@ -22,6 +22,71 @@ def load(name):
 A, F, Q = (load(n) for n in ("authority", "frozen", "qualify"))
 C = A.C
 WIDTHS = (32, 64, 128, 256, 512, 1024)
+COMPLETED_WIDTH_BINDINGS = {
+    32: "17d9aee5125310e6a7301b6eb74a948e0604f8d809652204e53f7055f1b8eb63",
+    64: "26c7dd11e683824f7300dcc7d1b64c07aa70b28788057a316adea006f0f66b18",
+    128: "051c209df1148d8ee0ddbea7580f13944b828427689997bab7489aec91a19622",
+}
+
+
+def reuse_source(manifest, width, binding):
+    """Recover the three completed workers preceding the diagnosed width-256 abort."""
+    C.require(
+        width in COMPLETED_WIDTH_BINDINGS and binding["sha256"] == COMPLETED_WIDTH_BINDINGS[width],
+        "Only the three recorded complete admission workers may be reused",
+    )
+    original = F.PLAN.load(binding)
+    worker = F.PLAN.load(original["receipt"])
+    previous = F.PLAN.load(worker["manifest"])
+    old, new = previous["bindings"], manifest["bindings"]
+    producer = A.verify_role(old["roles"]["control"], control=True)
+    C.require(
+        original["width"] == width
+        and worker["complete"] is True
+        and worker["integrity_after"] is True
+        and worker["outputs"]["blocking_passed"] is True
+        and producer["revision"] == "143c58c400151ef4ef834bf9c56da5ce91e7eaed"
+        and old["roles"]["math"] == new["roles"]["math"]
+        and all(old[k] == new[k] for k in ("capture", "fixtures", "native_assets", "hardware"))
+        and all(
+            previous[k] == manifest[k]
+            for k in previous
+            if k not in ("bindings", "source_roles", "frozen_utc")
+        ),
+        "Completed admission reuse changed scientific, runtime or source identity",
+    )
+    allowed = {
+        "integration/library-study-v1/" + name
+        for name in ("admission.py", "admission_worker.py", "audit_admission.py")
+    }
+    current = new["roles"]["control"]
+    C.require(
+        set(producer["files"]) == set(current["files"])
+        and all(
+            producer["files"][k] == current["files"][k]
+            for k in producer["files"]
+            if k not in allowed
+        ),
+        "Completed admission reuse changed unrelated execution controls",
+    )
+    return original, worker["manifest"], producer
+
+
+def reuse_audit_argv(python, producer, manifest_binding, receipt):
+    return [
+        str(python),
+        "-I",
+        "-B",
+        str(Path(producer["root"]) / "integration/library-study-v1/audit_admission.py"),
+        "--manifest",
+        manifest_binding["path"],
+        "--manifest-sha256",
+        manifest_binding["sha256"],
+        "--receipt",
+        receipt["path"],
+        "--receipt-sha256",
+        receipt["sha256"],
+    ]
 
 
 def verify(manifest, manifest_binding, binding):
@@ -42,14 +107,33 @@ def verify(manifest, manifest_binding, binding):
     )
     observed = []
     for row in value["widths"]:
+        producer_manifest = manifest_binding
+        if "reused_from" in row:
+            original, producer_manifest, producer = reuse_source(
+                manifest, row["width"], row["reused_from"]
+            )
+            execution = row["audit_execution"]
+            for name in ("stdout", "stderr"):
+                C.bound(execution[name])
+            C.require(
+                row["receipt"] == original["receipt"]
+                and row["worker_execution"] == original["worker_execution"]
+                and execution["exit_code"] == 0
+                and execution["stdout"] == row["audit"]
+                and execution["argv"]
+                == reuse_audit_argv(
+                    execution["argv"][0], producer, producer_manifest, row["receipt"]
+                ),
+                "Completed worker requires an independent original-source re-audit",
+            )
         worker, audit = F.PLAN.load(row["receipt"]), F.PLAN.load(row["audit"])
         C.require(
             worker["complete"] is True
             and worker["integrity_after"] is True
-            and worker["manifest"] == manifest_binding
+            and worker["manifest"] == producer_manifest
             and worker["outputs"]["blocking_passed"] is True
             and audit["schema"] == "frozen-library-admission-width-audit-v1"
-            and audit["manifest"] == manifest_binding
+            and audit["manifest"] == producer_manifest
             and audit["receipt"] == row["receipt"]
             and audit["evidence_valid"] is True
             and audit["blocking_passed"] is True
@@ -134,6 +218,32 @@ def execute(args):
     )
     for width in WIDTHS:
         F.verify(manifest)
+        env = dict(environment, ARM64_TRANSFORMER_WIDTH=str(width))
+        if args.reuse_admission is not None and width in COMPLETED_WIDTH_BINDINGS:
+            prior_binding = C.binding(args.reuse_admission / f"width-{width}-binding.json")
+            original, producer_manifest, producer = reuse_source(manifest, width, prior_binding)
+            saved = F.PLAN.load(original["receipt"])
+            C.require(
+                saved["outputs"]["raw_store"] == str(Path(args.raw_store).absolute()),
+                "Reused admission raw store differs",
+            )
+            argv = reuse_audit_argv(
+                args.audit_python, producer, producer_manifest, original["receipt"]
+            )
+            audited, execution = Q.run(argv, f"width-{width}-audit", output, env)
+            C.require(
+                audited["evidence_valid"] is True and audited["blocking_passed"] is True,
+                "Completed admission worker failed independent re-audit",
+            )
+            row = dict(
+                original,
+                audit=execution["stdout"],
+                audit_execution=execution,
+                reused_from=prior_binding,
+            )
+            rows.append(row)
+            C.write(output / f"width-{width}-binding.json", row)
+            continue
         destination = output / f"width-{width}"
         job = dict(
             schema="frozen-library-admission-job-v1",
@@ -150,7 +260,6 @@ def execute(args):
             load("admission_worker").validate_job(job)
         job_path = output / f"width-{width}-job.json"
         C.write(job_path, job)
-        env = dict(environment, ARM64_TRANSFORMER_WIDTH=str(width))
         argv = [
             inventory["layout"]["interpreter"],
             "-P",
@@ -210,4 +319,5 @@ if __name__ == "__main__":
     parser.add_argument("--raw-store", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--device-repair-receipt", type=Path)
+    parser.add_argument("--reuse-admission", type=Path)
     execute(parser.parse_args())
