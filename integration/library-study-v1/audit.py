@@ -7,6 +7,7 @@ source; this never activates the selected candidate package paths or trains.
 import argparse
 import importlib.util
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -39,7 +40,43 @@ def project_origins(role, modules):
     return result
 
 
-def validate_origins(proof, roles, capture, inventory, engine):
+def validate_validation(proof, roles, capture, inventory, *, pid=None, final=False):
+    """Bind the new guard policy to its worker and complete captured context."""
+    if A.CONTROL_PREFIX + "runtime_guard.py" not in roles["control"]["files"]:
+        return
+    C.require(isinstance(proof, dict), "Missing process-local runtime guard proof")
+    receipt = C.read(C.bound(capture["runtime_receipt"]))
+    roots = sorted(
+        {
+            *inventory["layout"]["scan_roots"],
+            *(r["root"] for r in roles.values()),
+            str(Path(capture["runtime_receipt"]["path"]).parent),
+            *(r["payload_root"] for r in receipt["frameworks"].values()),
+            *(str(Path(r["manifest"]["path"]).parent) for r in receipt["frameworks"].values()),
+        }
+    )
+    C.require(
+        proof["schema"] == "process-local-runtime-guard-v1"
+        and proof["mode"] == "full_hash_then_complete_unchanged_inventory"
+        and type(proof["pid"]) is int
+        and proof["pid"] > 0
+        and (pid is None or proof["pid"] == pid)
+        and type(proof["full_authentications"]) is int
+        and proof["full_authentications"] >= (2 if final else 1)
+        and type(proof["guard_checks"]) is int
+        and proof["guard_checks"] >= proof["full_authentications"]
+        and type(proof["entries"]) is int
+        and len(inventory["files"]) <= proof["entries"] <= 250_000
+        and proof["roots"] == roots
+        and re.fullmatch("[0-9a-f]{64}", proof["metadata_fingerprint_sha256"]) is not None
+        and proof["runtime_identity_sha256"] == capture["runtime_identity_sha256"]
+        and proof["inventory_identity_sha256"] == C.identity(inventory)
+        and proof["source_roles_sha256"] == C.identity(roles),
+        "Invalid process-local runtime guard context or final authentication",
+    )
+
+
+def validate_origins(proof, roles, capture, inventory, engine, *, pid=None):
     """Validate retained live origins without importing the selected runtime."""
     from transformer.gpu_owned_backend import (
         validate_compilation_probe,
@@ -51,6 +88,7 @@ def validate_origins(proof, roles, capture, inventory, engine):
         and proof["source_roles_sha256"] == C.identity(roles),
         "Retained runtime/source identity differs",
     )
+    validate_validation(proof.get("runtime_validation"), roles, capture, inventory, pid=pid)
     receipt = C.read(C.bound(capture["runtime_receipt"]))
     C.require(
         proof["numpy"]["version"]

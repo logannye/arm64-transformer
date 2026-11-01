@@ -330,7 +330,7 @@ def execute(path, expected):
             result = W.tie(derived, runtime, output, admission=job["manifest"])
         record["outputs"] = result
         record["origins_after"] = runtime.origins(origin_engine)
-        runtime.recheck()
+        record["runtime_validation_final"] = runtime.finish()
         C.require(C.binding(path)["sha256"] == expected, "Admission job changed")
         record.update(complete=True, integrity_after=True)
     except BaseException:

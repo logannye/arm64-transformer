@@ -48,6 +48,54 @@ def ledger(binding, manifest, manifest_binding, admission):
     return value
 
 
+def prepare_replays(campaign, output, manifest_binding, admission, raw_store):
+    """Freeze every original job before grouping only its untimed execution."""
+    cases, groups = [], {}
+    for index, row in enumerate(campaign["cells"]):
+        for checkpoint in ("best.f32", "last.f32"):
+            label = f"cell-{index:03d}-{checkpoint[:-4]}"
+            destination = output / label
+            destination.mkdir()
+            base = dict(
+                manifest=manifest_binding,
+                admission=admission,
+                cell_receipt=row["receipt"],
+                checkpoint=checkpoint,
+                raw_store=raw_store,
+            )
+            jobs = {}
+            for engine in (*R.ENGINES, "oracle"):
+                path = destination / (engine + "-job.json")
+                C.write(
+                    path,
+                    dict(
+                        base,
+                        schema="frozen-library-checkpoint-job-v1",
+                        engine=engine,
+                        output=str(destination / engine),
+                        parent_pid=os.getpid(),
+                    ),
+                )
+                jobs[engine] = C.binding(path)
+                if engine != "oracle":
+                    groups.setdefault((row["cell"]["width"], engine), []).append(jobs[engine])
+            cases.append(
+                dict(
+                    label=label,
+                    destination=destination,
+                    base=base,
+                    row=row,
+                    checkpoint=checkpoint,
+                    jobs=jobs,
+                )
+            )
+    C.require(
+        len(cases) == 360 and len(groups) == 30 and all(len(j) == 60 for j in groups.values()),
+        "Full best-and-last, five-engine replay denominator required",
+    )
+    return cases, groups
+
+
 def execute(args):
     C.require_execution_support()
     C.require(
@@ -112,92 +160,129 @@ def execute(args):
         scientific_acceptance=False,
     )
     C.write(output / "started.json", result)
-    for index, row in enumerate(campaign["cells"]):
-        for checkpoint in ("best.f32", "last.f32"):
-            label = f"cell-{index:03d}-{checkpoint[:-4]}"
-            destination = output / label
-            destination.mkdir()
-            base = dict(
+    cases, groups = prepare_replays(
+        campaign, output, manifest_binding, admission, request["raw_store"]
+    )
+    batch_root = output / "batches"
+    batch_root.mkdir()
+    selected_replays, batch_proofs = {}, {}
+    for (width, engine), bindings in sorted(groups.items()):
+        name = f"w{width}-{engine}"
+        path = batch_root / (name + "-job.json")
+        C.write(
+            path,
+            dict(
+                schema="frozen-library-checkpoint-batch-job-v1",
                 manifest=manifest_binding,
                 admission=admission,
-                cell_receipt=row["receipt"],
-                checkpoint=checkpoint,
-                raw_store=request["raw_store"],
-            )
-            replays = {}
-            environment = dict(env, ARM64_TRANSFORMER_WIDTH=str(row["cell"]["width"]))
-            for engine in (*R.ENGINES, "oracle"):
-                job = dict(
-                    base,
-                    schema="frozen-library-checkpoint-job-v1",
-                    engine=engine,
-                    output=str(destination / engine),
-                    parent_pid=os.getpid(),
-                )
-                path = destination / (engine + "-job.json")
-                C.write(path, job)
-                python = (
-                    args.audit_python if engine == "oracle" else inventory["layout"]["interpreter"]
-                )
-                flags = ["-I", "-B"] if engine == "oracle" else ["-P", "-S", "-B"]
-                reply, _ = Q.run(
-                    [
-                        str(python),
-                        *flags,
-                        str(HERE / "checkpoint_replay.py"),
-                        "--job",
-                        str(path),
-                        "--job-sha256",
-                        C.binding(path)["sha256"],
-                    ],
-                    engine + "-execution",
-                    destination,
-                    environment,
-                )
-                C.require(reply["complete"] is True, "Incomplete checkpoint replay")
-                replays[engine] = reply["receipt"]
-            job = dict(
-                base,
-                schema="frozen-library-checkpoint-audit-job-v1",
-                replays=replays,
-                replay_root=str(destination),
-            )
-            path = destination / "audit-job.json"
-            C.write(path, job)
-            report, execution = Q.run(
-                [
-                    str(args.audit_python),
-                    "-I",
-                    "-B",
-                    str(HERE / "audit_checkpoint.py"),
-                    "--job",
-                    str(path),
-                    "--job-sha256",
-                    C.binding(path)["sha256"],
-                ],
-                "independent-audit",
-                destination,
-                environment,
-            )
+                width=width,
+                engine=engine,
+                jobs=bindings,
+                output=str(batch_root / name),
+                parent_pid=os.getpid(),
+            ),
+        )
+        reply, _ = Q.run(
+            [
+                inventory["layout"]["interpreter"],
+                "-P",
+                "-S",
+                "-B",
+                str(HERE / "checkpoint_batch.py"),
+                "--job",
+                str(path),
+                "--job-sha256",
+                C.binding(path)["sha256"],
+            ],
+            name + "-execution",
+            batch_root,
+            dict(env, ARM64_TRANSFORMER_WIDTH=str(width)),
+        )
+        C.require(reply["complete"] is True, "Incomplete selected replay batch")
+        batch = F.PLAN.load(reply["receipt"])
+        C.require(
+            batch["complete"] is True
+            and batch["job"] == C.binding(path)
+            and [r["job"] for r in batch["records"]] == bindings,
+            "Selected replay batch denominator or authority changed",
+        )
+        batch_proofs[(width, engine)] = reply["receipt"]
+        for record in batch["records"]:
+            C.bound(record["receipt"])
             C.require(
-                report["evidence_valid"] is True
-                and report["job"] == C.binding(path)
-                and report["cell"] == row["cell"]
-                and report["checkpoint"] == checkpoint,
-                "Foreign checkpoint audit",
+                record["job"]["path"] not in selected_replays,
+                "Duplicate selected checkpoint replay",
             )
-            result["reports"].append(
-                dict(
-                    cell=row["cell"],
-                    checkpoint=checkpoint,
-                    report=execution["stdout"],
-                    passed=report["passed"],
-                )
+            selected_replays[record["job"]["path"]] = record["receipt"]
+    C.require(
+        len(selected_replays) == 1800, "All five engines must replay every best and last checkpoint"
+    )
+    for case in cases:
+        row, checkpoint = case["row"], case["checkpoint"]
+        label, destination, base = case["label"], case["destination"], case["base"]
+        environment = dict(env, ARM64_TRANSFORMER_WIDTH=str(row["cell"]["width"]))
+        replays = {e: selected_replays[case["jobs"][e]["path"]] for e in R.ENGINES}
+        oracle = case["jobs"]["oracle"]
+        reply, _ = Q.run(
+            [
+                str(args.audit_python),
+                "-I",
+                "-B",
+                str(HERE / "checkpoint_replay.py"),
+                "--job",
+                oracle["path"],
+                "--job-sha256",
+                oracle["sha256"],
+            ],
+            "oracle-execution",
+            destination,
+            environment,
+        )
+        C.require(reply["complete"] is True, "Incomplete independent checkpoint oracle")
+        replays["oracle"] = reply["receipt"]
+        job = dict(
+            base,
+            schema="frozen-library-checkpoint-audit-job-v2",
+            replays=replays,
+            replay_root=str(destination),
+            batch_proofs={e: batch_proofs[(row["cell"]["width"], e)] for e in R.ENGINES},
+        )
+        path = destination / "audit-job.json"
+        C.write(path, job)
+        report, execution = Q.run(
+            [
+                str(args.audit_python),
+                "-I",
+                "-B",
+                str(HERE / "audit_checkpoint.py"),
+                "--job",
+                str(path),
+                "--job-sha256",
+                C.binding(path)["sha256"],
+            ],
+            "independent-audit",
+            destination,
+            environment,
+        )
+        C.require(
+            report["evidence_valid"] is True
+            and report["job"] == C.binding(path)
+            and report["cell"] == row["cell"]
+            and report["checkpoint"] == checkpoint,
+            "Foreign checkpoint audit",
+        )
+        result["reports"].append(
+            dict(
+                cell=row["cell"],
+                checkpoint=checkpoint,
+                report=execution["stdout"],
+                passed=report["passed"],
             )
-            result["audited_checkpoints"] += 1
-            C.bound(campaign_binding)
-            F.verify(manifest)
-            C.write(output / (label + "-progress.json"), result)
+        )
+        result["audited_checkpoints"] += 1
+        C.bound(campaign_binding)
+        F.verify(manifest)
+        C.write(output / (label + "-progress.json"), result)
     cells = {r["cell"]["id"]: r for r in campaign["cells"]}
     repeats = []
     for row in (r for r in campaign["cells"] if r["cell"]["repeat"] == 1):

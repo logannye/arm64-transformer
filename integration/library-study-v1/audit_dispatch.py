@@ -19,7 +19,7 @@ SPEC.loader.exec_module(A)
 C = A.C
 AUDITORS = {
     "primitive": "integration/precision-library-v1/audit_runtime.py",
-    "optimizer": "integration/trained-precision/audit_library_optimizer.py",
+    "optimizer": "integration/library-study-v1/audit_optimizer.py",
     "provenance": "integration/trained-precision/audit_captured_replay.py",
     "collection": "integration/trained-precision/audit_collection.py",
 }
@@ -48,14 +48,23 @@ def execute(args):
     )
     control = A.source_role(HERE.parents[1], args.control_revision, control=True)
     math = A.source_role(args.math_root, C.MATH_REVISION)
-    source = Path(math["root"]) / AUDITORS[args.kind]
+    role = control if args.kind == "optimizer" else math
+    source = Path(role["root"]) / AUDITORS[args.kind]
     source_binding = C.binding(source)
-    C.require(source_binding["sha256"] == math["files"][AUDITORS[args.kind]], "Unbound raw auditor")
+    C.require(source_binding["sha256"] == role["files"][AUDITORS[args.kind]], "Unbound raw auditor")
     # The independently installed NumPy/Torch stay active. Only this exact
     # project's source precedes the environment's editable checkout.
     sys.path.insert(0, math["root"])
     arguments = list(args.audit_arguments)
     C.require(arguments and arguments.pop(0) == "--", "Separate frozen auditor arguments with --")
+    if args.kind == "optimizer":
+        arguments = [
+            "--control-revision",
+            args.control_revision,
+            "--math-root",
+            str(args.math_root),
+            *arguments,
+        ]
     original = sys.argv
     exit_code = 0
     output = BoundedOutput()

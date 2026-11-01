@@ -175,7 +175,9 @@ def test_activation_authenticates_bytes_before_exposing_dependency_paths(
         formal_fits=0,
         admission_stream_opened=False,
         runtime_root=str(tmp_path),
-        runtime_inventory=write("inventory", dict(python_paths=["dependency"])),
+        runtime_inventory=write(
+            "inventory", dict(python_paths=["dependency"], layout=dict(aliases={}))
+        ),
         runtime_receipt=write("receipt", dict(project=dict(root=str(math), files={}))),
         framework_selection=write("selection", C.comparison()["framework_selection"]),
     )
@@ -223,6 +225,6 @@ def test_activation_authenticates_bytes_before_exposing_dependency_paths(
         assert not authentications
     else:
         runtime = A.activate(roles, binding)
-        assert runtime.authority is authority
+        assert runtime.authority._authority is authority
         assert len(authentications) == 1
         assert str(dependency) in process.path

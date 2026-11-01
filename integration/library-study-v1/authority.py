@@ -218,7 +218,13 @@ def activate(roles, capture_binding):
 class Runtime:
     def __init__(self, roles, capture_binding, capture, inventory, authority, project):
         self.roles, self.capture_binding, self.capture = roles, capture_binding, capture
-        self.inventory, self.authority, self.project = inventory, authority, project
+        spec = importlib.util.spec_from_file_location(
+            "library_runtime_guard", HERE / "runtime_guard.py"
+        )
+        guard = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(guard)
+        self.inventory, self.project = inventory, project
+        self.authority = guard.RuntimeGuard(authority, inventory, roles, C)
 
     def origins(self, engine):
         """Check numerical modules in math role and every loaded file in both roles."""
@@ -260,6 +266,7 @@ class Runtime:
         )
         result["runtime_identity_sha256"] = receipt["runtime_identity_sha256"]
         result["source_roles_sha256"] = C.identity(self.roles)
+        result["runtime_validation"] = self.authority.witness()
         return result
 
     def recheck(self):
@@ -268,3 +275,9 @@ class Runtime:
         verify_role(self.roles["math"])
         self.authority.verify()
         C.require(not Path(sys.pycache_prefix).exists(), "Bytecode cache appeared")
+
+    def finish(self):
+        """Rehash the complete runtime at the end of this process's work."""
+        self.recheck()
+        self.authority.verify(full=True)
+        return self.authority.witness()

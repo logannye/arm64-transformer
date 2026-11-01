@@ -192,7 +192,7 @@ def replay_values(engine, parameters, fixture, *, runtime=None, assets=None):
             backend.close()
 
 
-def execute(path, digest):
+def execute(path, digest, *, runtime=None, defer_full_postflight=False, quiet=False):
     C.require_execution_support()
     job = C.read(path, digest)
     C.require(
@@ -225,6 +225,10 @@ def execute(path, digest):
     output = Path(job["output"])
     if job["engine"] == "oracle":
         C.require(
+            runtime is None and not defer_full_postflight,
+            "Independent oracle cannot share a selected runtime",
+        )
+        C.require(
             sys.flags.isolated and sys.flags.dont_write_bytecode, "Use independent -I -B oracle"
         )
         C.require(
@@ -237,7 +241,15 @@ def execute(path, digest):
         runtime = None
     else:
         sys.pycache_prefix = str(output / "unused-bytecode-cache")
-        runtime = A.activate(bindings["roles"], bindings["capture"])
+        if runtime is None:
+            runtime = A.activate(bindings["roles"], bindings["capture"])
+        else:
+            C.require(
+                runtime.roles == bindings["roles"]
+                and runtime.capture_binding == bindings["capture"],
+                "Batch replay crossed a frozen runtime/source identity",
+            )
+            runtime.recheck()
     # Apply identical source/runtime/raw-store output protections to the oracle.
     from types import SimpleNamespace
 
@@ -293,7 +305,10 @@ def execute(path, digest):
     )
     if runtime:
         proof["origins_after"] = runtime.origins(job["engine"])
-        runtime.recheck()
+        if defer_full_postflight:
+            runtime.recheck()
+        else:
+            proof["runtime_validation_final"] = runtime.finish()
     else:
         proof["auditor_project_origins"] = ORIGINS.project_origins(
             bindings["roles"]["math"], sys.modules
@@ -308,7 +323,10 @@ def execute(path, digest):
     C.require(C.binding(path)["sha256"] == digest, "Replay job changed")
     proof["complete"] = True
     C.write(output / "receipt.json", proof)
-    print(json.dumps(dict(complete=True, receipt=C.binding(output / "receipt.json"))))
+    reply = dict(complete=True, receipt=C.binding(output / "receipt.json"))
+    if not quiet:
+        print(json.dumps(reply))
+    return reply, runtime
 
 
 if __name__ == "__main__":

@@ -131,7 +131,7 @@ def execute(path, expected):
             "Missing measured artifacts",
         )
         proof["origins_after"] = runtime.origins(cell["engine"])
-        runtime.recheck()
+        proof["runtime_validation_final"] = runtime.finish()
         F.verify(manifest)
         C.require(C.binding(path)["sha256"] == expected, "Formal fit job changed")
         proof["complete"] = True

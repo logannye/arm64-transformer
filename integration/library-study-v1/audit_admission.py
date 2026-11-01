@@ -54,9 +54,20 @@ def worker_identity(record, job, manifest, capture, inventory):
 
     receipt = F.PLAN.load(capture["runtime_receipt"])
     roles = manifest["bindings"]["roles"]
+    ORIGINS.validate_validation(
+        record.get("runtime_validation_final"),
+        roles,
+        capture,
+        inventory,
+        pid=record["pid"],
+        final=True,
+    )
     imports = load("qualify_suites").imports
     for phase in ("before", "after"):
         proof = record["origins_" + phase]
+        ORIGINS.validate_validation(
+            proof.get("runtime_validation"), roles, capture, inventory, pid=record["pid"]
+        )
         C.require(
             proof["runtime_identity_sha256"] == capture["runtime_identity_sha256"]
             and proof["source_roles_sha256"] == C.identity(roles),

@@ -496,7 +496,7 @@ def execute(path, expected):
         function = functions[job["kind"]]
         receipt["outputs"] = function(job, runtime, output)
         receipt["origins_after"] = runtime.origins(job.get("engine", "metal"))
-        runtime.recheck()
+        receipt["runtime_validation_final"] = runtime.finish()
         C.require(C.binding(path)["sha256"] == expected, "Worker job changed")
         receipt.update(complete=True, integrity_after=True)
     except BaseException:

@@ -137,7 +137,13 @@ def load_replay(binding, job, manifest, capture, inventory, engine):
         names = ("validation", "test", "validation_torch_fp64", "test_torch_fp64", "b1")
     else:
         for phase in ("before", "after"):
-            ORIGINS.validate_origins(record["origins_" + phase], roles, capture, inventory, engine)
+            ORIGINS.validate_origins(
+                record["origins_" + phase], roles, capture, inventory, engine, pid=record["pid"]
+            )
+        batch = load("checkpoint_batch").validate(
+            job["batch_proofs"][engine], record, binding, job["manifest"], job["admission"], engine
+        )
+        ORIGINS.validate_validation(batch, roles, capture, inventory, pid=record["pid"], final=True)
         if engine in ("metal", "mps", "mlx"):
             E.validate_capabilities(engine, record["capabilities"])
         if engine == "metal":
@@ -259,8 +265,9 @@ def execute(path, digest):
             "replays",
             "replay_root",
             "raw_store",
+            "batch_proofs",
         }
-        and job["schema"] == "frozen-library-checkpoint-audit-job-v1"
+        and job["schema"] == "frozen-library-checkpoint-audit-job-v2"
         and job["checkpoint"] in ("best.f32", "last.f32")
         and list(job["replays"]) == sorted((*R.ENGINES, "oracle")),
         "Unknown checkpoint audit job",
@@ -276,12 +283,23 @@ def execute(path, digest):
     )
     capture = F.PLAN.load(manifest["bindings"]["capture"])
     inventory = F.PLAN.load(capture["runtime_inventory"])
+    C.require(
+        list(job["batch_proofs"]) == sorted(R.ENGINES), "Complete selected replay batches required"
+    )
     sys.path.insert(0, roles["math"]["root"])
     directory = Path(job["cell_receipt"]["path"]).parent
     for phase in ("before", "after"):
         ORIGINS.validate_origins(
-            proof["origins_" + phase], roles, capture, inventory, cell["engine"]
+            proof["origins_" + phase], roles, capture, inventory, cell["engine"], pid=proof["pid"]
         )
+    ORIGINS.validate_validation(
+        proof.get("runtime_validation_final"),
+        roles,
+        capture,
+        inventory,
+        pid=proof["pid"],
+        final=True,
+    )
     if cell["engine"] == "cpu_arm64":
         from transformer.backend import read_backend, validate_runtime_backend
 
