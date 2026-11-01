@@ -67,6 +67,13 @@ jobs:
       - run: make -C native widths PYTHON=python
       - name: Compile Metal host bridge (device tests require explicit GPU access)
         run: make -C native/metal
+      - name: Retain the exact hosted Metal bridge for device qualification
+        run: |
+          mkdir -p results/metal-host
+          cp native/metal/build/libtransformer_metal.dylib results/metal-host/
+          cp native/metal/backend.mm results/metal-host/
+          git rev-parse HEAD > results/metal-host/source-revision.txt
+          shasum -a 256 results/metal-host/libtransformer_metal.dylib results/metal-host/backend.mm > results/metal-host/SHA256SUMS
       - name: Check Metal cleanup ownership with a mocked Context
         run: python native/metal/check_close.py --output work/metal-close-ci
       - name: Numerical and executable checks at every width and supported backend

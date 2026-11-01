@@ -440,7 +440,8 @@ int tfm_primitive(void* p,const char* kind,const float* const* data,const size_t
                 c.encode(e,"norm_dparam",{c.r("primitive_norm"),c.r("primitive_dy"),c.r("primitive_dgamma"),c.r("primitive_dbeta")},a,k);}
             [e endEncoding];c.commit(command);
         }else if(name=="linear"){
-            if(m<1||m>c.maxB*c.maxT||n<1||n>std::max(3*c.w,128u)||k<1||k>3*c.w)throw std::runtime_error("Primitive linear shape");
+            // The fixed guard/barrier probes include a 129-column tile tail at width 32.
+            if(m<1||m>c.maxB*c.maxT||n<1||n>std::max(3*c.w,129u)||k<1||k>3*c.w)throw std::runtime_error("Primitive linear shape");
             input("primitive_x",0,size_t(m)*k);input("primitive_weight",1,size_t(n)*k);input("primitive_bias",2,n);
             c.allocate("primitive_y",size_t(m)*n);c.allocate("primitive_dx",size_t(m)*k);c.allocate("primitive_dw",size_t(n)*k);c.allocate("primitive_db",n);
             if(backward)input("primitive_dy",3,size_t(m)*n);
