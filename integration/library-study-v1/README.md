@@ -1,10 +1,19 @@
 # Frozen numerical implementation, separate study controls
 
-This successor uses protocol `gpu-v5-library-five-engine-v2`. Every numerical
+This successor uses protocol `gpu-v5-library-five-engine-v3`. Every numerical
 engine, including the CPU library model, comes from revision
-`9f57a0d58011dbb27cf0cd8f7a4862fc538df65b`. Controls in this directory have a
+`c2efce299984d120b185ffab70c3808150034eaf`. Controls in this directory have a
 separate, explicit source role. Changing a launcher must not silently change the
 qualified mathematical implementation or import another editable checkout.
+
+The approved v3 change selects precise FF1 for CPU Torch in both replay and
+training. The width-1024 common-state failure and its raw gradients remain
+development evidence. CPU library replay, optimizer and common-state gates must
+be requalified; the previous CPU model cannot satisfy these gates. Unchanged
+arms retain their original receipts and producer-version independent audits.
+Reuse requires identical installed runtime bytes, the exact approved source
+delta and unchanged comparison criteria. Common-state teacher checkpoints stay
+fixed, including their original CPU producer identity.
 
 The prospective comparison retains six widths, five engines, three seeds, two
 repeats, 1,024 updates per fit, 180 fits and 1,474,560 test-token predictions.

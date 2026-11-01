@@ -25832,7 +25832,8 @@
       "stages": [
         "ln1",
         "qkv",
-        "attention"
+        "attention",
+        "ff1"
       ]
     },
     "metal": {

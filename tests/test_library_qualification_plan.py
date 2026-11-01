@@ -26,3 +26,26 @@ def test_cell_schedule_rejects_missing_duplicate_or_reordered_arms():
             Q.cell_inventory(broken, Q.FRAMEWORKS)
     with pytest.raises(ValueError, match="collector set"):
         Q.build({}, {}, {}, "/raw")
+
+
+@pytest.mark.parametrize("kind", ["optimizer", "common_state", "collection", "provenance"])
+def test_pre_ff1_cpu_model_results_cannot_qualify_revised_cpu(kind):
+    old, new = {"path": "/old"}, {"path": "/new"}
+    reuse = {"capture": old}
+    with pytest.raises(ValueError, match="Pre-FF1 CPU model"):
+        Q.previous_scope(old, new, reuse, kind, "cpu_torch", library_api=True)
+    assert not Q.previous_scope(new, new, reuse, kind, "cpu_torch", library_api=True)
+    assert Q.previous_scope(old, new, reuse, kind, "mps", library_api=True)
+    assert Q.previous_scope(old, new, reuse, kind, "mlx", library_api=True)
+    with pytest.raises(ValueError, match="Foreign audit"):
+        Q.previous_scope({"path": "/foreign"}, new, reuse, kind, "mps")
+
+
+def test_pre_ff1_ordinary_cpu_and_primitives_remain_separate_from_cpu_model_gates():
+    old, new = {"path": "/old"}, {"path": "/new"}
+    reuse = {"capture": old}
+    for kind in ("primitive", "collection", "provenance"):
+        assert Q.previous_scope(old, new, reuse, kind, "cpu_torch")
+    for kind in ("optimizer", "common_state"):
+        with pytest.raises(ValueError, match="Pre-FF1 CPU model"):
+            Q.previous_scope(old, new, reuse, kind, "cpu_torch")

@@ -92,7 +92,11 @@ def prerequisites(binding, roles, capture, fixtures, assets):
     )
     plan = PLAN.load(report["plan"])
     expected = PLAN.build(
-        request["collectors"], capture, request["inventories"], request["raw_store"]
+        request["collectors"],
+        capture,
+        request["inventories"],
+        request["raw_store"],
+        reuse=request.get("reuse"),
     )
     C.require(C.canonical(plan) == C.canonical(expected), "Raw qualification schedule changed")
     completed = report["completed"]
@@ -101,12 +105,16 @@ def prerequisites(binding, roles, capture, fixtures, assets):
         "Raw prerequisite audit denominator changed",
     )
     full = PLAN.load(completed[0]["result"])
+    reuse = PLAN.reuse_context(request.get("reuse"), capture)
+    previous_suites = PLAN.previous_scope(full["capture"], capture, reuse, "full_suites")
+    suite_roles = reuse["roles"] if previous_suites else roles
+    suite_capture = reuse["capture"] if previous_suites else capture
     C.require(
         full["full_suites_passed"] is True
         and full["evidence_valid"] is True
-        and full["control"] == roles["control"]
-        and full["math"] == roles["math"]
-        and full["capture"] == capture,
+        and full["control"] == suite_roles["control"]
+        and full["math"] == suite_roles["math"]
+        and full["capture"] == suite_capture,
         "Full suite acceptance is stale or foreign",
     )
     for row, job in zip(completed[1:], plan["jobs"], strict=True):
@@ -124,6 +132,8 @@ def prerequisites(binding, roles, capture, fixtures, assets):
         )
     for role in ("math", "control"):
         QUALIFY.ci_evidence(request["source_ci"][role], roles[role]["revision"])
+        if reuse is not None:
+            QUALIFY.ci_evidence(reuse["source_ci"][role], reuse["roles"][role]["revision"])
     return report
 
 

@@ -98,7 +98,19 @@ def ci_evidence(records, revision):
     C.require(events == {"push", "pull_request"}, "Missing source CI event")
 
 
-def command(job, roles, capture, audit_python):
+def command(job, roles, capture, audit_python, reuse=None):
+    if job.get("previous_context"):
+        C.require(reuse is not None, "Missing authenticated pre-FF1 audit context")
+        source = Path(reuse["roles"]["control"]["root"]) / "integration/library-study-v1/qualify.py"
+        C.require(
+            C.binding(source)["sha256"]
+            == reuse["roles"]["control"]["files"]["integration/library-study-v1/qualify.py"],
+            "Unbound previous numerical auditor dispatch",
+        )
+        spec = importlib.util.spec_from_file_location("pre_ff1_qualifier", source)
+        previous = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(previous)
+        return previous.command(job, reuse["roles"], PLAN.load(reuse["capture"]), audit_python)
     base = [str(audit_python), "-I", "-B"]
     if job["kind"] in ("primitive", "optimizer", "provenance", "collection"):
         return [
@@ -216,7 +228,7 @@ def execute(args):
     request = C.read(args.request, args.request_sha256)
     C.require(
         request["schema"] == "frozen-library-prerequisite-request-v1"
-        and set(request)
+        and set(request) - {"reuse"}
         == {
             "schema",
             "roles",
@@ -237,21 +249,34 @@ def execute(args):
     A.verify_role(roles["math"])
     for role in ("math", "control"):
         ci_evidence(request["source_ci"][role], roles[role]["revision"])
+    reuse = PLAN.reuse_context(request.get("reuse"), request["capture"])
+    if reuse is not None:
+        for role in ("math", "control"):
+            ci_evidence(reuse["source_ci"][role], reuse["roles"][role]["revision"])
     capture = PLAN.load(request["capture"])
     inventory = PLAN.load(capture["runtime_inventory"])
     fixtures = PLAN.load(request["fixtures"])
     FIXTURES.verify(fixtures, roles["math"])
     N.verify(request["native_assets"], roles["math"])
     original_suites = PLAN.load(request["full_suite_audit"])
+    previous_suites = PLAN.previous_scope(
+        original_suites["capture"], request["capture"], reuse, "full_suites"
+    )
+    suite_roles = reuse["roles"] if previous_suites else roles
+    suite_capture = reuse["capture"] if previous_suites else request["capture"]
     C.require(
         original_suites["schema"] == "frozen-library-full-suite-audit-v1"
         and original_suites["full_suites_passed"] is True
-        and original_suites["capture"] == request["capture"]
-        and original_suites["math"] == roles["math"],
+        and original_suites["capture"] == suite_capture
+        and original_suites["math"] == suite_roles["math"],
         "Wrong raw suite audit scope",
     )
     plan = PLAN.build(
-        request["collectors"], request["capture"], request["inventories"], request["raw_store"]
+        request["collectors"],
+        request["capture"],
+        request["inventories"],
+        request["raw_store"],
+        reuse=request.get("reuse"),
     )
     output = Path(args.output).absolute()
     C.require(
@@ -287,15 +312,18 @@ def execute(args):
             "-I",
             "-S",
             "-B",
-            str(HERE / "qualify_suites.py"),
+            str(
+                Path(suite_roles["control"]["root"])
+                / "integration/library-study-v1/qualify_suites.py"
+            ),
             "--control-revision",
-            roles["control"]["revision"],
+            suite_roles["control"]["revision"],
             "--math-root",
-            roles["math"]["root"],
+            suite_roles["math"]["root"],
             "--capture",
-            request["capture"]["path"],
+            suite_capture["path"],
             "--capture-sha256",
-            request["capture"]["sha256"],
+            suite_capture["sha256"],
         ]
         for name, summary in zip(("mps", "mlx"), original_suites["summaries"], strict=True):
             C.bound(summary)
@@ -323,7 +351,10 @@ def execute(args):
             A.verify_role(roles["math"])
             env = dict(environment, ARM64_TRANSFORMER_WIDTH=str(job["width"]))
             value, execution = run(
-                command(job, roles, capture, args.audit_python), f"audit-{index:04d}", output, env
+                command(job, roles, capture, args.audit_python, reuse),
+                f"audit-{index:04d}",
+                output,
+                env,
             )
             decision = require_result(job, value)
             completed.append(

@@ -23,9 +23,9 @@ def test_frozen_numerical_source_plan_retains_every_gate_and_fit(monkeypatch):
     plan = C.plan()
     assert C.validate_plan(plan) is plan
     assert (
-        plan["math_revision"] == plan["cpu_revision"] == "9f57a0d58011dbb27cf0cd8f7a4862fc538df65b"
+        plan["math_revision"] == plan["cpu_revision"] == "c2efce299984d120b185ffab70c3808150034eaf"
     )
-    assert plan["protocol"] == "gpu-v5-library-five-engine-v2"
+    assert plan["protocol"] == "gpu-v5-library-five-engine-v3"
     assert plan["source_roles"] == ["control", "math"]
     assert plan["admission_seed"] == 20261112
     for field in ("admission_seed", "math_revision", "source_roles"):
