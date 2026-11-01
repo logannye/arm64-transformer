@@ -64,6 +64,6 @@ def test_cpu_library_stage_adapter_reproduces_v2_forward_all_gradients_and_fp32_
         for name, value in parameters.items():
             assert torch.equal(bytes_of(value.grad), bytes_of(getattr(reference, name).grad)), name
         assert all(dtype in (torch.float32, torch.int64) for dtype in saved)
-    assert MODEL.STAGES["cpu_torch"] == ["ln1", "qkv", "attention"]
-    assert MODEL.STAGES["mps"] == MODEL.STAGES["cpu_torch"]
+    assert MODEL.STAGES["cpu_torch"] == ["ln1", "qkv", "attention", "ff1"]
+    assert MODEL.STAGES["mps"] == ["ln1", "qkv", "attention"]
     assert MODEL.STAGES["mlx"] == ["ln1", "qkv", "attention", "ff1"]

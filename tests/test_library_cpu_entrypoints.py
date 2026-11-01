@@ -33,6 +33,11 @@ def module_at(name, relative, package=False):
 
 @pytest.fixture
 def explicit_api(monkeypatch):
+    import torch
+
+    # Match both production CPU entrypoints before constructing the expected
+    # trajectory; FP64 FF1 reductions can differ across thread counts.
+    torch.set_num_threads(1)
     for name, value in ENVIRONMENT.items():
         if value is None:
             monkeypatch.delenv(name, raising=False)

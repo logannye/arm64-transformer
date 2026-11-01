@@ -58,7 +58,7 @@ def torch_model_type(engine):
                 tokens,
                 ops,
                 api,
-                precise_ff1=False,
+                precise_ff1=engine == "cpu_torch",
             )
 
     return LibraryTransformer

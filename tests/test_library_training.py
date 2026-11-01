@@ -37,14 +37,27 @@ def exact(left, right):
     )
 
 
-def test_persistent_library_model_and_adam_match_retained_cpu_v2(monkeypatch):
+@pytest.mark.parametrize("engine", ["cpu_torch", "mps"])
+def test_persistent_library_model_and_adam_match_selected_ff1_reference(monkeypatch, engine):
     api = module_at("training_prototype_api", "integration/precision-library-v1/torch_api.py", True)
     monkeypatch.setitem(sys.modules, "torch.nn.precise_fp32", api)
     previous = module_at(
         "training_previous_v2", "integration/trained-precision/precision_reference_v2.py"
     )
-    actual = library_training.torch_model_type("cpu_torch")(seed=20261103)
+    actual = library_training.torch_model_type(engine)(seed=20261103)
     expected = previous.PrecisionReference(seed=20261103)
+    # Keep the independent v2 implementation, adding its retained precise
+    # linear only at FF1 for the approved CPU selection. MPS stays unchanged.
+    ordinary_linear = torch.nn.functional.linear
+
+    def selected_linear(x, weight, bias):
+        if engine == "cpu_torch" and weight is expected.ff1_weight:
+            return previous.V1.Linear.apply(x, weight, bias)
+        return ordinary_linear(x, weight, bias)
+
+    monkeypatch.setattr(
+        previous, "F", SimpleNamespace(**(vars(torch.nn.functional) | {"linear": selected_linear}))
+    )
     optimizers = [
         torch.optim.Adam(model.parameters(), lr=0.001, foreach=False, fused=False)
         for model in (actual, expected)

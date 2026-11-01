@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 IDENTITY = "maintained-library-fp32-saved-model-v1"
 STAGES = {
-    "cpu_torch": ["ln1", "qkv", "attention"],
+    "cpu_torch": ["ln1", "qkv", "attention", "ff1"],
     "mps": ["ln1", "qkv", "attention"],
     "mlx": ["ln1", "qkv", "attention", "ff1"],
 }
@@ -136,7 +136,7 @@ class Evaluator:
                 torch.tensor(value.astype("i8"), device=self.device) for value in (tokens, targets)
             )
             with torch.set_grad_enabled(self.gradients):
-                logits = forward(p, x, self.ops, self.api, precise_ff1=False)
+                logits = forward(p, x, self.ops, self.api, precise_ff1=self.engine == "cpu_torch")
                 loss = torch.nn.functional.cross_entropy(logits.reshape(-1, 128), y.reshape(-1))
                 values = dict(logits=logits, loss=loss)
                 if self.gradients:
