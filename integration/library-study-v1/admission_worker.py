@@ -28,6 +28,8 @@ A, F, W, CONTEXT, RAW = (load(n) for n in ("authority", "frozen", "worker", "con
 C = A.C
 SCHEMA = "frozen-library-admission-job-v1"
 ENGINES = ("cpu_arm64", "cpu_torch", "metal", "mps", "mlx")
+DEVICE_REPAIR_ID = "mlx/32/control/device_execution"
+DEVICE_REPAIR_RECEIPT_SHA256 = "7345e16db79fe944bee4a27cd7e5bb354b152d818ad66df8a567048a74f5e477"
 
 
 def validate_job(job):
@@ -54,6 +56,14 @@ def validate_job(job):
         )
     if job["kind"] == "repeat_training":
         keys.add("operands")
+    if "device_repair" in job:
+        keys.add("device_repair")
+        C.require(
+            job["kind"] == "width"
+            and job["width"] == 32
+            and job["device_repair"]["sha256"] == DEVICE_REPAIR_RECEIPT_SHA256,
+            "Only the recorded width-32 device observation may be repaired",
+        )
     C.require(
         type(job["raw_start_bytes"]) is int and job["raw_start_bytes"] >= 0,
         "Invalid admission raw-store baseline",
@@ -176,9 +186,19 @@ def width(job, runtime, output, manifest):
     inventory = [
         s for s in C.comparison()["gate_inventory"] if int(s["id"].split("/")[1]) == job["width"]
     ]
+    prior = None
+    if "device_repair" in job:
+        prior = F.PLAN.load(job["device_repair"])["outputs"]
+        C.require(
+            prior["expected_inventory"] == inventory and prior["raw_store"] == job["raw_store"],
+            "Device repair cannot change inventory or raw store",
+        )
     rows = []
     try:
-        for specification in inventory:
+        for index, specification in enumerate(inventory):
+            if prior is not None and specification["id"] != DEVICE_REPAIR_ID:
+                rows.append(prior["groups"][index])
+                continue
             size = (
                 int(
                     subprocess.check_output(
@@ -248,7 +268,17 @@ def width(job, runtime, output, manifest):
         # Diagnostic errors may retire a backend. Re-authenticate the selected
         # factories before final origins without turning a diagnostic into a
         # missing-capability failure or waiving any earlier blocking result.
-        selected_backends = {e: context.backend(e) for e in ("metal", "mps", "mlx")}
+        selected_backends = {
+            e: context.backend(e)
+            for e in (("mlx",) if prior is not None else ("metal", "mps", "mlx"))
+        }
+        capabilities = {} if prior is None else dict(prior["capabilities"])
+        capabilities.update(
+            {
+                e: W.E.validate_capabilities(e, b.capabilities())
+                for e, b in selected_backends.items()
+            }
+        )
         return dict(
             groups=rows,
             expected_inventory=inventory,
@@ -256,12 +286,13 @@ def width(job, runtime, output, manifest):
             blocking_passed=all(
                 r["passed"] for r, s in zip(rows, inventory, strict=True) if s["blocking"]
             ),
-            child_proofs=context.child_proofs,
-            capabilities={
-                e: W.E.validate_capabilities(e, b.capabilities())
-                for e, b in selected_backends.items()
-            },
-            metal_library_origin=selected_backends["metal"]._selected_native_origin,
+            child_proofs=context.child_proofs if prior is None else prior["child_proofs"],
+            capabilities=capabilities,
+            metal_library_origin=(
+                selected_backends["metal"]._selected_native_origin
+                if prior is None
+                else prior["metal_library_origin"]
+            ),
         )
     except BaseException:
         C.write(

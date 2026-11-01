@@ -4,6 +4,7 @@ import argparse
 import importlib.util
 import json
 import os
+import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
@@ -90,66 +91,8 @@ def worker_identity(record, job, manifest, capture, inventory):
         )
 
 
-def execute(args):
-    C.require_execution_support()
-    C.require(
-        sys.flags.isolated and sys.flags.dont_write_bytecode,
-        "Use independent admission auditor -I -B",
-    )
-    C.require(
-        not any(n.split(".", 1)[0] in {"transformer", "torch", "mlx"} for n in sys.modules),
-        "Fresh independent admission audit required",
-    )
-    manifest = F.read(args.manifest, args.manifest_sha256)
-    roles = manifest["bindings"]["roles"]
-    C.require(Path(roles["control"]["root"]) == HERE.parents[1], "Admission auditor source differs")
-    record = C.read(args.receipt, args.receipt_sha256)
-    C.bound(record["job"])
-    job = C.read(record["job"]["path"], record["job"]["sha256"])
-    WORKER.validate_job(job)
-    C.require(
-        job["kind"] == "width"
-        and job["manifest"] == C.binding(args.manifest)
-        and Path(job["output"]) == Path(args.receipt).parent
-        and os.environ.get("ARM64_TRANSFORMER_WIDTH") == str(job["width"]),
-        "Foreign admission width/job",
-    )
-    capture = F.PLAN.load(manifest["bindings"]["capture"])
-    inventory = F.PLAN.load(capture["runtime_inventory"])
-    sys.path.insert(0, roles["math"]["root"])
-    import numpy as np
-
-    worker_identity(record, job, manifest, capture, inventory)
-    specs = [
-        s for s in C.comparison()["gate_inventory"] if int(s["id"].split("/")[1]) == job["width"]
-    ]
-    outputs = record["outputs"]
-    C.require(
-        outputs["expected_inventory"] == specs
-        and [r["id"] for r in outputs["groups"]] == [s["id"] for s in specs]
-        and outputs["raw_store"] == job["raw_store"],
-        "Incomplete admission denominator",
-    )
-    checked = []
-    for row, spec in zip(outputs["groups"], specs, strict=True):
-        if row.get("status") == "runtime_error":
-            C.require(
-                spec["family"] == "diagnostic_precision"
-                and spec["blocking"] is False
-                and row["passed"] is False
-                and row["members"] == {}
-                and row["decisions"] == {},
-                "Runtime error cannot waive a blocking admission group",
-            )
-            error = F.PLAN.load(row["error"])
-            C.require(
-                error["gate"] == row["id"] and error["exception_type"] and error["traceback"],
-                "Missing diagnostic failure evidence",
-            )
-            passed = False
-        else:
-            passed = RAW.audit_gate(spec, row, job["raw_store"], roles["math"]["root"])
-        checked.append(dict(id=row["id"], passed=passed, blocking=spec["blocking"]))
+def audit_children(record, job, manifest, capture, inventory, np):
+    roles, outputs = manifest["bindings"]["roles"], record["outputs"]
     children, pids = {}, {record["pid"]}
     for child in outputs["child_proofs"]:
         for name in ("receipt", "job", "log"):
@@ -243,6 +186,189 @@ def execute(args):
         == C.binding(Path(roles["control"]["root"]) / A.METAL_LIBRARY),
         "Admission Metal host origin differs",
     )
+    return sorted(pids - {record["pid"]})
+
+
+def audit_device_repair(record, job, manifest):
+    """Reaudit the one identified failed observation without repeating trajectories."""
+    prior = F.PLAN.load(job["device_repair"])
+    previous = F.PLAN.load(prior["manifest"])
+    old, new = previous["bindings"], manifest["bindings"]
+    producer = A.verify_role(old["roles"]["control"], control=True)
+    C.require(
+        producer["revision"] == "b521fa2ba14ddad4faf13f8a1a762f027b9e9ff3"
+        and old["roles"]["math"] == new["roles"]["math"]
+        and all(old[k] == new[k] for k in ("capture", "fixtures", "native_assets", "hardware"))
+        and all(
+            previous[k] == manifest[k]
+            for k in previous
+            if k not in ("bindings", "source_roles", "frozen_utc")
+        ),
+        "Device repair cannot transfer numerical or runtime identity",
+    )
+    allowed = {
+        "integration/library-study-v1/" + name
+        for name in (
+            "context.py",
+            "qualify.py",
+            "admission.py",
+            "admission_worker.py",
+            "audit_admission.py",
+        )
+    }
+    current = new["roles"]["control"]
+    C.require(
+        set(producer["files"]) == set(current["files"])
+        and all(
+            producer["files"][k] == current["files"][k]
+            for k in producer["files"]
+            if k not in allowed
+        ),
+        "Device repair changed unrelated execution controls",
+    )
+    argv = [
+        sys.executable,
+        "-I",
+        "-B",
+        str(Path(producer["root"]) / "integration/library-study-v1/audit_admission.py"),
+        "--manifest",
+        prior["manifest"]["path"],
+        "--manifest-sha256",
+        prior["manifest"]["sha256"],
+        "--receipt",
+        job["device_repair"]["path"],
+        "--receipt-sha256",
+        job["device_repair"]["sha256"],
+    ]
+    audit = subprocess.run(argv, capture_output=True, text=True, timeout=3600, check=False)
+    C.require(audit.returncode == 1 and not audit.stderr, "Original device failure reaudit differs")
+    audited = json.loads(audit.stdout)
+    C.require(
+        audited["evidence_valid"] is True
+        and audited["blocking_passed"] is False
+        and audited["width"] == 32
+        and audited["receipt"] == job["device_repair"]
+        and audited["manifest"] == prior["manifest"]
+        and [g["id"] for g in audited["groups"] if g["blocking"] and not g["passed"]]
+        == [WORKER.DEVICE_REPAIR_ID],
+        "Original admission has another blocking failure",
+    )
+    before, after = prior["outputs"], record["outputs"]
+    C.require(
+        before["expected_inventory"] == after["expected_inventory"]
+        and before["raw_store"] == after["raw_store"] == job["raw_store"]
+        and before["child_proofs"] == after["child_proofs"]
+        and before["metal_library_origin"] == after["metal_library_origin"]
+        and set(after["capabilities"]) == {"metal", "mps", "mlx"}
+        and all(before["capabilities"][e] == after["capabilities"][e] for e in ("metal", "mps"))
+        and record["pid"] not in {prior["pid"], *audited["child_pids"]},
+        "Device repair changed retained provenance",
+    )
+    for first, second in zip(before["groups"], after["groups"], strict=True):
+        if first["id"] != WORKER.DEVICE_REPAIR_ID:
+            C.require(first == second, "Device repair changed another raw admission group")
+        else:
+            import numpy as np
+
+            actual, expected = RAW.load_pair(
+                first["members"]["observations"], job["raw_store"], new["roles"]["math"]["root"]
+            )
+            C.require(
+                actual.dtype == expected.dtype == np.int32
+                and actual.shape == expected.shape == (8,)
+                and np.array_equal(actual, [0, 1, 1, 1, 1, 1, 1, 1])
+                and np.array_equal(expected, np.ones(8, np.int32)),
+                "Original device observation differs from the diagnosed string mismatch",
+            )
+            repaired, target = RAW.load_pair(
+                second["members"]["observations"], job["raw_store"], new["roles"]["math"]["root"]
+            )
+            C.require(
+                repaired.dtype == target.dtype == expected.dtype
+                and repaired.shape == target.shape == expected.shape
+                and target.tobytes() == expected.tobytes()
+                and repaired[1:].tobytes() == actual[1:].tobytes(),
+                "Device repair changed another observation or its denominator",
+            )
+    E.validate_capabilities("mlx", after["capabilities"]["mlx"])
+    C.bound(job["device_repair"])
+    return dict(
+        receipt=job["device_repair"],
+        manifest=prior["manifest"],
+        replaced_group=WORKER.DEVICE_REPAIR_ID,
+        reused_groups=len(before["groups"]) - 1,
+        original_audit=audited,
+        audit_argv=argv,
+        audit_exit_code=audit.returncode,
+    )
+
+
+def execute(args):
+    C.require_execution_support()
+    C.require(
+        sys.flags.isolated and sys.flags.dont_write_bytecode,
+        "Use independent admission auditor -I -B",
+    )
+    C.require(
+        not any(n.split(".", 1)[0] in {"transformer", "torch", "mlx"} for n in sys.modules),
+        "Fresh independent admission audit required",
+    )
+    manifest = F.read(args.manifest, args.manifest_sha256)
+    roles = manifest["bindings"]["roles"]
+    C.require(Path(roles["control"]["root"]) == HERE.parents[1], "Admission auditor source differs")
+    record = C.read(args.receipt, args.receipt_sha256)
+    C.bound(record["job"])
+    job = C.read(record["job"]["path"], record["job"]["sha256"])
+    WORKER.validate_job(job)
+    C.require(
+        job["kind"] == "width"
+        and job["manifest"] == C.binding(args.manifest)
+        and Path(job["output"]) == Path(args.receipt).parent
+        and os.environ.get("ARM64_TRANSFORMER_WIDTH") == str(job["width"]),
+        "Foreign admission width/job",
+    )
+    capture = F.PLAN.load(manifest["bindings"]["capture"])
+    inventory = F.PLAN.load(capture["runtime_inventory"])
+    sys.path.insert(0, roles["math"]["root"])
+    import numpy as np
+
+    worker_identity(record, job, manifest, capture, inventory)
+    specs = [
+        s for s in C.comparison()["gate_inventory"] if int(s["id"].split("/")[1]) == job["width"]
+    ]
+    outputs = record["outputs"]
+    C.require(
+        outputs["expected_inventory"] == specs
+        and [r["id"] for r in outputs["groups"]] == [s["id"] for s in specs]
+        and outputs["raw_store"] == job["raw_store"],
+        "Incomplete admission denominator",
+    )
+    checked = []
+    for row, spec in zip(outputs["groups"], specs, strict=True):
+        if row.get("status") == "runtime_error":
+            C.require(
+                spec["family"] == "diagnostic_precision"
+                and spec["blocking"] is False
+                and row["passed"] is False
+                and row["members"] == {}
+                and row["decisions"] == {},
+                "Runtime error cannot waive a blocking admission group",
+            )
+            error = F.PLAN.load(row["error"])
+            C.require(
+                error["gate"] == row["id"] and error["exception_type"] and error["traceback"],
+                "Missing diagnostic failure evidence",
+            )
+            passed = False
+        else:
+            passed = RAW.audit_gate(spec, row, job["raw_store"], roles["math"]["root"])
+        checked.append(dict(id=row["id"], passed=passed, blocking=spec["blocking"]))
+    repair = None
+    if "device_repair" in job:
+        repair = audit_device_repair(record, job, manifest)
+        child_pids = repair["original_audit"]["child_pids"]
+    else:
+        child_pids = audit_children(record, job, manifest, capture, inventory, np)
     blocking = all(r["passed"] for r in checked if r["blocking"])
     C.require(
         outputs["blocking_passed"] is blocking, "Blocking admission result differs from raw members"
@@ -262,7 +388,8 @@ def execute(args):
         groups=checked,
         manifest=C.binding(args.manifest),
         receipt=C.binding(args.receipt),
-        child_pids=sorted(pids - {record["pid"]}),
+        child_pids=child_pids,
+        device_repair=repair,
         auditor_project_origins=proof,
         formal_eligible=False,
         formal_fits=0,

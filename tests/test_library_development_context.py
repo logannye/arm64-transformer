@@ -123,3 +123,42 @@ def test_reserved_permission_is_rejected_before_any_rng_is_opened(monkeypatch, t
             checkpoint_tie=None,
             admission=K.C.binding(fake),
         )
+
+
+@pytest.mark.parametrize("failed_index", [None, *range(8)])
+def test_mlx_device_identity_is_typed_and_retains_all_eight_checks(
+    monkeypatch, tmp_path, failed_index
+):
+    import sys
+
+    class Device:
+        def __eq__(self, other):
+            return other == ("cpu" if failed_index == 0 else "gpu")
+
+        def __str__(self):
+            return "Device(gpu, 0)"
+
+    mx = SimpleNamespace(default_device=Device, gpu="gpu")
+    monkeypatch.setitem(sys.modules, "mlx.core", mx)
+    cap = dict(
+        cpu_tensor_fallback=failed_index == 1,
+        compiled=failed_index != 2,
+        MLX_DISABLE_COMPILE="1" if failed_index == 3 else None,
+        compilation_probe=dict(
+            status="failed" if failed_index == 4 else "passed",
+            python_trace_count=2 if failed_index == 5 else 1,
+            executions=3 if failed_index == 6 else 4,
+            compiled_primitive_present=failed_index != 7,
+        ),
+    )
+    ctx = context(monkeypatch, tmp_path)
+    models = []
+    monkeypatch.setattr(ctx, "model", lambda engine: models.append(engine))
+    monkeypatch.setattr(ctx, "backend", lambda engine: SimpleNamespace(capabilities=lambda: cap))
+    actual, expected = ctx.produce("mlx", "control", "device_execution")["observations"]
+    assert models == ["mlx"]
+    assert str(mx.default_device()) != str(mx.gpu)
+    assert actual.dtype == expected.dtype == np.int32
+    assert actual.shape == expected.shape == (8,)
+    assert expected.tolist() == [1] * 8
+    assert actual.tolist() == [int(i != failed_index) for i in range(8)]

@@ -170,6 +170,23 @@ def create(
             return result
 
         def produce(self, engine, family, suffix):
+            if (engine, family, suffix) == ("mlx", "control", "device_execution"):
+                self.model(engine)
+                capabilities = self.backend(engine).capabilities()
+                mx = importlib.import_module("mlx.core")
+                # Device(gpu, 0) equals DeviceType.gpu, but their strings differ.
+                return math._bools(
+                    [
+                        mx.default_device() == mx.gpu,
+                        capabilities["cpu_tensor_fallback"] is False,
+                        capabilities["compiled"] is True,
+                        capabilities["MLX_DISABLE_COMPILE"] is None,
+                        capabilities["compilation_probe"]["status"] == "passed",
+                        capabilities["compilation_probe"]["python_trace_count"] == 1,
+                        capabilities["compilation_probe"]["executions"] == 4,
+                        capabilities["compilation_probe"]["compiled_primitive_present"] is True,
+                    ]
+                )
             if family == "control" and suffix == "repeat_training_fresh_process":
                 first, second = fresh_training(self, engine), fresh_training(self, engine)
                 return math._bools(

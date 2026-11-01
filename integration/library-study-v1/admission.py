@@ -145,6 +145,9 @@ def execute(args):
             raw_start_bytes=initial_raw,
             parent_pid=os.getpid(),
         )
+        if width == 32 and args.device_repair_receipt is not None:
+            job["device_repair"] = C.binding(args.device_repair_receipt)
+            load("admission_worker").validate_job(job)
         job_path = output / f"width-{width}-job.json"
         C.write(job_path, job)
         env = dict(environment, ARM64_TRANSFORMER_WIDTH=str(width))
@@ -206,4 +209,5 @@ if __name__ == "__main__":
     parser.add_argument("--audit-python", type=Path, required=True)
     parser.add_argument("--raw-store", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--device-repair-receipt", type=Path)
     execute(parser.parse_args())
