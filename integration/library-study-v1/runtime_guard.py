@@ -126,9 +126,7 @@ class RuntimeGuard:
             )
         before = snapshot(self._roots, self._aliases)
         if self._snapshot is not None:
-            unchanged(
-                self._snapshot, before, "Authenticated runtime inventory or metadata changed"
-            )
+            unchanged(self._snapshot, before, "Authenticated runtime inventory or metadata changed")
         if self._verified is None or full:
             receipt, payloads = self._authority.verify()
             verified = (C.canonical(receipt), C.canonical(payloads))
