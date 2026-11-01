@@ -75,6 +75,12 @@ def reuse_context(binding, capture):
     old_comparison["model_selection"]["cpu_torch"]["stages"].append("ff1")
     C.require(old_comparison == C.comparison(), "Changes exceed the approved CPU FF1 selection")
     replacements = {
+        "integration/trained-precision/audit_replay.py": (
+            (
+                '(["ff1"] if engine == "mlx" else [])',
+                '(["ff1"] if engine in {"cpu_torch", "mlx"} else [])',
+            ),
+        ),
         "integration/trained-precision/library_candidate.py": (
             (
                 '"cpu_torch": ["ln1", "qkv", "attention"],',

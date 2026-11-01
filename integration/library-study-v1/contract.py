@@ -14,7 +14,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 PROTOCOL = "gpu-v5-library-five-engine-v3"
 SCHEMA = "frozen-library-comparison-v1"
-MATH_REVISION = "c2efce299984d120b185ffab70c3808150034eaf"
+MATH_REVISION = "bd2cd2823038729779a217ee5b084fa06191d3a9"
 CPU_REVISION = MATH_REVISION
 ADMISSION_SEED = 20261112
 CONTRACT_SHA256 = "25b5847326ef7aee4a6580423a49c2812006cbfb6aa8ad84a365930015591714"

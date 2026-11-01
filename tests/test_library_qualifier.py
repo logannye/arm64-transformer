@@ -41,6 +41,31 @@ def test_native_reaudit_keeps_original_producer_role_explicit(monkeypatch):
     ]
 
 
+def test_reused_optimizer_audit_uses_original_adapter_control(tmp_path, monkeypatch):
+    files = {
+        "integration/library-study-v1/" + name: str(i) * 64
+        for i, name in enumerate(("audit_dispatch.py", "audit_optimizer.py", "audit.py"))
+    }
+    producer = dict(root="/producer", revision="a" * 40, files=files)
+    math = dict(root="/old-math", revision="b" * 40)
+    roles = dict(control=producer, math=math)
+    reuse = dict(roles=dict(control=dict(files=files), math=math))
+    arguments = []
+    for name in ("first", "second", "restart"):
+        path = tmp_path / (name + ".json")
+        Q.C.write(path, dict(control_adapter=dict(roles=roles)))
+        arguments += ["--" + name, str(path)]
+    monkeypatch.setattr(Q.A, "verify_role", lambda role, **_: role)
+    job = dict(kind="optimizer", width=32, previous_context=True, arguments=arguments)
+    argv = Q.command(job, {}, {}, "/audit/python", reuse)
+    assert argv[3] == "/producer/integration/library-study-v1/audit_dispatch.py"
+    assert argv[argv.index("--control-revision") + 1] == producer["revision"]
+    assert argv[argv.index("--math-root") + 1] == math["root"]
+    (tmp_path / "restart.json").write_text('{"control_adapter":{"roles":{}}}')
+    with pytest.raises(ValueError, match="Mixed original optimizer"):
+        Q.command(job, {}, {}, "/audit/python", reuse)
+
+
 def wrapped(kind, result):
     return dict(schema="frozen-library-raw-audit-dispatch-v1", kind=kind, width=512, result=result)
 

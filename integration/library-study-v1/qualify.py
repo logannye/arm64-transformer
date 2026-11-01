@@ -101,6 +101,42 @@ def ci_evidence(records, revision):
 def command(job, roles, capture, audit_python, reuse=None):
     if job.get("previous_context"):
         C.require(reuse is not None, "Missing authenticated pre-FF1 audit context")
+        if job["kind"] == "optimizer":
+            # Adapter receipts bind their actual producer control, not the
+            # later coordinating control. Reaudit those unchanged bytes there.
+            workers = [
+                C.read(job["arguments"][job["arguments"].index("--" + name) + 1])
+                for name in ("first", "second", "restart")
+            ]
+            producer_roles = workers[0]["control_adapter"]["roles"]
+            C.require(
+                producer_roles["math"] == reuse["roles"]["math"]
+                and all(w["control_adapter"]["roles"] == producer_roles for w in workers),
+                "Mixed original optimizer producers",
+            )
+            producer = A.verify_role(producer_roles["control"], control=True)
+            for name in ("audit_dispatch.py", "audit_optimizer.py", "audit.py"):
+                relative = "integration/library-study-v1/" + name
+                C.require(
+                    producer["files"][relative] == reuse["roles"]["control"]["files"][relative],
+                    "Original optimizer auditor bytes differ",
+                )
+            return [
+                str(audit_python),
+                "-I",
+                "-B",
+                str(Path(producer["root"]) / "integration/library-study-v1/audit_dispatch.py"),
+                "--kind",
+                "optimizer",
+                "--width",
+                str(job["width"]),
+                "--control-revision",
+                producer["revision"],
+                "--math-root",
+                producer_roles["math"]["root"],
+                "--",
+                *job["arguments"],
+            ]
         source = Path(reuse["roles"]["control"]["root"]) / "integration/library-study-v1/qualify.py"
         C.require(
             C.binding(source)["sha256"]

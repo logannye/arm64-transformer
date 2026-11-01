@@ -3,6 +3,7 @@
 import copy
 import importlib.util
 import os
+import subprocess
 import sys
 from pathlib import Path
 from types import ModuleType, SimpleNamespace
@@ -19,11 +20,25 @@ SPEC.loader.exec_module(A)
 C = A.C
 
 
+def test_git_status_preserves_source_metadata_without_environment_override(tmp_path, monkeypatch):
+    monkeypatch.delenv("GIT_OPTIONAL_LOCKS", raising=False)
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True)
+    path = tmp_path / "source.py"
+    path.write_text("value = 1\n")
+    subprocess.run(["git", "-C", str(tmp_path), "add", "source.py"], check=True)
+    info = path.stat()
+    os.utime(path, ns=(info.st_atime_ns, info.st_mtime_ns + 2_000_000_000))
+    directory, index = tmp_path / ".git", tmp_path / ".git/index"
+    before = C._stat(directory.stat()), C.binding(index)
+    assert A.git(tmp_path, "status", "--porcelain") == b"A  source.py\n"
+    assert (C._stat(directory.stat()), C.binding(index)) == before
+
+
 def test_frozen_numerical_source_plan_retains_every_gate_and_fit(monkeypatch):
     plan = C.plan()
     assert C.validate_plan(plan) is plan
     assert (
-        plan["math_revision"] == plan["cpu_revision"] == "c2efce299984d120b185ffab70c3808150034eaf"
+        plan["math_revision"] == plan["cpu_revision"] == "bd2cd2823038729779a217ee5b084fa06191d3a9"
     )
     assert plan["protocol"] == "gpu-v5-library-five-engine-v3"
     assert plan["source_roles"] == ["control", "math"]

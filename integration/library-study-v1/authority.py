@@ -38,7 +38,9 @@ def directory(path):
 
 
 def git(root, *args):
-    return subprocess.check_output(["git", "-C", str(root), *args], timeout=60)
+    return subprocess.check_output(
+        ["git", "--no-optional-locks", "-C", str(root), *args], timeout=60
+    )
 
 
 def source_role(root, revision, *, control=False):

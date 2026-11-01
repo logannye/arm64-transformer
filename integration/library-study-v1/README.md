@@ -2,7 +2,7 @@
 
 This successor uses protocol `gpu-v5-library-five-engine-v3`. Every numerical
 engine, including the CPU library model, comes from revision
-`c2efce299984d120b185ffab70c3808150034eaf`. Controls in this directory have a
+`bd2cd2823038729779a217ee5b084fa06191d3a9`. Controls in this directory have a
 separate, explicit source role. Changing a launcher must not silently change the
 qualified mathematical implementation or import another editable checkout.
 
