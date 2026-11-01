@@ -45,6 +45,12 @@ def test_library_api_identity_preserves_stage_and_stock_candidate_boundary():
         mutation(changed)
         with pytest.raises(ValueError):
             audit.validate_library_identity(changed)
+    cpu = copy.deepcopy(result)
+    cpu["engine"] = "cpu_torch"
+    with pytest.raises(ValueError, match="stages"):
+        audit.validate_library_identity(cpu)
+    cpu["library_api"]["precise_stages"].append("ff1")
+    audit.validate_library_identity(cpu)
     result.update(engine="mlx", framework_compiled=True)
     result["library_api"].update(
         module="mlx.nn.precise_fp32",

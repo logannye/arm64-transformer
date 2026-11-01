@@ -31,7 +31,7 @@ def validate_library_identity(result):
     require(engine in {"cpu_torch", "mps", "mlx"}, "Unknown library model engine")
     proof = result.get("library_api", {})
     expected_module = "mlx.nn.precise_fp32" if engine == "mlx" else "torch.nn.precise_fp32"
-    stages = ["ln1", "qkv", "attention"] + (["ff1"] if engine == "mlx" else [])
+    stages = ["ln1", "qkv", "attention"] + (["ff1"] if engine in {"cpu_torch", "mlx"} else [])
     require(
         result["library_model"]
         == proof.get("model_identity")
