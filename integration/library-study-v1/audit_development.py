@@ -163,7 +163,7 @@ def execute(args):
             E.validate_capabilities("metal", saved["outputs"]["capabilities"])
             C.require(
                 saved["outputs"]["metal_library_origin"]
-                == C.binding(Path(math["root"]) / A.METAL_LIBRARY),
+                == C.binding(Path(control["root"]) / A.METAL_LIBRARY),
                 "Fresh Metal worker used another native library",
             )
     C.require(
@@ -191,7 +191,7 @@ def execute(args):
         E.validate_capabilities(engine, cap)
     C.require(set(result["capabilities"]) == {"metal"}, "Missing selected Metal capability proof")
     C.require(
-        result["metal_library_origin"] == C.binding(Path(math["root"]) / A.METAL_LIBRARY),
+        result["metal_library_origin"] == C.binding(Path(control["root"]) / A.METAL_LIBRARY),
         "Wrong retained Metal origin",
     )
     origins = ORIGINS.project_origins(math, dict(sys.modules))

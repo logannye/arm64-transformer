@@ -149,7 +149,7 @@ def load_replay(binding, job, manifest, capture, inventory, engine):
         if engine == "metal":
             C.require(
                 record["metal_library_origin"]
-                == C.binding(Path(roles["math"]["root"]) / R.A.METAL_LIBRARY),
+                == C.binding(Path(roles["control"]["root"]) / R.A.METAL_LIBRARY),
                 "Replay Metal host library differs",
             )
         if engine == "cpu_arm64":

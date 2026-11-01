@@ -239,7 +239,8 @@ def execute(args):
     for engine, cap in outputs["capabilities"].items():
         E.validate_capabilities(engine, cap)
     C.require(
-        outputs["metal_library_origin"] == C.binding(Path(roles["math"]["root"]) / A.METAL_LIBRARY),
+        outputs["metal_library_origin"]
+        == C.binding(Path(roles["control"]["root"]) / A.METAL_LIBRARY),
         "Admission Metal host origin differs",
     )
     blocking = all(r["passed"] for r in checked if r["blocking"])

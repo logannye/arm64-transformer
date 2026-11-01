@@ -10,6 +10,9 @@ SPEC = importlib.util.spec_from_file_location("library_execution_authority", HER
 A = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(A)
 C = A.C
+SPEC = importlib.util.spec_from_file_location("library_selected_metal_host", HERE / "metal_host.py")
+H = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(H)
 
 
 def validate_capabilities(engine, capabilities):
@@ -39,7 +42,7 @@ def validate_capabilities(engine, capabilities):
         math = Path(__import__("transformer").__file__).resolve().parents[1]
         source = (math / SHADER).read_bytes() + b"\n" + OPTIMIZED_SHADERS.read_bytes()
         policies = bundle(reference(), WIDTH)
-        host_sha = hashlib.sha256((math / "native/metal/backend.mm").read_bytes()).hexdigest()
+        host_sha = H.HOST_SHA256
 
         C.require(
             capabilities.get("implementation") == "precision-normalization-reference-metal-v1"
@@ -53,7 +56,9 @@ def validate_capabilities(engine, capabilities):
             and capabilities.get("precision_policy") == 1
             and capabilities.get("optimized_kernel_claim") is False
             and capabilities.get("kernel_policy_sha256") == identity(policies)
-            and capabilities.get("binary_sha256") == A.METAL_SHA256
+            and capabilities.get("binary_sha256") == H.BINARY_SHA256
+            and capabilities.get("host_bridge_build")
+            == dict(source_revision=H.BUILD_REVISION, run_id=H.BUILD_RUN)
             and capabilities.get("compiled_host_source_sha256")
             == capabilities.get("host_source_sha256")
             == host_sha
@@ -78,10 +83,10 @@ def loaded_metal_library(runtime):
         raw = dyld._dyld_get_image_name(index)
         if raw and Path(raw.decode()).name == "libtransformer_metal.dylib":
             actual.add(str(Path(raw.decode()).resolve(strict=True)))
-    expected = Path(runtime.roles["math"]["root"]) / A.METAL_LIBRARY
+    expected = Path(runtime.roles["control"]["root"]) / H.LIBRARY
     C.require(actual == {str(expected)}, "Loaded Metal host bridge is missing or shadowed")
     result = C.binding(expected)
-    C.require(result["sha256"] == A.METAL_SHA256, "Loaded Metal host bridge bytes changed")
+    C.require(result["sha256"] == H.BINARY_SHA256, "Loaded Metal host bridge bytes changed")
     return result
 
 
@@ -94,9 +99,7 @@ def create_backend(runtime, engine, initial, **limits):
 
         backend = create_gpu_backend(engine, initial, **limits)
     elif engine == "metal":
-        from transformer.library_metal import create_backend as metal_backend
-
-        backend = metal_backend(initial, **limits)
+        backend = H.create_backend(runtime, initial, C, **limits)
     else:
         raise ValueError("GPU engine required")
     try:

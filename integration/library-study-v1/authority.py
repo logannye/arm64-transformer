@@ -77,6 +77,15 @@ def source_role(root, revision, *, control=False):
             "Unselected retained Metal host binary",
         )
         records[METAL_LIBRARY] = METAL_SHA256
+    elif CONTROL_PREFIX + "metal_host.py" in records:
+        # Older producer roles retain their exact historical file inventory.
+        # Only controls that select the repaired bridge bind these extra assets.
+        spec = importlib.util.spec_from_file_location(
+            "selected_metal_host_assets", root / CONTROL_PREFIX / "metal_host.py"
+        )
+        host = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(host)
+        records.update(host.bind_assets(root, C))
     C.require(
         git(root, "rev-parse", "HEAD").decode().strip() == revision
         and not git(root, "status", "--porcelain").strip(),

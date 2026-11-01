@@ -178,7 +178,7 @@ def execute(args):
     if job["engine"] == "metal":
         D.E.validate_capabilities("metal", result["capabilities"])
         C.require(
-            result["metal_library_origin"] == C.binding(Path(math["root"]) / A.METAL_LIBRARY),
+            result["metal_library_origin"] == C.binding(Path(control["root"]) / A.METAL_LIBRARY),
             "Common Metal library origin differs",
         )
     origins = D.ORIGINS.project_origins(math, dict(sys.modules))
