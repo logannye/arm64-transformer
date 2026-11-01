@@ -200,15 +200,25 @@ def audit_diagnostic(row, spec, record, job, manifest, capture, inventory):
 def audit_children(record, job, manifest, capture, inventory, np):
     roles, outputs = manifest["bindings"]["roles"], record["outputs"]
     children, pids = {}, {record["pid"]}
+    child_manifest, child_parent, child_job = manifest, record["pid"], job
+    if "child_recovery" in job:
+        recovery, child_manifest = WORKER.child_recovery(job, manifest)
+        failed = F.PLAN.load(recovery["failed_parent"])
+        child_parent, child_job = failed["pid"], F.PLAN.load(failed["job"])
+        C.require(
+            outputs["child_proofs"] == recovery["child_proofs"]
+            and record["pid"] not in [child_parent, *recovery["child_pids"]],
+            "Recovered child inventory or process identity changed",
+        )
     for child in outputs["child_proofs"]:
         for name in ("receipt", "job", "log"):
             C.bound(child[name])
         saved, task = F.PLAN.load(child["receipt"]), F.PLAN.load(child["job"])
         WORKER.validate_job(task)
         C.require(
-            task["manifest"] == job["manifest"]
+            task["manifest"] == child_job["manifest"]
             and task["width"] == job["width"]
-            and task["parent_pid"] == record["pid"]
+            and task["parent_pid"] == child_parent
             and task["raw_store"] == job["raw_store"]
             and saved["job"] == child["job"]
             and saved["pid"] == child["pid"]
@@ -217,7 +227,7 @@ def audit_children(record, job, manifest, capture, inventory, np):
             "Stale or repeated admission child",
         )
         pids.add(saved["pid"])
-        worker_identity(saved, task, manifest, capture, inventory)
+        worker_identity(saved, task, child_manifest, capture, inventory)
         children.setdefault((task["engine"], task["kind"]), []).append(saved)
         for item in saved["outputs"].get("files", []):
             C.bound(item)

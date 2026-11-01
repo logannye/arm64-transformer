@@ -271,6 +271,9 @@ def execute(args):
         if width == 32 and args.device_repair_receipt is not None:
             job["device_repair"] = C.binding(args.device_repair_receipt)
             load("admission_worker").validate_job(job)
+        if width == 256 and args.recover_children is not None:
+            job["child_recovery"] = C.binding(args.recover_children)
+            load("admission_worker").validate_job(job)
         job_path = output / f"width-{width}-job.json"
         C.write(job_path, job)
         argv = [
@@ -333,4 +336,5 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--device-repair-receipt", type=Path)
     parser.add_argument("--reuse-admission", type=Path)
+    parser.add_argument("--recover-children", type=Path)
     execute(parser.parse_args())

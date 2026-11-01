@@ -26,11 +26,79 @@ def load(name):
 
 
 A, F, W, CONTEXT, RAW = (load(n) for n in ("authority", "frozen", "worker", "context", "evidence"))
+IO = load("artifact_io")
 C = A.C
 SCHEMA = "frozen-library-admission-job-v1"
 ENGINES = ("cpu_arm64", "cpu_torch", "metal", "mps", "mlx")
 DEVICE_REPAIR_ID = "mlx/32/control/device_execution"
 DEVICE_REPAIR_RECEIPT_SHA256 = "7345e16db79fe944bee4a27cd7e5bb354b152d818ad66df8a567048a74f5e477"
+CHILD_RECOVERY_SHA256 = "b9036ba939a4e053ab7059707c8ec3488b895fdf46785669944456b57695bbd1"
+
+
+def child_recovery(job, manifest):
+    """Reuse only the twelve guarded children of the recorded receipt-read failure."""
+    binding = job["child_recovery"]
+    C.require(binding["sha256"] == CHILD_RECOVERY_SHA256, "Unknown child recovery evidence")
+    recovery = F.PLAN.load(binding)
+    failed = F.PLAN.load(recovery["failed_parent"])
+    stopped = F.PLAN.load(recovery["stopped"])
+    previous = F.read(recovery["manifest"]["path"], recovery["manifest"]["sha256"])
+    old, new = previous["bindings"], manifest["bindings"]
+    producer = A.verify_role(old["roles"]["control"], control=True)
+    C.require(
+        job["kind"] == "width"
+        and job["width"] == recovery["width"] == 256
+        and recovery["evidence_valid"] is True
+        and recovery["children_complete"] == 12
+        and failed["complete"] is False
+        and failed["integrity_after"] is False
+        and failed["manifest"] == recovery["manifest"]
+        and failed["pid"] == recovery["parent_pid"] == 28700
+        and len(stopped["completed_groups"]) == 303
+        and stopped["child_proofs"] == recovery["child_proofs"][:11]
+        and "ValueError: JSON changed during read" in stopped["error"]
+        and F.PLAN.load(failed["job"])["raw_store"] == job["raw_store"]
+        and producer["revision"] == "6af9acb32fb766ae1e5fc2cdb2ff80b1f7f05a89"
+        and old["roles"]["math"] == new["roles"]["math"]
+        and all(old[k] == new[k] for k in ("capture", "fixtures", "native_assets", "hardware"))
+        and all(
+            previous[k] == manifest[k]
+            for k in previous
+            if k not in ("bindings", "source_roles", "frozen_utc")
+        ),
+        "Child recovery changed failure, scientific, runtime or source identity",
+    )
+    allowed = {
+        "integration/library-study-v1/" + name
+        for name in ("admission.py", "admission_worker.py", "audit_admission.py")
+    }
+    current = new["roles"]["control"]
+    C.require(
+        set(producer["files"]) == set(current["files"])
+        and all(
+            producer["files"][k] == current["files"][k]
+            for k in producer["files"]
+            if k not in allowed
+        ),
+        "Child recovery changed unrelated execution controls",
+    )
+    return recovery, previous
+
+
+def read_child_receipt(path, anchor):
+    """Retry output metadata only against the child's source-exact export hash."""
+    C.require(anchor["path"] == str(path), "Foreign child receipt path")
+    for attempt in range(3):
+        try:
+            value = C.read(path, anchor["sha256"])
+            C.require(C.binding(path) == anchor, "Child receipt bytes differ from export")
+            return value
+        except ValueError as error:
+            if str(error) not in ("JSON changed during read", "Bound file changed during read"):
+                raise
+            if attempt == 2:
+                raise
+    raise AssertionError("Unreachable receipt retry")
 
 
 def isolated_diagnostic(gate):
@@ -87,6 +155,15 @@ def validate_job(job):
             and job["device_repair"]["sha256"] == DEVICE_REPAIR_RECEIPT_SHA256,
             "Only the recorded width-32 device observation may be repaired",
         )
+    if "child_recovery" in job:
+        keys.add("child_recovery")
+        C.require(
+            job["kind"] == "width"
+            and job["width"] == 256
+            and "device_repair" not in job
+            and job["child_recovery"]["sha256"] == CHILD_RECOVERY_SHA256,
+            "Only the recorded width-256 child workers may be recovered",
+        )
     C.require(
         type(job["raw_start_bytes"]) is int and job["raw_start_bytes"] >= 0,
         "Invalid admission raw-store baseline",
@@ -103,6 +180,39 @@ def validate_job(job):
 
 
 def child(context, engine, kind, job, *, gate=None):
+    if "child_recovery" in job and kind != "diagnostic_probe":
+        for index, proof in enumerate(context.recovered_children):
+            task = F.PLAN.load(proof["job"])
+            if (task["engine"], task["kind"]) != (engine, kind):
+                continue
+            result = F.PLAN.load(proof["receipt"])
+            C.require(
+                result["complete"] is True
+                and result["integrity_after"] is True
+                and result["job"] == proof["job"],
+                "Incomplete recovered admission child",
+            )
+            if kind == "repeat_training":
+                expected = dict(
+                    context.initial, tokens=context.tokens[:3], targets=context.targets[:3]
+                )
+                C.bound(task["operands"])
+                with Path(task["operands"]["path"]).open("rb") as stream:
+                    saved = RAW.decode_arrays(stream, tuple(expected))
+                import numpy as np
+
+                C.require(
+                    all(
+                        saved[k].dtype == np.asarray(v).dtype
+                        and saved[k].shape == np.asarray(v).shape
+                        and saved[k].tobytes() == np.asarray(v).tobytes()
+                        for k, v in expected.items()
+                    ),
+                    "Recovered child operands differ from the frozen inputs",
+                )
+            context.child_proofs.append(context.recovered_children.pop(index))
+            return result["outputs"]
+        raise ValueError("Missing recovered admission child")
     output = context.path(kind + "-admission-child").with_suffix("")
     task = {k: job[k] for k in ("schema", "manifest", "width", "raw_store", "raw_start_bytes")}
     task.update(kind=kind, engine=engine, output=str(output), parent_pid=os.getpid())
@@ -178,7 +288,8 @@ def child(context, engine, kind, job, *, gate=None):
             return None, proof
     C.require(process.returncode == 0, "Fresh admission child failed; retain its evidence")
     result_path = output / "result.json"
-    result = C.read(result_path)
+    summary = json.loads(log.read_text().splitlines()[-1])
+    result = read_child_receipt(result_path, summary["receipt"])
     C.require(
         result["complete"] is True
         and result["integrity_after"] is True
@@ -271,6 +382,9 @@ def width(job, runtime, output, manifest):
         admission=job["manifest"],
     )
     context.child_proofs = []
+    if "child_recovery" in job:
+        recovery, _ = child_recovery(job, manifest)
+        context.recovered_children = list(recovery["child_proofs"])
     inventory = [
         s for s in C.comparison()["gate_inventory"] if int(s["id"].split("/")[1]) == job["width"]
     ]
@@ -393,6 +507,7 @@ def width(job, runtime, output, manifest):
                 for e, b in selected_backends.items()
             }
         )
+        C.require(not getattr(context, "recovered_children", []), "Unused recovered children")
         return dict(
             groups=rows,
             expected_inventory=inventory,
@@ -486,8 +601,21 @@ def execute(path, expected):
         record["error"] = traceback.format_exc()
     finally:
         record["ended_unix"] = time.time()
-        C.write(output / "result.json", record)
-    print(json.dumps(dict(complete=record["complete"], integrity_after=record["integrity_after"])))
+        receipt, export = IO.write_exact(
+            output / "result.json",
+            (json.dumps(record, indent=2, allow_nan=False) + "\n").encode(),
+            C,
+        )
+    print(
+        json.dumps(
+            dict(
+                complete=record["complete"],
+                integrity_after=record["integrity_after"],
+                receipt=receipt,
+                receipt_export=export,
+            )
+        )
+    )
     return 0 if record["complete"] and record["integrity_after"] else 1
 
 
