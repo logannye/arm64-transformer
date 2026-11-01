@@ -15,13 +15,17 @@ SPEC.loader.exec_module(D)
 
 @pytest.mark.parametrize("width", [32, 64, 128, 256, 512, 1024])
 def test_frozen_native_adam_gates_require_all_gpu_gradient_sources(monkeypatch, width):
-    sources = {
-        g["id"].split("/")[3].removeprefix("from-")
-        for g in D.C.comparison()["gate_inventory"]
-        if g["id"].split("/")[0] in ("cpu_arm64", "metal")
-        and g["id"].split("/")[1:3] == [str(width), "adam"]
-    }
+    def gradient_sources(comparison):
+        return {
+            g["id"].split("/")[3].removeprefix("from-")
+            for g in comparison["gate_inventory"]
+            if g["id"].split("/")[0] in ("cpu_arm64", "metal")
+            and g["id"].split("/")[1:3] == [str(width), "adam"]
+        }
+
+    sources = gradient_sources(D.C.original_comparison())
     assert sources == {"cpu_arm64", "cpu_torch", "mps", "mlx", "metal"}
+    assert gradient_sources(D.C.comparison()) == (sources if width in D.C.WIDTHS else set())
     capabilities = {e: object() for e in sources - {"cpu_arm64", "cpu_torch"}}
     checked = {}
     monkeypatch.setattr(D.E, "validate_capabilities", lambda e, cap: checked.update({e: cap}))
