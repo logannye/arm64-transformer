@@ -24,6 +24,15 @@ def metadata(value):
     )
 
 
+def unchanged(before, after, message):
+    if before != after:
+        old, new = dict(before), dict(after)
+        paths = sorted(old.keys() | new.keys())
+        differences = [p for p in paths if old.get(p) != new.get(p)]
+        detail = [dict(path=p, before=old.get(p), after=new.get(p)) for p in differences[:8]]
+        raise ValueError(message + ": " + json.dumps(dict(count=len(differences), entries=detail)))
+
+
 def snapshot(roots, aliases=()):
     """Enumerate complete trees, following and separately recording symlinks."""
     records, visited = {}, set()
@@ -117,14 +126,14 @@ class RuntimeGuard:
             )
         before = snapshot(self._roots, self._aliases)
         if self._snapshot is not None:
-            C.require(
-                before == self._snapshot, "Authenticated runtime inventory or metadata changed"
+            unchanged(
+                self._snapshot, before, "Authenticated runtime inventory or metadata changed"
             )
         if self._verified is None or full:
             receipt, payloads = self._authority.verify()
             verified = (C.canonical(receipt), C.canonical(payloads))
             after = snapshot(self._roots, self._aliases)
-            C.require(before == after, "Runtime changed during full authentication")
+            unchanged(before, after, "Runtime changed during full authentication")
             C.require(
                 self._verified is None or verified == self._verified,
                 "Fully authenticated runtime bytes changed",

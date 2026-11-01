@@ -140,8 +140,9 @@ def test_guard_rejects_changes_during_initial_full_authentication(tmp_path):
         return result
 
     case.authority.verify = changed
-    with pytest.raises(ValueError, match="during full authentication"):
+    with pytest.raises(ValueError, match="during full authentication") as error:
         case.guard.verify()
+    assert str(case.payload) in str(error.value)
 
 
 def test_guard_cannot_be_reused_by_a_different_process(tmp_path, monkeypatch):
@@ -209,3 +210,21 @@ def test_guard_witness_binds_full_postflight_process_and_complete_context(tmp_pa
             audit.validate_validation(
                 altered, case.roles, capture, case.inventory, pid=os.getpid(), final=True
             )
+
+
+def test_native_development_auditors_require_each_worker_final_guard(monkeypatch):
+    audit = module("audit_development")
+    roles = {"control": {"files": {"integration/library-study-v1/runtime_guard.py": "a" * 64}}}
+    record = dict(pid=123, origins_before={"before": True}, origins_after={"after": True})
+    calls = []
+    monkeypatch.setattr(audit.ORIGINS, "validate_origins", lambda *a, **k: calls.append((a, k)))
+
+    def final(proof, *args, **kwargs):
+        assert proof == {"authenticated": True} and kwargs == dict(pid=123, final=True)
+
+    monkeypatch.setattr(audit.ORIGINS, "validate_validation", final)
+    with pytest.raises(AssertionError):
+        audit.runtime_validation(record, dict(engine="metal"), {}, {}, roles)
+    record["runtime_validation_final"] = {"authenticated": True}
+    audit.runtime_validation(record, dict(engine="metal"), {}, {}, roles)
+    assert len(calls) == 4 and all(c[0][-1] == "metal" for c in calls)

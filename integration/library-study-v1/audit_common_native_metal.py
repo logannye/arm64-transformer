@@ -67,6 +67,7 @@ def execute(args):
     torch.set_num_threads(1)
     C.bound(capture["runtime_inventory"])
     inventory = C.read(capture["runtime_inventory"]["path"], capture["runtime_inventory"]["sha256"])
+    D.runtime_validation(record, job, capture, inventory, roles)
     saved_imports = load("qualify_suites").imports
     for phase in ("before", "after"):
         proof = record["origins_" + phase]

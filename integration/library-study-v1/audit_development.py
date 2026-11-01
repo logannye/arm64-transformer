@@ -53,6 +53,29 @@ def worker_identity(record, job, runtime_identity, roles):
         )
 
 
+def runtime_validation(record, job, capture, inventory, roles):
+    """Require full final authentication for workers using the new guard."""
+    if A.CONTROL_PREFIX + "runtime_guard.py" not in roles["control"]["files"]:
+        return
+    for phase in ("before", "after"):
+        ORIGINS.validate_origins(
+            record["origins_" + phase],
+            roles,
+            capture,
+            inventory,
+            job.get("engine", "cpu_torch"),
+            pid=record["pid"],
+        )
+    ORIGINS.validate_validation(
+        record.get("runtime_validation_final"),
+        roles,
+        capture,
+        inventory,
+        pid=record["pid"],
+        final=True,
+    )
+
+
 def execute(args):
     C.require(sys.flags.isolated and sys.flags.dont_write_bytecode, "Use audit Python -I -B")
     C.require(
@@ -94,6 +117,7 @@ def execute(args):
         in [[e, str(job["width"])] for e in ("cpu_arm64", "metal", "oracle")]
     ]
     worker_identity(record, job, capture["runtime_identity_sha256"], roles)
+    runtime_validation(record, job, capture, inventory, roles)
     result = record["outputs"]
     C.require(
         result["expected_inventory"] == expected
@@ -128,6 +152,7 @@ def execute(args):
         )
         seen.add(saved["pid"])
         worker_identity(saved, task, capture["runtime_identity_sha256"], roles)
+        runtime_validation(saved, task, capture, inventory, roles)
         child_kinds.append((task["engine"], task["kind"]))
         for binding in saved["outputs"].values():
             if isinstance(binding, dict) and set(binding) == {"path", "sha256", "bytes"}:
