@@ -83,12 +83,18 @@ def test_execution_environment_completes_frozen_pins_without_mutating_parent():
         "MLX_DISABLE_COMPILE": "0",
         "OMP_NUM_THREADS": "8",
         "METAL_DEBUG_ERROR_MODE": "0",
+        "PYTHONNOUSERSITE": "1",
+        "PYTHONPYCACHEPREFIX": "/untrusted/bytecode",
     }
     unchanged = parent.copy()
     child = A.execution_environment(parent)
     assert parent == unchanged
     assert child["ARM64_TRANSFORMER_BACKEND"] == "auto"
     assert child["METAL_DEBUG_ERROR_MODE"] == "0"
+    assert {n for n in child if n.startswith("PYTHON")} == {
+        "PYTHONHASHSEED",
+        "PYTHONDONTWRITEBYTECODE",
+    }
     for name, value in C.comparison()["environment"].items():
         if value is None:
             assert name not in child
@@ -186,9 +192,7 @@ def test_activation_authenticates_bytes_before_exposing_dependency_paths(
     monkeypatch.setattr(
         A,
         "os",
-        SimpleNamespace(
-            environ={"PYTHONHASHSEED": "0", "PYTHONDONTWRITEBYTECODE": "1"}, path=os.path
-        ),
+        SimpleNamespace(environ=A.execution_environment({"PYTHONNOUSERSITE": "1"}), path=os.path),
     )
     checked_roles, authentications = [], []
     monkeypatch.setattr(A, "verify_role", lambda role, **kw: checked_roles.append(role))

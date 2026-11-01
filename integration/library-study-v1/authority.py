@@ -109,7 +109,14 @@ def merged_project(roles):
 
 def execution_environment(sanitized):
     """Complete sanitized child controls with every prospectively frozen pin."""
-    result = dict(sanitized)
+    # Suite launchers also set PYTHONNOUSERSITE. Formal children already use -S
+    # and accept only these two declared Python controls; retain that strict
+    # bootstrap guard instead of carrying redundant suite-only overrides.
+    result = {
+        name: value
+        for name, value in sanitized.items()
+        if not name.startswith("PYTHON") or name in {"PYTHONHASHSEED", "PYTHONDONTWRITEBYTECODE"}
+    }
     for name, value in C.comparison()["environment"].items():
         if value is None:
             result.pop(name, None)
