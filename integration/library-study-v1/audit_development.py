@@ -24,6 +24,32 @@ A, E, N, RAW, ORIGINS = (
 C = A.C
 
 
+def producer_role(auditor, root=None, revision=None):
+    """Permit the audit-only repair without relabelling an existing worker."""
+    C.require((root is None) == (revision is None), "Both producer source arguments are required")
+    if root is None:
+        return auditor
+    producer = A.source_role(root, revision, control=True)
+    audit_only = {A.CONTROL_PREFIX + n for n in ("audit_development.py", "qualify.py")}
+    C.require(
+        {k: v for k, v in producer["files"].items() if k not in audit_only}
+        == {k: v for k, v in auditor["files"].items() if k not in audit_only},
+        "Audit-only reuse requires unchanged worker and numerical dependencies",
+    )
+    return producer
+
+
+def validate_capabilities(capabilities):
+    # The frozen Adam gates use gradients from all five engines. MPS and MLX
+    # therefore execute even though the gates target only ARM64 and Metal.
+    C.require(
+        set(capabilities) == {"metal", "mps", "mlx"},
+        "Missing or foreign cross-engine gradient capability proof",
+    )
+    for engine, cap in capabilities.items():
+        E.validate_capabilities(engine, cap)
+
+
 def worker_identity(record, job, runtime_identity, roles):
     C.require(
         record["schema"] == "frozen-library-development-worker-v1"
@@ -83,6 +109,7 @@ def execute(args):
         "Independent audit requires fresh source/framework imports",
     )
     control = A.source_role(HERE.parents[1], args.control_revision, control=True)
+    producer = producer_role(control, args.producer_control_root, args.producer_control_revision)
     math = A.source_role(args.math_root, C.MATH_REVISION)
     path = C.regular(args.receipt)
     record = C.read(path, args.receipt_sha256)
@@ -90,7 +117,7 @@ def execute(args):
     job = C.read(record["job"]["path"], record["job"]["sha256"])
     worker_module = load("worker")
     worker_module.validate_job(job)
-    roles = dict(control=control, math=math)
+    roles = dict(control=producer, math=math)
     C.require(
         job["kind"] == "native_metal_gates"
         and job["roles"] == roles
@@ -163,7 +190,7 @@ def execute(args):
             E.validate_capabilities("metal", saved["outputs"]["capabilities"])
             C.require(
                 saved["outputs"]["metal_library_origin"]
-                == C.binding(Path(control["root"]) / A.METAL_LIBRARY),
+                == C.binding(Path(producer["root"]) / A.METAL_LIBRARY),
                 "Fresh Metal worker used another native library",
             )
     C.require(
@@ -187,11 +214,9 @@ def execute(args):
             runtime_root=capture["runtime_root"],
             receipt=receipt,
         )
-    for engine, cap in result["capabilities"].items():
-        E.validate_capabilities(engine, cap)
-    C.require(set(result["capabilities"]) == {"metal"}, "Missing selected Metal capability proof")
+    validate_capabilities(result["capabilities"])
     C.require(
-        result["metal_library_origin"] == C.binding(Path(control["root"]) / A.METAL_LIBRARY),
+        result["metal_library_origin"] == C.binding(Path(producer["root"]) / A.METAL_LIBRARY),
         "Wrong retained Metal origin",
     )
     origins = ORIGINS.project_origins(math, dict(sys.modules))
@@ -200,6 +225,7 @@ def execute(args):
         "Selected candidate must not replace independent audit arithmetic",
     )
     A.verify_role(control, control=True)
+    A.verify_role(producer, control=True)
     A.verify_role(math)
     C.require(C.binding(path)["sha256"] == args.receipt_sha256, "Worker receipt changed")
     return dict(
@@ -212,6 +238,7 @@ def execute(args):
         groups=decisions,
         child_pids=sorted(seen - {record["pid"]}),
         auditor_control_role=control,
+        worker_control_role=producer,
         auditor_math_revision=math["revision"],
         auditor_project_origins=origins,
         formal_eligible=False,
@@ -223,6 +250,8 @@ def execute(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--control-revision", required=True)
+    parser.add_argument("--producer-control-root", type=Path)
+    parser.add_argument("--producer-control-revision")
     parser.add_argument("--math-root", type=Path, required=True)
     parser.add_argument("--capture", type=Path, required=True)
     parser.add_argument("--capture-sha256", required=True)

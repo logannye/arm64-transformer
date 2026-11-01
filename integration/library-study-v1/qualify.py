@@ -131,6 +131,22 @@ def command(job, roles, capture, audit_python):
     producer = A.source_role(
         job["producer_control_root"], job["producer_control_revision"], control=True
     )
+    if job["kind"] == "native_metal":
+        # The corrected auditor binds the original producer and accepts only
+        # audit-only differences. Do not rerun completed numerical workers.
+        return [
+            *base,
+            str(HERE / "audit_development.py"),
+            "--control-revision",
+            roles["control"]["revision"],
+            "--producer-control-root",
+            producer["root"],
+            "--producer-control-revision",
+            producer["revision"],
+            "--math-root",
+            roles["math"]["root"],
+            *job["arguments"],
+        ]
     filename = (
         "audit_development.py" if job["kind"] == "native_metal" else "audit_common_native_metal.py"
     )

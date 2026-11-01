@@ -13,6 +13,34 @@ Q = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(Q)
 
 
+def test_native_reaudit_keeps_original_producer_role_explicit(monkeypatch):
+    producer = dict(root="/producer", revision="a" * 40)
+    monkeypatch.setattr(Q.A, "source_role", lambda *a, **k: producer)
+    job = dict(
+        kind="native_metal",
+        producer_control_root=producer["root"],
+        producer_control_revision=producer["revision"],
+        arguments=["--receipt", "/saved/result.json", "--receipt-sha256", "c" * 64],
+    )
+    roles = dict(control=dict(revision="b" * 40), math=dict(root="/math"))
+    command = Q.command(job, roles, {}, "/independent/python")
+    assert command == [
+        "/independent/python",
+        "-I",
+        "-B",
+        str(Q.HERE / "audit_development.py"),
+        "--control-revision",
+        "b" * 40,
+        "--producer-control-root",
+        "/producer",
+        "--producer-control-revision",
+        "a" * 40,
+        "--math-root",
+        "/math",
+        *job["arguments"],
+    ]
+
+
 def wrapped(kind, result):
     return dict(schema="frozen-library-raw-audit-dispatch-v1", kind=kind, width=512, result=result)
 
