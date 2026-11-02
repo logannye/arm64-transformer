@@ -198,14 +198,25 @@ differences. Matching CPU order and improving FP64 accuracy are distinct goals.
 The [diagnostics and repair notes](integration/gpu-owned/MPS-REPAIR-NOTES.md)
 retain raw evidence and distinguish source candidates from validated fixes.
 
-The maintained-library successor now has an approved
-[staged completion amendment](experiments/gpu-v5-library-phase1/AMENDMENT.md):
-**120 first-phase fits at widths 32–256**, with all five engines, three seeds,
-two repeats and every required checkpoint/oracle comparison. At amendment,
-formal progress is **0/120**; the **60 fits at widths 512/1024 are deferred**.
-The original six-width contract and its positive and negative evidence remain
-preserved. First-phase acceptance will not claim completion of the original
-180-fit study or qualification of the deferred widths.
+The maintained-library successor has now **accepted all 120 first-phase fits
+at widths 32–256**, covering five engines, three seeds and two repeats.
+All **1,200 engine replays, 240 independent FP64 oracles, 240 checkpoint audits
+and 60 exact repeat pairs** passed the prescribed checks, covering **983,040
+audited test-token predictions**.
+[Accepted results and failure history](experiments/gpu-v5-library-phase1/results/README.md).
+
+On this Apple M4 Max, ARM64 CPU trained **2.38–2.70× faster** than the selected
+maintained PyTorch CPU arm and delivered **3.99–7.52× faster resident B1 inference**.
+ARM64 CPU had the lowest median training time at widths 32, 64 and 128; Metal
+was fastest at width 256. The selected MPS and MLX arms were slower on this
+workload. These results use project-maintained frameworks, frozen precision
+selections, B16 training and context 32. Trained model quality varies across
+engines; numerical acceptance applies the frozen checks to every saved state.
+
+The [staged completion amendment](experiments/gpu-v5-library-phase1/AMENDMENT.md)
+leaves the **60 fits at widths 512/1024 deferred**. The original 180-fit study
+remains incomplete, and its positive and negative evidence is preserved.
+Standard framework releases and deferred widths remain outside this acceptance.
 
 **The earlier owned-study route remains at 0 of 180 fits.** Its retained broad MPS failures
 remain blocking. Rebuilt frameworks must pass integration and full-workload
