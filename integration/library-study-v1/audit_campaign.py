@@ -51,7 +51,7 @@ def ledger(binding, manifest, manifest_binding, admission):
     return value
 
 
-def prepare_replays(campaign, output, manifest_binding, admission, raw_store):
+def prepare_replays(campaign, output, manifest_binding, admission, raw_store, audit_recovery=None):
     """Freeze every original job before grouping only its untimed execution."""
     cases, groups = [], {}
     for index, row in enumerate(campaign["cells"]):
@@ -66,6 +66,8 @@ def prepare_replays(campaign, output, manifest_binding, admission, raw_store):
                 checkpoint=checkpoint,
                 raw_store=raw_store,
             )
+            if audit_recovery is not None:
+                base["audit_recovery"] = audit_recovery
             jobs = {}
             for engine in (*R.ENGINES, "oracle"):
                 path = destination / (engine + "-job.json")
@@ -110,11 +112,30 @@ def execute(args):
     )
     manifest_binding, admission = C.binding(args.manifest), C.binding(args.admission)
     C.require(manifest_binding["sha256"] == args.manifest_sha256, "Manifest trust anchor differs")
-    manifest = F.read(args.manifest, args.manifest_sha256)
+    authority = dict(manifest=manifest_binding, admission=admission)
+    recovery_path = getattr(args, "audit_recovery", None)
+    recovery_digest = getattr(args, "audit_recovery_sha256", None)
+    C.require(
+        (recovery_path is None) == (recovery_digest is None), "Both recovery arguments required"
+    )
+    if recovery_path:
+        authority["audit_recovery"] = C.binding(recovery_path)
+        C.require(
+            authority["audit_recovery"]["sha256"] == recovery_digest,
+            "Recovery trust anchor differs",
+        )
+    context = R.recovery_context(authority)
+    manifest = context.manifest if context else F.read(args.manifest, args.manifest_sha256)
     fits = len(manifest["comparison"]["cells"])
     test_predictions = manifest["comparison"]["planned_test_token_predictions"]
-    AD.verify(manifest, manifest_binding, admission)
+    if context is None:
+        AD.verify(manifest, manifest_binding, admission)
     campaign_binding = C.binding(args.campaign)
+    if context:
+        C.require(
+            campaign_binding == F.PLAN.load(context.binding)["campaign"],
+            "Recovery campaign differs",
+        )
     campaign = ledger(campaign_binding, manifest, manifest_binding, admission)
     capture = F.PLAN.load(manifest["bindings"]["capture"])
     inventory = F.PLAN.load(capture["runtime_inventory"])
@@ -123,8 +144,14 @@ def execute(args):
     output = Path(args.output).absolute()
     R.W.protected_output(
         dict(output=str(output), raw_store=request["raw_store"]),
-        type("MetadataRuntime", (), dict(roles=roles, inventory=inventory))(),
+        type(
+            "MetadataRuntime",
+            (),
+            dict(roles=context.roles if context else roles, inventory=inventory),
+        )(),
     )
+    if context:
+        context.protect(output)
     C.require(
         not output.is_relative_to(Path(args.campaign).parent)
         and not Path(args.campaign).parent.is_relative_to(output),
@@ -168,9 +195,16 @@ def execute(args):
         planned_test_token_predictions=test_predictions,
         scientific_acceptance=False,
     )
+    if context:
+        result["audit_recovery"] = context.binding
     C.write(output / "started.json", result)
     cases, groups = prepare_replays(
-        campaign, output, manifest_binding, admission, request["raw_store"]
+        campaign,
+        output,
+        manifest_binding,
+        admission,
+        request["raw_store"],
+        audit_recovery=context.binding if context else None,
     )
     batch_root = output / "batches"
     batch_root.mkdir()
@@ -189,6 +223,7 @@ def execute(args):
                 jobs=bindings,
                 output=str(batch_root / name),
                 parent_pid=os.getpid(),
+                **({"audit_recovery": context.binding} if context else {}),
             ),
         )
         reply, _ = Q.run(
@@ -291,7 +326,7 @@ def execute(args):
         )
         result["audited_checkpoints"] += 1
         C.bound(campaign_binding)
-        F.verify(manifest)
+        context.verify() if context else F.verify(manifest)
         C.write(output / (label + "-progress.json"), result)
     cells = {r["cell"]["id"]: r for r in campaign["cells"]}
     repeats = []
@@ -326,6 +361,8 @@ def execute(args):
         "Postrun prediction denominator differs",
     )
     ledger(campaign_binding, manifest, manifest_binding, admission)
+    if context:
+        context.verify()
     C.write(output / "audit.json", result)
     print(
         json.dumps(
@@ -343,4 +380,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("manifest", "manifest-sha256", "admission", "campaign", "output", "audit-python"):
         parser.add_argument("--" + name, required=True)
+    parser.add_argument("--audit-recovery")
+    parser.add_argument("--audit-recovery-sha256")
     execute(parser.parse_args())

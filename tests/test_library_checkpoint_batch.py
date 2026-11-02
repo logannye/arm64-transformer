@@ -4,6 +4,8 @@ import copy
 import importlib.util
 import json
 import os
+import subprocess
+import sys
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -23,6 +25,57 @@ def load(name):
 
 B, AUDIT = load("checkpoint_batch"), load("audit_campaign")
 C = B.C
+
+
+def test_real_torch_replays_two_checkpoints_in_one_process():
+    # The former setter failed on the second replay, even when its value was 1.
+    code = """
+import importlib.util, sys
+from pathlib import Path
+root = Path(sys.argv[1])
+sys.path.insert(0, str(root))
+source = root / 'integration/library-study-v1/checkpoint_replay.py'
+spec = importlib.util.spec_from_file_location('replay', source)
+r = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(r)
+import numpy as np
+import torch
+from transformer import spec as model
+parameters = np.zeros(model.PARAM_COUNT, np.float32)
+fixture = {name: np.zeros((256, 33), np.int32) for name in ('validation', 'test')}
+first, _ = r.replay_values('oracle', parameters, fixture)
+second, _ = r.replay_values('oracle', parameters, fixture)
+assert all(np.array_equal(first[name], second[name]) for name in first)
+assert torch.get_num_threads() == torch.get_num_interop_threads() == 1
+assert torch.are_deterministic_algorithms_enabled()
+torch.set_num_threads(2)
+try:
+    r.configure_torch(torch)
+except ValueError as e:
+    assert 'controls changed' in str(e)
+else:
+    raise AssertionError('changed process controls accepted')
+"""
+    subprocess.run(
+        [sys.executable, "-I", "-B", "-c", code, str(ROOT.parents[1])],
+        env=dict(os.environ, ARM64_TRANSFORMER_WIDTH="32"),
+        check=True,
+        capture_output=True,
+        text=True,
+        timeout=60,
+    )
+
+
+def test_thread_controls_reject_cross_process_reuse(monkeypatch):
+    replay = load("checkpoint_replay")
+    replay._TORCH_CONFIGURED_PID = os.getpid() + 1
+    torch = SimpleNamespace(
+        get_num_threads=lambda: 1,
+        get_num_interop_threads=lambda: 1,
+        are_deterministic_algorithms_enabled=lambda: True,
+    )
+    with pytest.raises(ValueError, match="controls changed"):
+        replay.configure_torch(torch)
 
 
 def write(path, value):
@@ -67,7 +120,7 @@ def batch(tmp_path):
 
 
 @pytest.mark.parametrize(
-    "mutation", ["engine", "width", "manifest", "duplicate", "unknown", "too_many"]
+    "mutation", ["engine", "width", "manifest", "duplicate", "unknown", "too_many", "recovery"]
 )
 def test_batch_rejects_mixed_or_duplicate_jobs(tmp_path, mutation):
     value = batch(tmp_path)
@@ -82,6 +135,8 @@ def test_batch_rejects_mixed_or_duplicate_jobs(tmp_path, mutation):
         value["jobs"][1] = value["jobs"][0]
     elif mutation == "unknown":
         value["skip_checkpoint"] = True
+    elif mutation == "recovery":
+        value["audit_recovery"] = {"foreign": True}
     else:
         value["jobs"] *= 31
     with pytest.raises(ValueError):

@@ -213,8 +213,7 @@ def test_checkpoint_replay_preserves_full_splits_own_loss_b1_and_cleanup(monkeyp
     from transformer import validate
 
     replay = load("checkpoint_replay")
-    monkeypatch.setattr(torch, "set_num_threads", lambda n: None)
-    monkeypatch.setattr(torch, "set_num_interop_threads", lambda n: None)
+    monkeypatch.setattr(replay, "configure_torch", lambda module: None)
     calls = dict(
         evaluations=0, forwards=0, closed=False, datasets=0, indices=0, gathers=0, uploads=0
     )

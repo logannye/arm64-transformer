@@ -23,7 +23,7 @@ MAX_JOBS = 60
 
 def jobs(value):
     C.require(
-        set(value)
+        set(value) - {"audit_recovery"}
         == {"schema", "manifest", "admission", "width", "engine", "jobs", "output", "parent_pid"}
         and value["schema"] == "frozen-library-checkpoint-batch-job-v1"
         and value["engine"] in R.ENGINES
@@ -42,6 +42,7 @@ def jobs(value):
             source["engine"] == value["engine"]
             and source["manifest"] == value["manifest"]
             and source["admission"] == value["admission"]
+            and source.get("audit_recovery") == value.get("audit_recovery")
             and source["parent_pid"] == value["parent_pid"],
             "Checkpoint batch mixes engine, authority or parent",
         )
@@ -73,8 +74,14 @@ def execute(path, digest):
         output.is_absolute() and output.resolve() == output and not output.exists(),
         "Fresh canonical batch output required",
     )
-    manifest = R.F.read(value["manifest"]["path"], value["manifest"]["sha256"])
-    R.AD.verify(manifest, value["manifest"], value["admission"])
+    context = R.recovery_context(value)
+    manifest = (
+        context.manifest
+        if context
+        else R.F.read(value["manifest"]["path"], value["manifest"]["sha256"])
+    )
+    if context is None:
+        R.AD.verify(manifest, value["manifest"], value["admission"])
     from types import SimpleNamespace
 
     capture = R.F.PLAN.load(manifest["bindings"]["capture"])
@@ -82,8 +89,12 @@ def execute(path, digest):
     first = C.read(C.bound(bindings[0]))
     R.W.protected_output(
         dict(output=str(output), raw_store=first["raw_store"]),
-        SimpleNamespace(roles=manifest["bindings"]["roles"], inventory=inventory),
+        SimpleNamespace(
+            roles=context.roles if context else manifest["bindings"]["roles"], inventory=inventory
+        ),
     )
+    if context:
+        context.protect(output)
     output.mkdir()
     runtime, records = None, []
     for binding in bindings:
@@ -99,6 +110,8 @@ def execute(path, digest):
         records.append(dict(job=binding, receipt=reply["receipt"]))
         C.write(output / f"progress-{len(records):03d}.json", dict(records=records, complete=False))
     final = runtime.finish()
+    if context:
+        context.verify()
     C.require(C.binding(path)["sha256"] == digest, "Checkpoint batch job changed")
     for binding in bindings:
         C.bound(binding)
@@ -133,7 +146,8 @@ def validate(binding, replay, replay_binding, manifest_binding, admission, engin
         and value["width"] == source["width"]
         and value["engine"] == source["engine"]
         and source["manifest"] == manifest_binding
-        and source["admission"] == admission,
+        and source["admission"] == admission
+        and source.get("audit_recovery") == replay.get("audit_recovery"),
         "Foreign checkpoint batch proof",
     )
     C.require(

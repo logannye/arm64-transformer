@@ -34,6 +34,31 @@ TRANSPORT = {
     "mlx": "resident_full_rows_indexed_b16",
     "oracle": "independent_fp64_equations",
 }
+_TORCH_CONFIGURED_PID = None
+
+
+def configure_torch(torch):
+    """Set process-wide controls once; verify them again for each batch member."""
+    global _TORCH_CONFIGURED_PID
+    if _TORCH_CONFIGURED_PID is None:
+        torch.set_num_threads(1)
+        torch.set_num_interop_threads(1)
+        torch.use_deterministic_algorithms(True)
+        _TORCH_CONFIGURED_PID = os.getpid()
+    C.require(
+        _TORCH_CONFIGURED_PID == os.getpid()
+        and torch.get_num_threads() == 1
+        and torch.get_num_interop_threads() == 1
+        and torch.are_deterministic_algorithms_enabled(),
+        "Checkpoint replay process/thread controls changed",
+    )
+
+
+def recovery_context(job):
+    if "audit_recovery" not in job:
+        return None
+    C.require(isinstance(job["audit_recovery"], dict), "Invalid postrun recovery binding")
+    return load("postrun_recovery").Context(job)
 
 
 def cell_receipt(binding, manifest, manifest_binding, admission):
@@ -89,9 +114,7 @@ def replay_values(engine, parameters, fixture, *, runtime=None, assets=None):
 
     from transformer import spec
 
-    torch.set_num_threads(1)
-    torch.set_num_interop_threads(1)
-    torch.use_deterministic_algorithms(True)
+    configure_torch(torch)
     native, backend, model, oracle = None, None, None, None
     if engine == "cpu_arm64":
         from transformer.validate import workspace_tensor
@@ -196,7 +219,7 @@ def execute(path, digest, *, runtime=None, defer_full_postflight=False, quiet=Fa
     C.require_execution_support()
     job = C.read(path, digest)
     C.require(
-        set(job)
+        set(job) - {"audit_recovery"}
         == {
             "schema",
             "manifest",
@@ -215,10 +238,15 @@ def execute(path, digest, *, runtime=None, defer_full_postflight=False, quiet=Fa
         and job["parent_pid"] == os.getppid(),
         "Unknown checkpoint replay job",
     )
-    manifest = F.read(job["manifest"]["path"], job["manifest"]["sha256"])
-    AD.verify(manifest, job["manifest"], job["admission"])
+    context = recovery_context(job)
+    manifest = (
+        context.manifest if context else F.read(job["manifest"]["path"], job["manifest"]["sha256"])
+    )
+    if context is None:
+        AD.verify(manifest, job["manifest"], job["admission"])
     receipt, _ = cell_receipt(job["cell_receipt"], manifest, job["manifest"], job["admission"])
     bindings, cell = manifest["bindings"], receipt["cell"]
+    roles = context.roles if context else bindings["roles"]
     C.require(os.environ.get("ARM64_TRANSFORMER_WIDTH") == str(cell["width"]), "Select width first")
     capture = F.PLAN.load(bindings["capture"])
     inventory = F.PLAN.load(capture["runtime_inventory"])
@@ -242,20 +270,19 @@ def execute(path, digest, *, runtime=None, defer_full_postflight=False, quiet=Fa
     else:
         sys.pycache_prefix = str(output / "unused-bytecode-cache")
         if runtime is None:
-            runtime = A.activate(bindings["roles"], bindings["capture"])
+            runtime = A.activate(roles, bindings["capture"])
         else:
             C.require(
-                runtime.roles == bindings["roles"]
-                and runtime.capture_binding == bindings["capture"],
+                runtime.roles == roles and runtime.capture_binding == bindings["capture"],
                 "Batch replay crossed a frozen runtime/source identity",
             )
             runtime.recheck()
     # Apply identical source/runtime/raw-store output protections to the oracle.
     from types import SimpleNamespace
 
-    W.protected_output(
-        job, runtime or SimpleNamespace(roles=bindings["roles"], inventory=inventory)
-    )
+    W.protected_output(job, runtime or SimpleNamespace(roles=roles, inventory=inventory))
+    if context:
+        context.protect(output)
     request = F.PLAN.load(F.PLAN.load(bindings["raw_prerequisites"])["request"])
     C.require(job["raw_store"] == request["raw_store"], "Replay raw-store selection changed")
     import numpy as np
@@ -286,6 +313,8 @@ def execute(path, digest, *, runtime=None, defer_full_postflight=False, quiet=Fa
         parent_pid=os.getppid(),
         complete=False,
     )
+    if context:
+        proof["audit_recovery"] = context.binding
     if runtime:
         proof["origins_before"] = runtime.origins(job["engine"])
     values, evidence = replay_values(
@@ -318,7 +347,7 @@ def execute(path, digest, *, runtime=None, defer_full_postflight=False, quiet=Fa
             "FP64 oracle loaded selected candidate APIs",
         )
         proof["oracle_versions"] = dict(numpy=np.__version__, torch=__import__("torch").__version__)
-    F.verify(manifest)
+    context.verify() if context else F.verify(manifest)
     cell_receipt(job["cell_receipt"], manifest, job["manifest"], job["admission"])
     C.require(C.binding(path)["sha256"] == digest, "Replay job changed")
     proof["complete"] = True

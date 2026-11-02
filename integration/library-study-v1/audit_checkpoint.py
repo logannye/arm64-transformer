@@ -92,7 +92,7 @@ def measured_arrays(cell, directory):
     )
 
 
-def load_replay(binding, job, manifest, capture, inventory, engine):
+def load_replay(binding, job, manifest, capture, inventory, engine, *, replay_roles=None):
     record = F.PLAN.load(binding)
     source = F.PLAN.load(record["job"])
     expected = {
@@ -110,6 +110,8 @@ def load_replay(binding, job, manifest, capture, inventory, engine):
         and record["cell_receipt"] == job["cell_receipt"]
         and record["checkpoint"] == job["checkpoint"]
         and record["raw_store"] == job["raw_store"]
+        and source.get("audit_recovery") == job.get("audit_recovery")
+        and record.get("audit_recovery") == job.get("audit_recovery")
         and Path(record["job"]["path"]).parent == Path(job["replay_root"])
         and Path(source["output"]) / "receipt.json" == Path(binding["path"])
         and type(record["pid"]) is int
@@ -117,7 +119,7 @@ def load_replay(binding, job, manifest, capture, inventory, engine):
         and record["pid"] != record["parent_pid"] == source["parent_pid"],
         "Foreign checkpoint replay",
     )
-    roles = manifest["bindings"]["roles"]
+    roles = replay_roles or manifest["bindings"]["roles"]
     if engine == "oracle":
         C.require(
             record["auditor_project_origins"] and record["oracle_versions"],
@@ -255,7 +257,7 @@ def execute(path, digest):
     )
     job = C.read(path, digest)
     C.require(
-        set(job)
+        set(job) - {"audit_recovery"}
         == {
             "schema",
             "manifest",
@@ -272,8 +274,12 @@ def execute(path, digest):
         and list(job["replays"]) == sorted((*R.ENGINES, "oracle")),
         "Unknown checkpoint audit job",
     )
-    manifest = F.read(job["manifest"]["path"], job["manifest"]["sha256"])
-    AD.verify(manifest, job["manifest"], job["admission"])
+    context = R.recovery_context(job)
+    manifest = (
+        context.manifest if context else F.read(job["manifest"]["path"], job["manifest"]["sha256"])
+    )
+    if context is None:
+        AD.verify(manifest, job["manifest"], job["admission"])
     receipt, proof = R.cell_receipt(
         job["cell_receipt"], manifest, job["manifest"], job["admission"]
     )
@@ -333,7 +339,15 @@ def execute(path, digest):
     from transformer.prepare import load_fixture
 
     arrays = {
-        engine: load_replay(binding, job, manifest, capture, inventory, engine)
+        engine: load_replay(
+            binding,
+            job,
+            manifest,
+            capture,
+            inventory,
+            engine,
+            replay_roles=context.roles if context else None,
+        )
         for engine, binding in job["replays"].items()
     }
     result = numerical(
@@ -344,7 +358,7 @@ def execute(path, digest):
         cell["engine"],
         directory,
     )
-    F.verify(manifest)
+    context.verify() if context else F.verify(manifest)
     R.cell_receipt(job["cell_receipt"], manifest, job["manifest"], job["admission"])
     C.require(C.binding(path)["sha256"] == digest, "Postrun audit job changed")
     result.update(
@@ -357,6 +371,8 @@ def execute(path, digest):
         auditor_project_origins=ORIGINS.project_origins(roles["math"], sys.modules),
         **{k: info[k] for k in ("training_seconds", "latency_p50", "latency_p95", "memory")},
     )
+    if context:
+        result["audit_recovery"] = context.binding
     print(json.dumps(result, sort_keys=True, allow_nan=False))
 
 
