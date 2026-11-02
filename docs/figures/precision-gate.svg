@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="1008pt" height="360pt" viewBox="0 0 1008 360" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 360
+L 1008 360
+L 1008 0
+L 0 0
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 90.72 257.4
+L 614.88 257.4
+L 614.88 113.4
+L 90.72 113.4
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1"/>
+     <g id="text_1">
+      <text style="font-size: 11px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; text-anchor: middle; fill: #586a80" x="125.204211" y="273.757422" transform="rotate(-0 125.204211 273.757422)">−2</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2"/>
+     <g id="text_2">
+      <text style="font-size: 11px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; text-anchor: middle; fill: #586a80" x="263.141053" y="273.757422" transform="rotate(-0 263.141053 273.757422)">0</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3"/>
+     <g id="text_3">
+      <text style="font-size: 11px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; text-anchor: middle; fill: #586a80" x="401.077895" y="273.757422" transform="rotate(-0 401.077895 273.757422)">2</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4"/>
+     <g id="text_4">
+      <text style="font-size: 11px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; text-anchor: middle; fill: #586a80" x="539.014737" y="273.757422" transform="rotate(-0 539.014737 273.757422)">4</text>
+     </g>
+    </g>
+    <g id="text_5">
+     <text style="font-size: 12px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; text-anchor: middle; fill: #586a80" x="352.8" y="295.518125" transform="rotate(-0 352.8 295.518125)">FF1 preactivation (× 10⁻⁷)</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_5"/>
+     <g id="text_6">
+      <text style="font-size: 11px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; text-anchor: end; fill: #586a80" x="82.72" y="248.966002" transform="rotate(-0 82.72 248.966002)">0 · block</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_6"/>
+     <g id="text_7">
+      <text style="font-size: 11px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; text-anchor: end; fill: #586a80" x="82.72" y="143.856083" transform="rotate(-0 82.72 143.856083)">1 · pass</text>
+     </g>
+    </g>
+    <g id="text_8">
+     <text style="font-size: 12px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; text-anchor: middle; fill: #586a80" x="21.162813" y="185.4" transform="rotate(-90 21.162813 185.4)">Gradient multiplier</text>
+    </g>
+   </g>
+   <g id="line2d_7">
+    <path d="M 90.72 244.786861
+L 263.141053 244.786861
+" clip-path="url(#p43b787f83a)" style="fill: none; stroke: #b5c0cf; stroke-width: 3; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_8">
+    <path d="M 263.141053 139.677372
+L 614.88 139.677372
+" clip-path="url(#p43b787f83a)" style="fill: none; stroke: #b5c0cf; stroke-width: 3; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_9">
+    <path d="M 263.141053 244.786861
+L 263.141053 139.677372
+" clip-path="url(#p43b787f83a)" style="fill: none; stroke-dasharray: 3.6,4.8; stroke-dashoffset: 0; stroke: #dde5ed; stroke-width: 1.2"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 90.72 257.4
+L 614.88 257.4
+" style="fill: none; stroke: #dde5ed; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 165.344262 210.738483
+Q 170.445115 226.808802 175.545969 242.879121
+" style="fill: none; stroke: #172b46; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="text_9">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; fill: #172b46" transform="translate(107.962105 188.340722)">FP64 reference</text>
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; fill: #172b46" transform="translate(107.962105 202.743066)">-1.26 × 10⁻⁷</text>
+   </g>
+   <g id="patch_5">
+    <path d="M 485.281518 184.857108
+Q 499.556495 163.104157 513.831472 141.351206
+" style="fill: none; stroke: #b56a16; stroke-width: 0.8; stroke-linecap: round"/>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; fill: #b56a16" transform="translate(421.768421 198.851671)">MLX diagnostic</text>
+    <text style="font-weight: 700; font-size: 12px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; fill: #b56a16" transform="translate(421.768421 213.254015)">+3.65 × 10⁻⁷</text>
+   </g>
+   <g id="PathCollection_1">
+    <defs>
+     <path id="C0_0_c1ced9c202" d="M 0 4.743416
+C 1.257969 4.743416 2.464584 4.24362 3.354102 3.354102
+C 4.24362 2.464584 4.743416 1.257969 4.743416 -0
+C 4.743416 -1.257969 4.24362 -2.464584 3.354102 -3.354102
+C 2.464584 -4.24362 1.257969 -4.743416 0 -4.743416
+C -1.257969 -4.743416 -2.464584 -4.24362 -3.354102 -3.354102
+C -4.24362 -2.464584 -4.743416 -1.257969 -4.743416 0
+C -4.743416 1.257969 -4.24362 2.464584 -3.354102 3.354102
+C -2.464584 4.24362 -1.257969 4.743416 0 4.743416
+z
+"/>
+    </defs>
+    <g clip-path="url(#p43b787f83a)">
+     <use xlink:href="#C0_0_c1ced9c202" x="176.151501" y="244.786861" style="fill: #172b46; stroke: #172b46"/>
+    </g>
+    <g clip-path="url(#p43b787f83a)">
+     <use xlink:href="#C0_0_c1ced9c202" x="514.929895" y="139.677372" style="fill: #b56a16; stroke: #b56a16"/>
+    </g>
+   </g>
+  </g>
+  <g id="text_11">
+   <text style="font-weight: 700; font-size: 10.5px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; text-anchor: start; fill: #586a80" x="45.36" y="17.28" transform="rotate(-0 45.36 17.28)">DEVELOPMENT DIAGNOSTIC · WIDTH 1024</text>
+  </g>
+  <g id="text_12">
+   <text style="font-weight: 700; font-size: 23px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; text-anchor: start; fill: #172b46" x="45.36" y="38.52" transform="rotate(-0 45.36 38.52)">A tiny sign change can switch a gradient on or off</text>
+  </g>
+  <g id="text_13">
+   <text style="font-size: 12.5px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; text-anchor: start; fill: #586a80" x="45.36" y="55.44" transform="rotate(-0 45.36 55.44)">Observed FF1 preactivation values, shown against the ReLU backward gate</text>
+  </g>
+  <g id="text_14">
+   <text style="font-weight: 700; font-size: 16px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; text-anchor: start; fill: #172b46" x="690.48" y="133.2" transform="rotate(-0 690.48 133.2)">Forward checks passed.</text>
+  </g>
+  <g id="text_15">
+   <text style="font-size: 14px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; fill: #586a80" transform="translate(690.48 167.04375)">12 FF1 weight-gradient coordinates</text>
+   <text style="font-size: 14px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; fill: #586a80" transform="translate(690.48 190.8)">exceeded the frozen tolerance.</text>
+  </g>
+  <g id="text_16">
+   <text style="font-size: 12px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; fill: #586a80" transform="translate(690.48 236.4)">Gate substitution isolated</text>
+   <text style="font-size: 12px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; fill: #586a80" transform="translate(690.48 255.6)">the mismatch to this branch.</text>
+  </g>
+  <g id="text_17">
+   <text style="font-size: 11px; font-family: 'DejaVu Sans', 'Arial', 'Liberation Sans', sans-serif; text-anchor: start; fill: #586a80" x="45.36" y="336.6" transform="rotate(-0 45.36 336.6)">Historical, unselected MLX candidate. This diagnostic does not qualify width 1024 for formal results.</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p43b787f83a">
+   <rect x="90.72" y="113.4" width="524.16" height="144"/>
+  </clipPath>
+ </defs>
+</svg>
