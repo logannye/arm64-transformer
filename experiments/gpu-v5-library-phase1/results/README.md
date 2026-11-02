@@ -8,6 +8,12 @@ All model state uses FP32 storage. The selected CPU and GPU precision operators 
 
 Each row is the median of six fits across three paired seeds and two repeats. Training throughput includes the frozen training boundary; latency measures resident B1 forward and completion, with 20 warmups and 100 samples.
 
+![Training time and resident batch-one latency for all five engines](performance.png)
+
+Both vertical axes are logarithmic; lower is better. The figure uses the exact
+medians in [summary.json](summary.json). A [vector version](performance.svg) is
+also available.
+
 | Width | Engine | Training targets/s | B1 p50 ms | B1 p95 ms | Test NLL |
 |---:|---|---:|---:|---:|---:|
 | 32 | cpu_arm64 | 692120.01 | 0.016 | 0.016 | 2.473305 |
