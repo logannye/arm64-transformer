@@ -1,0 +1,80 @@
+name: Trained precision candidates
+on:
+  push:
+    branches: [codex/trained-state-precision]
+    paths: ['native/**', 'tests/test_native_precision.py', '.github/workflows/trained-precision.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: macos-26
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        width: [32, 64, 128, 256, 512, 1024]
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      VECLIB_MAXIMUM_THREADS: "1"
+      ARM64_TRANSFORMER_WIDTH: ${{ matrix.width }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: >-
+          python -m pip install --only-binary=:all: -e '.[dev]'
+      - name: Build and check each candidate in one reusable build tree
+        run: |
+          width=$ARM64_TRANSFORMER_WIDTH
+          policies="0"
+          if [ "$width" -ge 512 ]; then
+            policies="0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15"
+          fi
+          for policy in $policies; do
+            make -C native WIDTH=$width PRECISION=$policy PYTHON=python
+            python -m pytest tests/test_native_precision.py -q
+            dest=results/precision-build/width-$width/policy-$policy
+            mkdir -p "$dest"
+            cp native/build/width-$width/libtransformer.dylib "$dest/"
+            cp native/build/width-$width/transformer-arm64 "$dest/"
+            cp native/build/width-$width/layout.inc "$dest/"
+            cp native/build/width-$width/precision.h "$dest/"
+            shasum -a 256 "$dest/"* > "$dest/SHA256SUMS"
+          done
+          git rev-parse HEAD > results/precision-build/source-revision.txt
+          sw_vers > results/precision-build/platform.txt
+          sysctl -n machdep.cpu.brand_string >> results/precision-build/platform.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: precision-native-candidates-width-${{ matrix.width }}
+          path: results/precision-build/
+          retention-days: 30
+      - name: Full model and executable checks for the declared width policy
+        run: |
+          width=$ARM64_TRANSFORMER_WIDTH
+          policy=0
+          if [ "$width" -ge 512 ]; then policy=15; fi
+          make -C native WIDTH=$width PRECISION=$policy PYTHON=python
+          python -m pytest -q
+          dest=results/precision-runtime/width-$width/policy-$policy
+          python -m transformer.validate --output "$dest/auto.json" \
+            --development-precision-policy "$policy" --runtime --work-dir "$dest/smoke-auto"
+          ARM64_TRANSFORMER_BACKEND=neon python -m transformer.validate \
+            --output "$dest/neon.json" --development-precision-policy "$policy" \
+            --runtime --work-dir "$dest/smoke-neon"
+          supported=$(python -c "import json; print(json.load(open('$dest/auto.json'))['backend']['sme_supported'])")
+          if [ "$supported" = 1 ]; then
+            ARM64_TRANSFORMER_BACKEND=sme python -m transformer.validate \
+              --output "$dest/sme.json" --development-precision-policy "$policy" \
+              --runtime --work-dir "$dest/smoke-sme"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: precision-native-runtime-evidence-width-${{ matrix.width }}
+          path: results/precision-runtime/
+          retention-days: 30

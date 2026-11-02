@@ -40,6 +40,7 @@ def test_contract_rejects_legacy_flags_missing_replays_or_erased_failures():
     assert validate_validation_contract(gate, 512) == (73, 1)
     for field, value in (
         ("validation_contract", "strict-free-running-v1"),
+        ("validation_contract", "trained-precision-development-v1"),
         ("legacy_failed_checks", []),
         ("legacy_contract_passed", True),
         ("legacy_diagnostics", []),

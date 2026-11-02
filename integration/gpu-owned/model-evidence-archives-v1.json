@@ -1,0 +1,51 @@
+{
+  "schema": "gpu-owned-model-archive-receipt-v1",
+  "passed": true,
+  "formal_eligible": false,
+  "uploaded": false,
+  "plan_sha256": "eebc219327aa6be013d504c6bd77e3783dd7df93e145f1487b4d0e50163dcee7",
+  "producer_sha256": "ea95ae4dd113e78e09f4037e7b52a0e29ef9b8acd2f1cda1422f5967bb67bbf5",
+  "coverage": {
+    "files": 291,
+    "raw_archives": 216,
+    "bytes": 3407100414
+  },
+  "archives": [
+    {
+      "archive": "model-compatibility-v2-cpu-torch.tar.gz",
+      "sha256": "f66acf4ad877ef57e1b5d66a9c5247e3a75f64c4bc31cb512d678260559d44fe",
+      "bytes": 1002761498,
+      "mode": 420,
+      "members": 96,
+      "uncompressed_bytes": 1135384926,
+      "all_member_hashes_sizes_and_inventory_passed": true
+    },
+    {
+      "archive": "model-compatibility-v2-mps.tar.gz",
+      "sha256": "651d9cc7d90ebd1461b90c5abef6a57ad78b291a882834f90b788c93738031ee",
+      "bytes": 1002621927,
+      "mode": 420,
+      "members": 96,
+      "uncompressed_bytes": 1135393466,
+      "all_member_hashes_sizes_and_inventory_passed": true
+    },
+    {
+      "archive": "model-compatibility-v2-mlx.tar.gz",
+      "sha256": "a408308592fe926a7df09eef200c0016855f1f6ce5c8a4582acdbc4c1e33565a",
+      "bytes": 1002671723,
+      "mode": 420,
+      "members": 96,
+      "uncompressed_bytes": 1135573866,
+      "all_member_hashes_sizes_and_inventory_passed": true
+    },
+    {
+      "archive": "model-compatibility-v2-metadata.tar.gz",
+      "sha256": "ce89d98edca540cc0d41425f7035853793173403a465fe6907d6d7fa0973cb9a",
+      "bytes": 55769,
+      "mode": 420,
+      "members": 3,
+      "uncompressed_bytes": 748156,
+      "all_member_hashes_sizes_and_inventory_passed": true
+    }
+  ]
+}

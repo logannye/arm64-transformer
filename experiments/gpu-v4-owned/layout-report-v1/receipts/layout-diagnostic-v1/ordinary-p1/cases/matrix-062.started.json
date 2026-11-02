@@ -1,0 +1,13 @@
+{
+  "case": {
+    "dtype": "bfloat16",
+    "layout": "outer",
+    "operation": "addmm",
+    "shape": [
+      8,
+      64,
+      12
+    ]
+  },
+  "complete": false
+}

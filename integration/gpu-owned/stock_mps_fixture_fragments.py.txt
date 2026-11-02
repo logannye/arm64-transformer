@@ -1,0 +1,221 @@
+# Exact source fragments for static AST regression tests; never imported.
+
+_CONFORMANCE_KERNELS_METAL = r"""
+struct simple_add_functor {
+    template <typename T>
+    inline T operator()(const T a, const T b) { return static_cast<T>(a + b); }
+};
+REGISTER_BINARY_OP(simple_add, float, float);
+
+struct simple_ge_functor {
+    template <typename T>
+    inline bool operator()(const T a, const T b) { return a >= b; }
+};
+REGISTER_BINARY_OP(simple_ge, float, bool);
+REGISTER_BINARY_CASTOUT_OP(simple_ge, float, bool);
+
+// `probe` deliberately has no REGISTER_BINARY_* entries. Every dispatch
+// through it must fail at getPipelineStateForFunc; the missing kernel name
+// in the resulting error message tells us which flavor the dispatcher
+// selected, which is what the routing tests assert on.
+"""
+
+_CONFORMANCE_CPP_SOURCE = r"""
+#include <torch/extension.h>
+#include <ATen/TensorIterator.h>
+#include <ATen/native/mps/MetalShaderLibrary.h>
+
+namespace {
+
+std::unique_ptr<at::native::mps::MetalShaderLibrary> g_lib;
+
+void set_kernel_source(const std::string& src) {
+    g_lib = std::make_unique<at::native::mps::MetalShaderLibrary>(src);
+}
+
+// Arithmetic-style: promote inputs to common, ask TI to cast on store when
+// out= dtype diverges from common.
+at::Tensor simple_add(const at::Tensor& a, const at::Tensor& b, std::optional<at::Tensor> out) {
+    TORCH_CHECK(g_lib != nullptr, "kernel source not set");
+    at::Tensor out_t = out.has_value() ? *out : at::Tensor();
+    at::TensorIteratorConfig cfg;
+    cfg.add_output(out_t).add_input(a).add_input(b).promote_inputs_to_common_dtype(true);
+    if (out_t.defined()) {
+        cfg.cast_common_dtype_to_outputs(true);
+    }
+    auto iter = cfg.build();
+    g_lib->exec_binary_kernel(iter, "simple_add");
+    return iter.output(0);
+}
+
+// Comparison-style: mirrors set_up_comparison_op_config from TI.
+at::Tensor simple_ge(const at::Tensor& a, const at::Tensor& b, std::optional<at::Tensor> out) {
+    TORCH_CHECK(g_lib != nullptr, "kernel source not set");
+    at::Tensor out_t = out.has_value() ? *out : at::Tensor();
+    at::TensorIteratorConfig cfg;
+    cfg.add_output(out_t).add_input(a).add_input(b).promote_inputs_to_common_dtype(true);
+    if (!out_t.defined()) {
+        cfg.declare_static_dtype(at::kBool);
+    } else if (out_t.scalar_type() != at::kBool) {
+        cfg.cast_common_dtype_to_outputs(true);
+    }
+    auto iter = cfg.build();
+    g_lib->exec_binary_kernel(iter, "simple_ge", std::nullopt, std::nullopt, at::kBool);
+    return iter.output(0);
+}
+
+// `probe` has no metal kernel registered, so exec_binary_kernel will always
+// raise from getPipelineStateForFunc. We capture the exception and return
+// the message so Python tests can grep for the kernel name to verify which
+// dispatch flavor was selected. The arguments mirror exec_binary_kernel.
+std::string probe(
+    const at::Tensor& a,
+    const at::Tensor& b,
+    std::optional<at::Tensor> out,
+    std::optional<at::ScalarType> natural_dtype,
+    std::optional<double> alpha,
+    std::optional<int64_t> ilp_threshold) {
+    TORCH_CHECK(g_lib != nullptr, "kernel source not set");
+    at::Tensor out_t = out.has_value() ? *out : at::Tensor();
+    at::TensorIteratorConfig cfg;
+    cfg.add_output(out_t).add_input(a).add_input(b).promote_inputs_to_common_dtype(true);
+    if (out_t.defined()) {
+        cfg.cast_common_dtype_to_outputs(true);
+    }
+    auto iter = cfg.build();
+    std::optional<c10::Scalar> alpha_s;
+    if (alpha.has_value()) alpha_s = c10::Scalar(*alpha);
+    std::optional<uint32_t> ilp_t;
+    if (ilp_threshold.has_value()) ilp_t = static_cast<uint32_t>(*ilp_threshold);
+    try {
+        g_lib->exec_binary_kernel(iter, "probe", alpha_s, std::nullopt, natural_dtype, ilp_t);
+    } catch (const std::exception& e) {
+        return std::string(e.what());
+    }
+    return std::string();
+}
+
+}  // namespace
+"""
+
+_CONFORMANCE_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+def _conformance_read_metal_header(rel_path):
+    with open(os.path.join(_CONFORMANCE_REPO_ROOT, rel_path)) as f:
+        text = f.read()
+    cleaned = []
+    for line in text.split("\n"):
+        stripped = line.strip()
+        if stripped == "#pragma once":
+            continue
+        if stripped.startswith("#include <c10/metal/"):
+            continue
+        cleaned.append(line)
+    return "\n".join(cleaned)
+
+def _conformance_compose_metal_source():
+    return "\n".join([
+        _conformance_read_metal_header("c10/metal/float8.h"),
+        _conformance_read_metal_header("c10/metal/common.h"),
+        _conformance_read_metal_header("c10/metal/utils.h"),
+        _conformance_read_metal_header("c10/metal/indexing.h"),
+        _CONFORMANCE_KERNELS_METAL,
+    ])
+
+_conformance_ext = None
+
+def _conformance_ext_handle():
+    global _conformance_ext
+    if _conformance_ext is None:
+        import torch.utils.cpp_extension
+        _conformance_ext = torch.utils.cpp_extension.load_inline(
+            name="mps_iter_conformance",
+            cpp_sources=_CONFORMANCE_CPP_SOURCE,
+            functions=["set_kernel_source", "simple_add", "simple_ge", "probe"],
+            extra_include_paths=[os.path.join(_CONFORMANCE_REPO_ROOT, "aten", "src")],
+            verbose=False,
+        )
+        _conformance_ext.set_kernel_source(_conformance_compose_metal_source())
+    return _conformance_ext
+
+def _conformance_make_tensor(shape, dtype):
+    if dtype.is_floating_point:
+        return torch.rand(shape, dtype=dtype) * 4 - 2
+    iinfo = torch.iinfo(dtype)
+    lo = max(iinfo.min, -10)
+    hi = min(iinfo.max, 10) + 1
+    return torch.randint(lo, hi, shape, dtype=dtype)
+
+_CONFORMANCE_ARITH_DTYPE_PAIRS = [
+    (torch.float32, torch.float32),
+    (torch.float16, torch.float32),
+    (torch.bfloat16, torch.float32),
+    (torch.int32, torch.float32),
+]
+
+_CONFORMANCE_SHAPES = [(), (8,), (3, 5)]
+
+class TestFallbackWarning(TestCase):
+    # TODO: Remove once test_testing.py is running on MPS devices
+    def test_no_warning_on_import(self):
+        out = subprocess.check_output(
+            [sys.executable, "-W", "always", "-c", "import torch"],
+            stderr=subprocess.STDOUT,
+            # On Windows, opening the subprocess with the default CWD makes `import torch`
+            # fail, so just set CWD to this script's directory
+            cwd=os.path.dirname(os.path.realpath(__file__)),).decode("utf-8")
+        self.assertEqual(out, "")
+
+    def _get_not_implemented_op(self):
+        # Should return fn, args, kwargs, string_version. Uses an op with no MPS
+        # kernel; change it if 'linalg.ldl_factor' ever gets one.
+        return (torch.linalg.ldl_factor,
+                [torch.eye(2, device='mps')], {},
+                "torch.linalg.ldl_factor(torch.eye(2, device='mps'))")
+
+    def test_error_on_not_implemented(self):
+        fn, args, kwargs, _ = self._get_not_implemented_op()
+
+        with self.assertRaisesRegex(NotImplementedError, "not currently implemented for the MPS device"):
+            fn(*args, **kwargs)
+
+    def test_warn_on_not_implemented_with_fallback(self):
+        _, _, _, op = self._get_not_implemented_op()
+        script = f"""
+import os
+# MUST happen before pytorch's import
+os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
+import warnings
+
+with warnings.catch_warnings(record=True) as w:
+    import torch
+
+if len(w) > 0:
+    print(w)
+    exit(1)
+
+# This should run just fine and raise warning about perf
+with warnings.catch_warnings(record=True) as w:
+    {op}
+
+if len(w) != 1:
+    print(w)
+    exit(2)
+"""
+        try:
+            subprocess.check_output(
+                [sys.executable, '-W', 'always', '-c', script],
+                stderr=subprocess.STDOUT,
+                # On Windows, opening the subprocess with the default CWD makes `import torch`
+                # fail, so just set CWD to this script's directory
+                cwd=os.path.dirname(os.path.realpath(__file__)),)
+        except subprocess.CalledProcessError as e:
+            if e.returncode == 1:
+                self.assertTrue(False, "There was a warning when importing torch when PYTORCH_ENABLE_MPS_FALLBACK is set." +
+                                       e.output.decode("utf-8"))
+            elif e.returncode == 2:
+                self.assertTrue(False, lambda msg: f"{msg}\nThere wasn't exactly one warning when running not implemented op with "
+                                f"PYTORCH_ENABLE_MPS_FALLBACK set. {e.output}")  # noqa: F821
+            else:
+                self.assertTrue(False, "Running a not implemented op failed even though PYTORCH_ENABLE_MPS_FALLBACK is set. " +
+                                       e.output.decode("utf-8"))

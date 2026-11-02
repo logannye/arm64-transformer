@@ -1,0 +1,209 @@
+"""Read-only, standard-library audit of retained half-index diagnostic evidence.
+
+No NumPy, PyTorch, MLX, device execution, or production source imports.
+"""
+
+import ast
+import hashlib
+import itertools
+import json
+import math
+from pathlib import Path
+import struct
+import zipfile
+
+
+WORKSPACE = Path(__file__).resolve().parents[2]
+ROOT = WORKSPACE / "work/gpu-v4-owned/half-index-v1"
+PLAN_SHA = "c5cd2c76385c72b841bbc7d370dd84f0a5c6f75865044e22ec78bf8922bbccf6"
+WORKER_SHAS = [
+    "940f2a830acbf911a03d88b12779ffc1ed3d85abf97af931d7ee27d517506be8",
+    "ada5f65291fce1110f6f5b00dae06875821d5bb1443f2819320470b76dcc388f",
+]
+OPS = ("combinations", "explicit_index", "index_put_accumulate")
+INDICES = list(itertools.combinations_with_replacement(range(2), 4))
+
+
+def require(value, message):
+    if not value:
+        raise RuntimeError(message)
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def read_json(path):
+    def pairs(items):
+        value = dict(items)
+        require(len(value) == len(items), "Duplicate JSON keys")
+        return value
+
+    def invalid(value):
+        raise ValueError(value)
+
+    return json.loads(path.read_text(), object_pairs_hook=pairs, parse_constant=invalid)
+
+
+def arrays(path):
+    result = {}
+    with zipfile.ZipFile(path) as archive:
+        names = archive.namelist()
+        require(len(set(names)) == len(names), "Duplicate archive members")
+        for name in names:
+            require(name.endswith(".npy") and "/" not in name, "Unexpected member")
+            raw = archive.read(name)
+            require(raw[:8] == b"\x93NUMPY\x01\x00", "Unexpected NPY format")
+            size = struct.unpack("<H", raw[8:10])[0]
+            header = ast.literal_eval(raw[10 : 10 + size].decode("ascii"))
+            require(set(header) == {"descr", "fortran_order", "shape"}, "Unexpected NPY header")
+            require(header["fortran_order"] is False, "Unexpected stored order")
+            code = {"<f2": "e", "<f4": "f", "<f8": "d", "<i8": "q"}[header["descr"]]
+            count = math.prod(header["shape"])
+            payload = raw[10 + size :]
+            require(len(payload) == count * struct.calcsize(code), "NPY byte count")
+            result[name[:-4]] = {
+                "shape": header["shape"],
+                "dtype": header["descr"],
+                "code": code,
+                "values": struct.unpack("<" + code * count, payload),
+                "payload": payload,
+                "npy_sha256": hashlib.sha256(raw).hexdigest(),
+            }
+    return result
+
+
+def rounded(value, code):
+    return struct.unpack("<" + code, struct.pack("<" + code, value))[0]
+
+
+def main():
+    require(sha(ROOT / "plan.json") == PLAN_SHA, "Frozen plan changed")
+    plan = read_json(ROOT / "plan.json")
+    top = read_json(ROOT / "summary.json")
+    require(top["complete"] and top["execution_integrity_passed"], "Incomplete diagnostic")
+    require(top["formal_fits"] == 0 and top["formal_eligible"] is False, "Unexpected formal scope")
+    require(len(top["workers"]) == 2 and top["plan_sha256"] == PLAN_SHA, "Worker inventory")
+    identities = {}
+    aggregate = []
+    failures = []
+    examples = []
+    archive_count = 0
+    tensor_count = 0
+    for process in (0, 1):
+        entry = top["workers"][process]
+        receipt_path = ROOT / f"p{process}/result.json"
+        require(str(receipt_path) == entry["result"], "Worker receipt path")
+        require(sha(receipt_path) == entry["sha256"] == WORKER_SHAS[process], "Worker receipt changed")
+        receipt = read_json(receipt_path)
+        require(receipt["process_index"] == process and receipt["complete"], "Worker identity")
+        require(receipt["execution_integrity_passed"] and receipt["deterministic_mode_restored"], "Worker integrity")
+        require(receipt["sources"] == plan["sources"], "Source binding differs")
+        summary_path = ROOT / f"p{process}/cases/summary.json"
+        require(receipt["diagnostic_file"]["path"] == str(summary_path), "Diagnostic path")
+        require(sha(summary_path) == receipt["diagnostic_file"]["sha256"], "Diagnostic changed")
+        diagnostic = read_json(summary_path)
+        require([x["case"] for x in diagnostic["cases"]] == plan["cases"], "Case inventory")
+        require(len(receipt["raw_files"]) == 40, "Missing raw file")
+        count = {"cases": 0, "cpu_serial_disagreements": 0, "nonrepeatable_operation_cases": 0,
+                 "cpu_mps_tolerance_failures": 0, "dual_fp64_disagreements": 0}
+        process_identities = []
+        for number, result in enumerate(diagnostic["cases"]):
+            case = result["case"]
+            count["cases"] += 1
+            raw_path = ROOT / f"p{process}/cases/case-{number:02}.npz"
+            raw_receipt = receipt["raw_files"][number]
+            require(raw_receipt["path"] == str(raw_path), "Raw path differs")
+            require(raw_path.stat().st_size == result["raw"]["bytes"] == raw_receipt["bytes"], "Raw size")
+            require(sha(raw_path) == result["raw"]["sha256"] == raw_receipt["sha256"], "Raw hash")
+            require(read_json(raw_path.with_suffix(".json")) == result, "Per-case record differs")
+            data = arrays(raw_path)
+            archive_count += 1
+            tensor_count += len(data)
+            process_identities.append({name: a["npy_sha256"] for name, a in data.items()})
+            require(data["cotangent"]["shape"] == (5, 4), "Cotangent shape")
+            require(data["indices"]["values"] == tuple(x for row in INDICES for x in row), "Indices")
+            values = data["cotangent"]["values"]
+            gold = tuple(math.fsum(values[i * 4 + j] for i in range(5) for j in range(4)
+                                   if INDICES[i][j] == target) for target in (0, 1))
+            require(data["fp64"]["values"] == gold, "Stored scalar FP64 differs")
+            require(data["torch_cpu_fp64"]["values"] == gold, "Independent framework FP64 differs")
+            order = ([(i, j) for i in range(5) for j in range(4)]
+                     if case["gradient_layout"] == "contiguous"
+                     else [(i, j) for j in range(4) for i in range(5)])
+            require(result["logical_serial_order"] == [list(p) for p in order], "Serial traversal")
+            code = {"float16": "e", "float32": "f"}[case["dtype"]]
+            serial = [0.0, 0.0]
+            for i, j in order:
+                target = INDICES[i][j]
+                serial[target] = rounded(serial[target] + values[i * 4 + j], code)
+            require(tuple(serial) == data["serial_cpu_order"]["values"], "Serial oracle differs")
+            for op in OPS:
+                for device in ("cpu", "mps"):
+                    key = device + "_" + op
+                    array = data[key]
+                    require(array["shape"] == (20, 2) and array["code"] == code, "Gradient storage")
+                    width = struct.calcsize(code) * 2
+                    repeated = all(array["payload"][k * width : (k + 1) * width] == array["payload"][:width]
+                                   for k in range(20))
+                    count["nonrepeatable_operation_cases"] += not repeated
+                    require(repeated == result["operations"][key]["exact_within_process"], "Repeat result differs")
+                    serial_match = array["payload"] == struct.pack("<" + code * 2, *serial) * 20
+                    require(serial_match == result["operations"][key]["matches_serial_cpu_order"], "Serial result differs")
+                    if device == "cpu":
+                        count["cpu_serial_disagreements"] += not serial_match
+                    if op != "index_put_accumulate":
+                        expected = tuple((-.75, .5)[index] for row in INDICES for index in row) * 20
+                        require(data[key + "_forward"]["values"] == expected, "Forward mismatch")
+                for replay in range(20):
+                    cpu = data["cpu_" + op]["values"][2 * replay : 2 * replay + 2]
+                    mps = data["mps_" + op]["values"][2 * replay : 2 * replay + 2]
+                    failed = any(abs(a - b) > 1e-5 + 1e-3 * abs(b) for a, b in zip(mps, cpu))
+                    require(failed != result["upstream_tolerance_checks"][op][replay]["passed"], "Tolerance result differs")
+                    count["cpu_mps_tolerance_failures"] += failed
+                if not result["upstream_tolerance_checks"][op][0]["passed"]:
+                    failures.append({"process": process, "case_index": number, "operation": op, **case})
+            require(data["cpu_combinations"]["payload"] == data["cpu_explicit_index"]["payload"], "CPU public/index differs")
+            require(data["mps_combinations"]["payload"] == data["mps_explicit_index"]["payload"], "MPS public/index differs")
+            if process == 0 and number in (16, 18, 36, 38):
+                examples.append({"case_index": number, **case, "fp64": gold, "serial_cpu": serial,
+                                 "cpu": data["cpu_combinations"]["values"][:2],
+                                 "mps": data["mps_combinations"]["values"][:2]})
+        identities[process] = process_identities
+        aggregate.append({"process": process, **count})
+    require(identities[0] == identities[1], "Fresh-process raw array bytes differ")
+    return {
+        "schema": "gpu-owned-half-index-independent-evidence-audit-v1",
+        "method": "Python standard library only; no framework imports or numerical device work",
+        "source": str(ROOT), "source_summary_sha256": sha(ROOT / "summary.json"),
+        "plan_sha256": PLAN_SHA, "worker_receipt_sha256": WORKER_SHAS,
+        "complete": True, "integrity_passed": True, "formal_eligible": False,
+        "archives_rehashed_and_parsed": archive_count, "raw_tensors_recomputed_or_compared": tensor_count,
+        "fresh_process_all_retained_raw_array_bytes_equal": True,
+        "counts": aggregate, "failing_operation_cases": failures, "examples": examples,
+        "interpretation": [
+            "Declared FP16 cancellation with column-major cotangents fails CPU/MPS compatibility in both fresh processes.",
+            "Both CPU and MPS have half-rounding error against the exact derivative; neither dominates both coordinates.",
+            "Matching serial CPU half accumulation would improve CPU compatibility but would not necessarily improve mathematical accuracy.",
+            "No observed nonrepeatability in these small 20-execution cases does not establish deterministic parallel atomics.",
+            "FP32 cancellation controls match the exact FP64 derivative on these inputs.",
+        ],
+        "limits": [
+            "This does not reconstruct the historical OpInfo incoming gradient or clear its failure.",
+            "Ordinary index accumulation was deliberately run with deterministic mode false and restored true.",
+            "No source patch, admission gate, performance measurement, or framework release claim follows.",
+            "Runtime inventory reauthentication is attested by the pinned worker receipts, not repeated by this raw-data audit.",
+            "Guard flags are retained observations; raw backing buffers were not saved for independent guard recomputation.",
+        ],
+    }
+
+
+if __name__ == "__main__":
+    report = main()
+    destination = WORKSPACE / "work/gpu-v4-owned/half-index-independent-audit-v1.json"
+    report["audit_script_sha256"] = sha(Path(__file__).resolve())
+    with destination.open("x") as stream:
+        json.dump(report, stream, indent=2, sort_keys=True, allow_nan=False)
+        stream.write("\n")
+    print(json.dumps({"report": str(destination), "sha256": sha(destination),
+                      "archives": report["archives_rehashed_and_parsed"], "counts": report["counts"]}))

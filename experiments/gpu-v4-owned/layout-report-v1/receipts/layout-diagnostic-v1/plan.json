@@ -1,0 +1,17 @@
+{
+  "admission_stream_opened": false,
+  "development_seed": 20261103,
+  "formal_eligible": false,
+  "modes": [
+    "ordinary",
+    "metal32_diagnostic"
+  ],
+  "processes_per_mode": 2,
+  "schema": "gpu-owned-layout-plan-v1",
+  "scope": "Synthetic development diagnosis only; no qualification or timing",
+  "sources": {
+    "mps_layout_diagnostic.py": "21080cf3af4f07be16823853917b49d18e93307d13bb771874b7543c21a65d81",
+    "run_layout_diagnostic.py": "dd1b605a8c97948f39f80dd44c146a500059983f07a2dca6f03b432238c5e515",
+    "runtime_probe.py": "2156caa15e04d6b6bb942ce128e4571ec397b0e8b911a6ec497402b566887e8f"
+  }
+}

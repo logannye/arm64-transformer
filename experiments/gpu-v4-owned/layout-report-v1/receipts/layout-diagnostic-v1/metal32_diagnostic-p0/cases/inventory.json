@@ -1,0 +1,803 @@
+{
+  "convolution_bias": [
+    false,
+    true
+  ],
+  "convolution_dtypes": [
+    "float32",
+    "float16",
+    "bfloat16"
+  ],
+  "convolution_reference": "PyTorch CPU FP64 on the exact stored operands",
+  "development_seed": 20261103,
+  "matrix": [
+    {
+      "dtype": "float32",
+      "layout": "inner",
+      "operation": "mm",
+      "shape": [
+        1,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "inner",
+      "operation": "mm",
+      "shape": [
+        12,
+        64,
+        1
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "inner",
+      "operation": "mm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "transposed",
+      "operation": "mm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "outer",
+      "operation": "mm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "inner",
+      "operation": "mm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "transposed",
+      "operation": "mm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "outer",
+      "operation": "mm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "inner",
+      "operation": "addmm",
+      "shape": [
+        1,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "inner",
+      "operation": "addmm",
+      "shape": [
+        12,
+        64,
+        1
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "inner",
+      "operation": "addmm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "transposed",
+      "operation": "addmm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "outer",
+      "operation": "addmm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "inner",
+      "operation": "addmm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "transposed",
+      "operation": "addmm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "outer",
+      "operation": "addmm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "inner",
+      "operation": "bmm",
+      "shape": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "transposed",
+      "operation": "bmm",
+      "shape": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "outer",
+      "operation": "bmm",
+      "shape": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "inner",
+      "operation": "bmm",
+      "shape": [
+        4,
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "transposed",
+      "operation": "bmm",
+      "shape": [
+        4,
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "outer",
+      "operation": "bmm",
+      "shape": [
+        4,
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "inner",
+      "operation": "bmm",
+      "shape": [
+        3,
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "transposed",
+      "operation": "bmm",
+      "shape": [
+        3,
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "outer",
+      "operation": "bmm",
+      "shape": [
+        3,
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "inner",
+      "operation": "mm",
+      "shape": [
+        1,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "inner",
+      "operation": "mm",
+      "shape": [
+        12,
+        64,
+        1
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "inner",
+      "operation": "mm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "transposed",
+      "operation": "mm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "outer",
+      "operation": "mm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "inner",
+      "operation": "mm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "transposed",
+      "operation": "mm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "outer",
+      "operation": "mm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "inner",
+      "operation": "addmm",
+      "shape": [
+        1,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "inner",
+      "operation": "addmm",
+      "shape": [
+        12,
+        64,
+        1
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "inner",
+      "operation": "addmm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "transposed",
+      "operation": "addmm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "outer",
+      "operation": "addmm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "inner",
+      "operation": "addmm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "transposed",
+      "operation": "addmm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "outer",
+      "operation": "addmm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "inner",
+      "operation": "bmm",
+      "shape": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "transposed",
+      "operation": "bmm",
+      "shape": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "outer",
+      "operation": "bmm",
+      "shape": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "inner",
+      "operation": "bmm",
+      "shape": [
+        4,
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "transposed",
+      "operation": "bmm",
+      "shape": [
+        4,
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "outer",
+      "operation": "bmm",
+      "shape": [
+        4,
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "inner",
+      "operation": "bmm",
+      "shape": [
+        3,
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "transposed",
+      "operation": "bmm",
+      "shape": [
+        3,
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float16",
+      "layout": "outer",
+      "operation": "bmm",
+      "shape": [
+        3,
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "inner",
+      "operation": "mm",
+      "shape": [
+        1,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "inner",
+      "operation": "mm",
+      "shape": [
+        12,
+        64,
+        1
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "inner",
+      "operation": "mm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "transposed",
+      "operation": "mm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "outer",
+      "operation": "mm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "inner",
+      "operation": "mm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "transposed",
+      "operation": "mm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "outer",
+      "operation": "mm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "inner",
+      "operation": "addmm",
+      "shape": [
+        1,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "inner",
+      "operation": "addmm",
+      "shape": [
+        12,
+        64,
+        1
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "inner",
+      "operation": "addmm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "transposed",
+      "operation": "addmm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "outer",
+      "operation": "addmm",
+      "shape": [
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "inner",
+      "operation": "addmm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "transposed",
+      "operation": "addmm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "outer",
+      "operation": "addmm",
+      "shape": [
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "inner",
+      "operation": "bmm",
+      "shape": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "transposed",
+      "operation": "bmm",
+      "shape": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "outer",
+      "operation": "bmm",
+      "shape": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "inner",
+      "operation": "bmm",
+      "shape": [
+        4,
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "transposed",
+      "operation": "bmm",
+      "shape": [
+        4,
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "outer",
+      "operation": "bmm",
+      "shape": [
+        4,
+        8,
+        64,
+        12
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "inner",
+      "operation": "bmm",
+      "shape": [
+        3,
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "transposed",
+      "operation": "bmm",
+      "shape": [
+        3,
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "bfloat16",
+      "layout": "outer",
+      "operation": "bmm",
+      "shape": [
+        3,
+        33,
+        17,
+        49
+      ]
+    },
+    {
+      "dtype": "float32",
+      "layout": "inner",
+      "operation": "mm",
+      "shape": [
+        1,
+        512,
+        64
+      ]
+    }
+  ],
+  "matrix_reference": "same-dtype PyTorch CPU; not an independent FP64 oracle"
+}

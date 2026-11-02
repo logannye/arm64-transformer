@@ -1,0 +1,32 @@
+{
+  "schema": "trained-precision-mlx-linkage-artifact-failure-v1",
+  "worker_record": {
+    "path": "work/gpu-v4-owned/half-v3-mlx-suites-device-v6/mlx_cpp/receipt.json",
+    "sha256": "c5c38f8093ee0f2a318fe23b49bf461fbab8ace9bc10d0b542bac82ab2a6f5e3",
+    "bytes": 937281
+  },
+  "summary": {
+    "path": "work/gpu-v4-owned/half-v3-mlx-suites-device-v6/summary.json",
+    "sha256": "611ea7c568e01337e98523a3f34eeef7346f41d244c1f6fce57f091a45270a7f",
+    "bytes": 2615
+  },
+  "cpp_log": {
+    "path": "work/gpu-v4-owned/half-v3-mlx-suites-device-v6/mlx_cpp/cpp.log",
+    "sha256": "9a8ff283f52fe30c50af2aee213b972c00ad502f0e1e7c0a0fad10e86a5197d0",
+    "bytes": 378
+  },
+  "cpp_cases_passed": 305,
+  "cpp_assertions_passed": 4792,
+  "cpp_skips": 0,
+  "worker_passed": true,
+  "outer_audit_passed": false,
+  "qualification": false,
+  "cause": "otool -L and -l artifact filenames collide on a case-insensitive filesystem; the second write replaced the first",
+  "repair": "Distinct libraries/load-commands names and exclusive creation; require casefold-distinct paths and exact saved text in regression checks",
+  "python_suite_executed": false,
+  "source_arithmetic_changed": false,
+  "suite_unit_tests": 31,
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "admission_stream_opened": false
+}

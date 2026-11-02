@@ -1,0 +1,366 @@
+"""Untimed selected-engine or independent FP64 replay of an authenticated checkpoint."""
+
+import argparse
+import importlib.util
+import json
+import os
+import shutil
+import sys
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+
+
+def load(name):
+    spec = importlib.util.spec_from_file_location(
+        "library_checkpoint_" + name, HERE / (name + ".py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+A, F, AD, W, E, ORIGINS = (
+    load(n) for n in ("authority", "frozen", "admission", "worker", "execution", "audit")
+)
+C = A.C
+ENGINES = ("cpu_arm64", "cpu_torch", "metal", "mps", "mlx")
+NAMES = ("validation", "test", "validation_nll", "test_nll", "b1")
+TRANSPORT = {
+    "cpu_arm64": "native_sequential_full_rows",
+    "cpu_torch": "cpu_int64_full_rows_sliced_b16",
+    "metal": "resident_full_rows_indexed_b16",
+    "mps": "resident_full_rows_indexed_b16",
+    "mlx": "resident_full_rows_indexed_b16",
+    "oracle": "independent_fp64_equations",
+}
+_TORCH_CONFIGURED_PID = None
+
+
+def configure_torch(torch):
+    """Set process-wide controls once; verify them again for each batch member."""
+    global _TORCH_CONFIGURED_PID
+    if _TORCH_CONFIGURED_PID is None:
+        torch.set_num_threads(1)
+        torch.set_num_interop_threads(1)
+        torch.use_deterministic_algorithms(True)
+        _TORCH_CONFIGURED_PID = os.getpid()
+    C.require(
+        _TORCH_CONFIGURED_PID == os.getpid()
+        and torch.get_num_threads() == 1
+        and torch.get_num_interop_threads() == 1
+        and torch.are_deterministic_algorithms_enabled(),
+        "Checkpoint replay process/thread controls changed",
+    )
+
+
+def recovery_context(job):
+    if "audit_recovery" not in job:
+        return None
+    C.require(isinstance(job["audit_recovery"], dict), "Invalid postrun recovery binding")
+    return load("postrun_recovery").Context(job)
+
+
+def cell_receipt(binding, manifest, manifest_binding, admission):
+    receipt = F.PLAN.load(binding)
+    cell = receipt["cell"]
+    C.require(
+        receipt["schema"] == "frozen-library-formal-cell-v1"
+        and receipt["complete"] is True
+        and receipt["scope"] == "formal_measurement"
+        and receipt["manifest"] == manifest_binding
+        and receipt["admission"] == admission
+        and cell in manifest["comparison"]["cells"],
+        "Foreign or incomplete measured cell",
+    )
+    directory = Path(binding["path"]).parent
+    for name, artifact in receipt["artifacts"].items():
+        A.relative(name)
+        C.require(Path(artifact["path"]) == directory / name, "Cell artifact path differs")
+        C.bound(artifact)
+    C.require("fit-authority.json" in receipt["artifacts"], "Missing measured source authority")
+    proof = F.PLAN.load(receipt["artifacts"]["fit-authority.json"])
+    C.require(
+        proof["schema"] == "frozen-library-fit-authority-v1"
+        and proof["job"] == receipt["job"]
+        and proof["manifest"] == manifest_binding
+        and proof["admission"] == admission
+        and proof["cell"] == cell
+        and proof["scope"] == "formal_measurement"
+        and proof["complete"] is True
+        and "error" not in proof,
+        "Measured source authority differs",
+    )
+    job = F.PLAN.load(proof["job"])
+    C.require(
+        job["cell"] == cell
+        and job["manifest"] == manifest_binding
+        and job["admission"] == admission
+        and Path(job["output"]) == directory
+        and type(proof["pid"]) is int
+        and type(proof["parent_pid"]) is int
+        and proof["pid"] > 0
+        and proof["pid"] != proof["parent_pid"] == job["parent_pid"],
+        "Measured job differs",
+    )
+    return receipt, proof
+
+
+def replay_values(engine, parameters, fixture, *, runtime=None, assets=None):
+    """Keep the original B16 NLL reduction and resident B1 forward boundaries."""
+    import numpy as np
+    import torch
+    from torch.nn import functional as functional
+
+    from transformer import spec
+
+    configure_torch(torch)
+    native, backend, model, oracle = None, None, None, None
+    if engine == "cpu_arm64":
+        from transformer.validate import workspace_tensor
+
+        native = W.N.load(runtime, assets, spec.WIDTH)
+        gradient = np.empty((32, 128), np.float32)
+    elif engine == "cpu_torch":
+        from transformer.library_training import torch_model_type
+
+        model = torch_model_type("cpu_torch")().load_flat(parameters)
+    elif engine == "oracle":
+        from transformer.precision_audit import FP64Transformer
+        from transformer.reference import Transformer
+
+        oracle, model = FP64Transformer(parameters), Transformer().load_flat(parameters).double()
+    else:
+        backend = E.create_backend(runtime, engine, parameters, max_batch=16)
+    result, evidence = {}, dict(batch_transport=TRANSPORT[engine])
+    try:
+        for split in ("validation", "test"):
+            rows = fixture[split]
+            C.require(rows.shape == (256, 33) and rows.dtype == np.int32, "Wrong replay rows")
+            values = np.empty((256, 32, 128), np.float64 if oracle else np.float32)
+            total = 0.0
+            if backend is not None:
+                dataset = backend.upload_dataset(rows)
+                indices = backend.upload_indices(np.arange(256, dtype=np.int32))
+            elif model is not None and oracle is None:
+                tensor_rows = torch.from_numpy(rows.astype(np.int64))
+            if native is not None:
+                for i, row in enumerate(rows):
+                    workspace = native.forward(parameters, np.ascontiguousarray(row[:-1]))
+                    values[i] = workspace_tensor(workspace, "logits")
+                    total += native.call(
+                        "cross_entropy",
+                        workspace_tensor(workspace, "logits"),
+                        np.ascontiguousarray(row[1:]),
+                        gradient,
+                        32,
+                        128,
+                    )
+            else:
+                for start in range(0, 256, 16):
+                    selected = rows[start : start + 16]
+                    if oracle is not None:
+                        logits, loss = oracle(selected[:, :-1]), 0.0
+                    elif model is not None:
+                        with torch.no_grad():
+                            tensor_batch = tensor_rows[start : start + 16]
+                            tensor = model(tensor_batch[:, :-1])
+                            loss = functional.cross_entropy(
+                                tensor.reshape(-1, 128),
+                                tensor_batch[:, 1:].reshape(-1),
+                            ).item()
+                            logits = tensor.numpy()
+                    else:
+                        batch = backend.gather_batch(dataset, indices, start, 16)
+                        loss_value, device_logits = backend.evaluate(batch)
+                        logits = backend.to_numpy(device_logits)
+                        loss = float(backend.to_numpy(loss_value).reshape(-1)[0])
+                    values[start : start + 16] = logits
+                    total += loss * 16
+            C.require(np.isfinite(values).all(), "Nonfinite replay logits")
+            result[split] = values
+            if oracle is not None:
+                with torch.no_grad():
+                    # The independent PyTorch double equations cross-check the
+                    # first and last rows, matching the original audit contract.
+                    result[split + "_torch_fp64"] = model(
+                        torch.tensor(rows[[0, -1], :-1].astype(np.int64))
+                    ).numpy()
+            else:
+                result[split + "_nll"] = np.array(total / 256, np.float64)
+        tokens = fixture["test"][:1, :32]
+        if native is not None:
+            result["b1"] = workspace_tensor(
+                native.forward(parameters, np.ascontiguousarray(tokens[0])), "logits"
+            )[None].copy()
+        elif model is not None:
+            with torch.no_grad():
+                sample = (
+                    tensor_rows[:1, :32].contiguous()
+                    if oracle is None
+                    else torch.tensor(tokens.astype(np.int64))
+                )
+                result["b1"] = model(sample).numpy()
+        else:
+            result["b1"] = backend.to_numpy(backend.forward(backend.upload_inputs(tokens))).copy()
+        if backend is not None:
+            evidence["capabilities"] = E.validate_capabilities(engine, backend.capabilities())
+            if engine == "metal":
+                evidence["metal_library_origin"] = E.loaded_metal_library(runtime)
+        if native is not None:
+            evidence["native_assets"] = assets
+        return result, evidence
+    finally:
+        if backend is not None:
+            backend.close()
+
+
+def execute(path, digest, *, runtime=None, defer_full_postflight=False, quiet=False):
+    C.require_execution_support()
+    job = C.read(path, digest)
+    C.require(
+        set(job) - {"audit_recovery"}
+        == {
+            "schema",
+            "manifest",
+            "admission",
+            "cell_receipt",
+            "checkpoint",
+            "engine",
+            "output",
+            "raw_store",
+            "parent_pid",
+        }
+        and job["schema"] == "frozen-library-checkpoint-job-v1"
+        and job["engine"] in (*ENGINES, "oracle")
+        and job["checkpoint"] in ("best.f32", "last.f32")
+        and type(job["parent_pid"]) is int
+        and job["parent_pid"] == os.getppid(),
+        "Unknown checkpoint replay job",
+    )
+    context = recovery_context(job)
+    manifest = (
+        context.manifest if context else F.read(job["manifest"]["path"], job["manifest"]["sha256"])
+    )
+    if context is None:
+        AD.verify(manifest, job["manifest"], job["admission"])
+    receipt, _ = cell_receipt(job["cell_receipt"], manifest, job["manifest"], job["admission"])
+    bindings, cell = manifest["bindings"], receipt["cell"]
+    roles = context.roles if context else bindings["roles"]
+    C.require(os.environ.get("ARM64_TRANSFORMER_WIDTH") == str(cell["width"]), "Select width first")
+    capture = F.PLAN.load(bindings["capture"])
+    inventory = F.PLAN.load(capture["runtime_inventory"])
+    output = Path(job["output"])
+    if job["engine"] == "oracle":
+        C.require(
+            runtime is None and not defer_full_postflight,
+            "Independent oracle cannot share a selected runtime",
+        )
+        C.require(
+            sys.flags.isolated and sys.flags.dont_write_bytecode, "Use independent -I -B oracle"
+        )
+        C.require(
+            not any(
+                n.split(".", 1)[0] in {"torch", "mlx", "numpy", "transformer"} for n in sys.modules
+            ),
+            "Fresh independent FP64 oracle required",
+        )
+        sys.path.insert(0, bindings["roles"]["math"]["root"])
+        runtime = None
+    else:
+        sys.pycache_prefix = str(output / "unused-bytecode-cache")
+        if runtime is None:
+            runtime = A.activate(roles, bindings["capture"])
+        else:
+            C.require(
+                runtime.roles == roles and runtime.capture_binding == bindings["capture"],
+                "Batch replay crossed a frozen runtime/source identity",
+            )
+            runtime.recheck()
+    # Apply identical source/runtime/raw-store output protections to the oracle.
+    from types import SimpleNamespace
+
+    W.protected_output(job, runtime or SimpleNamespace(roles=roles, inventory=inventory))
+    if context:
+        context.protect(output)
+    request = F.PLAN.load(F.PLAN.load(bindings["raw_prerequisites"])["request"])
+    C.require(job["raw_store"] == request["raw_store"], "Replay raw-store selection changed")
+    import numpy as np
+
+    from transformer import spec
+    from transformer.prepare import load_fixture
+    from transformer.trained_precision import save_arrays
+
+    fixture = next(
+        r
+        for r in F.PLAN.load(bindings["fixtures"])["fixtures"]
+        if (r["width"], r["seed"]) == (cell["width"], cell["seed"])
+    )
+    parameters = np.fromfile(C.bound(receipt["artifacts"][job["checkpoint"]]), "<f4")
+    C.require(
+        parameters.shape == (spec.PARAM_COUNT,) and np.isfinite(parameters).all(),
+        "Invalid checkpoint",
+    )
+    output.mkdir()
+    proof = dict(
+        schema="frozen-library-checkpoint-replay-v1",
+        job=C.binding(path),
+        manifest=job["manifest"],
+        cell_receipt=job["cell_receipt"],
+        engine=job["engine"],
+        checkpoint=job["checkpoint"],
+        pid=os.getpid(),
+        parent_pid=os.getppid(),
+        complete=False,
+    )
+    if context:
+        proof["audit_recovery"] = context.binding
+    if runtime:
+        proof["origins_before"] = runtime.origins(job["engine"])
+    values, evidence = replay_values(
+        job["engine"],
+        parameters,
+        load_fixture(fixture["directory"]),
+        runtime=runtime,
+        assets=bindings["native_assets"],
+    )
+    C.require(
+        shutil.disk_usage(output).free > C.MIN_FREE_BYTES + 128 * 1024**2,
+        "Replay disk reserve reached",
+    )
+    raw = save_arrays(output / "raw.npz", values, job["raw_store"])
+    proof.update(
+        raw={k: raw[k] for k in ("sha256", "bytes")}, raw_store=job["raw_store"], **evidence
+    )
+    if runtime:
+        proof["origins_after"] = runtime.origins(job["engine"])
+        if defer_full_postflight:
+            runtime.recheck()
+        else:
+            proof["runtime_validation_final"] = runtime.finish()
+    else:
+        proof["auditor_project_origins"] = ORIGINS.project_origins(
+            bindings["roles"]["math"], sys.modules
+        )
+        C.require(
+            not any(n.startswith(("torch.nn.precise_fp32", "mlx")) for n in sys.modules),
+            "FP64 oracle loaded selected candidate APIs",
+        )
+        proof["oracle_versions"] = dict(numpy=np.__version__, torch=__import__("torch").__version__)
+    context.verify() if context else F.verify(manifest)
+    cell_receipt(job["cell_receipt"], manifest, job["manifest"], job["admission"])
+    C.require(C.binding(path)["sha256"] == digest, "Replay job changed")
+    proof["complete"] = True
+    C.write(output / "receipt.json", proof)
+    reply = dict(complete=True, receipt=C.binding(output / "receipt.json"))
+    if not quiet:
+        print(json.dumps(reply))
+    return reply, runtime
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--job", type=Path, required=True)
+    parser.add_argument("--job-sha256", required=True)
+    args = parser.parse_args()
+    execute(args.job, args.job_sha256)

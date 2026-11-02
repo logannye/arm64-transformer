@@ -11,11 +11,12 @@ import argparse
 import runpy
 import struct
 import subprocess
-import sys
 from pathlib import Path
 
 
-def run_cpu_operation(engine, manifest, roots, operand_file, output_file, *, width):
+def run_cpu_operation(
+    engine, manifest, roots, operand_file, output_file, *, width, expected_rejection=None
+):
     from transformer.gpu_environment import child_environment
     from transformer.gpu_study import ENVIRONMENT, python_path, require, verify_bindings
 
@@ -24,8 +25,9 @@ def run_cpu_operation(engine, manifest, roots, operand_file, output_file, *, wid
     require(not Path(output_file).exists(), "CPU bridge output collision")
     env = child_environment(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(width))
     env["PYTHONPATH"] = python_path(manifest, roots, cpu=True)
-    command = [
-        sys.executable,
+    from transformer.gpu_study_context import child_controls, python_command, resolve_context
+
+    command = python_command(manifest, output_file, roots=roots, cpu=True) + [
         str((Path(roots["source"]) / "transformer/gpu_study_cpu_admission.py").resolve()),
         "--engine",
         engine,
@@ -34,13 +36,49 @@ def run_cpu_operation(engine, manifest, roots, operand_file, output_file, *, wid
         "--output",
         str(Path(output_file).resolve()),
     ]
+    if resolve_context(manifest).owned and engine == "cpu_torch":
+        from transformer.gpu_owned_cpu import prepare_command
+
+        command = prepare_command(
+            manifest,
+            roots,
+            engine,
+            "admission",
+            command[-6:],
+            output_file,
+            expected_rejection=expected_rejection,
+        )
     subprocess.run(
-        command, cwd=roots["cpu"], env=env, capture_output=True, text=True, check=True, timeout=1800
+        command,
+        cwd=roots["cpu"],
+        env=child_controls(manifest, env),
+        capture_output=True,
+        text=True,
+        check=True,
+        timeout=1800,
     )
     verify_bindings(manifest, roots)
+    if resolve_context(manifest).owned and engine == "cpu_torch":
+        from transformer.gpu_owned_cpu import digest, verify_proof
+
+        verify_proof(
+            str(output_file) + ".owned-cpu-proof.json",
+            manifest,
+            engine=engine,
+            kind="admission",
+            output_hashes={}
+            if expected_rejection
+            else {Path(output_file).name: digest(output_file)},
+            input_hashes={Path(operand_file).name: digest(operand_file)},
+            expected_rejection=expected_rejection,
+        )
+        if expected_rejection is not None:
+            raise ValueError(expected_rejection)
 
 
-def execute(engine, operand_file, output_file):
+def execute(engine, operand_file, output_file, *, library_api=False):
+    if library_api and engine != "cpu_torch":
+        raise ValueError("Explicit library CPU selection requires cpu_torch")
     controls = runpy.run_path(str(Path(__file__).with_name("gpu_environment.py")))
     controls["require_environment"](controls["ENVIRONMENT"])
     import numpy as np
@@ -67,6 +105,7 @@ def execute(engine, operand_file, output_file):
                         "step": np.array(int(state["step"]) + 1, np.int64),
                     },
                     native=native,
+                    library_api=library_api,
                 )
                 state = {key: updated[key] for key in state}
             probe = _compute(
@@ -78,6 +117,7 @@ def execute(engine, operand_file, output_file):
                     "targets": values["targets"],
                 },
                 native=native,
+                library_api=library_api,
             )
             result.update(
                 {
@@ -86,12 +126,12 @@ def execute(engine, operand_file, output_file):
                 }
             )
     else:
-        result = _compute(engine, values, native=native)
+        result = _compute(engine, values, native=native, library_api=library_api)
     with Path(output_file).open("xb") as handle:
         np.savez(handle, **result)
 
 
-def _compute(engine, values, *, native=None):
+def _compute(engine, values, *, native=None, library_api=False):
     import numpy as np
     import torch
     from torch.nn import functional as F
@@ -99,6 +139,13 @@ def _compute(engine, values, *, native=None):
     from transformer import spec
     from transformer.reference import Transformer
 
+    model_type = Transformer
+    if library_api:
+        if engine != "cpu_torch":
+            raise ValueError("Explicit library CPU selection requires cpu_torch")
+        from transformer.library_training import torch_model_type
+
+        model_type = torch_model_type("cpu_torch")
     torch.set_num_threads(1)
     torch.use_deterministic_algorithms(True)
     values = dict(values)
@@ -125,7 +172,7 @@ def _compute(engine, values, *, native=None):
         result["backend_width"] = np.array(native.model_identity["width"], dtype=np.int64)
         result["backend_kind"] = np.array(1, dtype=np.int64)
     else:
-        probe = Transformer().load_flat(parameters)
+        probe = model_type().load_flat(parameters)
         if any(p.device.type != "cpu" for p in probe.parameters()):
             raise ValueError("Frozen CPU reference did not allocate CPU parameters")
         result["backend_width"] = np.array(spec.WIDTH, dtype=np.int64)
@@ -156,7 +203,7 @@ def _compute(engine, values, *, native=None):
             gradient *= np.float32(1.0) / np.float32(len(tokens))
             loss = total / len(tokens)
         else:
-            model = Transformer().load_flat(parameters)
+            model = model_type().load_flat(parameters)
             logits_t = model(torch.tensor(tokens.astype(np.int64)))
             loss_t = F.cross_entropy(
                 logits_t.reshape(-1, 128), torch.tensor(targets.astype(np.int64)).reshape(-1)
@@ -281,7 +328,9 @@ def run_cpu_checkpoint_tie(engine, manifest, roots, output_directory, *, width):
     output = Path(output_directory)
     require(not output.exists() and not output.is_symlink(), "CPU tie output collision")
     fixture, run = output / "fixture", output / "run"
-    _write_tie_fixture(fixture, width, 20261104)
+    from transformer.gpu_study_context import child_controls, python_command, resolve_context
+
+    _write_tie_fixture(fixture, width, resolve_context(manifest).admission_seed)
     # Each target ID appears exactly four times in the B16/T32 batch. The head bias
     # gradient sums exact binary fractions to zero; all other paths are zero.
     env = child_environment(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(width))
@@ -290,17 +339,39 @@ def run_cpu_checkpoint_tie(engine, manifest, roots, output_directory, *, width):
     command = (
         [str(cpu / f"native/build/width-{width}/transformer-arm64")]
         if engine == "cpu_arm64"
-        else [sys.executable, "-m", "transformer.python_train"]
+        else python_command(manifest, run, roots=roots, cpu=True)
+        + ["-m", "transformer.python_train"]
     )
+    arguments = [str(fixture.resolve()), str(run.resolve())]
+    if resolve_context(manifest).owned and engine == "cpu_torch":
+        from transformer.gpu_owned_cpu import prepare_command
+
+        command = prepare_command(manifest, roots, engine, "tie", arguments, run)
+        arguments = []
     subprocess.run(
-        command + [str(fixture.resolve()), str(run.resolve())],
+        command + arguments,
         cwd=cpu,
-        env=env,
+        env=child_controls(manifest, env),
         capture_output=True,
         text=True,
         check=True,
         timeout=1800,
     )
+    if resolve_context(manifest).owned and engine == "cpu_torch":
+        from transformer.gpu_owned_cpu import verify_proof
+
+        verify_proof(
+            run / "owned-cpu-proof.json",
+            manifest,
+            engine=engine,
+            kind="tie",
+            output_hashes={
+                p.name: digest(p)
+                for p in run.iterdir()
+                if p.is_file() and p.name != "owned-cpu-proof.json"
+            },
+            input_hashes={p.name: digest(p) for p in fixture.iterdir() if p.is_file()},
+        )
     history = read_array(run / "history.f64", "<f8", (2, 3))
     performance = read_array(run / "performance.f64", "<f8", (8,))
     state_zero = [
@@ -333,8 +404,9 @@ def main():
     parser.add_argument("--engine", choices=("cpu_arm64", "cpu_torch"), required=True)
     parser.add_argument("--input", required=True)
     parser.add_argument("--output", required=True)
+    parser.add_argument("--library-api", action="store_true")
     args = parser.parse_args()
-    execute(args.engine, args.input, args.output)
+    execute(args.engine, args.input, args.output, library_api=args.library_api)
 
 
 if __name__ == "__main__":

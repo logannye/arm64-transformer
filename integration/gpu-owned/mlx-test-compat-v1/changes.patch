@@ -1,0 +1,13 @@
+--- a/python/tests/test_array.py
++++ b/python/tests/test_array.py
+@@ -25,7 +25,9 @@
+ try:
+     import torch
+ 
+-    torch_version = [int(v) for v in torch.__version__.split("+")[0].split(".")]
++    from packaging.version import Version
++
++    torch_version = list(Version(torch.__version__).release)
+     is_torch_212 = torch_version[0] > 2 or (
+         torch_version[0] == 2 and torch_version[1] >= 12
+     )

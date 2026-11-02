@@ -1,0 +1,826 @@
+"""Authenticate and probe existing project-maintained binaries; never admit a fit.
+
+Run with -I -S -B. No packages are installed, no framework is rebuilt, and all
+framework imports happen after archive-bound inventory authentication. The second
+joint dependency contract overlays the retained NumPy 1.26.4 package on MLX's
+dependency environment. The failed NumPy 2.2.6 attempt remains separate evidence.
+"""
+
+from __future__ import annotations
+
+import argparse
+import copy
+import ctypes
+import hashlib
+import importlib.metadata
+import importlib.util
+import json
+import os
+import platform
+import re
+import stat
+import subprocess
+import sys
+import time
+import traceback
+import zipfile
+from pathlib import Path
+
+SCHEMA = "gpu-owned-joint-runtime-probe-v1"
+PROTOCOL = "gpu-v4-owned-development-v1"
+PREFIX = Path("work/upstream-integration-v2")
+TORCH_AREA = PREFIX / "pytorch/hosted-40989036595-verified-v1"
+TORCH_RUNTIME = TORCH_AREA / "bundle/runtime"
+MLX_AREA = PREFIX / "mlx/release-40978071574"
+MLX_BUNDLE = MLX_AREA / "bundles/patched-jit-on"
+DEPENDENCIES = PREFIX / "mlx/runtime-env/lib/python3.12/site-packages"
+NUMPY_SOURCE = PREFIX / "pytorch/runtime-env/lib/python3.12/site-packages/numpy"
+NUMPY_WHEEL = TORCH_AREA / "artifact/wheels/numpy-1.26.4-cp312-cp312-macosx_11_0_arm64.whl"
+NUMPY_OVERLAY = Path("work/gpu-v4-owned/runtime-numpy126-overlay-v2")
+NUMPY_METADATA = "numpy-1.26.4.dist-info"
+TORCH_BASE = "71d2a08507ab47dd6b2fa9b66319d17ce2377de4"
+TORCH_PATCH = "3834dca844ea3de6b40467ce214b99bce83fa06dae2bc454623516dafc0fdd71"
+MLX_BASE = "a21f892a6e8e83afb117cef1d1ceae3e82f48c32"
+MLX_PATCHES = {
+    "embedding-fix.patch": "9aecf0c9b0131fe0673493035fd3c47fba3e4ffb1cfc04d00a506702e1d1067c",
+    "attention-fix.patch": "b9787a423920641034f42e611f0d8529f6dd49022d094e280fa5ce52a38b7cc3",
+}
+TORCH_MANIFEST_SHA = "5c5165860d484250101a150917277b8c85506bccc6323b5a3d6d6c28b7d333d5"
+MLX_MANIFEST_SHA = "97cb2ade3efa1364ed7458e99c41367f6674ee6d199ee2d05ba3934bbadfe200"
+COMPILE_PROBE = Path("outputs/arm64-transformer/transformer/gpu_mlx_compile.py")
+COMPILE_PROBE_SHA = "6029935a51aeb76707828270b430dc7f4f5374276b96c574de847c30c79ffa6d"
+PINNED_FILES = {
+    NUMPY_WHEEL: (
+        13685868,
+        "03a8c78d01d9781b28a6989f6fa1bb2c4f2d51201cf99d3dd875df6fbd96b23b",
+    ),
+    TORCH_AREA / "artifact/receipt.json": (
+        168452,
+        "6e47533073c68ba5cd54a0e8de14d06d616b8e495281403deb3eba09711fa338",
+    ),
+    TORCH_AREA / "artifact/pytorch-integrated-runtime.tar.gz": (
+        116647267,
+        "e0d82f7dfa61da87ef59abceaf5a7fa2030f20178f08f4ae1b456249930620de",
+    ),
+    MLX_AREA / "publication-files.json": (
+        18208,
+        "50b7ede6889a68b0a5e6d49fc28bfcab68f2061a2e3e31488183433d6f0e64a2",
+    ),
+    MLX_AREA / "mlx-release-patched-jit-on-macos14-arm64-cp312.tar.gz": (
+        15390369,
+        "f2045a87c87963a82ff95884e27b73e100c5defee37c7289efa9feaaa242003d",
+    ),
+    PREFIX / "mlx/operator-bench-release-v1/operator-manifest-v1.json": (
+        25343848,
+        "79f8fc4b53d3918226ad37e96287e22cff4d2fd1e57ecb961f9771b22da202d8",
+    ),
+}
+ENVIRONMENT = {
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1",
+    "PYTORCH_ENABLE_MPS_FALLBACK": "0",
+    "PYTORCH_MPS_FAST_MATH": "0",
+    "MLX_ENABLE_TF32": "0",
+    "MLX_SDPA_VJP_FALLBACK": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "SKBUILD_EDITABLE_REBUILD": "false",
+}
+ABSENT = {"MLX_DISABLE_COMPILE", "PYTORCH_MPS_PREFER_METAL", "PYTHONPATH", "PYTHONHOME"}
+COMPARISON_VERSION = "owned-runtime-single-compiled-node-alpha-v1"
+COMPILED_GRAPH = (
+    "digraph {\n"
+    '{ rank=source; "A"; }\n'
+    '{ rank=source; "B"; }\n'
+    '{ rank=source; "C"; }\n'
+    '{ rank=source; "D"; }\n'
+    '{ NODE [label ="CompiledBroadcastMultiplyAddBroadcastMaximum", shape=rectangle]; }\n'
+    '"A" -> NODE\n'
+    '"B" -> NODE\n'
+    '"C" -> NODE\n'
+    '"D" -> NODE\n'
+    '{ rank=sink; "E"; }\n'
+    'NODE -> "E"\n'
+    "}"
+)
+
+
+def require(condition, message):
+    if not condition:
+        raise RuntimeError(message)
+
+
+def compilation_graph_identity(compilation):
+    """Authenticate the raw graph, then rename exactly one numeric graph node.
+
+    This recognizes only the already declared dyadic compilation probe's graph.
+    It is not a general DOT parser or numeric/tensor normalization. Any operator,
+    edge, label, whitespace, extra constant, or inconsistent identifier change
+    fails before comparison. Original worker records remain untouched.
+    """
+    graph = compilation.get("graph_dot")
+    require(isinstance(graph, str), "Missing raw compiled graph")
+    raw_sha = hashlib.sha256(graph.encode()).hexdigest()
+    require(raw_sha == compilation.get("graph_sha256"), "Raw compiled graph hash differs")
+    identifiers = re.findall(
+        r'\{ ([1-9][0-9]{0,19}) \[label ="CompiledBroadcastMultiplyAddBroadcastMaximum", '
+        r"shape=rectangle\]; \}",
+        graph,
+    )
+    require(len(identifiers) == 1, "Expected one declared Compiled graph node")
+    identifier = identifiers[0]
+    require(int(identifier) < 2**64, "Compiled graph identifier is out of range")
+    require(
+        graph == COMPILED_GRAPH.replace("NODE", identifier),
+        "Compiled graph structure differs from the fixed probe",
+    )
+    canonical_graph = COMPILED_GRAPH.replace("NODE", "compiled_node")
+    return {
+        "raw_graph_sha256": raw_sha,
+        "raw_node_id": identifier,
+        "canonical_graph_dot": canonical_graph,
+        "canonical_graph_sha256": hashlib.sha256(canonical_graph.encode()).hexdigest(),
+    }
+
+
+def compare_probes(engine, first, second):
+    """Keep tensor hashes and every non-graph field exact across fresh workers."""
+    require(engine in ("torch", "mlx"), "Unknown probe engine")
+    normalized = [copy.deepcopy(first), copy.deepcopy(second)]
+    graphs = []
+    if engine == "mlx":
+        for value in normalized:
+            require(isinstance(value.get("compilation"), dict), "Missing compilation probe")
+            graph = compilation_graph_identity(value["compilation"])
+            graphs.append(graph)
+            value["compilation"]["graph_dot"] = graph["canonical_graph_dot"]
+            value["compilation"]["graph_sha256"] = graph["canonical_graph_sha256"]
+    require(normalized[0] == normalized[1], f"Fresh-process probe fields differ: {engine}")
+    return {
+        "engine": engine,
+        "contract": COMPARISON_VERSION,
+        "passed": True,
+        "raw_probe_json_equal": first == second,
+        "all_non_graph_fields_exact": True,
+        "tensor_output_hashes_compared_exactly": True,
+        "raw_graphs_preserved": True,
+        "graph_comparisons": graphs,
+        "normalized_fields": ["compilation.graph_dot", "compilation.graph_sha256"]
+        if engine == "mlx"
+        else [],
+    }
+
+
+def digest(path):
+    value = hashlib.sha256()
+    with Path(path).open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            value.update(chunk)
+    return value.hexdigest()
+
+
+def file_state(path):
+    info = Path(path).lstat()
+    require(stat.S_ISREG(info.st_mode), f"Expected regular file: {path}")
+    return {
+        key: getattr(info, key)
+        for key in (
+            "st_dev",
+            "st_ino",
+            "st_mode",
+            "st_nlink",
+            "st_size",
+            "st_mtime_ns",
+            "st_ctime_ns",
+        )
+    }
+
+
+def verify_file(path, expected_sha, expected_bytes=None):
+    path = Path(path)
+    require(path.resolve(strict=True) == path, f"Noncanonical input: {path}")
+    before = file_state(path)
+    if expected_bytes is not None:
+        require(before["st_size"] == expected_bytes, f"Size differs: {path}")
+    actual = digest(path)
+    require(file_state(path) == before, f"Input changed while hashing: {path}")
+    require(actual == expected_sha, f"SHA-256 differs from original authority: {path}")
+    return {"bytes": before["st_size"], "sha256": actual, "stat": before}
+
+
+def verify_tree(root, expected, excluded=()):
+    root = Path(root)
+    require(root.resolve(strict=True) == root and root.is_dir(), f"Invalid root: {root}")
+    observed = {}
+    for path in sorted(root.rglob("*")):
+        info = path.lstat()
+        require(not stat.S_ISLNK(info.st_mode), f"Symlink in immutable input: {path}")
+        if stat.S_ISDIR(info.st_mode):
+            continue
+        require(stat.S_ISREG(info.st_mode), f"Special file in immutable input: {path}")
+        name = path.relative_to(root).as_posix()
+        if name in excluded:
+            continue
+        require(name in expected, f"Unrecorded file: {path}")
+        row = expected[name]
+        verified = verify_file(path, row["sha256"], row["bytes"])
+        if "executable" in row:
+            require(bool(info.st_mode & 0o111) == row["executable"], f"Mode differs: {path}")
+        observed[name] = verified
+    require(set(observed) == set(expected), f"Missing inventory members in {root}")
+    return observed
+
+
+def controlled_env():
+    env = dict(os.environ)
+    for key in list(env):
+        if key in ABSENT or key.startswith(("DYLD_", "MLX_", "PYTORCH_")):
+            env.pop(key)
+    env.update(ENVIRONMENT)
+    return env
+
+
+def require_environment():
+    require(
+        sys.flags.isolated and sys.flags.no_site and sys.dont_write_bytecode, "Requires -I -S -B"
+    )
+    require(not (ABSENT & set(os.environ)), "Forbidden compile/import control is present")
+    require(
+        all(os.environ.get(k) == v for k, v in ENVIRONMENT.items()), "Environment controls differ"
+    )
+    require(
+        not any(
+            k.startswith(("DYLD_", "MLX_", "PYTORCH_")) and k not in ENVIRONMENT for k in os.environ
+        ),
+        "Undeclared framework or loader control",
+    )
+    require(
+        platform.system() == "Darwin" and platform.machine() == "arm64",
+        "Requires native macOS ARM64",
+    )
+    require(sys.version_info[:3] == (3, 12, 13), "Requires the retained CPython 3.12.13")
+    require(
+        not any(k == "torch" or k.startswith(("torch.", "mlx", "numpy")) for k in sys.modules),
+        "A numerical framework was imported before authentication",
+    )
+
+
+def authenticate_runtime(workspace):
+    """Read and authenticate originals and expanded inputs without importing frameworks."""
+    workspace = Path(workspace).resolve(strict=True)
+    files = {}
+    for relative, (size, sha) in PINNED_FILES.items():
+        files[str(workspace / relative)] = verify_file(workspace / relative, sha, size)
+    for relative, sha in [
+        (TORCH_RUNTIME / "runtime-manifest.json", TORCH_MANIFEST_SHA),
+        (MLX_BUNDLE / "MANIFEST.json", MLX_MANIFEST_SHA),
+        (COMPILE_PROBE, COMPILE_PROBE_SHA),
+    ]:
+        files[str(workspace / relative)] = verify_file(workspace / relative, sha)
+    python = Path(sys.executable).resolve(strict=True)
+    files[str(python)] = verify_file(
+        python, "e2605291e058fdbe3102e8185d0ac5fe0e063398de617010a6af3a42a78f05e3", 49968
+    )
+    torch_manifest = json.loads((workspace / TORCH_RUNTIME / "runtime-manifest.json").read_text())
+    require(
+        torch_manifest["source_revision"] == TORCH_BASE
+        and torch_manifest["patch_sha256"] == TORCH_PATCH,
+        "Wrong patched PyTorch source identity",
+    )
+    mlx_manifest = json.loads((workspace / MLX_BUNDLE / "MANIFEST.json").read_text())
+    require(
+        mlx_manifest["base"] == MLX_BASE
+        and mlx_manifest["patches"] == MLX_PATCHES
+        and mlx_manifest["variant"] == "patched"
+        and mlx_manifest["mode"] == "jit-on"
+        and mlx_manifest["scope"] == "mlx_matched_release_operator_build_v1",
+        "Wrong patched Release MLX identity",
+    )
+    historical = json.loads(
+        (workspace / PREFIX / "mlx/operator-bench-release-v1/operator-manifest-v1.json").read_text()
+    )
+    dep = historical["dependencies"]
+    require(
+        Path(dep["path"]) == workspace / DEPENDENCIES,
+        "Relocation needs a new declared runtime contract",
+    )
+    trees = {}
+    for relative, expected, excluded in [
+        (TORCH_RUNTIME, torch_manifest["files"], ("runtime-manifest.json",)),
+        (MLX_BUNDLE, mlx_manifest["files"], ("MANIFEST.json",)),
+        (DEPENDENCIES, dep["files"], ()),
+    ]:
+        root = workspace / relative
+        trees[str(root)] = verify_tree(root, expected, excluded)
+    numpy_files = {}
+    numpy_metadata = {}
+    with zipfile.ZipFile(workspace / NUMPY_WHEEL) as wheel:
+        for entry in wheel.infolist():
+            if entry.is_dir():
+                continue
+            name = Path(entry.filename)
+            require(not name.is_absolute() and ".." not in name.parts, "Unsafe wheel member")
+            if name.parts[0] not in {"numpy", NUMPY_METADATA}:
+                continue  # The f2py command-line script is outside the imported package.
+            content = wheel.read(entry)
+            relative = Path(*name.parts[1:]).as_posix()
+            require(
+                relative not in numpy_files
+                if name.parts[0] == "numpy"
+                else relative not in numpy_metadata,
+                "Duplicate NumPy wheel member",
+            )
+            if name.parts[0] == "numpy":
+                numpy_files[relative] = {
+                    "bytes": len(content),
+                    "sha256": hashlib.sha256(content).hexdigest(),
+                }
+            else:
+                numpy_metadata[relative] = content
+    require(len(numpy_files) == 785 and len(numpy_metadata) == 5, "NumPy wheel inventory differs")
+    trees[str(workspace / NUMPY_SOURCE)] = verify_tree(workspace / NUMPY_SOURCE, numpy_files)
+    code = Path(__file__).resolve(strict=True)
+    files[str(code)] = verify_file(code, digest(code))
+    return {
+        "workspace": str(workspace),
+        "files": files,
+        "trees": trees,
+        "numpy_overlay_metadata": numpy_metadata,
+        "dependency_contract": {
+            "name": "reuse-mlx-dependencies-with-patched-torch-numpy126-overlay-v2",
+            "numpy": "1.26.4",
+            "shadowed_mlx_environment_numpy": dep["distributions"]["numpy"],
+            "previous_selected_torch_numpy": "1.26.4",
+            "retained_failed_attempt": "work/gpu-v4-owned/joint-runtime-v1",
+            "prior_probe_source": "work/gpu-v4-owned/failed-runtime-probe-v1/runtime_probe.py",
+            "prior_probe_sha256": (
+                "7dfb7b25a3bf1c1b824ce4e35524bd63801ab1d0bc1dc3142b46510a5c92a9b7"
+            ),
+            "historical_joint_environment_qualified": False,
+            "stock_torch_distribution_present_but_shadowed": dep["distributions"]["torch"],
+        },
+        "identities": {
+            "torch_cpu": {
+                "runtime_manifest_sha256": TORCH_MANIFEST_SHA,
+                "source_revision": TORCH_BASE,
+            },
+            "torch_mps": {
+                "runtime_manifest_sha256": TORCH_MANIFEST_SHA,
+                "source_revision": TORCH_BASE,
+            },
+            "mlx": {
+                "runtime_manifest_sha256": MLX_MANIFEST_SHA,
+                "base": MLX_BASE,
+                "mode": "jit-on",
+                "variant": "patched",
+            },
+        },
+    }
+
+
+def prepare_numpy_overlay(auth):
+    """Expose authenticated existing NumPy binaries; create only links and metadata."""
+    workspace = Path(auth["workspace"])
+    overlay = workspace / NUMPY_OVERLAY
+    source = workspace / NUMPY_SOURCE
+    require(overlay.resolve() == overlay, "NumPy overlay path is noncanonical")
+    if not overlay.exists():
+        overlay.mkdir(parents=True, exist_ok=False)
+        (overlay / "numpy").symlink_to(source, target_is_directory=True)
+        metadata = overlay / NUMPY_METADATA
+        metadata.mkdir()
+        for name, content in auth["numpy_overlay_metadata"].items():
+            with (metadata / name).open("xb") as stream:
+                stream.write(content)
+    require(overlay.is_dir() and not overlay.is_symlink(), "Invalid NumPy overlay")
+    require(
+        {p.name for p in overlay.iterdir()} == {"numpy", NUMPY_METADATA},
+        "Unexpected overlay member",
+    )
+    link = overlay / "numpy"
+    require(link.is_symlink() and os.readlink(link) == str(source), "NumPy overlay target differs")
+    require(
+        link.resolve(strict=True) == source, "NumPy overlay resolves outside the verified package"
+    )
+    metadata_expected = {
+        name: {"bytes": len(content), "sha256": hashlib.sha256(content).hexdigest()}
+        for name, content in auth["numpy_overlay_metadata"].items()
+    }
+    metadata = overlay / NUMPY_METADATA
+    auth["trees"][str(metadata)] = verify_tree(metadata, metadata_expected)
+    info = link.lstat()
+    auth["numpy_overlay"] = {
+        "path": str(overlay),
+        "link": str(link),
+        "target": str(source),
+        "link_stat": {
+            k: getattr(info, k)
+            for k in ("st_dev", "st_ino", "st_mode", "st_mtime_ns", "st_ctime_ns")
+        },
+        "native_binaries_copied": False,
+        "package_manager_used": False,
+    }
+    return overlay
+
+
+def bootstrap(workspace):
+    """Authenticate then install controlled import paths; caller may import torch/MLX."""
+    require_environment()
+    auth = authenticate_runtime(workspace)
+    workspace = Path(auth["workspace"])
+    numpy_overlay = prepare_numpy_overlay(auth)
+    require(
+        not any("site-packages" in p or "dist-packages" in p for p in sys.path),
+        "Unexpected site path",
+    )
+    sys.path[:0] = [
+        str(workspace / TORCH_RUNTIME),
+        str(workspace / MLX_BUNDLE / "runtime/python"),
+        str(numpy_overlay),
+    ]
+    sys.path.append(str(workspace / DEPENDENCIES))
+    sys.path.append(str(workspace / "outputs/arm64-transformer"))
+    return auth
+
+
+def postflight(auth):
+    """Rehash all immutable input bytes and retain any metadata changes as failures."""
+    for name, row in auth["files"].items():
+        current = verify_file(Path(name), row["sha256"], row["bytes"])
+        require(current == row, f"Input identity changed after execution: {name}")
+    counts = {}
+    for name, expected in auth["trees"].items():
+        excluded = (
+            ("runtime-manifest.json",)
+            if name.endswith("bundle/runtime")
+            else ("MANIFEST.json",)
+            if name.endswith("patched-jit-on")
+            else ()
+        )
+        current = verify_tree(Path(name), expected, excluded)
+        require(current == expected, f"Input identity changed after execution: {name}")
+        counts[name] = {"files": len(current), "bytes": sum(r["bytes"] for r in current.values())}
+    if "numpy_overlay" in auth:
+        before = auth["numpy_overlay"]
+        prepare_numpy_overlay(auth)
+        require(auth["numpy_overlay"] == before, "NumPy overlay identity changed")
+    return {
+        "passed": True,
+        "all_declared_input_bytes_and_file_identities_unchanged": True,
+        "trees": counts,
+    }
+
+
+def public_auth(auth):
+    return {
+        "workspace": auth["workspace"],
+        "identities": auth["identities"],
+        "dependency_contract": auth["dependency_contract"],
+        "numpy_overlay": auth.get("numpy_overlay"),
+        "scope_limits": [
+            "CPython executable is bound; its base libpython/stdlib is not inventoried here.",
+            "System framework bytes are not independently bound in this development smoke check.",
+            "Only this driver and the named compilation helper are bound project sources.",
+            "Project root is on the import path; the entire project tree is not authenticated.",
+        ],
+        "pinned_files": {
+            k: {f: v[f] for f in ("bytes", "sha256")} for k, v in auth["files"].items()
+        },
+        "trees": {
+            root: {
+                "files": len(rows),
+                "bytes": sum(x["bytes"] for x in rows.values()),
+                "inventory_sha256": hashlib.sha256(
+                    json.dumps(rows, sort_keys=True).encode()
+                ).hexdigest(),
+            }
+            for root, rows in auth["trees"].items()
+        },
+    }
+
+
+def loaded_images():
+    dyld = ctypes.CDLL(None)
+    dyld._dyld_image_count.restype = ctypes.c_uint32
+    dyld._dyld_get_image_name.argtypes = [ctypes.c_uint32]
+    dyld._dyld_get_image_name.restype = ctypes.c_char_p
+    return sorted(
+        {
+            Path(os.fsdecode(raw)).resolve()
+            for index in range(dyld._dyld_image_count())
+            if (raw := dyld._dyld_get_image_name(index))
+        }
+    )
+
+
+def verify_torch_origins(torch, auth):
+    root = Path(auth["workspace"]) / TORCH_RUNTIME
+    require(torch.version.git_version == TORCH_BASE, "Unexpected PyTorch source")
+    require(
+        Path(torch.__file__).resolve() == root / "torch/__init__.py", "Stock/other PyTorch imported"
+    )
+    require(
+        Path(torch._C.__file__).resolve().is_relative_to(root), "PyTorch extension escaped archive"
+    )
+    origins = {}
+    for name, module in list(sys.modules.items()):
+        if name == "torch" or name.startswith("torch."):
+            file = getattr(module, "__file__", None)
+            if isinstance(file, str) and Path(file).exists():
+                actual = Path(file).resolve()
+                require(actual.is_relative_to(root), f"Foreign PyTorch module: {name}: {actual}")
+                require(
+                    actual.relative_to(root).as_posix() in auth["trees"][str(root)],
+                    "Unbound PyTorch module",
+                )
+                origins[name] = str(actual)
+    require(not torch.ops.loaded_libraries, "Unexpected process-local operator library")
+    native = [
+        p for p in loaded_images() if p.name.startswith(("libtorch", "libc10", "libomp", "libshm"))
+    ]
+    require(
+        native and any(p.name == "libtorch_cpu.dylib" for p in native), "Missing full CPU runtime"
+    )
+    require(all(p.is_relative_to(root) for p in native), "Foreign PyTorch native library loaded")
+    return {
+        "version": torch.__version__,
+        "module": str(Path(torch.__file__).resolve()),
+        "extension": str(Path(torch._C.__file__).resolve()),
+        "native_libraries": list(map(str, native)),
+        "module_count": len(origins),
+        "build_configuration": torch.__config__.show(),
+    }
+
+
+def verify_numpy_origin(np, auth):
+    source = Path(auth["workspace"]) / NUMPY_SOURCE
+    require(np.__version__ == "1.26.4", "Joint NumPy version differs")
+    require(Path(np.__file__).resolve() == source / "__init__.py", "Foreign NumPy imported")
+    distribution = importlib.metadata.distribution("numpy")
+    require(distribution.version == "1.26.4", "NumPy metadata version differs from loaded package")
+    require(
+        Path(distribution.locate_file("numpy")).resolve() == source,
+        "NumPy metadata comes from another environment",
+    )
+    return {"version": np.__version__, "package": str(source), "metadata_matches": True}
+
+
+def torch_probe(auth):
+    import numpy as np
+    import torch
+
+    origins = verify_torch_origins(torch, auth)
+    verify_numpy_origin(np, auth)
+    require(torch.backends.mps.is_available(), "MPS GPU is unavailable")
+    torch.set_num_threads(1)
+    torch.set_num_interop_threads(1)
+    torch.use_deterministic_algorithms(True)
+    rows = {}
+    for device in ("cpu", "mps"):
+        x = torch.arange(257, dtype=torch.float32, device=device) / 16 - 8
+        values = torch.maximum(x * 2 + 0.5, torch.zeros_like(x))
+        if device == "mps":
+            torch.mps.synchronize()
+        actual = values.cpu().numpy()
+        expected = np.array([max(2 * (i / 16 - 8) + 0.5, 0) for i in range(257)], dtype=np.float32)
+        require(
+            actual.dtype == np.float32
+            and actual.shape == (257,)
+            and np.array_equal(actual, expected),
+            "Dyadic roundtrip differs",
+        )
+        rows[device] = {
+            "fp32_sha256": hashlib.sha256(actual.tobytes()).hexdigest(),
+            "device": str(values.device),
+            "passed": True,
+        }
+    require(rows["cpu"]["fp32_sha256"] == rows["mps"]["fp32_sha256"], "CPU/MPS dyadic bytes differ")
+    verify_torch_origins(torch, auth)
+    return {
+        "origins": origins,
+        "dyadic_roundtrips": rows,
+        "numpy_version": np.__version__,
+        "torch_cpu_mps_same_runtime": True,
+        "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
+    }
+
+
+def mlx_probe(auth):
+    import mlx.core as mx
+    import numpy as np
+    import torch
+
+    verify_numpy_origin(np, auth)
+    # Exercise simultaneous framework loading without replacing any operator.
+    torch_origins = verify_torch_origins(torch, auth)
+    bundle = Path(auth["workspace"]) / MLX_BUNDLE
+    require(
+        Path(mx.__file__).resolve() == bundle / "runtime/python/mlx/core.cpython-312-darwin.so",
+        "Foreign MLX imported",
+    )
+    probe_path = Path(auth["workspace"]) / COMPILE_PROBE
+    spec = importlib.util.spec_from_file_location("owned_compilation_probe", probe_path)
+    helper = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(helper)
+    result = helper.verify_compilation(mx)
+    native = [
+        p for p in loaded_images() if "libmlx" in p.name.lower() or p == Path(mx.__file__).resolve()
+    ]
+    require(
+        native and all(p.is_relative_to(bundle) for p in native),
+        "Foreign MLX native library loaded",
+    )
+    return {
+        "core": str(Path(mx.__file__).resolve()),
+        "native_libraries": list(map(str, native)),
+        "compilation": result,
+        "co_loaded_torch": torch_origins,
+    }
+
+
+def write_json_new(path, data):
+    path = Path(path)
+    with path.open("x") as stream:
+        json.dump(data, stream, indent=2, sort_keys=True)
+        stream.write("\n")
+
+
+def checked_output(workspace, output):
+    workspace = Path(workspace).resolve(strict=True)
+    output = Path(output).absolute()
+    require(output.resolve() == output, "Output has symlink or noncanonical components")
+    require(
+        output.is_relative_to(workspace / "work/gpu-v4-owned"),
+        "Output must use the new development namespace",
+    )
+    require(not output.exists(), "Output already exists; preserve the earlier attempt")
+    return output
+
+
+def worker(args):
+    output = checked_output(args.workspace, args.output)
+    output.mkdir(parents=True, exist_ok=False)
+    record = {
+        "schema": SCHEMA,
+        "protocol": PROTOCOL,
+        "engine": args.worker,
+        "process_index": args.process_index,
+        "formal_eligible": False,
+        "formal_fits": 0,
+        "admission_stream_opened": False,
+        "complete": False,
+        "passed": False,
+        "pid": os.getpid(),
+        "started_unix": time.time(),
+    }
+    auth = None
+    try:
+        require(
+            args.expected_driver_sha256 == digest(Path(__file__).resolve()),
+            "Worker driver differs from the parent launch identity",
+        )
+        auth = bootstrap(args.workspace)
+        record["authentication"] = public_auth(auth)
+        record["probe"] = torch_probe(auth) if args.worker == "torch" else mlx_probe(auth)
+        record["complete"] = True
+        record["passed"] = True
+    except BaseException:
+        record["error"] = traceback.format_exc()
+    finally:
+        if auth is not None:
+            try:
+                record["postflight"] = postflight(auth)
+            except BaseException:
+                record["postflight_error"] = traceback.format_exc()
+                record["passed"] = False
+        record["finished_unix"] = time.time()
+        write_json_new(output / "result.json", record)
+    return 0 if record["passed"] else 1
+
+
+def run(args):
+    output = checked_output(args.workspace, args.output)
+    output.mkdir(parents=True, exist_ok=False)
+    summary = {
+        "schema": SCHEMA,
+        "protocol": PROTOCOL,
+        "formal_eligible": False,
+        "formal_fits": 0,
+        "admission_stream_opened": False,
+        "historical_standard_study_unchanged": True,
+        "scope": (
+            "Joint import, native origin and dyadic GPU execution; no model qualification or timing"
+        ),
+        "complete": False,
+        "passed": False,
+        "workers": [],
+        "planned_workers": [
+            {"engine": engine, "process_index": index}
+            for engine in ("torch", "mlx")
+            for index in (0, 1)
+        ],
+        "driver_sha256": digest(Path(__file__).resolve()),
+        "fresh_process_comparison_contract": COMPARISON_VERSION,
+        "fresh_process_comparisons": [],
+    }
+    try:
+        for engine in ("torch", "mlx"):
+            for process_index in (0, 1):
+                require(
+                    digest(Path(__file__).resolve()) == summary["driver_sha256"],
+                    "Driver changed after the parent inventory was declared",
+                )
+                target = output / f"{engine}-p{process_index}"
+                command = [
+                    sys.executable,
+                    "-I",
+                    "-S",
+                    "-B",
+                    str(Path(__file__).resolve()),
+                    "--workspace",
+                    str(Path(args.workspace).resolve()),
+                    "--output",
+                    str(target),
+                    "--worker",
+                    engine,
+                    "--process-index",
+                    str(process_index),
+                    "--expected-driver-sha256",
+                    summary["driver_sha256"],
+                ]
+                receipt = target / "result.json"
+                row = {
+                    "engine": engine,
+                    "process_index": process_index,
+                    "path": str(receipt),
+                    "command": command,
+                    "passed": False,
+                }
+                summary["workers"].append(row)
+                with (output / f"{engine}-p{process_index}.log").open("xb") as log:
+                    try:
+                        child = subprocess.run(
+                            command,
+                            env=controlled_env(),
+                            stdout=log,
+                            stderr=subprocess.STDOUT,
+                            timeout=900,
+                        )
+                    except subprocess.TimeoutExpired:
+                        row["timed_out"] = True
+                        raise
+                row["returncode"] = child.returncode
+                if receipt.exists():
+                    record = json.loads(receipt.read_text())
+                    row.update(sha256=digest(receipt), passed=record.get("passed") is True)
+                    if record.get("authentication"):
+                        summary["identities"] = record["authentication"]["identities"]
+                        summary["dependency_contract"] = record["authentication"][
+                            "dependency_contract"
+                        ]
+                require(
+                    child.returncode == 0 and row.get("passed"),
+                    f"Failed worker: {engine} p{process_index}",
+                )
+        for engine in ("torch", "mlx"):
+            for row in summary["workers"]:
+                if row["engine"] == engine:
+                    require(digest(Path(row["path"])) == row["sha256"], "Worker receipt changed")
+            first = json.loads((output / f"{engine}-p0/result.json").read_text())
+            second = json.loads((output / f"{engine}-p1/result.json").read_text())
+            comparison = compare_probes(engine, first["probe"], second["probe"])
+            summary["fresh_process_comparisons"].append(comparison)
+            require(
+                first["authentication"] == second["authentication"],
+                f"Fresh-process input identity differs: {engine}",
+            )
+        require(
+            digest(Path(__file__).resolve()) == summary["driver_sha256"],
+            "Driver changed during the probe",
+        )
+        summary.update(
+            complete=True,
+            passed=True,
+            fresh_process_tensor_and_graph_structure_equality=True,
+        )
+    except BaseException:
+        summary["error"] = traceback.format_exc()
+    finally:
+        write_json_new(output / "summary.json", summary)
+    return 0 if summary["passed"] else 1
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--workspace", type=Path, required=True)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--worker", choices=("torch", "mlx"))
+    parser.add_argument("--process-index", type=int, choices=(0, 1), default=0)
+    parser.add_argument("--expected-driver-sha256")
+    args = parser.parse_args()
+    return worker(args) if args.worker else run(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

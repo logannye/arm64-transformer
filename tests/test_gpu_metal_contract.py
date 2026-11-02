@@ -274,6 +274,30 @@ def test_close_invalidates_borrowed_views_even_when_native_cleanup_fails(backend
     assert sum(name == "tfm_destroy" for name, _ in backend._lib.calls) == 1
 
 
+def test_real_metal_required_guard_and_barrier_tail_shapes():
+    if os.environ.get("ARM64_TRANSFORMER_GPU_TEST_BACKEND") != "metal":
+        pytest.skip("Explicit ARM64_TRANSFORMER_GPU_TEST_BACKEND=metal opt-in required")
+
+    from transformer.library_metal import create_backend
+
+    rng = np.random.default_rng(20261103)
+    instance = create_backend(np.zeros(spec.PARAM_COUNT, np.float32))
+    try:
+        # Preserve the exact shape inventory and tolerance of the frozen gate.
+        for m, n, k in ((1, 1, 1), (5, 19, 17), (31, 65, 33), (33, 129, 65)):
+            x = rng.normal(0, 0.2, (m, k)).astype(np.float32)
+            weight = rng.normal(0, 0.2, (n, k)).astype(np.float32)
+            output = instance.to_numpy(
+                instance.linear(x, weight, np.zeros(n, np.float32))["output"]
+            )
+            np.testing.assert_allclose(
+                output, x.astype(np.float64) @ weight.astype(np.float64).T, atol=2e-5, rtol=2e-4
+            )
+            assert instance.check_guards()
+    finally:
+        instance.close()
+
+
 def test_real_metal_trace_components_masks_and_ownership():
     if os.environ.get("ARM64_TRANSFORMER_GPU_TEST_BACKEND") != "metal":
         pytest.skip("Explicit ARM64_TRANSFORMER_GPU_TEST_BACKEND=metal opt-in required")

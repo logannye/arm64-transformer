@@ -12,7 +12,6 @@ import argparse
 import json
 import os
 import subprocess
-import sys
 from pathlib import Path
 
 from transformer.gpu_environment import child_environment, require_environment
@@ -33,6 +32,7 @@ from transformer.gpu_study import (
     verify_bindings,
     write_new,
 )
+from transformer.gpu_study_context import child_controls, python_command, resolve_context
 
 TOLERANCES = {
     "forward": (2e-5, 2e-4),
@@ -113,7 +113,7 @@ CONTROLS = (
 
 
 def gate_inventory():
-    from transformer.gpu_precision import attention_case_specs, layernorm_qkv_case_specs
+    from transformer.gpu_study_case_inventory import attention_case_specs, layernorm_qkv_case_specs
 
     result = []
 
@@ -225,6 +225,7 @@ def execution_readiness():
 
 
 def binding_identity(manifest):
+    keys = ("owned_frameworks",) if resolve_context(manifest).owned else ()
     return identity(
         {
             key: manifest[key]
@@ -238,6 +239,7 @@ def binding_identity(manifest):
                 "gate_inventory_sha256",
                 "admission_seed",
             )
+            + keys
         }
     )
 
@@ -247,7 +249,6 @@ def verify_baseline_repeatability(manifest, roots):
     import numpy as np
 
     from transformer.gpu_repeatability import (
-        CONTRACT,
         PINS,
         PROCESSES,
         REPETITIONS,
@@ -256,6 +257,11 @@ def verify_baseline_repeatability(manifest, roots):
         expected_case_names,
     )
 
+    context = resolve_context(manifest)
+    if context.owned:
+        from transformer.gpu_owned_eligibility import verify_eligibility
+
+        verify_eligibility(manifest, roots)
     root = Path(roots["baseline"])
     records = manifest["bindings"]["baseline"]
     require("summary.json" in records, "Missing baseline summary binding")
@@ -267,7 +273,7 @@ def verify_baseline_repeatability(manifest, roots):
     summary = read_json(root / "summary.json")
     runtime_hash = identity(manifest["bindings"]["runtime"])
     require(
-        summary.get("contract") == CONTRACT
+        summary.get("contract") == context.repeatability_contract
         and summary.get("scope") == "development_only"
         and summary.get("engines") == ["mps", "mlx"]
         and summary.get("widths") == list(WIDTHS)
@@ -283,6 +289,10 @@ def verify_baseline_repeatability(manifest, roots):
         summary.get("complete") is True and summary.get("exact_passed") is True,
         "Standard baseline repeatability still fails; reserved admission stays closed",
     )
+    if context.owned:
+        from transformer.gpu_owned_repeatability import LIMITS
+
+        require(summary.get("limits") == LIMITS, "Owned diagnostic resource contract changed")
     expected_workers = [
         (engine, width, process)
         for engine in ("mps", "mlx")
@@ -302,12 +312,71 @@ def verify_baseline_repeatability(manifest, roots):
             entry.get("returncode") == 0 and entry.get("result") == worker_path,
             "Failed or redirected baseline worker",
         )
+        if context.owned:
+            execution = entry.get("execution", {})
+            require(
+                execution.get("returncode") == 0
+                and execution.get("timed_out") is False
+                and "error" not in execution
+                and execution.get("command") == entry.get("command")
+                and type(execution.get("pid")) is int
+                and execution["pid"] > 0
+                and 0
+                <= execution.get("ended_unix", -1) - execution.get("started_unix", 0)
+                <= LIMITS["worker_seconds"] + 20,
+                "Owned diagnostic process failed or exceeded its execution bounds",
+            )
+            directory = root / Path(worker_path).parent
+            artifacts = entry.get("artifact_sha256", {})
+            require(
+                {
+                    path.relative_to(directory).as_posix()
+                    for path in directory.rglob("*")
+                    if path.is_file()
+                }
+                == set(artifacts),
+                "Owned worker raw evidence inventory changed",
+            )
+            verify_files(directory, artifacts)
+            require(
+                digest(root / (directory.name + ".log")) == entry.get("log_sha256"),
+                "Owned baseline worker log changed",
+            )
         worker = read_json(regular(root, worker_path))
         require(
             worker.get("runtime_identity_sha256") == runtime_hash
             and worker.get("environment") == PINS,
             "Baseline worker runtime/environment differs",
         )
+        if context.owned:
+            from transformer.gpu_owned_repeatability import validate_capabilities
+
+            capabilities = worker.get("capabilities", {})
+            framework = "pytorch" if engine == "mps" else "mlx"
+            require(
+                worker.get("protocol") == context.protocol
+                and worker.get("contract") == context.repeatability_contract
+                and worker.get("complete") is True
+                and worker.get("exact_passed") is True
+                and not worker.get("cleanup_errors")
+                and "fatal_error" not in worker,
+                "Owned repeatability worker is incomplete or failed",
+            )
+            require(
+                capabilities.get("baseline_class") == "project_maintained_full_source_build"
+                and capabilities.get("standard_release_claim") is False
+                and capabilities.get("runtime_identity_sha256") == runtime_hash
+                and capabilities.get("framework_identity")
+                == manifest["owned_frameworks"]["frameworks"][framework]
+                and capabilities.get("runtime_receipt_sha256")
+                == records[manifest["owned_frameworks"]["runtime_receipt"]],
+                "Owned repeatability capability provenance differs",
+            )
+            validate_capabilities(
+                worker,
+                manifest,
+                read_json(regular(root, manifest["owned_frameworks"]["runtime_receipt"])),
+            )
         source = worker.get("source_sha256", {})
         require(
             bool(source)
@@ -325,6 +394,10 @@ def verify_baseline_repeatability(manifest, roots):
             "transformer/spec.py",
             f"transformer/gpu_{engine}.py",
         }
+        if context.owned:
+            from transformer.gpu_owned_repeatability import source_names
+
+            required_sources = set(source_names(engine))
         if engine == "mlx":
             required_sources.add("transformer/gpu_mlx_compile.py")
             capabilities = worker.get("capabilities", {})
@@ -468,13 +541,93 @@ def evaluate_gate(root, specification, record, manifest):
     return all(outcomes)
 
 
+def owned_cpu_proofs(root, manifest, records=None, gates=None):
+    """Bind and re-evaluate retained frozen-CPU child proof files, archive safely."""
+    from transformer.gpu_owned_admission import verify_cpu_operation_records
+    from transformer.gpu_owned_cpu import verify_proof
+
+    root = Path(root)
+    require(isinstance(gates, list), "Missing CPU gate operation inventory")
+    expected = verify_cpu_operation_records(manifest, gates)
+    paths = sorted(root.rglob("*owned-cpu-proof.json"))
+    inventory = [
+        {"path": path.relative_to(root).as_posix(), "sha256": digest(path)} for path in paths
+    ]
+    require(records == inventory == expected, "Missing or changed owned CPU admission origin proof")
+    operation_by_path = {
+        row["proof"]["path"]: row for gate in gates for row in gate["owned_cpu_operations"]
+    }
+    previous = {**manifest, "admission": None}
+    ties, widths = [], set()
+    for path in paths:
+        relative = path.relative_to(root).parts
+        require(
+            len(relative) > 2 and relative[0] == "operands" and relative[1].startswith("width-"),
+            "Unexpected CPU admission proof location",
+        )
+        width = int(relative[1].removeprefix("width-"))
+        require(width in WIDTHS, "Unknown CPU proof width")
+        widths.add(width)
+        proof = read_json(path)
+        operation = operation_by_path[path.relative_to(root).as_posix()]
+        rejection = operation["expected_rejection"]
+        kind = proof.get("kind")
+        require(kind in ("admission", "tie"), "CPU measurement proof cannot qualify admission")
+        if kind == "tie":
+            require(operation["mode"] == "checkpoint_first_tie", "CPU tie operation changed")
+            ties.append(width)
+            source = path.parent.parent / "fixture"
+            inputs = {p.name: digest(p) for p in source.iterdir() if p.is_file()}
+            outputs = {
+                p.name: digest(p)
+                for p in path.parent.iterdir()
+                if p.is_file() and p.name != "owned-cpu-proof.json"
+            }
+        else:
+            require(len(proof.get("arguments", [])) == 6, "Missing CPU bridge argv")
+            operand = regular(path.parent, Path(proof["arguments"][3]).name)
+            inputs = {operand.name: digest(operand)}
+            import numpy as np
+
+            with np.load(operand, allow_pickle=False) as values:
+                require(
+                    values["mode"].shape == () and str(values["mode"].item()) == operation["mode"],
+                    "CPU proof operation differs from retained operands",
+                )
+            output = path.parent / path.name.removesuffix(".owned-cpu-proof.json")
+            if rejection is None:
+                output = regular(path.parent, output.name)
+                outputs = {output.name: digest(output)}
+            else:
+                require(not output.exists(), "Rejected CPU operation retained a numerical result")
+                outputs = {}
+        verify_proof(
+            path,
+            previous,
+            engine="cpu_torch",
+            kind=kind,
+            output_hashes=outputs,
+            input_hashes=inputs,
+            expected_rejection=rejection,
+        )
+    require(
+        widths == set(WIDTHS) and sorted(ties) == list(WIDTHS),
+        "Owned CPU proofs omit a width or checkpoint-selection tie",
+    )
+    return True
+
+
 def validate_receipt(manifest, receipt, root):
     """Re-evaluate all authenticated arrays; ignore claimed passed booleans."""
     require(
         receipt.get("schema") == 1 and receipt.get("scope") == "formal_admission",
         "Not a formal admission receipt",
     )
-    require(receipt.get("seed") == 20261104, "Wrong admission stream")
+    context = resolve_context(manifest)
+    require(receipt.get("seed") == context.admission_seed, "Wrong admission stream")
+    if context.owned:
+        require(receipt.get("protocol") == context.protocol, "Wrong owned admission namespace")
+        owned_cpu_proofs(root, manifest, receipt.get("owned_cpu_proofs"), receipt.get("gates"))
     require(
         receipt.get("binding_sha256") == binding_identity(manifest),
         "Admission source/runtime/input/policy binding is stale",
@@ -526,7 +679,7 @@ def run_admission(manifest_path, expected_hash, roots, output):
     result = {
         "schema": 1,
         "scope": "formal_admission",
-        "seed": 20261104,
+        "seed": resolve_context(manifest).admission_seed,
         "binding_sha256": binding_identity(manifest),
         "inventory_sha256": manifest["gate_inventory_sha256"],
         "producers_complete": True,
@@ -535,14 +688,16 @@ def run_admission(manifest_path, expected_hash, roots, output):
         "status": "running",
         "disk_preflight": disk,
     }
+    if resolve_context(manifest).owned:
+        result["protocol"] = manifest["protocol"]
     try:
         for width in WIDTHS:
             verify_bindings(manifest, roots)
             env = child_environment(ENVIRONMENT, ARM64_TRANSFORMER_WIDTH=str(width))
             env["PYTHONPATH"] = python_path(manifest, roots)
             env["ARM64_TRANSFORMER_METAL_POLICY"] = str(policy_path(manifest, roots))
-            command = [
-                sys.executable,
+            env = child_controls(manifest, env)
+            command = python_command(manifest, output / f"width-{width}", roots=roots) + [
                 "-m",
                 "transformer.gpu_study_admission",
                 "worker",
@@ -601,6 +756,11 @@ def run_admission(manifest_path, expected_hash, roots, output):
         result.update(status="execution_failed", error=f"{type(exc).__name__}: {exc}")
         raise
     finally:
+        if resolve_context(manifest).owned:
+            result["owned_cpu_proofs"] = [
+                {"path": path.relative_to(output).as_posix(), "sha256": digest(path)}
+                for path in sorted(output.rglob("*owned-cpu-proof.json"))
+            ]
         write_new(output / "admission.json", result)
     return result
 

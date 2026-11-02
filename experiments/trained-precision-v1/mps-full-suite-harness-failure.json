@@ -1,0 +1,70 @@
+{
+  "schema": "trained-precision-mps-full-suite-harness-failure-v1",
+  "test_record": {
+    "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v5/full/tests.json",
+    "sha256": "ed9e01dbdcc97000d6610740c5e7716136b0fc702cc80ba3c2fc65101dd3e9c7",
+    "bytes": 2649184
+  },
+  "worker_record": {
+    "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v5/full/receipt.json",
+    "sha256": "78578121fbccbb23170e32368145f60ab2809e1eaf0868ca536cae77243d3688",
+    "bytes": 1536063
+  },
+  "raw_log": {
+    "path": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-v3-full-suite-device-v5/full/tests.log",
+    "sha256": "d3b375319923b513a6013145eca88ce90ae7f1170d1ebdfbf8fd320e81d45d1f",
+    "bytes": 1780500
+  },
+  "tests_run": 10357,
+  "failures": 1,
+  "errors": 1,
+  "skipped": 744,
+  "expected_failures": 382,
+  "previous_27_failed_tests_now_upstream_assertion_passes": [
+    "integrated_upstream_test_mps.TestConsistencyMPS.test_output_grad_match_combinations_mps_float16",
+    "integrated_upstream_test_mps.TestConsistencyMPS.test_output_grad_match_nn_functional_conv_transpose3d_mps_float32",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_False_shape_kind_production_bfloat16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_False_shape_kind_production_float16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_False_shape_kind_production_float32",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_False_shape_kind_small_bfloat16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_False_shape_kind_small_float16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_False_shape_kind_small_float32",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_True_shape_kind_production_bfloat16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_True_shape_kind_production_float16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_True_shape_kind_production_float32",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_True_shape_kind_small_bfloat16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_True_shape_kind_small_float16",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv3d_channels_last_3d_fwd_bwd_with_bias_True_shape_kind_small_float32",
+    "integrated_upstream_test_mps.TestConv3dChannelsLast3dMPS.test_conv_transpose3d_channels_last_3d",
+    "integrated_upstream_test_mps.TestMPS.test_bmm_strided_output_float32_case0",
+    "integrated_upstream_test_mps.TestMPS.test_bmm_strided_output_float32_case1",
+    "integrated_upstream_test_mps.TestMPS.test_bmm_strided_output_float32_case3",
+    "integrated_upstream_test_mps.TestMPS.test_bmm_strided_output_float32_case4",
+    "integrated_upstream_test_mps.TestMPS.test_bmm_strided_output_float32_case6",
+    "integrated_upstream_test_mps.TestMPS.test_bmm_strided_output_float32_case7",
+    "integrated_upstream_test_mps.TestMPS.test_gemv_strided_output_falls_back",
+    "integrated_upstream_test_mps.TestMPS.test_mm_strided_output_float32_case0",
+    "integrated_upstream_test_mps.TestMPS.test_mm_strided_output_float32_case2",
+    "integrated_upstream_test_mps.TestMPS.test_mm_strided_output_float32_case3",
+    "integrated_upstream_test_mps.TestMPS.test_mm_strided_output_float32_case5",
+    "integrated_upstream_test_mps.TestMPS.test_mm_strided_output_float32_case6"
+  ],
+  "remaining_failed_ids": [
+    "integrated_upstream_test_mps.TestFallbackWarning.test_no_warning_on_import",
+    "integrated_upstream_test_mps.TestFallbackWarning.test_warn_on_not_implemented_with_fallback"
+  ],
+  "launcher_environment_diagnostic": {
+    "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/subprocess-launcher-environment-v1/result.json",
+    "sha256": "97d9ec2e2861bba80229a37618ffd88658b4caef04433dc22ab00d42b9e71e1e",
+    "bytes": 365
+  },
+  "post_run_reader_error": "Raw explicit-symlink entries have no sha256 field; use the existing authenticated normalized source inventory",
+  "fix_tests": {
+    "suite": 63,
+    "portable_archive": 26
+  },
+  "qualification": false,
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "admission_stream_opened": false
+}

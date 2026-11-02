@@ -1,0 +1,62 @@
+{
+  "base": "71d2a08507ab47dd6b2fa9b66319d17ce2377de4",
+  "checker": {
+    "source_sha256": "8cb231a23b7e7f49169454143abf78ae579bfaa30ab84fb5a3f6758bbd31eccc",
+    "source_url": "https://github.com/llvm/llvm-project/blob/llvmorg-21.1.0/clang-tools-extra/clang-tidy/bugprone/NarrowingConversionsCheck.cpp",
+    "version": "21.1.0"
+  },
+  "conversion_sites": {
+    "torch/headeronly/util/Half.h": 5,
+    "torch/headeronly/util/complex.h": 8
+  },
+  "files": {
+    "torch/headeronly/util/Half.h": {
+      "after_sha256": "2e74ae13d3fee30371703cefa35a7eaab466cca90c8fd5908e6389e8034a2c90",
+      "before_sha256": "6c02317b90c2d1265b7d8d29d3f1f39e28abf41b6d94afce4d91c297623a90c6"
+    },
+    "torch/headeronly/util/complex.h": {
+      "after_sha256": "30ae971d71fcc3cbb032bb15507bd965540a31a3c496632582a7d66cafb38a34",
+      "before_sha256": "f28ba904a1087a15f33fadf4b2b7ec8165a061d84a6d2f28f863c75d410ee642"
+    }
+  },
+  "formal_admission_opened": false,
+  "formal_fits": 0,
+  "formatter": {
+    "receipt_sha256": "a95e03fedc5ff1a7da5fe84704a3844b15effb5f2605e88dd203dff61d17a782",
+    "scope": "changed lines only; before/after source retained",
+    "sha256": "f0da3ecf0ab1e9b50e8c27bd2d7ca0baa619e2f4b824b35d79d46356581fa552",
+    "version": "19.1.4"
+  },
+  "full_upstream_lint": "not_run",
+  "git_apply_check": true,
+  "historical_header_diagnostics_equal": true,
+  "historical_lint": {
+    "compare-base": {
+      "header_findings": 13,
+      "other_finding_paths": [],
+      "sha256": "2da3519ea514acc36d987236dfd4a01f5e88993e4d1319c5a0fb0568fb35f7f0",
+      "total_findings": 13
+    },
+    "compare-formatted": {
+      "header_findings": 13,
+      "other_finding_paths": [],
+      "sha256": "ba63abae6da46b7d406601eda3f95a007b1bd6d80db5b1812471f72392ebf2d4",
+      "total_findings": 13
+    },
+    "compare-original": {
+      "header_findings": 13,
+      "other_finding_paths": [
+        "aten/src/ATen/native/mps/kernels/Embedding.metal"
+      ],
+      "sha256": "61d9c093073c267b4a8df4e874dda1d8e212ccea946b2d54ca9104195bac105e",
+      "total_findings": 14
+    }
+  },
+  "native_compilation": "not_run",
+  "numerical_regression": "not_run",
+  "old_candidate_recipes_modified": false,
+  "patch_sha256": "b365c370ae317e0fb046fb8bca1ca68527a9c59f824779bb382e66bdb7dc3f7a",
+  "schema": "gpu-owned-half-narrowing-candidate-v1",
+  "source_tokens_after_removing_only_helper_and_wrappers_equal_original": true,
+  "status": "prospective_uncompiled_unqualified"
+}

@@ -1,0 +1,88 @@
+{
+  "abi_policy": "Retain original two-argument AdvancedIndex constructor and make_info overload; new opt-in overload disables normalization only for MPS FP16 accumulate.",
+  "arithmetic": "float addition of two stored half values, explicit volatile half rounding after every addition",
+  "chunk_updates": 65536,
+  "device_numerics_validated": false,
+  "expected_full_test_mps_inventory_after_prospective_integration": 10357,
+  "formal_eligible": false,
+  "host_parameter_abi": {
+    "alignment": 8,
+    "bytes": 40,
+    "chunk_begin_offset": 16,
+    "output_base_offset": 24,
+    "output_storage_bytes_offset": 32
+  },
+  "keys": "full uint64 storage byte offset and original unsplit TensorIterator ordinal",
+  "known_unvalidated": [
+    "Native C++/Objective-C++/MSL compilation and shader ABI",
+    "All actual device cases including true >32-bit offsets/ordinals",
+    "Full broad suite and fresh-process repeatability",
+    "Apple GPU FP16 subnormal/NaN behavior and volatile rounding lowering",
+    "Complete performance and memory counters; no speed claim"
+  ],
+  "native_compiled": false,
+  "native_formatting": "Local clang-format21.1.8 changed-line whitespace only; upstream19.1.4 full-file lint remains required",
+  "new_native_test_methods": 4,
+  "ownership": "one writer per aligned4-byte storage word; typed half accesses only to touched valid lanes",
+  "patch_sha256": "e071e76328c47e0666ef9013a5878d130289c1ce5ee677f1dea8608207161bb1",
+  "performance_measured": false,
+  "prior_static_revision": "work/gpu-v4-owned/half-index-candidate-v1/revision-2",
+  "prior_static_revision_not_selected": true,
+  "purpose": "FP16 CPU-order compatibility and exact repeated execution; no FP64 improvement claim",
+  "requires_embedding_patch_sha256": "3834dca844ea3de6b40467ce214b99bce83fa06dae2bc454623516dafc0fdd71",
+  "revision": 3,
+  "schema": "gpu-owned-half-index-candidate-v1",
+  "scope": "MPS index_put accumulate FP16 only, ordinary and deterministic modes; all shapes use one policy",
+  "scratch_payload_bytes_max": 2097152,
+  "source_base": "71d2a08507ab47dd6b2fa9b66319d17ce2377de4",
+  "source_files": {
+    "aten/src/ATen/native/IndexingUtils.h": {
+      "after_sha256": "f80c4d74255e4fb61122aa6e951e4242f1129651ef254f18a3a66ac832ef421a",
+      "before_sha256": "4d96878b8c0aeb601adb46ed96c77d31f537e519aed1ff2bfa08b92922f4839a"
+    },
+    "aten/src/ATen/native/TensorAdvancedIndexing.cpp": {
+      "after_sha256": "5b9ecb298cd20325d310956863376374588a5cb91954b90f2eeefb2f549da799",
+      "before_sha256": "32f6970bb91e5114badcf69f62d36bc23af5fe5976ed0b5fa4fce23e0916c135"
+    },
+    "aten/src/ATen/native/TensorAdvancedIndexingUtils.h": {
+      "after_sha256": "f9797ba1146e009ec173acc62dac8f8bf2ad08cd4516ef5bd350519560405bc6",
+      "before_sha256": "0f1f6efaaa5b794777b339ab0542b58b2b8f407d940fbd2f367de25605c2a604"
+    },
+    "aten/src/ATen/native/mps/kernels/Indexing.h": {
+      "after_sha256": "b79813a2f6c08cdd5eb6dfaf53083109d40662595dd2c955e922746e85fac2a3",
+      "before_sha256": "3ebb5c4b9976f96f851bb5ab6bc2fdf67d3f345b5816db06b4872ce7e4083ee5"
+    },
+    "aten/src/ATen/native/mps/kernels/Indexing.metal": {
+      "after_sha256": "cb1442517a5243ab185f638ac1db0b7b0edc3a5b21f79b839e1a1d941534d92f",
+      "before_sha256": "283362996d9c86188510dc5be2e522de9bc59ebea448ecff5b46bd2c4233ff58"
+    },
+    "aten/src/ATen/native/mps/operations/Indexing.mm": {
+      "after_sha256": "3ed688b52acef54d3429daf500c316574c5e42961d01afd9ed3674cbcb481897",
+      "before_sha256": "ae9ce032e96856e1161f140829e06986ef7776015f3105c6685b8d2bfd411b15"
+    },
+    "test/test_mps.py": {
+      "after_sha256": "a7b6420664a9352dcb1fc7eb070744c4f1f869d7498d036e5d73ef83dab27bc7",
+      "before_sha256": "7345b6e229aed240921460a3b598ffd1a47148ab4816aead0d405539a154a396"
+    },
+    "torch/__init__.py": {
+      "after_sha256": "a3ac1f3819e4ebddb8d9d71bf1490c335daaa3118ea8ea1300192146f0cf02b2",
+      "before_sha256": "18053b2d5cf73c20fee2f29173ba4219b586c92e15f00a5b14c7dacd90bd35c9"
+    }
+  },
+  "status": "uncompiled-unqualified-prospective-candidate",
+  "strict_indirect_callers_retained_unsupported": [
+    "index_add_",
+    "put_"
+  ],
+  "unchanged_existing_test_ids": true,
+  "untouched_paths": [
+    "FP32",
+    "BF16",
+    "complex",
+    "integer",
+    "non-accumulate",
+    "CPU",
+    "CUDA",
+    "XPU"
+  ]
+}

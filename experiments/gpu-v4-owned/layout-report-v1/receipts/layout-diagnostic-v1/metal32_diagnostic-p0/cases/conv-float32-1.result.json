@@ -1,0 +1,94 @@
+{
+  "bias": true,
+  "channels_last_output": true,
+  "channels_last_vs_contiguous": {
+    "all_finite": true,
+    "atol": 1e-05,
+    "coordinates": 8192,
+    "failed_coordinates": 0,
+    "max_absolute_error": 0.0,
+    "passed": true,
+    "rtol": 1e-05
+  },
+  "complete": true,
+  "control_vs_fp64": {
+    "all_finite": true,
+    "atol": 1e-05,
+    "coordinates": 8192,
+    "failed_coordinates": 0,
+    "max_absolute_error": 6.60395656493229e-07,
+    "passed": true,
+    "rtol": 1e-05
+  },
+  "dtype": "float32",
+  "layouts": {
+    "control": {
+      "dtype": "torch.float32",
+      "shape": [
+        2,
+        8,
+        8,
+        8,
+        8
+      ],
+      "storage_offset": 0,
+      "strides": [
+        4096,
+        512,
+        64,
+        8,
+        1
+      ]
+    },
+    "input": {
+      "dtype": "torch.float32",
+      "shape": [
+        2,
+        4,
+        8,
+        8,
+        8
+      ],
+      "storage_offset": 0,
+      "strides": [
+        2048,
+        1,
+        256,
+        32,
+        4
+      ]
+    },
+    "ordinary": {
+      "dtype": "torch.float32",
+      "shape": [
+        2,
+        8,
+        8,
+        8,
+        8
+      ],
+      "storage_offset": 0,
+      "strides": [
+        4096,
+        1,
+        512,
+        64,
+        8
+      ]
+    }
+  },
+  "ordinary_vs_fp64": {
+    "all_finite": true,
+    "atol": 1e-05,
+    "coordinates": 8192,
+    "failed_coordinates": 0,
+    "max_absolute_error": 6.60395656493229e-07,
+    "passed": true,
+    "rtol": 1e-05
+  },
+  "raw": {
+    "bytes": 152436,
+    "path": "conv-float32-1.npz",
+    "sha256": "c0ce25642c7088dc2db51fce80de702c434fb6e8dc3114383b082f485fbaded7"
+  }
+}

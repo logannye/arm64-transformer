@@ -13,13 +13,22 @@ import importlib
 import json
 import os
 import subprocess
-import sys
 import types
 from pathlib import Path
 
 import numpy as np
 
 from transformer.gpu_environment import ENVIRONMENT, child_environment, require_environment
+from transformer.gpu_study_context import (
+    OWNED,
+    RESERVED_SEEDS,
+    child_controls,
+    create_backend,
+    python_command,
+    read_authority,
+    resolve_context,
+    write_authority,
+)
 
 ADMISSION_SEED = 20261104
 _CONTEXTS = {}
@@ -119,7 +128,7 @@ def _exact(left, right):
 
 def precision_fixtures(width, family, seed):
     """Reuse existing generator bytecode with a private RNG, never mutate v1 globals."""
-    if seed == ADMISSION_SEED:
+    if seed in RESERVED_SEEDS:
         raise ValueError("Reserved admission stream requires a verified frozen context")
     return _private_fixtures(width, family, seed)
 
@@ -284,17 +293,21 @@ class Context:
         )
         require_environment(ENVIRONMENT)
         self.manifest, self.roots, self.output, self.width = manifest, roots, Path(output), width
+        self.study_context = resolve_context(manifest)
         self.backends, self.cache, self.counter = {}, {}, 0
+        self.owned_cpu_operations = []
         from transformer.reference import Transformer
 
-        initial = Transformer(seed=ADMISSION_SEED).flat_parameters()
+        initial = Transformer(seed=self.study_context.admission_seed).flat_parameters()
         self.initial = {
             "parameters": initial,
             "m": np.zeros_like(initial),
             "v": np.zeros_like(initial),
             "step": 0,
         }
-        self.rng = np.random.default_rng(np.random.SeedSequence([ADMISSION_SEED, width, 99]))
+        self.rng = np.random.default_rng(
+            np.random.SeedSequence([self.study_context.admission_seed, width, 99])
+        )
         self.tokens = self.rng.integers(0, 128, (16, 32), dtype=np.int32)
         self.tokens[:, ::3] = 65
         self.targets = self.rng.integers(0, 128, (16, 32), dtype=np.int32)
@@ -309,25 +322,60 @@ class Context:
 
     def backend(self, engine):
         if engine not in self.backends:
-            self.backends[engine] = importlib.import_module(f"transformer.gpu_{engine}").Backend(
-                self.initial["parameters"]
+            self.backends[engine] = create_backend(
+                engine, self.initial["parameters"], manifest=self.manifest, roots=self.roots
             )
         return self.backends[engine]
 
-    def cpu(self, engine, mode, state, **values):
+    def record_cpu_proof(self, engine, mode, path, expected_rejection=None):
+        if self.study_context.owned and engine == "cpu_torch":
+            from transformer.gpu_study import digest
+
+            self.owned_cpu_operations.append(
+                {
+                    "mode": mode,
+                    "expected_rejection": expected_rejection,
+                    "proof": {
+                        "path": Path(path).relative_to(self.output).as_posix(),
+                        "sha256": digest(path),
+                    },
+                }
+            )
+
+    def cpu(self, engine, mode, state, *, expected_rejection=None, **values):
         from transformer.gpu_study_cpu_admission import run_cpu_operation
 
         operands, output = self.path("cpu-input"), self.path("cpu-output")
         _npz(operands, {**state, **values, "mode": np.asarray(mode)})
-        run_cpu_operation(engine, self.manifest, self.roots, operands, output, width=self.width)
+        try:
+            run_cpu_operation(
+                engine,
+                self.manifest,
+                self.roots,
+                operands,
+                output,
+                width=self.width,
+                expected_rejection=expected_rejection,
+            )
+        finally:
+            self.record_cpu_proof(
+                engine, mode, str(output) + ".owned-cpu-proof.json", expected_rejection
+            )
         return _read_npz(output)
 
-    def model(self, engine, state=None, tokens=None, targets=None):
+    def model(self, engine, state=None, tokens=None, targets=None, *, expected_rejection=None):
         state = self.initial if state is None else state
         tokens = self.tokens[:3] if tokens is None else tokens
         targets = self.targets[: len(tokens)] if targets is None else targets
         if engine.startswith("cpu_"):
-            return self.cpu(engine, "forward_gradient", state, tokens=tokens, targets=targets)
+            return self.cpu(
+                engine,
+                "forward_gradient",
+                state,
+                tokens=tokens,
+                targets=targets,
+                expected_rejection=expected_rejection,
+            )
         backend = self.backend(engine)
         backend.load_state({**state, "step": int(state["step"])})
         batch = backend.upload_inputs(tokens, targets)
@@ -392,7 +440,7 @@ def _fixture_family(context, family):
     key = ("fixture", family)
     if key not in context.cache:
         context.cache[key] = {}
-        for case in _private_fixtures(context.width, family, ADMISSION_SEED):
+        for case in _private_fixtures(context.width, family, context.study_context.admission_seed):
             context.cache[key][case["name"]] = case
             operands = {
                 name: value for name, value in case.items() if isinstance(value, np.ndarray)
@@ -503,8 +551,7 @@ def _fresh_training(context, engine):
     _npz(
         operands, {**context.initial, "tokens": context.tokens[:3], "targets": context.targets[:3]}
     )
-    command = [
-        sys.executable,
+    command = python_command(context.manifest, output, roots=context.roots) + [
         "-m",
         "transformer.gpu_admission_checks",
         "repeat-worker",
@@ -515,10 +562,17 @@ def _fresh_training(context, engine):
         "--output",
         str(output.resolve()),
     ]
+    command += write_authority(
+        context.manifest, context.roots, Path(str(output) + ".authority.json")
+    )
+    from transformer.gpu_study import python_path
+
+    env = child_environment()
+    env["PYTHONPATH"] = python_path(context.manifest, context.roots)
     subprocess.run(
         command,
         cwd=context.roots["source"],
-        env=child_environment(),
+        env=child_controls(context.manifest, env),
         check=True,
         capture_output=True,
         text=True,
@@ -584,15 +638,20 @@ def _control(context, engine, name):
         if engine.startswith("cpu_"):
             from transformer.gpu_study_cpu_admission import run_cpu_checkpoint_tie
 
-            return {
-                "observations": run_cpu_checkpoint_tie(
+            path = context.path("cpu-first-tie").with_suffix("")
+            try:
+                observations = run_cpu_checkpoint_tie(
                     engine,
                     context.manifest,
                     context.roots,
-                    context.path("cpu-first-tie").with_suffix(""),
+                    path,
                     width=context.width,
                 )
-            }
+            finally:
+                context.record_cpu_proof(
+                    engine, "checkpoint_first_tie", path / "run" / "owned-cpu-proof.json"
+                )
+            return {"observations": observations}
         from transformer.gpu_study_worker import checkpoint_improves
 
         best, selected = float("inf"), -1
@@ -655,12 +714,19 @@ def _control(context, engine, name):
         if engine.startswith("cpu_"):
             return _bools(
                 [
-                    _reject(lambda: context.model(engine, tokens=np.full((3, 32), 128, np.int32))),
+                    _reject(
+                        lambda: context.model(
+                            engine,
+                            tokens=np.full((3, 32), 128, np.int32),
+                            expected_rejection="Out-of-range CPU tokens",
+                        )
+                    ),
                     _reject(
                         lambda: context.model(
                             engine,
                             tokens=np.zeros((17, 32), np.int32),
                             targets=np.zeros((17, 32), np.int32),
+                            expected_rejection="Malformed CPU token batch",
                         )
                     ),
                 ]
@@ -727,7 +793,15 @@ def _control(context, engine, name):
         if engine.startswith("cpu_"):
             if name == "runtime_failure":
                 state = {**initial, "parameters": np.array([0], np.float32)}
-                return _bools([_reject(lambda: context.model(engine, state=state))])
+                return _bools(
+                    [
+                        _reject(
+                            lambda: context.model(
+                                engine, state=state, expected_rejection="Malformed CPU parameters"
+                            )
+                        )
+                    ]
+                )
             return _bools([np.isfinite(context.model(engine)["logits"]).all()])
         backend = context.backend(engine)
         batch = backend.upload_inputs(context.tokens[:3], context.targets[:3])
@@ -936,6 +1010,9 @@ def produce_gate(specification, manifest, roots, output_directory):
     key = (identity(manifest), str(Path(output_directory).resolve()), width)
     if key not in _CONTEXTS:
         _CONTEXTS[key] = Context(manifest, roots, output_directory, width)
+    context = _CONTEXTS[key]
+    owned = manifest.get("protocol") == OWNED.protocol
+    first_cpu_operation = len(context.owned_cpu_operations) if owned else 0
     try:
         pairs = _produce(_CONTEXTS[key], engine, family, suffix)
     except Exception as error:
@@ -961,7 +1038,7 @@ def produce_gate(specification, manifest, roots, output_directory):
                 evidence["cleanup_error"] = repr(cleanup_error)
             evidence["next_case_requires_fresh_backend"] = True
         write_new(path, evidence)
-        return {
+        failure = {
             "id": identifier,
             "status": "runtime_error",
             "passed": False,
@@ -971,9 +1048,22 @@ def produce_gate(specification, manifest, roots, output_directory):
                 "sha256": digest(path),
             },
         }
+        if owned:
+            failure["owned_cpu_operations"] = context.owned_cpu_operations[first_cpu_operation:]
+        return failure
     require(set(pairs) == set(specification["members"]), "Producer/member inventory mismatch")
     root = Path(output_directory)
     record = {"id": identifier, "members": {}}
+    if owned:
+        from transformer.gpu_owned_admission import cpu_operation_inventory
+
+        operations = context.owned_cpu_operations[first_cpu_operation:]
+        require(
+            [{k: row[k] for k in ("mode", "expected_rejection")} for row in operations]
+            == cpu_operation_inventory(manifest)[identifier],
+            "CPU operation schedule differs from prospective provenance inventory",
+        )
+        record["owned_cpu_operations"] = operations
     if family == "control":
         scopes = {
             "runtime_failure": (
@@ -1031,12 +1121,14 @@ def close_contexts():
         raise RuntimeError(f"Admission backend cleanup failed: {errors!r}")
 
 
-def repeat_worker(engine, input_file, output_file):
+def repeat_worker(engine, input_file, output_file, *, authority=None, authority_sha256=None):
     """Replay supplied arrays; this child never generates random fixtures."""
     require_environment(ENVIRONMENT)
+    manifest, roots = (None, None)
+    if authority is not None or authority_sha256 is not None:
+        manifest, roots = read_authority(authority, authority_sha256)
     values = _read_npz(input_file)
-    runtime = importlib.import_module(f"transformer.gpu_{engine}")
-    backend = runtime.Backend(values["parameters"])
+    backend = create_backend(engine, values["parameters"], manifest=manifest, roots=roots)
     try:
         backend.load_state(
             {
@@ -1060,6 +1152,8 @@ def main():
     parser.add_argument("--engine", choices=("mps", "mlx", "metal"))
     parser.add_argument("--input")
     parser.add_argument("--output")
+    parser.add_argument("--authority")
+    parser.add_argument("--authority-sha256")
     args = parser.parse_args()
     if args.action == "inventory":
         print(
@@ -1070,7 +1164,13 @@ def main():
     else:
         if not all((args.engine, args.input, args.output)):
             parser.error("Repeat worker needs engine/input/output")
-        repeat_worker(args.engine, args.input, args.output)
+        repeat_worker(
+            args.engine,
+            args.input,
+            args.output,
+            authority=args.authority,
+            authority_sha256=args.authority_sha256,
+        )
 
 
 if __name__ == "__main__":

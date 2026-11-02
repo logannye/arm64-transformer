@@ -1,0 +1,70 @@
+{
+  "schema": "trained-precision-six-width-build-verification-v1",
+  "run_url": "https://github.com/logannye/arm64-transformer/actions/runs/41137295729",
+  "source_revision": "44a3bca1b17bff104965848855fb8fe0954a610c",
+  "all_six_hosted_jobs_passed": true,
+  "formal_eligible": false,
+  "raw_hosted_runtime_artifacts_downloaded": false,
+  "candidates": [
+    {
+      "width": 32,
+      "policy": 0,
+      "artifact_id": 13016513700,
+      "artifact_sha256": "89beea6d0e46927002531dad773cf1ee7ff9e652b758da5cdcbe75ce932513be",
+      "artifact_bytes": 33157,
+      "library_sha256": "45c7f2d9a43d0808eb19a20d91ca067eb834443a220f04b391ed93bfc1e1e93a",
+      "platform": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83\nApple M1 (Virtual)",
+      "prior_m4_library_bytes_equal": null
+    },
+    {
+      "width": 64,
+      "policy": 0,
+      "artifact_id": 13017268147,
+      "artifact_sha256": "9d8082e9fb561ff3172116c8a43d75510f9e57a0ef4db16c6b8166c8fef0e6ce",
+      "artifact_bytes": 33186,
+      "library_sha256": "bfd9c5f41b94cc0cddc69b60635aa1790945d6c444789cfd05089deb678a3974",
+      "platform": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83\nApple M1 (Virtual)",
+      "prior_m4_library_bytes_equal": null
+    },
+    {
+      "width": 128,
+      "policy": 0,
+      "artifact_id": 13015904963,
+      "artifact_sha256": "f4c5d2d98551eb06e81b29ad5d183d23b5cee88d85e25c3bd97eed3352e14d32",
+      "artifact_bytes": 33258,
+      "library_sha256": "445e0477892df4ea9e81ef9535ee54f391516fbe774cbb7c27a1a03b2967dd6c",
+      "platform": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83\nApple M1 (Virtual)",
+      "prior_m4_library_bytes_equal": null
+    },
+    {
+      "width": 256,
+      "policy": 0,
+      "artifact_id": 13016898513,
+      "artifact_sha256": "28cfdb8171cca2973390e31804bca42a10bffd11af4b455401da4518ef518569",
+      "artifact_bytes": 33390,
+      "library_sha256": "62e8b92fd2dbd1ba1b000a7c70a13fafe3cf55fc3d7715926b773413013e9db5",
+      "platform": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83\nApple M1 (Virtual)",
+      "prior_m4_library_bytes_equal": null
+    },
+    {
+      "width": 512,
+      "policy": 15,
+      "artifact_id": 13017303781,
+      "artifact_sha256": "e8ebaf40121e779d67e1b140ae2135d002ef6f75e6d24e411ec5d6ca3168a5a3",
+      "artifact_bytes": 529515,
+      "library_sha256": "08bd16a9bb8d1a823756ce5388b3f5b1fbb14bf02ac87821f7b981f9f0cc6bad",
+      "platform": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83\nApple M1 (Virtual)",
+      "prior_m4_library_bytes_equal": true
+    },
+    {
+      "width": 1024,
+      "policy": 15,
+      "artifact_id": 13017143932,
+      "artifact_sha256": "6160d0d4f6d39119f3cddb98b78fd0686d6ad99db3400470e5892c845ea6f34e",
+      "artifact_bytes": 530843,
+      "library_sha256": "90bc2f74fdaddd5e19a1185b57b10c39810f7bac6b2c636fa0ef31e29ada9eff",
+      "platform": "ProductName:\t\tmacOS\nProductVersion:\t\t26.6.2\nBuildVersion:\t\t25G83\nApple M1 (Virtual)",
+      "prior_m4_library_bytes_equal": true
+    }
+  ]
+}

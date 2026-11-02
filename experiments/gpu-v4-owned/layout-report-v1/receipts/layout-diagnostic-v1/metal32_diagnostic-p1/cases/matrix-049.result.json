@@ -1,0 +1,111 @@
+{
+  "case": {
+    "dtype": "float16",
+    "layout": "outer",
+    "operation": "bmm",
+    "shape": [
+      3,
+      33,
+      17,
+      49
+    ]
+  },
+  "complete": true,
+  "contiguous_then_copy": {
+    "all_finite": true,
+    "atol": 0.01,
+    "coordinates": 4851,
+    "failed_coordinates": 0,
+    "max_absolute_error": 0.00390625,
+    "passed": true,
+    "rtol": 0.01
+  },
+  "control_guard_intact": true,
+  "layouts": {
+    "a": {
+      "dtype": "torch.float16",
+      "shape": [
+        3,
+        33,
+        17
+      ],
+      "storage_offset": 0,
+      "strides": [
+        561,
+        17,
+        1
+      ]
+    },
+    "b": {
+      "dtype": "torch.float16",
+      "shape": [
+        3,
+        17,
+        49
+      ],
+      "storage_offset": 0,
+      "strides": [
+        833,
+        49,
+        1
+      ]
+    },
+    "bias": {
+      "dtype": "torch.float16",
+      "shape": [
+        3,
+        33,
+        49
+      ],
+      "storage_offset": 0,
+      "strides": [
+        1617,
+        49,
+        1
+      ]
+    },
+    "control": {
+      "dtype": "torch.float16",
+      "shape": [
+        3,
+        33,
+        49
+      ],
+      "storage_offset": 0,
+      "strides": [
+        3234,
+        49,
+        1
+      ]
+    },
+    "ordinary": {
+      "dtype": "torch.float16",
+      "shape": [
+        3,
+        33,
+        49
+      ],
+      "storage_offset": 0,
+      "strides": [
+        3234,
+        49,
+        1
+      ]
+    }
+  },
+  "ordinary": {
+    "all_finite": true,
+    "atol": 0.01,
+    "coordinates": 4851,
+    "failed_coordinates": 0,
+    "max_absolute_error": 0.00390625,
+    "passed": true,
+    "rtol": 0.01
+  },
+  "ordinary_guard_intact": true,
+  "raw": {
+    "bytes": 68568,
+    "path": "matrix-049.npz",
+    "sha256": "f3aba30fedd0d2255c8fa09570fea0e3a5e2f10dfe7331d6cc35725a821306e5"
+  }
+}

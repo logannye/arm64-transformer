@@ -1,5 +1,6 @@
 // Complete handwritten one-block transformer forward/backward and embeddings.
 #include <layout.inc>
+#include <precision.h>
 .text
 .p2align 2
 .macro ADDR reg, symbol
@@ -87,13 +88,21 @@ Lembed_vec:
  PTR x5,x21,W_INV1
  mov x6,#CONTEXT
  mov x7,#WIDTH
+ .if WIDTH >= 512 && (TF_PRECISION_POLICY & 1)
+ bl _tf_ln_forward_precise
+ .else
  bl _tf_ln_forward
+ .endif
  PTR x0,x21,W_N1
  PTR x1,x19,P_QKV_WEIGHT
  PTR x2,x19,P_QKV_BIAS
  PTR x3,x21,W_QKV
  ADDR x4,Lqkvshape
+ .if WIDTH >= 512 && (TF_PRECISION_POLICY & 2)
+ bl _tf_linear_forward_precise
+ .else
  bl _tf_linear_forward
+ .endif
  PTR x0,x21,W_QKV
  PTR x1,x21,W_ATTENTION
  PTR x2,x21,W_PROBS
@@ -118,13 +127,21 @@ Lembed_vec:
  PTR x5,x21,W_INV2
  mov x6,#CONTEXT
  mov x7,#WIDTH
+ .if WIDTH >= 512 && (TF_PRECISION_POLICY & 4)
+ bl _tf_ln_forward_precise
+ .else
  bl _tf_ln_forward
+ .endif
  PTR x0,x21,W_N2
  PTR x1,x19,P_FF1_WEIGHT
  PTR x2,x19,P_FF1_BIAS
  PTR x3,x21,W_FF1
  ADDR x4,Lff1shape
+ .if WIDTH >= 512 && (TF_PRECISION_POLICY & 8)
+ bl _tf_linear_forward_precise
+ .else
  bl _tf_linear_forward
+ .endif
  PTR x0,x21,W_FF1
  PTR x1,x21,W_RELU
  mov x2,#(CONTEXT*HIDDEN)
@@ -208,7 +225,11 @@ _tf_backward:
  PTR x4,x22,P_FF1_WEIGHT
  PTR x5,x22,P_FF1_BIAS
  ADDR x6,Lff1shape
+ .if WIDTH >= 512 && (TF_PRECISION_POLICY & 8)
+ bl _tf_linear_backward_precise
+ .else
  bl _tf_linear_backward
+ .endif
  PTR x0,x21,W_DN2
  PTR x1,x21,W_NORM2
  PTR x2,x21,W_INV2
@@ -217,7 +238,11 @@ _tf_backward:
  PTR x5,x22,P_LN2_WEIGHT
  PTR x6,x22,P_LN2_BIAS
  ADDR x7,Lnormshape
+ .if WIDTH >= 512 && (TF_PRECISION_POLICY & 4)
+ bl _tf_ln_backward_precise
+ .else
  bl _tf_ln_backward
+ .endif
  PTR x0,x21,W_DR2
  PTR x1,x21,W_TEMP
  PTR x2,x21,W_DR1
@@ -244,7 +269,11 @@ _tf_backward:
  PTR x4,x22,P_QKV_WEIGHT
  PTR x5,x22,P_QKV_BIAS
  ADDR x6,Lqkvshape
+ .if WIDTH >= 512 && (TF_PRECISION_POLICY & 2)
+ bl _tf_linear_backward_precise
+ .else
  bl _tf_linear_backward
+ .endif
  PTR x0,x21,W_DN1
  PTR x1,x21,W_NORM1
  PTR x2,x21,W_INV1
@@ -253,7 +282,11 @@ _tf_backward:
  PTR x5,x22,P_LN1_WEIGHT
  PTR x6,x22,P_LN1_BIAS
  ADDR x7,Lnormshape
+ .if WIDTH >= 512 && (TF_PRECISION_POLICY & 1)
+ bl _tf_ln_backward_precise
+ .else
  bl _tf_ln_backward
+ .endif
  PTR x0,x21,W_DX
  PTR x1,x21,W_DR1
  PTR x2,x21,W_DX

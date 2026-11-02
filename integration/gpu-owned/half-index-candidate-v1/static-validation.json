@@ -1,0 +1,69 @@
+{
+  "commands": [
+    {
+      "command": [
+        "git",
+        "apply",
+        "--check",
+        "--whitespace=error-all",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/half-index-candidate-v1/changes.patch"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "git",
+        "apply",
+        "--whitespace=error-all",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/half-index-candidate-v1/changes.patch"
+      ],
+      "returncode": 0,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "contract_sha256": "42f8f6ea2f96ecbea0d53e9eaa1fce1043f30738d2ef1687ac5eb8a70cde2009",
+  "device_numerics_validated": false,
+  "formal_eligible": false,
+  "native_compiled": false,
+  "original_source_unchanged": true,
+  "passed": true,
+  "patch_sha256": "e071e76328c47e0666ef9013a5878d130289c1ce5ee677f1dea8608207161bb1",
+  "schema": "gpu-owned-half-index-static-validation-v1",
+  "sources": {
+    "aten/src/ATen/native/IndexingUtils.h": {
+      "after_sha256": "f80c4d74255e4fb61122aa6e951e4242f1129651ef254f18a3a66ac832ef421a",
+      "before_sha256": "4d96878b8c0aeb601adb46ed96c77d31f537e519aed1ff2bfa08b92922f4839a"
+    },
+    "aten/src/ATen/native/TensorAdvancedIndexing.cpp": {
+      "after_sha256": "5b9ecb298cd20325d310956863376374588a5cb91954b90f2eeefb2f549da799",
+      "before_sha256": "32f6970bb91e5114badcf69f62d36bc23af5fe5976ed0b5fa4fce23e0916c135"
+    },
+    "aten/src/ATen/native/TensorAdvancedIndexingUtils.h": {
+      "after_sha256": "f9797ba1146e009ec173acc62dac8f8bf2ad08cd4516ef5bd350519560405bc6",
+      "before_sha256": "0f1f6efaaa5b794777b339ab0542b58b2b8f407d940fbd2f367de25605c2a604"
+    },
+    "aten/src/ATen/native/mps/kernels/Indexing.h": {
+      "after_sha256": "b79813a2f6c08cdd5eb6dfaf53083109d40662595dd2c955e922746e85fac2a3",
+      "before_sha256": "3ebb5c4b9976f96f851bb5ab6bc2fdf67d3f345b5816db06b4872ce7e4083ee5"
+    },
+    "aten/src/ATen/native/mps/kernels/Indexing.metal": {
+      "after_sha256": "cb1442517a5243ab185f638ac1db0b7b0edc3a5b21f79b839e1a1d941534d92f",
+      "before_sha256": "283362996d9c86188510dc5be2e522de9bc59ebea448ecff5b46bd2c4233ff58"
+    },
+    "aten/src/ATen/native/mps/operations/Indexing.mm": {
+      "after_sha256": "3ed688b52acef54d3429daf500c316574c5e42961d01afd9ed3674cbcb481897",
+      "before_sha256": "ae9ce032e96856e1161f140829e06986ef7776015f3105c6685b8d2bfd411b15"
+    },
+    "test/test_mps.py": {
+      "after_sha256": "a7b6420664a9352dcb1fc7eb070744c4f1f869d7498d036e5d73ef83dab27bc7",
+      "before_sha256": "7345b6e229aed240921460a3b598ffd1a47148ab4816aead0d405539a154a396"
+    },
+    "torch/__init__.py": {
+      "after_sha256": "a3ac1f3819e4ebddb8d9d71bf1490c335daaa3118ea8ea1300192146f0cf02b2",
+      "before_sha256": "18053b2d5cf73c20fee2f29173ba4219b586c92e15f00a5b14c7dacd90bd35c9"
+    }
+  }
+}

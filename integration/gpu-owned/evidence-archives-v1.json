@@ -1,0 +1,46 @@
+{
+  "schema": "gpu-owned-closed-evidence-publication-v1",
+  "passed": true,
+  "formal_eligible": false,
+  "uploaded": false,
+  "plan_sha256": "eeaacae7de524030806096a50745ab114e27e8751de9a596c53ae7bc426f5cdc",
+  "producer_sha256": "2a30d78a30cfe75e56bf3a133f7611e0544706c4b1171a40732eb113b0b4ba51",
+  "archives": [
+    {
+      "archive": "joint-runtime-v1-through-v4.tar.gz",
+      "sha256": "27b2bfaa53012d56a8ff5b3c9407f04b5e155c67f86faa0f12d2edb30d8e807f",
+      "bytes": 29937,
+      "mode": 420,
+      "members": 31,
+      "uncompressed_bytes": 223920,
+      "all_member_hashes_sizes_and_inventory_passed": true
+    },
+    {
+      "archive": "layout-diagnostic-v1.tar.gz",
+      "sha256": "e6cb07e839f68e7082c5b215cb9b8d7f8c7dfd0a0f7e1c40f0e9c568b2ed0ee6",
+      "bytes": 6224205,
+      "mode": 420,
+      "members": 998,
+      "uncompressed_bytes": 13399774,
+      "all_member_hashes_sizes_and_inventory_passed": true
+    },
+    {
+      "archive": "half-index-v1.tar.gz",
+      "sha256": "2e9afdd7ac89fa5988dd5c9eb00fe1461f56fff4308971c5bd01288d0542b314",
+      "bytes": 206933,
+      "mode": 420,
+      "members": 252,
+      "uncompressed_bytes": 6664645,
+      "all_member_hashes_sizes_and_inventory_passed": true
+    },
+    {
+      "archive": "failed-model-v1.tar.gz",
+      "sha256": "9abf0ec680587d38e33c9f1c8d8143f0ab745e4bed33507385e76e3044036a14",
+      "bytes": 3055238,
+      "mode": 420,
+      "members": 43,
+      "uncompressed_bytes": 5134450,
+      "all_member_hashes_sizes_and_inventory_passed": true
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "schema": "gpu-owned-failed-runtime-snapshot-v2",
+  "purpose": "Retain exact helper used by failed joint-runtime-v2 and joint-runtime-v3; neither result is relabeled",
+  "files": [
+    {
+      "source": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/runtime_probe.py",
+      "copy": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/failed-runtime-probe-v2/runtime_probe.py",
+      "sha256": "eed7725382f01a4cdfb370aa902ca2e0eb60ae6f600aa9dad5dc2e380c6e9da3",
+      "bytes": 29334
+    },
+    {
+      "source": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/test_runtime_probe.py",
+      "copy": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/failed-runtime-probe-v2/test_runtime_probe.py",
+      "sha256": "8b2dda08e8f5ff9df654415418814bf1e2bfc098333362d928b1bdcc1333994c",
+      "bytes": 9803
+    }
+  ]
+}

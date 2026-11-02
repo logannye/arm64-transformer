@@ -77,7 +77,9 @@ def evaluate(model, rows, batch):
     return total / len(rows)
 
 
-def run(input_dir, output_dir):
+def run(input_dir, output_dir, *, library_api=False):
+    if type(library_api) is not bool:
+        raise ValueError("Explicit library selection must be a boolean")
     started = time.perf_counter()
     torch.set_num_threads(1)
     # Tests may call run twice in one process; the setting is idempotent in effect
@@ -87,7 +89,21 @@ def run(input_dir, output_dir):
     torch.use_deterministic_algorithms(True)
     fixture = load_fixture(input_dir)
     config = fixture["config"]
-    model = Transformer(config["seed"]).load_flat(fixture["initial"])
+    model_type, selection = Transformer, None
+    if library_api:
+        from transformer.library_training import IDENTITY, adapter, selected_api, torch_model_type
+
+        model_type = torch_model_type("cpu_torch")
+        api = selected_api("cpu_torch")
+        selection = dict(
+            identity=IDENTITY,
+            module=api.__name__,
+            module_path=api.__file__,
+            precise_stages=list(adapter().STAGES["cpu_torch"]),
+            storage_dtype="float32",
+            stock_control=False,
+        )
+    model = model_type(config["seed"]).load_flat(fixture["initial"])
     optimizer = torch.optim.Adam(
         model.parameters(),
         lr=LR,
@@ -193,7 +209,12 @@ def run(input_dir, output_dir):
     (output_dir / "runtime.json").write_text(
         json.dumps(
             {
-                "implementation": "PyTorch eager, batched, SDPA, autograd, torch.optim.Adam",
+                "implementation": (
+                    "PyTorch eager, maintained-library FP32-saved API, autograd, torch.optim.Adam"
+                    if library_api
+                    else "PyTorch eager, batched, SDPA, autograd, torch.optim.Adam"
+                ),
+                **({"explicit_model": selection} if library_api else {}),
                 "torch": torch.__version__,
                 "numpy": np.__version__,
                 "python": platform.python_version(),
@@ -218,8 +239,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("input", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--library-api", action="store_true")
     args = parser.parse_args()
-    performance = run(args.input, args.output)
+    performance = run(args.input, args.output, library_api=args.library_api)
     print(
         json.dumps(
             {

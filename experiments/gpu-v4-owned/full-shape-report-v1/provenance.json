@@ -1,0 +1,59 @@
+{
+  "schema": "gpu-owned-full-shape-report-provenance-v1",
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "admission_stream_opened": false,
+  "anchors": {
+    "work/gpu-v4-owned/model-full-shape-v1/summary.json": "2995a572d97799a48ca436634ac7959590fff5e2d5904feac2ea8d45790d3df8",
+    "work/gpu-v4-owned/model-full-shape-manifest-v1.json": "1617562aa8cd1e04c358aa5e4261fb72a6fad529472115f1762462c3ed470954",
+    "work/gpu-v4-owned/model-full-shape-array-audit-v1.json": "e7b6498e3180d7bfd038c5adffc4b3f947c54a35a0e9b78bce4c76daeecb038f"
+  },
+  "producer_sha256": "0b53b0a9a48d1dce541a1da60e5338d5aed33f966f99edd5f8fe6f4f0639bd88",
+  "evidence_helper_sha256": "07abf58c262b43afa13b43c5fa99c9c9218b11abbd56969cba7bc90a63aa42b6",
+  "matplotlib": "3.11.2",
+  "rows": 36,
+  "workers": 72,
+  "raw_archives_audited": 504,
+  "saved_initial_tensor_comparisons": 1440,
+  "recorded_initial_replays": 720,
+  "recorded_six_step_trajectories": 144,
+  "generated": [
+    {
+      "path": "README.md",
+      "sha256": "01bc4ea40deb3897f45d3e0f7432a46753ab5d1d3ab0b9bc24fd32fc98f01bdf",
+      "bytes": 2289,
+      "mode": 420
+    },
+    {
+      "path": "accuracy.csv",
+      "sha256": "3d2f9ccb2a60718ad07e497298618b99af4fe257fd5ed16431d70fdfe8cee97e",
+      "bytes": 5511,
+      "mode": 420
+    },
+    {
+      "path": "initial-fp64-errors.png",
+      "sha256": "764d81c15fb26667ddcebfebc3678d116af4fc40008f9e654f3ae023bc279e41",
+      "bytes": 365125,
+      "mode": 420
+    },
+    {
+      "path": "initial-fp64-errors.svg",
+      "sha256": "223667f6c1925fcc248444af9cfa95d1b8ac6b9fe3022f726568e790b64b340b",
+      "bytes": 59437,
+      "mode": 420
+    },
+    {
+      "path": "receipt-catalog.json",
+      "sha256": "d648bf32bd0aba97ca4471ec34358a1eb2d13f1d95576bc0dd936c0f6e8f37d9",
+      "bytes": 25042,
+      "mode": 420
+    }
+  ],
+  "limits": [
+    "B1/T32 and B16/T32 synthetic development only; no corpus training or timing study",
+    "Other initial replays, intermediate steps and warmup restoration have authenticated execution-time hash records, not separately retained raw arrays",
+    "Raw checkpoint predictions are retained for steps 3 and 6; other intermediate predictions are not retained",
+    "Post-training accuracy versus FP64, complete framework integration and formal admission remain unchecked here",
+    "Runtime provenance is retained execution evidence, not reauthenticated by this array-only audit"
+  ]
+}

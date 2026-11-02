@@ -1,0 +1,205 @@
+"""Bound the stock test_mps load_inline fixture; never build the framework.
+
+This module uses only the standard library. The upstream test owns compilation.
+The 1 GiB cache ceiling and 5 GiB free-space floor are checked before execution,
+once per second by the parent while full mode runs, and after execution. These
+are monitored limits, not filesystem quotas; one polling interval may overshoot.
+"""
+
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import stat
+import sysconfig
+
+
+GIB = 1024**3
+MAX_CACHE_BYTES = GIB
+MIN_FREE_BYTES = 5 * GIB
+MAX_CACHE_FILES = 64
+CACHE_NAME = "pytorch-test-extensions"
+SCHEMA = "stock-mps-conformance-extension-cache-v2"
+SOURCE_INPUTS = {
+    "test/test_mps.py": "7345b6e229aed240921460a3b598ffd1a47148ab4816aead0d405539a154a396",
+    "test/metal/test_kernels.metallib": "393308cb5e049aef6b20e90510ff93f8bc645f3b778d0ca73a9a8a29c5ff8ac7",
+    "test/metal/test_kernels.metal": "f65609f116836a6b85a6ac2404c97f056b5b79be0d3927067963f59b549b6ef7",
+    "aten/src/ATen/native/mps/MetalShaderLibrary.h": "efc0457c2349c226fd13f9b7b61b30b7a0848f14ea9d01d31677a64ecc56d0bd",
+    "c10/metal/float8.h": "b2fc52567ecd0a6f5fad35043caaae53cd4b27e0fe8de899894a52dab0b7d4ce",
+    "c10/metal/common.h": "24a00e10b40fd772e162d29f75d1cb132bc9631a71f82586b9497f06763d4348",
+    "c10/metal/utils.h": "795307f765ef0336678c71c931d860002894612e94d56fadf69ca2e4a8d29a0b",
+    "c10/metal/indexing.h": "c3cdac6ad3bb29a99f972c566aa4a175600b124f70721a1a6b2a7ffb3f23b4cc",
+    "aten/src/ATen/native/mps/kernels/Convolution.metal": "29ac7ee39591885e48eceff4ae5682ea6b6c58676208a48d40446ee7dc8c94c3",
+}
+CONTROLS = {
+    "MAX_JOBS": "2",
+    "CMAKE_BUILD_PARALLEL_LEVEL": "2",
+    "DEBUG": "0",
+    "REL_WITH_DEB_INFO": "0",
+    "CXX": "/usr/bin/clang++",
+    "TORCH_NO_COMPILER_WRAPPER": "1",
+}
+ABSENT_FLAGS = ("CFLAGS", "CXXFLAGS", "CPPFLAGS", "LDFLAGS", "TORCH_DONT_CHECK_COMPILER_ABI")
+
+
+def sha(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def configure_environment(env, cache):
+    env.update(CONTROLS)
+    env["TORCH_EXTENSIONS_DIR"] = str(Path(cache).resolve())
+    for key in ABSENT_FLAGS:
+        env.pop(key, None)
+
+
+def require_environment(env, cache):
+    expected = {**CONTROLS, "TORCH_EXTENSIONS_DIR": str(Path(cache).resolve())}
+    if any(env.get(key) != value for key, value in expected.items()):
+        raise RuntimeError("Stock test-extension execution controls differ")
+    if any(key in env for key in ABSENT_FLAGS):
+        raise RuntimeError("Unrecorded external compiler flags are forbidden")
+    return expected
+
+
+def require_child_receipt(record, mode, process, pid, exit_code):
+    permitted = {"passed"}
+    if mode == "full":
+        permitted.add("completed_with_skips_or_expected_failures")
+    if (
+        not isinstance(record, dict)
+        or exit_code != 0
+        or record.get("status") not in permitted
+        or record.get("mode") != mode
+        or type(record.get("process")) is not int
+        or record["process"] != process
+        or type(record.get("pid")) is not int
+        or record["pid"] != pid
+    ):
+        raise RuntimeError("Integrated worker receipt is not a complete matching success")
+
+
+def snapshot(cache, *, hashes=False, enforce=True):
+    cache = Path(cache)
+    if cache.is_symlink() or not cache.is_dir():
+        raise RuntimeError("Extension cache must be an existing real directory")
+    files = {}
+    for entry in sorted(cache.rglob("*")):
+        try:
+            info = entry.lstat()
+        except FileNotFoundError:
+            # Ninja/compiler temporary files may disappear during monitoring.
+            # This is a size sample, not an immutable before/after hash pass.
+            if hashes:
+                raise
+            continue
+        if stat.S_ISLNK(info.st_mode):
+            raise RuntimeError("Symlinks are forbidden inside the extension cache")
+        if stat.S_ISREG(info.st_mode):
+            files[str(entry.relative_to(cache))] = {"bytes": info.st_size}
+        elif not stat.S_ISDIR(info.st_mode):
+            raise RuntimeError("Special files are forbidden inside the extension cache")
+    value = {
+        "path": str(cache.resolve()),
+        "bytes": sum(row["bytes"] for row in files.values()),
+        "file_count": len(files),
+        "free_bytes": shutil.disk_usage(cache).free,
+        "max_cache_bytes": MAX_CACHE_BYTES,
+        "min_free_bytes": MIN_FREE_BYTES,
+        "max_cache_files": MAX_CACHE_FILES,
+        "files": files,
+    }
+    if enforce:
+        require_bounds(value)
+    if hashes:
+        require_bounds(value)
+        for relative, row in files.items():
+            row["sha256"] = sha(cache / relative)
+    return value
+
+
+def require_bounds(value):
+    if value["bytes"] > MAX_CACHE_BYTES:
+        raise RuntimeError("Stock test-extension cache exceeds its 1 GiB ceiling")
+    if value["file_count"] > MAX_CACHE_FILES:
+        raise RuntimeError("Stock test-extension cache exceeds its 64-file ceiling")
+    if value["free_bytes"] < MIN_FREE_BYTES:
+        raise RuntimeError("Stock test-extension execution requires at least 5 GiB free")
+
+
+def prepare(cache, source, runtime):
+    cache, source, runtime = Path(cache), Path(source), Path(runtime)
+    if cache.name != CACHE_NAME or cache.is_symlink():
+        raise RuntimeError("Use the dedicated task-owned pytorch-test-extensions directory")
+    cache.mkdir(exist_ok=True)
+    for relative, expected in SOURCE_INPUTS.items():
+        if sha(source / relative) != expected:
+            raise RuntimeError(f"Stock test source/fixture changed: {relative}")
+    # load_inline would delete these when use_pch=False. Refuse beforehand so
+    # the authenticated runtime cannot be mutated as a side effect of the test.
+    for name in ("extension.h.gch", "extension.h.sign"):
+        if (runtime / "torch/include/torch" / name).exists():
+            raise RuntimeError("Unexpected precompiled header in immutable runtime")
+    includes = [
+        runtime / "torch/include/torch/extension.h",
+        runtime / "torch/include/torch/csrc/api/include/torch/torch.h",
+        source / "aten/src/ATen/native/mps/MetalShaderLibrary.h",
+        Path(sysconfig.get_path("include", scheme="posix_prefix")) / "Python.h",
+    ]
+    if any(not path.is_file() for path in includes):
+        raise RuntimeError("The stock test extension requires complete runtime/source/Python headers")
+    ninja = shutil.which("ninja")
+    if not ninja or not Path(CONTROLS["CXX"]).is_file():
+        raise RuntimeError("The stock test extension requires Ninja and /usr/bin/clang++")
+    # Bind reuse to the runtime AND recorded toolchain/header/control inputs.
+    # Ninja does not necessarily rebuild when the compiler executable changes.
+    identity = {
+        "schema": SCHEMA,
+        "runtime_manifest_sha256": sha(runtime / "runtime-manifest.json"),
+        "source_inputs": SOURCE_INPUTS,
+        "controls": dict(CONTROLS),
+        "ninja": {"path": ninja, "sha256": sha(ninja)},
+        "compiler": {"path": CONTROLS["CXX"], "sha256": sha(CONTROLS["CXX"])},
+        "include_inputs": {str(path): sha(path) for path in includes},
+        "toolchain_environment": {name: os.environ.get(name) for name in ("DEVELOPER_DIR", "SDKROOT", "MACOSX_DEPLOYMENT_TARGET")},
+    }
+    marker = cache / "cache-identity.json"
+    if marker.exists():
+        if marker.is_symlink() or json.loads(marker.read_text()) != identity:
+            raise RuntimeError("Stock test-extension cache identity changed")
+    else:
+        if any(cache.iterdir()):
+            raise RuntimeError("Refuse to claim an existing unowned extension cache")
+        marker.write_text(json.dumps(identity, indent=2) + "\n")
+    return {
+        **identity,
+        "scope": "One unchanged upstream C++ conformance test extension; complete framework compilation remains hosted",
+        "tracked_metallib": "test/metal/test_kernels.metallib",
+        "offline_metal_compiler_required": False,
+        "debug_policy": "Stock load_inline cflags have no -g; DEBUG=0 is recorded, but this loader does not read DEBUG/CXXFLAGS",
+        "limits_are_monitored_not_quotas": True,
+        "poll_seconds": 1,
+        "before": snapshot(cache, hashes=True),
+    }
+
+
+def loaded_extension(module, cache):
+    extension = getattr(module, "_conformance_ext", None)
+    if extension is None:
+        raise RuntimeError("The full upstream suite did not load its conformance test extension")
+    path = Path(extension.__file__).resolve(strict=True)
+    expected = Path(cache).resolve() / "mps_iter_conformance/mps_iter_conformance.so"
+    if path != expected:
+        raise RuntimeError("The conformance extension loaded outside its declared cache")
+    ninja = path.parent / "build.ninja"
+    content = ninja.read_text()
+    for line in content.splitlines():
+        if line.startswith(("cflags =", "post_cflags =")):
+            if any(flag.startswith("-g") and flag != "-g0" for flag in line.split()):
+                raise RuntimeError("The stock test extension unexpectedly enabled debug information")
+    return {"path": str(path), "sha256": sha(path), "build_ninja_sha256": sha(ninja), "build_ninja": content}

@@ -1,0 +1,324 @@
+{
+  "schema": "gpu-owned-model-report-catalog-v1",
+  "files": [
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/summary.json",
+      "report_copy": "receipts/model-compatibility-v2/summary.json",
+      "sha256": "1b72abdfa347c7877ad930c7b4c9721c1f61a2dc1b07f9de3244221959f98f4e",
+      "bytes": 61175,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-manifest-v2.json",
+      "report_copy": "receipts/model-manifest-v2.json",
+      "sha256": "06c29116993f0adbaa2bfb6f5f04b79de152345c3549cfaf466c17a9f2e32a86",
+      "bytes": 6820,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-array-audit-v1.json",
+      "report_copy": "receipts/model-array-audit-v1.json",
+      "sha256": "13588eb731711a0ddd299643f0f29dd187238273357fbfbb5e9c57244516e8e0",
+      "bytes": 680161,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w32-cpu_torch-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w32-cpu_torch-p0/result.json",
+      "sha256": "cd8d37265e2c8bf7c7881163d72ad8bc7f74d98d957a362384d7f5da1b49f02f",
+      "bytes": 250222,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w32-cpu_torch-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w32-cpu_torch-p1/result.json",
+      "sha256": "5eb0f5341acb0f2a2482d14a7d30172da7f3e707aa1cc1f245f748393cd0ece3",
+      "bytes": 250222,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w32-mps-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w32-mps-p0/result.json",
+      "sha256": "43e0399a4c7be04a388d9e2d06a010181958c1cf382ae312ee24ccd4dd1fdd22",
+      "bytes": 250977,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w32-mps-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w32-mps-p1/result.json",
+      "sha256": "629ff48c4664344c21b2c2f86004046bac768c5af914faab88d75c0666c8d1b8",
+      "bytes": 250977,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w32-mlx-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w32-mlx-p0/result.json",
+      "sha256": "d53256a8fa73b84f665cc5ef732b4780f9f17776fd698cffadd7401bef2942d8",
+      "bytes": 265982,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w32-mlx-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w32-mlx-p1/result.json",
+      "sha256": "e810c85f799fbfa6f47f76d897cc4b1976ff996b6ad9abe8c006db5e28e978a0",
+      "bytes": 265982,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w64-cpu_torch-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w64-cpu_torch-p0/result.json",
+      "sha256": "cc52a3080b94ae7fbe6169099fc143c5c3e67dd2ee5678732d4721dd21f2389e",
+      "bytes": 250350,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w64-cpu_torch-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w64-cpu_torch-p1/result.json",
+      "sha256": "5ce1e3acb3e5926cd49c115c466d7884435e3e895725433a60979b94c56a2b49",
+      "bytes": 250350,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w64-mps-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w64-mps-p0/result.json",
+      "sha256": "ba13fd013eb0a36b9ecef0080405665dc8cf7d292eb8175172348147b6fe42a1",
+      "bytes": 251015,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w64-mps-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w64-mps-p1/result.json",
+      "sha256": "c63592e96bf1a54f848a57b0c978717bb994de01bdcfe302732610ca9a631511",
+      "bytes": 251015,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w64-mlx-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w64-mlx-p0/result.json",
+      "sha256": "83a558310edb55be3a49793b0f2e97c188b1f390df9dbb65147a4b223d36c47d",
+      "bytes": 266150,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w64-mlx-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w64-mlx-p1/result.json",
+      "sha256": "e423fbc024f00f6862d4beab90f53dd486ddc0a56d3e40d37d66e230cf79929e",
+      "bytes": 266150,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w128-cpu_torch-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w128-cpu_torch-p0/result.json",
+      "sha256": "f8a962ec4bc90d4a121ce87f12ab485c87e1592e66b8bbc0cc539c020dd0d6d6",
+      "bytes": 250901,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w128-cpu_torch-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w128-cpu_torch-p1/result.json",
+      "sha256": "ed7cc0cd4ff2a4f8958a3195e1d9b8da3ee871b7cc2232aae91255e397c1f39b",
+      "bytes": 250901,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w128-mps-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w128-mps-p0/result.json",
+      "sha256": "4c771e11d24b12acb0dd1ea1249304c289f062109cbab7678eb9993ee416cc43",
+      "bytes": 251616,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w128-mps-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w128-mps-p1/result.json",
+      "sha256": "8ae24f1d3488aa3ea6df14b326dc38cdcde1c82a6f68db832ef48ce594ed59e6",
+      "bytes": 251616,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w128-mlx-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w128-mlx-p0/result.json",
+      "sha256": "24737c51e9c8912ca0eace2ae414822232f4df8bcc1426fb7d9fea4008353385",
+      "bytes": 266641,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w128-mlx-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w128-mlx-p1/result.json",
+      "sha256": "f20d804db17763790e797836c6a0f494ae89e0a3a629ef99454a6c5bdd442f79",
+      "bytes": 266641,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w256-cpu_torch-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w256-cpu_torch-p0/result.json",
+      "sha256": "9053a5b0816a3a71eb884346c8c4e2e48ce9c09dc3c9868ee6437934a836334c",
+      "bytes": 250908,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w256-cpu_torch-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w256-cpu_torch-p1/result.json",
+      "sha256": "5a569334d73c804b2d54251efb969921ce5e06213650178496dadc2695016589",
+      "bytes": 250908,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w256-mps-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w256-mps-p0/result.json",
+      "sha256": "b0f2a000842b8fcfb162790e3431dd7fd172342a768f40de38958e7426b2fea7",
+      "bytes": 251593,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w256-mps-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w256-mps-p1/result.json",
+      "sha256": "6ef4dd1dba5299a3ac6e3a0d049044516b70f31e78af50438b5ce163de5d5013",
+      "bytes": 251593,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w256-mlx-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w256-mlx-p0/result.json",
+      "sha256": "4e976f394e974ead0603cea58e9688ca9a7086cf697b3e719534cdee4ac1b39f",
+      "bytes": 266608,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w256-mlx-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w256-mlx-p1/result.json",
+      "sha256": "22f570ffaec86b6db185ded178376ef79252f2c8c489c711399459dc693cba9e",
+      "bytes": 266608,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w512-cpu_torch-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w512-cpu_torch-p0/result.json",
+      "sha256": "4940c73244a01b091141fb161dea52b395937078848709d9b75983c11709c5e6",
+      "bytes": 251135,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w512-cpu_torch-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w512-cpu_torch-p1/result.json",
+      "sha256": "18fd9d1dda4202808ad02f5c1efa2b2c511abe24da5149fed132ccaa19e314bd",
+      "bytes": 251135,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w512-mps-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w512-mps-p0/result.json",
+      "sha256": "802ea0f1ff10c1575ae2558044b02bd7c7c18dbd8548abc56f0caca88d93b77c",
+      "bytes": 251890,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w512-mps-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w512-mps-p1/result.json",
+      "sha256": "13f419b3eefe221716bf30b67ebdcfc73c1612e5b6c410bff727e76940b9f96a",
+      "bytes": 251890,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w512-mlx-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w512-mlx-p0/result.json",
+      "sha256": "c27a252e3844eb5e8e181fd0af398475f75d4184da1ed9aa793c7d423f91ff88",
+      "bytes": 266855,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w512-mlx-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w512-mlx-p1/result.json",
+      "sha256": "bdfb34535756f2880953b89ca541cd5bb08792bbc53dedbd023cfaee657c8919",
+      "bytes": 266855,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w1024-cpu_torch-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w1024-cpu_torch-p0/result.json",
+      "sha256": "deedf7dbd9821c2865c05930a3146dde6c2da47efd431ce98231633f49fda2a6",
+      "bytes": 251563,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w1024-cpu_torch-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w1024-cpu_torch-p1/result.json",
+      "sha256": "f213ff026020ac87580c0c0a5a5012168c7a02c01745c15052ea174b0812b91d",
+      "bytes": 251563,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w1024-mps-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w1024-mps-p0/result.json",
+      "sha256": "f81b5a5a35aecb065c0b6855a9e55021de00dffadf2199a9bb64eb601b0bf34e",
+      "bytes": 252258,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w1024-mps-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w1024-mps-p1/result.json",
+      "sha256": "cad489f065d8b0c3a00adf3706cb6267442fae2f920efa3d5a88e090fff7ab70",
+      "bytes": 252258,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w1024-mlx-p0/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w1024-mlx-p0/result.json",
+      "sha256": "242b859c80cf7d3cf6edc22465a2cc9abbf6588d682c4d48c9ece1d95d1b234c",
+      "bytes": 267313,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v2/w1024-mlx-p1/result.json",
+      "report_copy": "receipts/model-compatibility-v2/w1024-mlx-p1/result.json",
+      "sha256": "6b60ac87d210c79a605638b45a8261ff1ea0d81a752f481a82b3bcbffd8722dc",
+      "bytes": 267313,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/model-compatibility-v1/summary.json",
+      "report_copy": "receipts/model-compatibility-v1/summary.json",
+      "sha256": "0a3a5c50acb3f8265f9b14944c4248319aaf1dbe2572ddf540d8fdad8caa272b",
+      "bytes": 10898,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/failed-model-probe-v1/model-manifest-v1.json",
+      "report_copy": "receipts/failed-model-probe-v1/model-manifest-v1.json",
+      "sha256": "6ef939461e37660a1c91db60fc038d53dc147d72aadda7ae86d5c38ba8818bfd",
+      "bytes": 6820,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/failed-model-probe-v1/model_probe.py",
+      "report_copy": "receipts/failed-model-probe-v1/model_probe.py.txt",
+      "sha256": "8ec1a35d1a0ac41c8a88e73c66e1e7b79d2537d07e4fa28ade69519161dde25d",
+      "bytes": 28423,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/failed-model-probe-v1/snapshot.json",
+      "report_copy": "receipts/failed-model-probe-v1/snapshot.json",
+      "sha256": "0f15f37e96b17b138667d9d076f5962fc1cf9cafa7e65653ab8aaaa75448053b",
+      "bytes": 1161,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/failed-model-probe-v1/summary.json",
+      "report_copy": "receipts/failed-model-probe-v1/summary.json",
+      "sha256": "0a3a5c50acb3f8265f9b14944c4248319aaf1dbe2572ddf540d8fdad8caa272b",
+      "bytes": 10898,
+      "mode": 420
+    },
+    {
+      "original_workspace_path": "work/gpu-v4-owned/failed-model-probe-v1/test_model_probe.py",
+      "report_copy": "receipts/failed-model-probe-v1/test_model_probe.py.txt",
+      "sha256": "2717af755c4140c55e66c54dd32f9cd74339617277efb4bc315b89c9a253aa21",
+      "bytes": 9107,
+      "mode": 420
+    }
+  ],
+  "original_paths_inside_receipts_preserved_verbatim": true,
+  "raw_npz_copied": false,
+  "raw_evidence_archive_plan": "integration/gpu-owned/model-evidence-plan-v1.json",
+  "scope": "Byte-preserved execution receipts; no framework qualification or formal admission"
+}

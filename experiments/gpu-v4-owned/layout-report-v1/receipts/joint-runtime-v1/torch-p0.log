@@ -1,0 +1,44 @@
+
+A module that was compiled using NumPy 1.x cannot be run in
+NumPy 2.2.6 as it may crash. To support both 1.x and 2.x
+versions of NumPy, modules must be compiled with NumPy 2.0.
+Some module may need to rebuild instead e.g. with 'pybind11>=2.12'.
+
+If you are a user of the module, the easiest solution will be to
+downgrade to 'numpy<2' or try to upgrade the affected module.
+We expect that some modules will need time to support NumPy 2.
+
+Traceback (most recent call last):  File "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/runtime_probe.py", line 630, in <module>
+    raise SystemExit(main())
+  File "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/runtime_probe.py", line 626, in main
+    return worker(args) if args.worker else run(args)
+  File "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/runtime_probe.py", line 496, in worker
+    record["probe"] = torch_probe(auth) if args.worker == "torch" else mlx_probe(auth)
+  File "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/runtime_probe.py", line 380, in torch_probe
+    import torch
+  File "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/__init__.py", line 3373, in <module>
+    from torch import (
+  File "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/export/__init__.py", line 11, in <module>
+    from torch.fx.passes.infra.pass_base import PassResult
+  File "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/fx/passes/__init__.py", line 1, in <module>
+    from . import (
+  File "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/fx/passes/runtime_assert.py", line 23, in <module>
+    from torch.fx.experimental.proxy_tensor import py_sym_types
+  File "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/fx/experimental/proxy_tensor.py", line 66, in <module>
+    from torch._subclasses.functional_tensor import FunctionalTensor
+  File "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/_subclasses/functional_tensor.py", line 120, in <module>
+    class FunctionalTensor(torch.Tensor):
+  File "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/_subclasses/functional_tensor.py", line 377, in FunctionalTensor
+    cpu = _conversion_method_template(device=torch.device("cpu"))
+/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/pytorch/hosted-40989036595-verified-v1/bundle/runtime/torch/_subclasses/functional_tensor.py:377: UserWarning: Failed to initialize NumPy: 
+A module that was compiled using NumPy 1.x cannot be run in
+NumPy 2.2.6 as it may crash. To support both 1.x and 2.x
+versions of NumPy, modules must be compiled with NumPy 2.0.
+Some module may need to rebuild instead e.g. with 'pybind11>=2.12'.
+
+If you are a user of the module, the easiest solution will be to
+downgrade to 'numpy<2' or try to upgrade the affected module.
+We expect that some modules will need time to support NumPy 2.
+
+ (Triggered internally at /Users/runner/work/arm64-transformer/arm64-transformer/pytorch-source/torch/csrc/utils/tensor_numpy.cpp:82.)
+  cpu = _conversion_method_template(device=torch.device("cpu"))

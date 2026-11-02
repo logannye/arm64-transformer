@@ -1,0 +1,5471 @@
+{
+  "schema": "gpu-owned-suite-inventory-v1",
+  "protocol": "gpu-v4-owned-five-engine-v1",
+  "formal_eligible": false,
+  "mlx": {
+    "contract_sha256": "d1c58034c351756e8442d237622bca33007eb745ced1bdc3d54f1ecccdb41a30",
+    "python_cases": [
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_add_numpy",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_api",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_at",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_at_complex_add_gpu",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_at_slice_update_extensive",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_basics",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_comparison",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_copy",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_from_noncontiguous_np",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_iteration",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_namespace",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_namespace_asarray",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_np_conversion",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_np_dtype_conversion",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_np_shape_dim_check",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_pickle",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_repr",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_repr_precision",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_subclass",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_to_list",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_type_cast",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_unary_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_array_view_ref_counting",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_asarray",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_asarray_copy",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_bool_conversion",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_buffer_protocol",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_buffer_protocol_eval_error",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_buffer_protocol_ref_counting",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_buffer_protocol_tf",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_construction_from_lists",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_construction_from_lists_of_mlx_arrays",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_construction_from_lists_wide_ints",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_create_from_buffer",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_deep_graphs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_dlpack",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_dlpack_cpu_dtype_mapping",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_double_keeps_precision",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_dtype_promotion",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_dtype_python_scalar_promotion",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_format",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_from_dlpack_cpu",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_from_dlpack_cpu_strided",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_from_dlpack_torch_mps_copy_false_shares_updates",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_from_dlpack_torch_mps_copy_none_one_way_updates",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_from_dlpack_torch_mps_copy_true_copies",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_frozen_types",
+        "reason": "requires Python 3.15",
+        "status": "skipped"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_getitem_with_list",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_indexing",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_indexing_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_init_from_array",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_inplace",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_inplace_preserves_ids",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_int_type",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_large_indices",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_load_from_pickled_np",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_logical_overloads",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_matrix_transpose",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_memoryless_copy",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_mlx_dlpack_export_torch_update_writes_mlx_buffer",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_mlx_dlpack_exports_mps_tensor_to_torch",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_mlx_dlpack_exports_mps_tensor_to_torch_tensor",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_multi_output_leak",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_np_array_conversion_copies_by_default",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_real_imag",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_scalar_integer_conversion_overflow",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_setitem",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_setitem_with_boolean_mask",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_setitem_with_list",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_slice_bounds_with_array_index",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_slice_negative_step",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_slice_update_contiguous_2d",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_to_scalar",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_torch_mps_array_copies_dlpack_input",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_torch_mps_array_operand",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_torch_mps_asarray_copy_true_copies_dlpack_input",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_torch_mps_dlpack_bfloat16",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_torch_mps_dlpack_broadcast_stride",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_torch_mps_dlpack_data_offset",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_torch_mps_dlpack_different_dtype_argument_copies",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_torch_mps_dlpack_import",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_torch_mps_dlpack_matching_dtype_argument_shares_updates",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_torch_mps_dlpack_stepped_view",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_torch_mps_dlpack_strided_view",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArray",
+        "name": "test_torch_mps_dlpack_zero_copy_one_way_updates",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestArrayNamespsceInfo",
+        "name": "test",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestDtypes",
+        "name": "test_can_cast",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestDtypes",
+        "name": "test_dtypes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestDtypes",
+        "name": "test_finfo",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestDtypes",
+        "name": "test_iinfo",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestDtypes",
+        "name": "test_index_conversion",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestDtypes",
+        "name": "test_index_conversion_invalid",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestDtypes",
+        "name": "test_isdtype",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestDtypes",
+        "name": "test_result_type",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestDtypes",
+        "name": "test_scalar_conversion",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestEquality",
+        "name": "test_array_eq_array",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestEquality",
+        "name": "test_array_eq_scalar",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestEquality",
+        "name": "test_list_equals_array",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestEquality",
+        "name": "test_tuple_equals_array",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestInequality",
+        "name": "test_array_ne_array",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestInequality",
+        "name": "test_array_ne_scalar",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestInequality",
+        "name": "test_dlx_device_type",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestInequality",
+        "name": "test_invalid_op_on_array",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestInequality",
+        "name": "test_list_not_equals_array",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestInequality",
+        "name": "test_obj_inequality_array",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestInequality",
+        "name": "test_tuple_not_equals_array",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_array.TestVersion",
+        "name": "test_version",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_autograd_types",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_auxiliary_values",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_captured",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_complex_abs_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_complex_exp_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_complex_log_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_complex_power_vjps",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_complex_prod_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_complex_unary_vjps",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_complex_vjps",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_concatenate_vjps",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_conv_second_order_grad_with_padding",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_cummax_cummin_grad_vs_torch",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_cummax_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_cummin_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_cumprod_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_custom_function",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_eval_in_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_flatten_unflatten_vjps",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_grad_ids_pre_post",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_grad_kwargs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_grad_trees",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_grad_with_copies",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_grad_with_inplace_update",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_index_vjp_requires_stop_gradient",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_jvp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_jvp_comparison_tangent_dtype",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_jvp_through_bitwise_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_jvp_with_constant_inputs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_jvp_with_partly_traced_inputs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_leaks",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_logcumsumexp_jvp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_logsumexp_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_matmul_jvps",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_pad_value_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_power_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_put_along_axis_grads",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_reduce_jvp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_scatter_add_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_scatter_max_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_scatter_min_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_scatter_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_second_order_permutation_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_slice_grads",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_slice_grads_single_element",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_slice_update_add_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_slice_update_max_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_slice_update_min_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_slice_update_multiply_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_sort_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_split_against_slice",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_stop_gradient",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_stop_gradient_computed_indices",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_take_along_axis_complex_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_topk_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_transform_releases_captures",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_update_state",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_autograd.TestAutograd",
+        "name": "test_vjp_types",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_bf16.TestBF16",
+        "name": "test_arg_reduction_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_bf16.TestBF16",
+        "name": "test_arithmetic_reduction_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_bf16.TestBF16",
+        "name": "test_binary_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_bf16.TestBF16",
+        "name": "test_blas_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_bf16.TestBF16",
+        "name": "test_conversion",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_bf16.TestBF16",
+        "name": "test_conversion_ml_dtypes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_bf16.TestBF16",
+        "name": "test_reduction_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_bf16.TestBF16",
+        "name": "test_unary_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_addmm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_addmm_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_block_masked_matmul",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_complex_gemm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_complex_gemv",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_dot_product",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_empty_matmul",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_gather_matmul",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_gather_matmul_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_gather_matmul_index_vjp_requires_stop_gradient",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_gather_mm_blocks",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_gather_mm_sorted",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_gather_mm_sorted_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_gemv_gemm_same_precision",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_matmul",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_matmul_batched",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_matmul_dtypes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_matmul_shapes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_matmul_unaligned",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_matrix_vector",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_matrix_vector_attn",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_matrix_vector_batched",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_matrix_vector_broadcast",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_matrix_vector_edgecases",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_matvec_unaligned",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_mismatch_stride_mm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_segmented_mm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_thin_matmul",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_wide_addmm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_blas.TestBlas",
+        "name": "test_wide_matmul",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_abs_unsigned",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_broadcast_only",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_capture",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_changing_outputs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_changing_outputs_with_state",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_create_list",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_different_log_bases",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_donates_input_buffer",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_dynamic_dims",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_equal_nan",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_float_constant_precision",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_inf",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_inputs_with_primitives",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_kwargs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_large_graph_with_broadcasts",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_many_inputs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_many_outputs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_multi_output",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_negative_strides",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_nonfinite_constants",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_output_with_siblings",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_release_on_another_thread",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_rng",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_rng_across_threads",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_scalar_constant_output",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_shapeless_with_broadcast",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_sigmoid_matches_eager",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_state_capture_with_rng_updates_in_place",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_tuple_output_in_thread",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_two_input_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_types",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_with_closure",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_with_constant",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_with_long_name",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_with_none",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compile_without_captured_inputs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compiled_preserves_attributes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_compiled_subnormal_bool_cast",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_double_constant",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_dtypes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_enable_disable",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_function_creates_array",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_inf_constant",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_leaks",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_max_into_equal",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_multiple_compile_same_capture",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_outputs_changing",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_compile",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_compile_addmm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_compile_full_like",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_compile_gather",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_compile_gather_mm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_compile_gather_qmm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_compile_matmul",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_compile_reduce_after_gather",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_compile_scan",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_compile_slice_update",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_compile_unflatten",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_compile_with_broadcasts",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_compile_with_reduction",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_compile_with_reshape",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shapeless_mean",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_shared_broadcast",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_simple_compile",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_transform_over_eval_compiled",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_unsupported_input_types",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_vjp_vjp_compiled",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_vmap_compiled",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_compile.TestCompile",
+        "name": "test_wrap_compiled",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_config.TestConfig",
+        "name": "test_get_environment",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_config.TestConfig",
+        "name": "test_scoped_update",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_config.TestConfig",
+        "name": "test_update",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_constants.TestConstants",
+        "name": "test_constants_availability",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_constants.TestConstants",
+        "name": "test_constants_values",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_constants.TestConstants",
+        "name": "test_newaxis_for_reshaping_arrays",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_asymmetric_padding",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_basic_grad_shapes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_conv2d_large_filter_small_channels",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_conv2d_large_output_channels",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_conv2d_unaligned_channels",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_conv2d_winograd_batch_tiling",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_conv2d_winograd_disable",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_conv_1d_groups_flipped",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_conv_1d_with_2d",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_conv_3D_small_kd_decomposition",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_conv_depthwise_c_multiple_of_8",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_conv_general_flip_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_conv_grouped_c_per_group_8",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_conv_groups_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_grouped_conv_padding_stays_in_output",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_grouped_depthwise_conv_padding_bounds",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_large_filter_input_grad_bounds",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_numpy_conv",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_padding_input_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_repeated_conv",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_torch_conv_1D",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_torch_conv_1D_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_torch_conv_2D",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_torch_conv_2D_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_torch_conv_3D",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_torch_conv_3D_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_torch_conv_depthwise",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv.TestConv",
+        "name": "test_torch_conv_general",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv_transpose.TestConvTranspose",
+        "name": "test_conv_transpose_unfold_tiling",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv_transpose.TestConvTranspose",
+        "name": "test_torch_conv_tranpose_1d_output_padding",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv_transpose.TestConvTranspose",
+        "name": "test_torch_conv_transpose_1D",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv_transpose.TestConvTranspose",
+        "name": "test_torch_conv_transpose_1D_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv_transpose.TestConvTranspose",
+        "name": "test_torch_conv_transpose_2D",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv_transpose.TestConvTranspose",
+        "name": "test_torch_conv_transpose_2D_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv_transpose.TestConvTranspose",
+        "name": "test_torch_conv_transpose_2d_output_padding",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv_transpose.TestConvTranspose",
+        "name": "test_torch_conv_transpose_3D",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv_transpose.TestConvTranspose",
+        "name": "test_torch_conv_transpose_3D_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_conv_transpose.TestConvTranspose",
+        "name": "test_torch_conv_transpose_3d_output_padding",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_device.TestDefaultDevice",
+        "name": "test_mlx_default_device",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_device.TestDevice",
+        "name": "test_device",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_device.TestDevice",
+        "name": "test_device_context",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_device.TestDevice",
+        "name": "test_op_on_device",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_device.TestDeviceInfo",
+        "name": "test_cuda_get_arch_list",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_device.TestDeviceInfo",
+        "name": "test_device_count",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_device.TestDeviceInfo",
+        "name": "test_device_info_cpu",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_device.TestDeviceInfo",
+        "name": "test_device_info_default",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_device.TestDeviceInfo",
+        "name": "test_device_info_gpu",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_device.TestStream",
+        "name": "test_op_on_stream",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_device.TestStream",
+        "name": "test_reentrant_stream_context",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_device.TestStream",
+        "name": "test_stream",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_device.TestStream",
+        "name": "test_stream_context_exited_on_another_thread",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_double.TestDouble",
+        "name": "test_binary_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_double.TestDouble",
+        "name": "test_conversion",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_double.TestDouble",
+        "name": "test_gemm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_double.TestDouble",
+        "name": "test_get_and_set_item",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_double.TestDouble",
+        "name": "test_lapack",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_double.TestDouble",
+        "name": "test_linspace",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_double.TestDouble",
+        "name": "test_python_float_keeps_double_precision",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_double.TestDouble",
+        "name": "test_reductions",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_double.TestDouble",
+        "name": "test_type_promotion",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_double.TestDouble",
+        "name": "test_unary_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_double.TestDouble",
+        "name": "test_where",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_einsum.TestEinsum",
+        "name": "test_attention",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_einsum.TestEinsum",
+        "name": "test_broadcasting",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_einsum.TestEinsum",
+        "name": "test_ellipses",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_einsum.TestEinsum",
+        "name": "test_ellipses_broadcast",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_einsum.TestEinsum",
+        "name": "test_longer_paths",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_einsum.TestEinsum",
+        "name": "test_multi_input_einsum",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_einsum.TestEinsum",
+        "name": "test_opt_einsum_test_cases",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_einsum.TestEinsum",
+        "name": "test_scalar_operands",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_einsum.TestEinsum",
+        "name": "test_simple_einsum",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_einsum.TestEinsum",
+        "name": "test_simple_path",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_einsum.TestEinsum",
+        "name": "test_sum_first",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_einsum.TestEinsum",
+        "name": "test_two_input_einsum",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_async_eval",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_async_eval_error_in_synchronize",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_async_eval_in_trace",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_async_eval_into_eval",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_async_eval_into_eval_diff_stream",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_async_eval_twice",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_async_eval_with_multiple_streams",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_donation_for_noops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_eval",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_eval_exception_after_cross_stream_wait",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_eval_exception_does_not_corrupt_state",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_eval_mixed",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_eval_slow_fast_multi_stream",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_multi_output_eval_during_transform",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_multistream_deadlock",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_eval.TestEval",
+        "name": "test_retain_graph",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_basic_export_import",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_control_flow",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_conv",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_conv_shapeless",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_custom_metal_kernel_with_math_mode",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_custom_metal_kernel_without_evaluation",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_import_custom_kernel",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_import_metadata",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_import_multi_with_constants",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_import_scatter_sum",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_import_shapeless",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_kwarg_ordering",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_matmul_shapeless_batch_and_mid_dim",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_matmul_shapeless_mid_dim",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_quantized_model",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_random_sample",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_scatter_gather",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_searchsorted",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_unique",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_variable_inputs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_with_callback",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_export_with_kwargs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_export_import.TestExportImport",
+        "name": "test_leaks",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_build_extension_can_disable_stub_generation",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_build_extension_can_enable_ninja",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_build_extension_falls_back_without_ninja",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_build_extension_uses_default_generator",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_build_extension_uses_mlx_macos_deployment_target",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_cmake_args_overrides_macos_deployment_target",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_cmake_args_rejects_macos_deployment_target_below_minimum",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_cmake_generator_environment_uses_distinct_build_directory",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_compile_argument_list_applies_to_cxx",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_debug_build_enables_metal_debug",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_environment_overrides_macos_deployment_target",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_environment_rejects_macos_deployment_target_below_minimum",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_explicit_cmake_generator_overrides_ninja",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_explicit_metal_libraries",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_extension_metadata",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_extension_paths_use_public_build_metadata",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_generated_cmake_builds_module_and_metallib",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_generated_cmake_uses_nested_package_mlx_rpath",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_reads_mlx_macos_deployment_target",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_rejects_duplicate_metal_library_names",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_rejects_mixed_metal_source_forms",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_rejects_non_list_compile_arguments",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_rejects_python_stable_abi",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_rejects_unknown_compile_argument_group",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_requires_host_source",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_extension.TestMetalExtension",
+        "name": "test_requires_metal_source",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_cross_entropy",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_cross_entropy_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_cross_entropy_grad_non_contiguous",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_cross_entropy_shape_checks",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_cuda_kernel_same_name_different_source",
+        "reason": "CUDA is not available",
+        "status": "skipped"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_custom_kernel_args",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_custom_kernel_attributes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_custom_kernel_basic",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_custom_kernel_caching",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_custom_kernel_helper",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_custom_kernel_mixed_dtypes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_custom_kernel_same_name_different_source_one_eval",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_custom_kernel_strides",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_custom_metal_kernel_math_mode",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_custom_metal_kernel_negative_template_int",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_fast_transforms",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_layer_norm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_layer_norm_dim_check",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_layer_norm_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_layer_norm_grad_no_bias",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_layer_norm_grad_no_params",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_layer_norm_grad_params",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_rms_norm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_rms_norm_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_rope",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_rope_batch",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_rope_dims_validation",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_rope_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_rope_large_input",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_rope_single_batch",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_rope_with_freqs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_rope_with_large_offset",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast.TestFast",
+        "name": "test_slice_into_layer_norm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_gated_delta.TestGatedDelta",
+        "name": "test_gated_delta_dtypes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_gated_delta.TestGatedDelta",
+        "name": "test_gated_delta_fallback",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_gated_delta.TestGatedDelta",
+        "name": "test_gated_delta_fallback_masked",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_gated_delta.TestGatedDelta",
+        "name": "test_gated_delta_nax",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_gated_delta.TestGatedDelta",
+        "name": "test_gated_delta_sequential",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_gated_delta.TestGatedDelta",
+        "name": "test_gated_delta_simdgroup",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_gated_delta.TestGatedDelta",
+        "name": "test_gated_delta_vectorized_g",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_gated_delta.TestGatedDelta",
+        "name": "test_gated_delta_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_attention_sinks",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_blocks_env_override",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_broadcast_mask",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_few_query",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_force_fused_cuda",
+        "reason": "CUDA kernel path only",
+        "status": "skipped"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_force_fused_metal",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_full_d96_v64",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_full_head_dim_256",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_full_head_dim_512_nax",
+        "reason": "D512 full attention requires NAX",
+        "status": "skipped"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_fully_masked",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_head_dim_72",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_head_dim_72_80_sinks",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_head_dim_80",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_head_dim_96",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_inf_score",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_long_masked_sequence",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_nan_bug",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_noncontiguous_inputs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_pad_head_dim_opt_in",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_promote_mask",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_short_query_many_heads",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_sliced",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_split_large_values",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_vector",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_vector_2pass_threadgroup_limit",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_vector_batched",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_vector_d96_v64",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_vector_gqa_long",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_vector_head_dim_512",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_vector_kv_transposed_head_seq",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_vector_reversed_mask",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_vector_value_dims",
+        "reason": "Different head and value dims is not enabled",
+        "status": "skipped"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_window_large",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_window_size",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa.TestFastSDPA",
+        "name": "test_sdpa_window_size_errors",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa_training.TestMetalSDPATraining",
+        "name": "test_float32_head_dim_192_threadgroup_memory",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa_training.TestMetalSDPATraining",
+        "name": "test_inference_keeps_vector_head_dimensions",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa_training.TestMetalSDPATraining",
+        "name": "test_short_training_array_mask_fallback",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa_training.TestMetalSDPATraining",
+        "name": "test_short_training_asymmetric_head_dimensions",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa_training.TestMetalSDPATraining",
+        "name": "test_short_training_low_precision",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa_training.TestMetalSDPATraining",
+        "name": "test_short_training_more_queries_than_keys",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa_training.TestMetalSDPATraining",
+        "name": "test_short_training_sequence_isolation",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa_training.TestMetalSDPATraining",
+        "name": "test_short_training_strided_inputs_and_cotangent",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa_training.TestMetalSDPATraining",
+        "name": "test_short_training_vjp_regression",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa_training.TestMetalSDPATraining",
+        "name": "test_training_neighboring_head_dimensions",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa_training.TestMetalSDPATraining",
+        "name": "test_training_partial_query_and_key_tiles",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa_training.TestMetalSDPATraining",
+        "name": "test_training_query_length_boundaries",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa_training.TestMetalSDPATraining",
+        "name": "test_training_rejects_vector_only_head_dimensions",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fast_sdpa_training.TestSDPANumpyOracle",
+        "name": "test_gradients_against_finite_differences",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_batched_bluestein_twiddle_table",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft_big_powers_of_two",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft_contiguity",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft_exhaustive",
+        "reason": "Too slow for CI but useful for local testing.",
+        "status": "skipped"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft_grads",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft_into_ifft",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft_jvp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft_large_numbers",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft_norm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft_partial_threadgroup_bounds",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft_shared_mem",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft_throws",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft_too_large",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft_vmap",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fft_vmap_explicit_size",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fftfreq",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fftn",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fftn_size_one_axes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fftshift",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_fftshift_errors",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_ifftshift",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_istft",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_rfftfreq",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_fft.TestFFT",
+        "name": "test_stft",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_gather_grad.TestGatherGradient",
+        "name": "test_axes_scalar_and_empty_indices",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_gather_grad.TestGatherGradient",
+        "name": "test_embedding_module_and_higher_order",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_gather_grad.TestGatherGradient",
+        "name": "test_fresh_process_replay",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_gather_grad.TestGatherGradient",
+        "name": "test_index_dtypes_and_negative_aliases",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_gather_grad.TestGatherGradient",
+        "name": "test_multiple_sort_blocks_and_partial_slice_tiles",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_gather_grad.TestGatherGradient",
+        "name": "test_noncontiguous_inputs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_gather_grad.TestGatherGradient",
+        "name": "test_output_dtypes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_gather_grad.TestGatherGradient",
+        "name": "test_partial_slice_and_multi_axis_fallback",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_gather_grad.TestGatherGradient",
+        "name": "test_repeated_embedding_ids",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_gather_grad.TestGatherGradient",
+        "name": "test_scatter_initial_values_and_untouched_signed_zero",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_gather_grad.TestGatherGradient",
+        "name": "test_sparse_large_vocabulary",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_gather_grad.TestGatherGradient",
+        "name": "test_vmap_shared_weight",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_gather_grad.TestGatherGradient",
+        "name": "test_zero_and_cancellation",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_graph.TestGraph",
+        "name": "test_to_dot",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_init.TestInit",
+        "name": "test_constant",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_init.TestInit",
+        "name": "test_glorot_normal",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_init.TestInit",
+        "name": "test_glorot_uniform",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_init.TestInit",
+        "name": "test_he_normal",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_init.TestInit",
+        "name": "test_he_uniform",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_init.TestInit",
+        "name": "test_identity",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_init.TestInit",
+        "name": "test_normal",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_init.TestInit",
+        "name": "test_orthogonal",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_init.TestInit",
+        "name": "test_sparse",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_init.TestInit",
+        "name": "test_sparse_zeros_per_row",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_init.TestInit",
+        "name": "test_uniform",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_cholesky",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_cholesky_inv",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_complex_norm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_cross_product",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_det",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_eig",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_eigh",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_inverse",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_lu",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_lu_factor",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_norm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_pseudo_inverse",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_qr_factorization",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_slogdet",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_solve",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_solve_triangular",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_svd_decomposition",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_linalg.TestLinalg",
+        "name": "test_tri_inverse",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_async_load_npy_read_error_across_streams",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_failed_save_gguf_keeps_the_existing_file",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_failed_save_safetensors_keeps_the_existing_file",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_load_donation",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_load_f8_e4m3",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_load_gguf_quantized",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_load_npy_dtype",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_load_npy_invalid_shape",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_load_npy_read_error",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_non_contiguous",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_save_and_load",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_save_and_load_empty",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_save_and_load_fs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_save_and_load_gguf",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_save_and_load_gguf_metadata_arrays",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_save_and_load_gguf_metadata_basic",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_save_and_load_gguf_metadata_mixed",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_save_and_load_safetensors",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_save_over_lazily_loaded_npy",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_save_over_lazily_loaded_safetensors",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_save_over_unevaluated_load",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_save_through_symlink",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_load.TestLoad",
+        "name": "test_savez_and_loadz",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_losses.TestLosses",
+        "name": "test_binary_cross_entropy",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_losses.TestLosses",
+        "name": "test_cosine_similarity_loss",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_losses.TestLosses",
+        "name": "test_cross_entropy",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_losses.TestLosses",
+        "name": "test_gaussian_nll_loss",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_losses.TestLosses",
+        "name": "test_hinge_loss",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_losses.TestLosses",
+        "name": "test_huber_loss",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_losses.TestLosses",
+        "name": "test_kl_div_loss",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_losses.TestLosses",
+        "name": "test_l1_loss",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_losses.TestLosses",
+        "name": "test_log_cosh_loss",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_losses.TestLosses",
+        "name": "test_margin_ranking_loss",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_losses.TestLosses",
+        "name": "test_mse_loss",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_losses.TestLosses",
+        "name": "test_nll_loss",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_losses.TestLosses",
+        "name": "test_smooth_l1_loss",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_losses.TestLosses",
+        "name": "test_triplet_loss",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_memory.TestMemory",
+        "name": "test_active_memory_count",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_memory.TestMemory",
+        "name": "test_array_buffer_size",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_memory.TestMemory",
+        "name": "test_memory_info",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_memory.TestMemory",
+        "name": "test_wired_memory",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_chaining",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_circular_leaks",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_freeze_strict_keys",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_grad_of_module",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_load_from_weights",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_model_with_dict",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_module_attributes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_module_state",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_module_utilities",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_parameter_deletion",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_quantize",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_quantize_freeze",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_quantized_sharded_linear_construction",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_save_npz_weights",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_save_safetensors_weights",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_update",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestBase",
+        "name": "test_update_modules",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_alibi",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_attention",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_batch_norm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_batch_norm_matches_torch",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_batch_norm_stats",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_bilinear",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_causal_mask",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_celu",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_conv1d",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_conv2d",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_conv_grouped_init",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_conv_transpose_extra_repr",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_dropout",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_dropout2d",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_dropout3d",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_elu",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_gelu",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_glu",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_group_norm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_gru",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_hard_shrink",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_hard_tanh",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_hardswish",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_identity",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_instance_norm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_leaky_relu",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_linear",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_log_sigmoid",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_log_softmax",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_lstm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_mish",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_norm_eps_validation",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_pooling",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_prelu",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_quantized_embedding",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_relu",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_relu6",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_rnn",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_rope",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_sequential",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_set_dtype",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_sigmoid",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_sin_pe",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_softmax",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_softmin",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_softplus",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_softshrink",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_softsign",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_step",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_transformer",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_transformer_custom_modules",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_transformer_decoder",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_transformer_decoder_layer",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_transformer_encoder",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_transformer_encoder_layer",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_upsample",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_nn.TestLayers",
+        "name": "test_upsample_align_corners_one_dim",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_abs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_add",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_all",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_allclose",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_along_axis_invalid_axis",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_any",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_arange_corner_cases_cast",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_arange_inferred_dtype",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_arange_overload_dispatch",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_argmin_argmax",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_argpartition",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_argsort_nan",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_array_equal",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_as_strided",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_atleast_1d",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_atleast_2d",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_atleast_3d",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_bartlett_general",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_binary_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_bitwise_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_bitwise_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_blackman_general",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_broadcast",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_broadcast_arrays",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_broadcast_shapes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_ceil",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_clip",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_comparisons",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_complex_bool_cast",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_complex_divide_extreme_values",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_complex_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_complex_power",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_concatenate",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_concatenate_large_offsets",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_conjugate",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_cos",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_count_nonzero",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_cross_invalid_axis",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_cummax_cummin_nan",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_degrees",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_depends",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_diag",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_diag_zero_size",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_diagonal",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_diff",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_divide",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_divmod",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_dynamic_slicing",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_empty_matmuls",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_erf",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_erfinv",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_exp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_expm1",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_eye",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_flatten",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_flip",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_floor",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_floor_divide",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_full_ones_zeros",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_hadamard",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_hadamard_grad_vmap",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_hadamard_m_only",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_hamming_general",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_hanning_general",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_indexing_large_strided_view",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_inner",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_integer_index_protocol",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_integer_power",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_irregular_alignments",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_irregular_binary_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_isclose",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_isfinite",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_isinf",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_isnan",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_isneginf",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_isposinf",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_issubdtype",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_kron",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_large_binary",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_linspace",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_linspace_endpoint",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_log",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_log10",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_log1p",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_log2",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_logaddexp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_logcumsumexp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_logical_and",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_logical_not",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_logical_or",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_logical_xor",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_logsumexp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_logsumexp_shape",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_masked_scatter",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_maximum",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_mean",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_median",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_median_nan",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_meshgrid",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_min_and_max",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_minimum",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_move_swap_axes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_multiply",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_nan_to_num",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_negative",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_out_of_bounds_axis_raises_index_error",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_outer",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_pad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_pad_large_offsets",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_pad_reflect_symmetric",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_partition",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_prod",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_put_along_axis",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_radians",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_real_imag",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_reciprocal",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_remainder",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_repeat",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_reshape_col_contiguous",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_roll",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_roll_errors",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_round",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_rsqrt",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_scalar_inputs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_scan_does_not_write_past_the_output",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_scan_invalid_axis",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_scan_size_one_axis",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_scan_strided_bool",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_scans",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_scans_complex_exclusive",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_searchsorted",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_shape_overflow_error",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_sigmoid",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_sign",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_sin",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_slice_update_reversed",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_slice_with_negative_stride",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_softmax",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_sort",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_sort_nan",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_sort_transposed",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_split",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_split_invalid_num_splits",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_sqrt",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_square",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_squeeze_expand",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_squeeze_expand_invalid_axes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_stack",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_std",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_stop_gradient",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_subnormal_bool_cast",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_subtract",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_sum",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_take",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_take_along_axis",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_tensordot",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_tile",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_to_from_fp8",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_trace",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_transpose_axis",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_transpose_noargs",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_tri",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_trig_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_tril",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_triu",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_trunc",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_unary_ops",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_unary_ops_from_non_array",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_unique",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_unstack",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_var",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_vecdot",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_view",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_where",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_ops.TestOps",
+        "name": "test_zeros_ones_empty_like_dtype",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_adadelta",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_adafactor",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_adagrad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_adam",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_adamw_matches_pytorch",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_compiled_optimizer",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_epsilon_validation",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_lion",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_muon",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_optimizer_state",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_optimizers",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_rmsprop",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_sgd",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_types_conserved",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_update_lr_compiled",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestOptimizers",
+        "name": "test_weight_decay_keeps_inputs_unchanged",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestSchedulers",
+        "name": "test_clip_grad_norm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestSchedulers",
+        "name": "test_clip_grad_norm_float16",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestSchedulers",
+        "name": "test_clip_grad_norm_mixed_dtypes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestSchedulers",
+        "name": "test_compile_with_schedule",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestSchedulers",
+        "name": "test_cosine_decay",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestSchedulers",
+        "name": "test_decay_lr",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestSchedulers",
+        "name": "test_exponential_decay",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestSchedulers",
+        "name": "test_init_from_state",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestSchedulers",
+        "name": "test_linear_warmup_with_cosine_decay",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestSchedulers",
+        "name": "test_multi_optimizer",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestSchedulers",
+        "name": "test_multi_optimizer_with_empty_group",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestSchedulers",
+        "name": "test_multi_optimizer_with_parameterless_layers",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestSchedulers",
+        "name": "test_schedule_joiner",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_optimizers.TestSchedulers",
+        "name": "test_step_decay",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_1bit_quantize_dequantize",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_affine_quantize_signed_groups",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_fp_gather_qmm_non_multiple_of_32",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_fp_qmm_non_multiple_of_32",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_fp_qmm_non_multiple_of_32_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_fp_qmv",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_fp_qmv_fast_unaligned_n",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_fp_qmv_fast_unaligned_n_global_scale",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_fp_qmv_large_output",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_fp_qvm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_fp_vjp_scales_throws",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_gather_matmul_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_gather_qmm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_gather_qmm_global_scale",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_gather_qmm_grad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_gather_qmm_matrix_path",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_gather_qmm_sorted",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_gather_qmm_sorted_nax_large_m",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_gather_qmm_sorted_rhs_cuda",
+        "reason": "CUDA kernel path only",
+        "status": "skipped"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_gather_qmm_sorted_sliced_weight",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_gather_qmm_sorted_unaligned_k",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_gather_qqmm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_gather_qqmm_global_scale_matrix_paths",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_mode_error_cases",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_mxfp4_quantize_dequantize",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_mxfp8_block_scale_does_not_saturate",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_mxfp8_quantize_dequantize",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_non_multiples",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_nvfp4_quantize_dequantize",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmm_few_rows",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmm_fp4_half_loader",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmm_fp_type",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmm_jvp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmm_large_dims",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmm_mid_m",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmm_non_transposed",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmm_shapes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmm_small_m_block",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmm_splitk_precision",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmm_vjp",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmv",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmv_affine_bias_sum_precision",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmv_fast_unaligned_n",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmv_small_non_multiples",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qmv_wide",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qqmm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qqmm_global_scale_matrix_kernels",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qqmv",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_quantize_dequantize",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_quantize_strided",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_quantized_matmul_batched_split_k",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qvm",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qvm_splitk",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_qvm_splitk_multi_row",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_small_matrix",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_throw",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_quantized.TestQuantized",
+        "name": "test_vjp_scales_biases",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_bernoulli",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_broadcastable_scale_loc",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_categorical",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_complex_normal",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_global_rng",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_gumbel",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_key",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_key_split",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_multivariate_normal",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_normal_and_laplace",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_normal_loc_scale_shape",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_permutation",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_randint",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_truncated_normal",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_random.TestRandom",
+        "name": "test_uniform",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_and_or_negative_zero",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_and_or_small_ints",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_arg_reduce",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_axis_permutation_sums",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_col_reduce_negative_stride",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_dtypes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_edge_case",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_expand_sums",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_init_reduce_large_output",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_large_offsets",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_long_column",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_many_reduction_axes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_minmax",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_nan_propagation",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_nan_propagation_complex64",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_row_reduce_negative_stride",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_sum_bool",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_reduce.TestReduce",
+        "name": "test_zero_size",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_threads.TestThreads",
+        "name": "test_concurrent_transforms",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_threads.TestThreads",
+        "name": "test_threadlocal_stream",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_tree.TestTreeUtils",
+        "name": "test_empty_subtree_merge",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_tree.TestTreeUtils",
+        "name": "test_merge",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_tree.TestTreeUtils",
+        "name": "test_supported_trees",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_tree.TestTreeUtils",
+        "name": "test_tree_flatten",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_tree.TestTreeUtils",
+        "name": "test_tree_map",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_tree.TestTreeUtils",
+        "name": "test_tree_unflatten_integer_key_collision",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_upsample.TestUpsample",
+        "name": "test_antialias_1d_smoke",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_upsample.TestUpsample",
+        "name": "test_antialias_non_integer_scale_smoke",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_upsample.TestUpsample",
+        "name": "test_antialias_upscale_cubic_matches_pytorch",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_upsample.TestUpsample",
+        "name": "test_antialias_upscale_linear_is_noop",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_upsample.TestUpsample",
+        "name": "test_torch_upsample",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_upsample.TestUpsample",
+        "name": "test_torch_upsample_antialias",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_basics",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_binary",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_broadcast_axes_vmap",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_leaks",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_mismatch_input_sizes",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_tree",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_unary",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_argreduce",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_argsort",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_concatenate",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_const_func",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_conv",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_flatten",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_gather",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_indexing",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_inverse",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_masked_scatter",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_matmul",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_mean",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_pad",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_partition",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_put_along_axis",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_reduce",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_scatter",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_scatter_higher_rank",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_slice_update",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_sort",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_split_vmap",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_strided_slice_single_element",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_svd",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_take_along_axis",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_topk",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_tri_inverse",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_types",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_vmap.TestVmap",
+        "name": "test_vmap_view",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_zero_copy.TestZeroCopy",
+        "name": "test_adopt_in_loop_not_recycled",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_zero_copy.TestZeroCopy",
+        "name": "test_clear_streams_releases_gil",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_zero_copy.TestZeroCopy",
+        "name": "test_copy_false",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_zero_copy.TestZeroCopy",
+        "name": "test_copy_false_dtype_conversion_raises",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_zero_copy.TestZeroCopy",
+        "name": "test_copy_true_copies",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_zero_copy.TestZeroCopy",
+        "name": "test_default_shares_or_copies",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_zero_copy.TestZeroCopy",
+        "name": "test_dtype_mismatch_same_width_converts",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_zero_copy.TestZeroCopy",
+        "name": "test_misaligned_source_copies",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_zero_copy.TestZeroCopy",
+        "name": "test_ops_do_not_write_to_source",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_zero_copy.TestZeroCopy",
+        "name": "test_ops_on_read_only_memmap",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_zero_copy.TestZeroCopy",
+        "name": "test_source_lifetime",
+        "status": "passed"
+      },
+      {
+        "class": "python.tests.test_zero_copy.TestZeroCopy",
+        "name": "test_synchronize_releases_gil",
+        "status": "passed"
+      }
+    ],
+    "required_gpu_regressions": [
+      [
+        "TestGatherGradient",
+        "test_repeated_embedding_ids"
+      ],
+      [
+        "TestGatherGradient",
+        "test_multiple_sort_blocks_and_partial_slice_tiles"
+      ],
+      [
+        "TestGatherGradient",
+        "test_axes_scalar_and_empty_indices"
+      ],
+      [
+        "TestGatherGradient",
+        "test_index_dtypes_and_negative_aliases"
+      ],
+      [
+        "TestGatherGradient",
+        "test_noncontiguous_inputs"
+      ],
+      [
+        "TestGatherGradient",
+        "test_output_dtypes"
+      ],
+      [
+        "TestGatherGradient",
+        "test_sparse_large_vocabulary"
+      ],
+      [
+        "TestGatherGradient",
+        "test_zero_and_cancellation"
+      ],
+      [
+        "TestGatherGradient",
+        "test_scatter_initial_values_and_untouched_signed_zero"
+      ],
+      [
+        "TestGatherGradient",
+        "test_embedding_module_and_higher_order"
+      ],
+      [
+        "TestGatherGradient",
+        "test_vmap_shared_weight"
+      ],
+      [
+        "TestGatherGradient",
+        "test_partial_slice_and_multi_axis_fallback"
+      ],
+      [
+        "TestGatherGradient",
+        "test_fresh_process_replay"
+      ],
+      [
+        "TestSDPANumpyOracle",
+        "test_gradients_against_finite_differences"
+      ],
+      [
+        "TestMetalSDPATraining",
+        "test_short_training_vjp_regression"
+      ],
+      [
+        "TestMetalSDPATraining",
+        "test_training_query_length_boundaries"
+      ],
+      [
+        "TestMetalSDPATraining",
+        "test_training_neighboring_head_dimensions"
+      ],
+      [
+        "TestMetalSDPATraining",
+        "test_training_partial_query_and_key_tiles"
+      ],
+      [
+        "TestMetalSDPATraining",
+        "test_short_training_asymmetric_head_dimensions"
+      ],
+      [
+        "TestMetalSDPATraining",
+        "test_float32_head_dim_192_threadgroup_memory"
+      ],
+      [
+        "TestMetalSDPATraining",
+        "test_short_training_strided_inputs_and_cotangent"
+      ],
+      [
+        "TestMetalSDPATraining",
+        "test_short_training_more_queries_than_keys"
+      ],
+      [
+        "TestMetalSDPATraining",
+        "test_short_training_low_precision"
+      ],
+      [
+        "TestMetalSDPATraining",
+        "test_short_training_sequence_isolation"
+      ],
+      [
+        "TestMetalSDPATraining",
+        "test_short_training_array_mask_fallback"
+      ],
+      [
+        "TestMetalSDPATraining",
+        "test_training_rejects_vector_only_head_dimensions"
+      ],
+      [
+        "TestMetalSDPATraining",
+        "test_inference_keeps_vector_head_dimensions"
+      ]
+    ],
+    "test_source_sha256": {
+      "source/python/tests/conftest.py": "22cfaeb2e969292906041fc14093ef21ce7fc8e27ee2f8e47d4d0b50c59f94a5",
+      "source/python/tests/mlx_distributed_tests.py": "b4033866113c9cde70cfcbde9e34e4f61896a7b15411022f51db5cd40a86e7a5",
+      "source/python/tests/mlx_tests.py": "a819a52ffece76b3fcbbd54edfffe05f1f7e5a0bc0405d4a94e98e6ad42fcc83",
+      "source/python/tests/mpi_test_distributed.py": "cbdcfe5b57faa0e7d32e65ff61ef86ebfa7f558ff3ca7ec8371afda9dad9ab60",
+      "source/python/tests/nccl_test_distributed.py": "857d9d2eec0e328dfe91cfa53dd0c45c4c7151121d851d2e58f888064df7b03a",
+      "source/python/tests/ring_test_distributed.py": "4d2a727d26519d081646831c85fd8918398ceace846809d41eab86ea0963bcdf",
+      "source/python/tests/run.py": "022897b256c9de79537f0814d81ab27197f9b0bf32a9b3e6f2d9f04ed311b1a5",
+      "source/python/tests/test_array.py": "7924745a66a9ed113ec437b6e7cbf3d381feefaafb562c87ed2545c302398e02",
+      "source/python/tests/test_autograd.py": "71974890117042087d22d78da3d4c90eaa313c5fcc719646091f228f57a709e0",
+      "source/python/tests/test_bf16.py": "1fa6d7a4ceadabbe1ad849e9d0ab7e71cc52a2c7f4e6a1a3680be1e0e0a886c1",
+      "source/python/tests/test_blas.py": "06b5d8690bd894def9a4dcc01c3f43c6aaaa1eadecaa5b4d42b2decc11ea8232",
+      "source/python/tests/test_compile.py": "cb5d13d8ec82768cc809d06bbb3dc780f0329c6db8df3a5e2b4b29c9eb2cbc8d",
+      "source/python/tests/test_config.py": "bc78f9433ce95bc47db01ba6834ce24868c7c081ec9111c99eec4778dc4bde16",
+      "source/python/tests/test_constants.py": "863fe572a5537222c72035da68482d28c527508f9f0aad8e1692ea9c43c98732",
+      "source/python/tests/test_conv.py": "bba16448ede01942623716da5eab73ffa94f949031fbbbafc2e4f7e8ff9fd340",
+      "source/python/tests/test_conv_transpose.py": "75de1f2e33e4dc306bd282aa34619f90f5b490009a6c60b330d327d45ac992ea",
+      "source/python/tests/test_device.py": "e73015e6e2c09ae14413f4f14731bec0c4279c503a3ba93d1584e906b4996e81",
+      "source/python/tests/test_double.py": "98a2c4f9eafee8a597d4c579c7c232eb82bc3fd1e9d921f382afbb364579eb49",
+      "source/python/tests/test_einsum.py": "0c5735ec430706116fdce47d5c26c8b03ec259d666909c0744e72a5050ec9025",
+      "source/python/tests/test_eval.py": "02d5ad856a0bc0458261bbfa08cc087d3c3710f2f1e79e9d4a3a1e75d2fe2a31",
+      "source/python/tests/test_export_import.py": "da638b6addf2dab12694199291e48e1182942d4dc19b5e55802d735dc1cb1d5d",
+      "source/python/tests/test_extension.py": "3e9e512cd5c7ebb3e06eb7a832dfa63b8daf25f1cde0d13b348f85c3e15f1f63",
+      "source/python/tests/test_fast.py": "9d91dcec78dab47a72676264e71a0f347a7e712d727d1f19c7e5816b084232a9",
+      "source/python/tests/test_fast_gated_delta.py": "5c182417d4870d769bc1442106476ae200e27c7211382e546f4248372ef7e292",
+      "source/python/tests/test_fast_sdpa.py": "6c53a807056a12cf2c51bbd94ffc24828839bbbe14336bf1edadc25e7f9a99e7",
+      "source/python/tests/test_fast_sdpa_training.py": "e9c216656e281735caa8d41e4b8e6f375f3de4a1995de6fbe71187e3d5327925",
+      "source/python/tests/test_fft.py": "ca88585fb5317abb7daed749026b548de51902c27ee6b88544c706c18bf028fb",
+      "source/python/tests/test_gather_grad.py": "600e49f9a0feb9d5a6e649bbbc0c0efd48280969d96ba7a549efacc66ab89a2c",
+      "source/python/tests/test_graph.py": "fa5eb4ab84878c0a6aae4963fc5a7681704dbac819d3a43a6af7ba480db01f95",
+      "source/python/tests/test_init.py": "973a8f6e0266b4705f27a6552d0382e52911e27f1770c677cc47d3db695de0f4",
+      "source/python/tests/test_linalg.py": "0dcc92004c8bb248ac8dc9605e386ab700112471b185b317c147bb093665c222",
+      "source/python/tests/test_load.py": "87fb0775ff49ec914a833c66a33c4e4c663a62b28f1132a23d90e1d886cb07f9",
+      "source/python/tests/test_losses.py": "15faf6aef705c212383276dbab38075519be8fd002498e5b3b07275cd6fb2dc1",
+      "source/python/tests/test_memory.py": "f3103f665ad127e75d8645447d51d69a431e7ed77692615e5b2b666eeb6852e9",
+      "source/python/tests/test_nn.py": "b7f9460f0191ec8d7dc211305be966fc16950bd0b76c23db6f979a065c05e11e",
+      "source/python/tests/test_ops.py": "c021ecb77fe20a941988baa65203b5fd97786d0048b9d6f82551f2c497eaedd9",
+      "source/python/tests/test_optimizers.py": "cedc34305053a14fcfc2f24651c08bedeb5f23d4c9c54d37658d2d41f47e1559",
+      "source/python/tests/test_quantized.py": "79c13113e3ce7dd8f21bb9f2f08363072e8ab06923d36749774719ac4d90e8b0",
+      "source/python/tests/test_random.py": "2633a7afff08e10895e61faec5afec35ddee359a32954389d41cfb37b686180c",
+      "source/python/tests/test_reduce.py": "db4e9198b6960d31e439081f922ad6005d78770ffa4365bfb26adefceb2232a7",
+      "source/python/tests/test_threads.py": "6483656e6bbfaa59b03ac77d3da87171bc6bfc53ef4bb908450043405b95f6cb",
+      "source/python/tests/test_tree.py": "4eea4013bbaf29aa42fc396858d4e8a492691e32f70e306460aa2d1fe333e201",
+      "source/python/tests/test_upsample.py": "69e44456544df4f5e97c906ea2df990dd61853d55427667493cc7395b1fa34e9",
+      "source/python/tests/test_vmap.py": "e5bb6535ac7f59fd3f6260faa30df8976c074dd5ca2aee61b6effd40b5579b28",
+      "source/python/tests/test_zero_copy.py": "c5d7ea3d03925b3167e1dcd886b7a28683ae419b84424f51070be806fe51a1dc",
+      "source/python/tests/xp-tests/skips.txt": "65135de7a7e870cd624fd4690d7f07ee8a155ab055685c2328e69ead2991df02",
+      "source/python/tests/xp-tests/xfail.txt": "bad50ef7078c2c957f53e2bdfc27fee2468848ca75a023949847010d1b8b11a4",
+      "source/tests/CMakeLists.txt": "ba2f193007855025f53ddf9a5e0c748847c88d3e0be04490b05ad68358b6d9ec",
+      "source/tests/allocator_tests.cpp": "3b229ead81a3645c12b06d43944d669741541fdf8b4c665db1782b200fea5c0a",
+      "source/tests/arg_reduce_tests.cpp": "e96966d7750b90c0ade343df7c2c7f9e68bcda954144b84d148704fb1e6f4649",
+      "source/tests/array_tests.cpp": "6c88668b138d443094e9a27638aad0d802be19d1a5aa9f32859bbb9ab028a02a",
+      "source/tests/autograd_tests.cpp": "4386cfed33d2e672981eb8139f454bc38e71c64bf46f512d0d221cfcc6b812e7",
+      "source/tests/blas_tests.cpp": "39b7225fefd50fcc4da8b6eb0dfa7e7c8c3f38055748c79b75dd62643698cdfa",
+      "source/tests/compile_tests.cpp": "15e645a209daa2459d22b3478d288d76afcdd19087334f0651059ac15f0c1ea9",
+      "source/tests/config_tests.cpp": "e99862ed1448dd997b1b0aaed57290e5373cb74005583f0981f84ac7cd284c49",
+      "source/tests/creations_tests.cpp": "29c4257de5c17bcc01919fc2fbe5fcd34a6923daaefc81fe0ed7fdb7b0e974ba",
+      "source/tests/cuda_tests.cpp": "fb9ee059a014b2cf4d29de59d86911e154a5f97b1c26eeb13b2609f3cf27fceb",
+      "source/tests/custom_vjp_tests.cpp": "3def0350c2aded66159f2b175544f2b116f4d5239f39ada811ac0b957d95e8ba",
+      "source/tests/device_tests.cpp": "36ee24f8dec6d6c3032b17556aee5fa46de83af814d37e54a5caeaa8b9ad1f15",
+      "source/tests/einsum_tests.cpp": "373214f3b6b06d40fc228c9434ed84398454e5fddef37107d5f00cdcec5ba1c7",
+      "source/tests/eval_tests.cpp": "a4c03f8a155a498dbb58b5b489d7ef41b2ba971b8cecd40af734aee312e58a4e",
+      "source/tests/export_import_tests.cpp": "3ad2d40d2dbf0e8a15d7eba5885ce67b1e35cbe5cc951d18a5579955e5cea770",
+      "source/tests/fft_tests.cpp": "4c9fd64c1eaf3088abe1ff403412d7fdd30935ac62cea35f6c5ba9f6bffe5ebc",
+      "source/tests/gpu_tests.cpp": "e79b9a16754d93ad799f1cdd6af6e4e40b51d75e5f2713931b5416eebafc3b36",
+      "source/tests/linalg_tests.cpp": "8a763e4b1a5fd5ca7bb791884079434068c7f5e62ccb1f93d968fe3baeee8987",
+      "source/tests/load_tests.cpp": "aa7f467797ce2f35a52ac00eeca8f506b2510a26c587bf813400ffc12d21ea1d",
+      "source/tests/ops_tests.cpp": "c41c7410d93848042a1edb1e211cd8d92372dd2972ca9cd46da326d8d32161a8",
+      "source/tests/random_tests.cpp": "3fc4e7fb0481fff61dbe6b3776b152ef018e142db89bdc7b9bedbcc9c2374e9d",
+      "source/tests/residency_tests.cpp": "94635fecde0a1767357bad273c68928141e48f01c0b0c04d6aebcd9577315bf7",
+      "source/tests/scheduler_tests.cpp": "e38de9abb54f9da5904edac72e674488b73b3a91989ab54ba3c68147578684a3",
+      "source/tests/tests.cpp": "d95306ac565afacc423c12dfd688f192450a7fb7804eb43ca4cb90b087968023",
+      "source/tests/utils_tests.cpp": "5c09d3626d7b0c58fa5a08d96ee6e1b9a2f4a9f8141a1e539850e7c804418cda",
+      "source/tests/vmap_tests.cpp": "21fc593403a63e15409ff326b1756a5c335d82d255ab9126500750bfa53d775a"
+    },
+    "cpp_case_count": 305,
+    "cpp_assertions": 4792,
+    "python_subtests": 17701,
+    "test_compatibility_contract_sha256": "9c9df29cf7fc02b76330966a06a37681376b1c68bc47b7e4ac95b78a146a46da"
+  }
+}

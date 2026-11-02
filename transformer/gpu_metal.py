@@ -150,6 +150,7 @@ def _library():
 
 class Backend:
     name = "metal"
+    shader_source = None
 
     def __init__(self, initial_flat, max_batch=16, max_length=32, *, kernel_policy=None):
         from transformer.gpu_policy import bundle, controls, defines, identity
@@ -167,7 +168,8 @@ class Backend:
         self._lib = _library()
         policies = bundle(kernel_policy, spec.WIDTH)
         version = max(p["schema"] for p in policies.values())
-        source = SHADERS.read_bytes() + b"\n" + OPTIMIZED_SHADERS.read_bytes()
+        shader_source = SHADERS if self.shader_source is None else self.shader_source
+        source = shader_source.read_bytes() + b"\n" + OPTIMIZED_SHADERS.read_bytes()
         if version == 3:
             source += b"\n" + QKV_SHADERS.read_bytes()
         training_source = defines(policies["training"]) + source

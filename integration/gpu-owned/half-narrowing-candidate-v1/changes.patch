@@ -1,0 +1,99 @@
+diff --git a/torch/headeronly/util/Half.h b/torch/headeronly/util/Half.h
+--- a/torch/headeronly/util/Half.h
++++ b/torch/headeronly/util/Half.h
+@@ -496,23 +496,35 @@
+ }
+ #endif
+ 
++namespace detail {
++// Keep the existing FP32 arithmetic and make its final storage conversion
++// explicit.
++inline C10_HOST_DEVICE Half half_from_float(float value) {
++#if defined(__aarch64__) && !defined(__CUDACC__)
++  return Half(static_cast<float16_t>(value));
++#else
++  return Half(value);
++#endif
++}
++} // namespace detail
++
+ /// Arithmetic
+ 
+ inline C10_HOST_DEVICE Half operator+(const Half& a, const Half& b) {
+-  return static_cast<float>(a) + static_cast<float>(b);
++  return detail::half_from_float(static_cast<float>(a) + static_cast<float>(b));
+ }
+ 
+ inline C10_HOST_DEVICE Half operator-(const Half& a, const Half& b) {
+-  return static_cast<float>(a) - static_cast<float>(b);
++  return detail::half_from_float(static_cast<float>(a) - static_cast<float>(b));
+ }
+ 
+ inline C10_HOST_DEVICE Half operator*(const Half& a, const Half& b) {
+-  return static_cast<float>(a) * static_cast<float>(b);
++  return detail::half_from_float(static_cast<float>(a) * static_cast<float>(b));
+ }
+ 
+ inline C10_HOST_DEVICE Half operator/(const Half& a, const Half& b)
+     __ubsan_ignore_float_divide_by_zero__ {
+-  return static_cast<float>(a) / static_cast<float>(b);
++  return detail::half_from_float(static_cast<float>(a) / static_cast<float>(b));
+ }
+ 
+ inline C10_HOST_DEVICE Half operator-(const Half& a) {
+@@ -522,7 +534,7 @@
+ #elif defined(__SYCL_DEVICE_ONLY__)
+   return -c10::bit_cast<sycl::half>(a);
+ #else
+-  return -static_cast<float>(a);
++  return detail::half_from_float(-static_cast<float>(a));
+ #endif
+ }
+ 
+diff --git a/torch/headeronly/util/complex.h b/torch/headeronly/util/complex.h
+--- a/torch/headeronly/util/complex.h
++++ b/torch/headeronly/util/complex.h
+@@ -552,7 +552,8 @@
+   C10_HOST_DEVICE explicit inline complex(const Half& real, const Half& imag)
+       : real_(real), imag_(imag) {}
+   C10_HOST_DEVICE inline complex(const c10::complex<float>& value)
+-      : real_(value.real()), imag_(value.imag()) {}
++      : real_(detail::half_from_float(value.real())),
++        imag_(detail::half_from_float(value.imag())) {}
+ 
+   // Conversion operator
+   inline C10_HOST_DEVICE operator c10::complex<float>() const {
+@@ -567,14 +568,18 @@
+   }
+ 
+   C10_HOST_DEVICE complex<Half>& operator+=(const complex<Half>& other) {
+-    real_ = static_cast<float>(real_) + static_cast<float>(other.real_);
+-    imag_ = static_cast<float>(imag_) + static_cast<float>(other.imag_);
++    real_ = detail::half_from_float(
++        static_cast<float>(real_) + static_cast<float>(other.real_));
++    imag_ = detail::half_from_float(
++        static_cast<float>(imag_) + static_cast<float>(other.imag_));
+     return *this;
+   }
+ 
+   C10_HOST_DEVICE complex<Half>& operator-=(const complex<Half>& other) {
+-    real_ = static_cast<float>(real_) - static_cast<float>(other.real_);
+-    imag_ = static_cast<float>(imag_) - static_cast<float>(other.imag_);
++    real_ = detail::half_from_float(
++        static_cast<float>(real_) - static_cast<float>(other.real_));
++    imag_ = detail::half_from_float(
++        static_cast<float>(imag_) - static_cast<float>(other.imag_));
+     return *this;
+   }
+ 
+@@ -583,8 +588,8 @@
+     auto b = static_cast<float>(imag_);
+     auto c = static_cast<float>(other.real());
+     auto d = static_cast<float>(other.imag());
+-    real_ = a * c - b * d;
+-    imag_ = a * d + b * c;
++    real_ = detail::half_from_float(a * c - b * d);
++    imag_ = detail::half_from_float(a * d + b * c);
+     return *this;
+   }
+ };

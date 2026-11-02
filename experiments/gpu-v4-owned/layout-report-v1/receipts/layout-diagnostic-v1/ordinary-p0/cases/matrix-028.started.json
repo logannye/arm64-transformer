@@ -1,0 +1,13 @@
+{
+  "case": {
+    "dtype": "float16",
+    "layout": "transposed",
+    "operation": "mm",
+    "shape": [
+      8,
+      64,
+      12
+    ]
+  },
+  "complete": false
+}

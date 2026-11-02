@@ -174,6 +174,8 @@ def _loss(model, tokens, targets):
 
 
 class Backend:
+    model_type = Transformer
+
     def __init__(self, initial_flat, max_batch=16, max_length=CONTEXT):
         self.max_batch = _integer(max_batch, 1, 16, "max_batch")
         self.max_length = _integer(max_length, 1, CONTEXT, "max_length")
@@ -189,7 +191,7 @@ class Backend:
                 if mx.config.get(name, -1) != 0:
                     raise RuntimeError(f"Cached MLX configuration does not match {name}=0")
         self._compilation_probe = verify_compilation(mx)
-        self.model = Transformer(initial_flat)
+        self.model = self.model_type(initial_flat)
         self.optimizer = optim.Adam(
             learning_rate=LR, betas=(0.9, 0.999), eps=1e-8, bias_correction=True
         )
@@ -199,8 +201,13 @@ class Backend:
         self._pending = []
         self.step = 0
         loss_grad = nn.value_and_grad(self.model, _loss)
+        self._training_python_traces = 0
+        self._training_trace_shapes = {}
 
         def train(tokens, targets):
+            self._training_python_traces += 1
+            shape = f"b{tokens.shape[0]}-t{tokens.shape[1]}"
+            self._training_trace_shapes[shape] = self._training_trace_shapes.get(shape, 0) + 1
             (loss, logits), gradients = loss_grad(self.model, tokens, targets)
             self.optimizer.update(self.model, gradients)
             return loss, logits, gradients
@@ -550,10 +557,22 @@ class Backend:
         }
 
     def capabilities(self):
+        versions = {}
+        for package in ("mlx", "mlx-metal"):
+            try:
+                versions[package] = importlib.metadata.version(package)
+            except importlib.metadata.PackageNotFoundError:
+                # Full source bundles are authenticated by their source/native
+                # manifests. They must not invent installed-wheel metadata.
+                versions[package] = None
         return {
             "backend": "mlx",
-            "mlx": importlib.metadata.version("mlx"),
-            "mlx_metal": importlib.metadata.version("mlx-metal"),
+            "mlx": versions["mlx"],
+            "mlx_metal": versions["mlx-metal"],
+            "version_authority": (
+                "Installed wheel metadata when present; authenticated source/native manifests "
+                "are required for full source bundles"
+            ),
             "device": str(mx.gpu),
             "device_info": mx.device_info(),
             "implementation": "compiled standard MLX fast LayerNorm/SDPA/autodiff/Adam",

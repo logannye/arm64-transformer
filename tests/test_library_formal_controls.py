@@ -1,0 +1,334 @@
+"""Formal controls reject unqualified work and preserve numerical failures."""
+
+import copy
+import importlib.util
+import struct
+from pathlib import Path
+
+import numpy as np
+import pytest
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def load(name):
+    spec = importlib.util.spec_from_file_location(
+        "test_library_formal_" + name, ROOT / "integration/library-study-v1" / (name + ".py")
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+CAM, AUDIT = load("campaign"), load("audit_checkpoint")
+
+
+def test_repeats_ignore_only_timing_and_reject_checkpoint_or_loss_changes(tmp_path):
+    left, right = tmp_path / "first", tmp_path / "second"
+    for directory, timing in ((left, 1.0), (right, 3.0)):
+        directory.mkdir()
+        for name in (
+            "best.f32",
+            "last.f32",
+            "adam_m.f32",
+            "adam_v.f32",
+            "test_logits.f32",
+            "inference_logits.f32",
+        ):
+            (directory / name).write_bytes(b"same")
+        (directory / "history.f64").write_bytes(struct.pack("<24d", *([2.0, 1.0, timing] * 8)))
+    assert CAM.repeat_pair(left, right, "mps")["passed"]
+    (right / "last.f32").write_bytes(b"different")
+    assert not CAM.repeat_pair(left, right, "mps")["passed"]
+    (right / "last.f32").write_bytes(b"same")
+    raw = bytearray((right / "history.f64").read_bytes())
+    raw[8:16] = struct.pack("<d", 1.1)
+    (right / "history.f64").write_bytes(raw)
+    result = CAM.repeat_pair(left, right, "mps")
+    assert not result["passed"] and not result["checks"]["history_without_timings"]
+    (right / "history.f64").write_bytes(b"truncated")
+    with pytest.raises(ValueError, match="history"):
+        CAM.repeat_pair(left, right, "mps")
+
+
+def test_storage_budget_retains_both_checkpoints_and_all_five_arms():
+    estimate = CAM.storage_estimate()
+    raw = 240 * 2 * 256 * 32 * 128 * (5 * 4 + 8)
+    assert estimate["components_bytes"]["five_engine_and_fp64_best_and_last"] == raw
+    assert estimate["required_free_bytes"] > raw
+
+
+@pytest.mark.parametrize(
+    "name", ["fit", "admission_worker", "checkpoint_replay", "audit_checkpoint"]
+)
+def test_closed_formal_entry_cannot_read_job_or_open_stream(monkeypatch, tmp_path, name):
+    module = load(name)
+    monkeypatch.setattr(module.C, "EXECUTION_SUPPORTED", False)
+    with pytest.raises(ValueError, match="not implemented"):
+        module.execute(tmp_path / "no-authority.json", "0" * 64)
+    assert not list(tmp_path.iterdir())
+
+
+def replay_arrays():
+    arrays = {}
+    for engine in (*AUDIT.R.ENGINES, "oracle"):
+        dtype = np.float64 if engine == "oracle" else np.float32
+        value = {name: np.zeros((256, 32, 128), dtype) for name in ("validation", "test")}
+        value["b1"] = np.zeros((1, 32, 128), dtype)
+        for split in ("validation", "test"):
+            if engine == "oracle":
+                value[split + "_torch_fp64"] = np.zeros((2, 32, 128), np.float64)
+            else:
+                value[split + "_nll"] = np.array(np.log(128), np.float64)
+        arrays[engine] = value
+    return arrays
+
+
+def test_all_coordinate_gate_keeps_accuracy_compatibility_and_exact_replay_separate(tmp_path):
+    arrays = replay_arrays()
+    info = dict(
+        best_epoch=1,
+        history=np.full((8, 3), np.log(128)),
+        logits=arrays["cpu_torch"]["test"].copy(),
+    )
+    rows = {name: np.zeros((256, 33), np.int32) for name in ("validation", "test")}
+    result = AUDIT.numerical(arrays, info, rows, "best.f32", "cpu_torch", tmp_path)
+    assert result["passed"] and result["quality"]["tokens"] == 8192
+    arrays["mps"]["validation"][255, 31, 127] = np.float32(0.5)
+    result = AUDIT.numerical(arrays, info, rows, "best.f32", "cpu_torch", tmp_path)
+    assert not result["passed"]
+    assert result["fp64"]["mps/validation"]["failed_coordinates"] == 1
+    assert result["integrity"]["own_test_replay_exact"]
+    arrays["mps"]["validation"].fill(0)
+    # A small changed saved byte may pass FP64 tolerance but must fail exact replay.
+    info["logits"][0, 0, 0] = np.float32(1e-7)
+    result = AUDIT.numerical(arrays, info, rows, "best.f32", "cpu_torch", tmp_path)
+    assert not result["passed"] and all(c["passed"] for c in result["fp64"].values())
+    assert not result["integrity"]["own_test_replay_exact"]
+
+
+def test_last_checkpoint_compares_to_last_epoch_and_double_oracle_failure_is_blocking(tmp_path):
+    arrays = replay_arrays()
+    rows = {name: np.zeros((256, 33), np.int32) for name in ("validation", "test")}
+    info = dict(
+        best_epoch=1,
+        history=np.full((8, 3), np.log(128)),
+        logits=arrays["cpu_torch"]["test"].copy(),
+    )
+    info["history"][-1, 1] = 2
+    result = AUDIT.numerical(arrays, info, rows, "last.f32", "cpu_torch", tmp_path)
+    assert not result["passed"] and not result["integrity"]["own_validation_history_exact"]
+    info["history"][-1, 1] = np.log(128)
+    assert AUDIT.numerical(arrays, info, rows, "last.f32", "cpu_torch", tmp_path)["passed"]
+    arrays["oracle"]["validation_torch_fp64"][1, 31, 127] = 1e-8
+    result = AUDIT.numerical(arrays, info, rows, "last.f32", "cpu_torch", tmp_path)
+    assert not result["passed"] and not result["oracle"]["validation"]["passed"]
+
+
+def test_missing_or_wrong_replay_dtype_is_rejected(tmp_path):
+    arrays = replay_arrays()
+    arrays["metal"]["test"] = arrays["metal"]["test"].astype(np.float64)
+    info = dict(best_epoch=1, history=np.ones((8, 3)), logits=np.zeros((256, 32, 128), np.float32))
+    rows = {name: np.zeros((256, 33), np.int32) for name in ("validation", "test")}
+    with pytest.raises(ValueError, match="dtype/shape"):
+        AUDIT.numerical(arrays, info, rows, "best.f32", "cpu_torch", tmp_path)
+
+
+def test_cell_authority_does_not_accept_manifest_or_output_path_substitution(monkeypatch, tmp_path):
+    module = AUDIT.R
+    cell = dict(id="cell", width=32, engine="cpu_torch", repeat=1, seed=42)
+    manifest_binding, admission = dict(path="manifest"), dict(path="admission")
+    receipt = dict(
+        schema="frozen-library-formal-cell-v1",
+        cell=cell,
+        complete=True,
+        scope="formal_measurement",
+        manifest=manifest_binding,
+        admission=admission,
+        artifacts={"history.f64": dict(path=str(tmp_path / "elsewhere"))},
+    )
+    monkeypatch.setattr(module.F.PLAN, "load", lambda binding: copy.deepcopy(receipt))
+    binding = dict(path=str(tmp_path / "cell.json"))
+    manifest = dict(comparison=dict(cells=[cell]))
+    with pytest.raises(ValueError, match="path differs"):
+        module.cell_receipt(binding, manifest, manifest_binding, admission)
+    receipt["manifest"] = dict(path="other-manifest")
+    with pytest.raises(ValueError, match="Foreign"):
+        module.cell_receipt(binding, manifest, manifest_binding, admission)
+
+
+def test_summary_uses_all_six_fits_and_paired_seed_ratios():
+    report = load("report")
+    rows = []
+    for cell in CAM.C.comparison()["cells"]:
+        rows.append(
+            dict(
+                cell=cell,
+                training_seconds=2 if cell["engine"] == "cpu_torch" else 1,
+                latency_p50=0.002 if cell["engine"] == "cpu_torch" else 0.001,
+                latency_p95=0.003,
+                quality=dict(nll=1, accuracy=0.5),
+            )
+        )
+    result = report.summarize(rows)
+    assert len(result["groups"]) == len(result["cpu_torch_relative"]) == 20
+    native = next(r for r in result["cpu_torch_relative"] if r["engine"] == "cpu_arm64")
+    assert (
+        native["median_paired_training_speedup"] == native["median_paired_resident_b1_speedup"] == 2
+    )
+    assert [r["seed"] for r in native["paired_seeds"]] == [42, 43, 44]
+    with pytest.raises(ValueError, match="denominator"):
+        report.summarize(rows[:-1])
+
+
+def test_actual_training_graph_reopens_bound_transport_and_rejects_trace_or_path_changes(tmp_path):
+    audit = load("audit")
+    relative = "integration/trained-precision/graph_evidence.py"
+    source = ROOT / relative
+    spec = importlib.util.spec_from_file_location("test_postrun_graph_transport", source)
+    transport = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(transport)
+    role = dict(root=str(ROOT), files={relative: audit.C.binding(source)["sha256"]})
+    destination = tmp_path / "compiled-training"
+    destination.mkdir()
+    row = transport.write(destination, "gradient", "digraph { a [label=Compiled]; }")
+    proof = dict(
+        graph=audit.C.binding(destination / row["path"]), transport=row, python_trace_count=1
+    )
+    assert audit.training_graph(role, proof, tmp_path)["verified"]
+    with pytest.raises(ValueError, match="exactly once"):
+        audit.training_graph(role, dict(proof, python_trace_count=2), tmp_path)
+    with pytest.raises(ValueError, match="path or transport"):
+        audit.training_graph(role, proof, tmp_path / "substituted")
+    (destination / row["path"]).write_text("digraph { wrong; }")
+    with pytest.raises(ValueError, match="changed"):
+        audit.training_graph(role, proof, tmp_path)
+
+
+@pytest.mark.parametrize("engine", ["cpu_arm64", "cpu_torch", "mps", "mlx", "metal"])
+@pytest.mark.parametrize("fail", [False, True])
+def test_checkpoint_replay_preserves_full_splits_own_loss_b1_and_cleanup(monkeypatch, engine, fail):
+    import torch
+
+    from transformer import validate
+
+    replay = load("checkpoint_replay")
+    monkeypatch.setattr(replay, "configure_torch", lambda module: None)
+    calls = dict(
+        evaluations=0, forwards=0, closed=False, datasets=0, indices=0, gathers=0, uploads=0
+    )
+
+    class Backend:
+        def upload_inputs(self, tokens, targets=None):
+            assert tokens.shape == (1, 32) and targets is None
+            calls["uploads"] += 1
+            return tokens
+
+        def upload_dataset(self, rows):
+            assert rows.shape == (256, 33) and rows.dtype == np.int32
+            calls["datasets"] += 1
+            return rows
+
+        def upload_indices(self, indices):
+            assert np.array_equal(indices, np.arange(256, dtype=np.int32))
+            calls["indices"] += 1
+            return indices
+
+        def gather_batch(self, dataset, indices, offset, count):
+            calls["gathers"] += 1
+            selected_rows = dataset[indices[offset : offset + count]]
+            assert selected_rows.shape == (16, 33)
+            batch = selected_rows[:, :-1]
+            assert batch.strides == (33 * 4, 4)
+            return batch
+
+        def evaluate(self, batch):
+            calls["evaluations"] += 1
+            if fail:
+                raise ValueError("synthetic replay failure")
+            return np.array(3, np.float32), np.full((len(batch), 32, 128), 2, np.float32)
+
+        def forward(self, *args):
+            calls["forwards"] += 1
+            if fail:
+                raise ValueError("synthetic replay failure")
+            return np.full((1, 32, 128), 2, np.float32)
+
+        def to_numpy(self, value):
+            return value
+
+        def capabilities(self):
+            return {}
+
+        def close(self):
+            calls["closed"] = True
+
+    backend = Backend()
+    selected = []
+
+    def create(runtime, selected_engine, parameters, **limits):
+        selected.append((selected_engine, limits))
+        return backend
+
+    if engine == "cpu_torch":
+        from torch.nn import functional
+
+        from transformer import library_training
+
+        class Model:
+            def load_flat(self, parameters):
+                return self
+
+            def __call__(self, tokens):
+                calls["forwards"] += 1
+                if fail:
+                    raise ValueError("synthetic replay failure")
+                assert tokens.dtype == torch.int64
+                assert tokens.stride() == (33, 1)
+                return torch.full((len(tokens), 32, 128), 2, dtype=torch.float32)
+
+        def model_type(selected_engine):
+            selected.append(selected_engine)
+            return Model
+
+        def cross_entropy(logits, targets):
+            calls["evaluations"] += 1
+            assert targets.shape == (16 * 32,) and targets.stride() == (1,)
+            return torch.tensor(3, dtype=torch.float32)
+
+        monkeypatch.setattr(library_training, "torch_model_type", model_type)
+        monkeypatch.setattr(functional, "cross_entropy", cross_entropy)
+    elif engine == "cpu_arm64":
+        monkeypatch.setattr(replay.W.N, "load", lambda *args: backend)
+        monkeypatch.setattr(validate, "workspace_tensor", lambda value, name: value[0])
+        backend.call = lambda *args: 3.0
+    else:
+        monkeypatch.setattr(replay.E, "create_backend", create)
+        monkeypatch.setattr(replay.E, "validate_capabilities", lambda e, c: c)
+        monkeypatch.setattr(replay.E, "loaded_metal_library", lambda r: {})
+    rows = dict(validation=np.zeros((256, 33), np.int32), test=np.zeros((256, 33), np.int32))
+    if fail:
+        with pytest.raises(ValueError, match="synthetic replay failure"):
+            replay.replay_values(engine, np.zeros(7, np.float32), rows, runtime=None, assets={})
+    else:
+        result, proof = replay.replay_values(
+            engine, np.zeros(7, np.float32), rows, runtime=None, assets={}
+        )
+        for split in ("validation", "test"):
+            assert result[split].shape == (256, 32, 128) and result[split].dtype == np.float32
+            assert result[split + "_nll"].shape == () and result[split + "_nll"].dtype == np.float64
+            assert float(result[split + "_nll"]) == 3
+        assert result["b1"].shape == (1, 32, 128)
+        assert proof["batch_transport"] == replay.TRANSPORT[engine]
+        if engine == "cpu_arm64":
+            assert calls["forwards"] == 513
+        elif engine == "cpu_torch":
+            assert calls["evaluations"] == 32 and calls["forwards"] == 33
+        else:
+            assert calls["evaluations"] == 32 and calls["forwards"] == 1
+            assert calls["datasets"] == calls["indices"] == 2
+            assert calls["gathers"] == 32 and calls["uploads"] == 1
+    if engine == "cpu_torch":
+        assert selected == [engine]
+    elif engine != "cpu_arm64":
+        assert calls["closed"] and selected == [(engine, dict(max_batch=16))]

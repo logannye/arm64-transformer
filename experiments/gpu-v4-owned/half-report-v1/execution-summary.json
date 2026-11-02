@@ -1,0 +1,82 @@
+{
+  "admission_stream_opened": false,
+  "complete": true,
+  "execution_integrity_passed": true,
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "plan_sha256": "c5cd2c76385c72b841bbc7d370dd84f0a5c6f75865044e22ec78bf8922bbccf6",
+  "planned_workers": [
+    0,
+    1
+  ],
+  "protocol": "gpu-owned-half-index-execution-v1",
+  "reference_agreement_passed": true,
+  "schema": "gpu-owned-half-index-execution-v1",
+  "scope": "Synthetic index-gradient localization; no historical RNG reconstruction, baseline substitution, admission, or timing claim",
+  "workers": [
+    {
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/run_half_diagnostic.py",
+        "--workspace",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p0",
+        "--worker",
+        "0",
+        "--plan",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/plan.json",
+        "--plan-sha256",
+        "c5cd2c76385c72b841bbc7d370dd84f0a5c6f75865044e22ec78bf8922bbccf6"
+      ],
+      "diagnostic_summary": {
+        "all_dual_fp64_pass": true,
+        "cases": 40,
+        "cpu_mps_tolerance_failures": 120,
+        "cpu_serial_order_disagreements": 0,
+        "mps_nonrepeatable_operation_cases": 0
+      },
+      "execution_integrity_passed": true,
+      "process_index": 0,
+      "reference_agreement_passed": true,
+      "result": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p0/result.json",
+      "returncode": 0,
+      "sha256": "940f2a830acbf911a03d88b12779ffc1ed3d85abf97af931d7ee27d517506be8"
+    },
+    {
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/run_half_diagnostic.py",
+        "--workspace",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1",
+        "--worker",
+        "1",
+        "--plan",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/plan.json",
+        "--plan-sha256",
+        "c5cd2c76385c72b841bbc7d370dd84f0a5c6f75865044e22ec78bf8922bbccf6"
+      ],
+      "diagnostic_summary": {
+        "all_dual_fp64_pass": true,
+        "cases": 40,
+        "cpu_mps_tolerance_failures": 120,
+        "cpu_serial_order_disagreements": 0,
+        "mps_nonrepeatable_operation_cases": 0
+      },
+      "execution_integrity_passed": true,
+      "process_index": 1,
+      "reference_agreement_passed": true,
+      "result": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/half-index-v1/p1/result.json",
+      "returncode": 0,
+      "sha256": "ada5f65291fce1110f6f5b00dae06875821d5bb1443f2819320470b76dcc388f"
+    }
+  ]
+}

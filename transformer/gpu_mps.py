@@ -98,6 +98,8 @@ def _flat(values, label):
 class Backend:
     """A fixture-compatible model and ordinary torch.optim.Adam on MPS."""
 
+    model_type = Transformer
+
     def __init__(self, initial_flat, max_batch=16, max_length=CONTEXT):
         self.max_batch = _integer(max_batch, 1, 16, "max_batch")
         self.max_length = _integer(max_length, 1, CONTEXT, "max_length")
@@ -109,7 +111,7 @@ class Backend:
             torch.set_num_interop_threads(1)
         torch.use_deterministic_algorithms(True)
         self.device = torch.device("mps")
-        self.model = Transformer().load_flat(initial_flat).to(self.device)
+        self.model = self.model_type().load_flat(initial_flat).to(self.device)
         self.optimizer = torch.optim.Adam(
             self.model.parameters(),
             lr=LR,

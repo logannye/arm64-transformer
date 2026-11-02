@@ -1,0 +1,14 @@
+{
+  "schema": "mlx-test-torch-version-compatibility-v1",
+  "original_manifest_sha256": "97cb2ade3efa1364ed7458e99c41367f6674ee6d199ee2d05ba3934bbadfe200",
+  "target": "source/python/tests/test_array.py",
+  "original_sha256": "b22f9653d0a4e585571323f7cf1bb894f6f09c5ed62d4b647bca1733bf39b2a1",
+  "patched_sha256": "7924745a66a9ed113ec437b6e7cbf3d381feefaafb562c87ed2545c302398e02",
+  "patch_sha256": "d61b0928b439b76819799368cb9c0ec29e185bc5acc36d9f72e3fa8b457a8674",
+  "native_build_run": 40978071574,
+  "native_compilation": false,
+  "native_source_changes": false,
+  "test_assertion_changes": false,
+  "test_eligibility_changes": false,
+  "formal_eligible": false
+}

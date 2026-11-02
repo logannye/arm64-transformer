@@ -1,0 +1,8 @@
+{
+  "prior_attempt": "joint-runtime-v2",
+  "new_attempt": "joint-runtime-v3",
+  "reason": "CPU/MPS dyadic values passed; postflight rejected a file identity change in newly created NumPy metadata. Exact cause is not established. Retry uses the unchanged helper and original wheel content anchors. No check is relaxed.",
+  "prior_summary_sha256": "28006a5e3b52b6aaee075f180956a83e74514f757e687dcae4792b3eb26537dd",
+  "driver_sha256": "eed7725382f01a4cdfb370aa902ca2e0eb60ae6f600aa9dad5dc2e380c6e9da3",
+  "formal_eligible": false
+}

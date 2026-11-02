@@ -1,0 +1,139 @@
+{
+  "admission_stream_opened": false,
+  "complete": true,
+  "execution_integrity_passed": true,
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "plan_sha256": "c515ea6bee9115b32ee65f3f78b9aec76e1251af547d0fc7380c74490ce003fc",
+  "schema": "gpu-owned-layout-execution-v1",
+  "workers": [
+    {
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/run_layout_diagnostic.py",
+        "--workspace",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/layout-diagnostic-v1/ordinary-p0",
+        "--mode",
+        "ordinary",
+        "--plan",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/layout-diagnostic-v1/plan.json",
+        "--plan-sha256",
+        "c515ea6bee9115b32ee65f3f78b9aec76e1251af547d0fc7380c74490ce003fc"
+      ],
+      "diagnostic_counts": {
+        "control_matrix_failures": 0,
+        "convolution_layout_failures": 6,
+        "guard_failures": 7,
+        "matrix_cases": 76,
+        "ordinary_matrix_failures": 12
+      },
+      "execution_integrity_passed": true,
+      "mode": "ordinary",
+      "process_index": 0,
+      "result": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/layout-diagnostic-v1/ordinary-p0/result.json",
+      "returncode": 0,
+      "sha256": "66dc4bf4aad0f4d52ae9a0147ecd28d58a020bbbf5a2f701883549c25a7da496"
+    },
+    {
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/run_layout_diagnostic.py",
+        "--workspace",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/layout-diagnostic-v1/ordinary-p1",
+        "--mode",
+        "ordinary",
+        "--plan",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/layout-diagnostic-v1/plan.json",
+        "--plan-sha256",
+        "c515ea6bee9115b32ee65f3f78b9aec76e1251af547d0fc7380c74490ce003fc"
+      ],
+      "diagnostic_counts": {
+        "control_matrix_failures": 0,
+        "convolution_layout_failures": 6,
+        "guard_failures": 7,
+        "matrix_cases": 76,
+        "ordinary_matrix_failures": 12
+      },
+      "execution_integrity_passed": true,
+      "mode": "ordinary",
+      "process_index": 1,
+      "result": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/layout-diagnostic-v1/ordinary-p1/result.json",
+      "returncode": 0,
+      "sha256": "c9f5b3b6c8999395c405245a155c8307afe607719f5ec442b3bd624fc428a95f"
+    },
+    {
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/run_layout_diagnostic.py",
+        "--workspace",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/layout-diagnostic-v1/metal32_diagnostic-p0",
+        "--mode",
+        "metal32_diagnostic",
+        "--plan",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/layout-diagnostic-v1/plan.json",
+        "--plan-sha256",
+        "c515ea6bee9115b32ee65f3f78b9aec76e1251af547d0fc7380c74490ce003fc"
+      ],
+      "diagnostic_counts": {
+        "control_matrix_failures": 0,
+        "convolution_layout_failures": 0,
+        "guard_failures": 7,
+        "matrix_cases": 76,
+        "ordinary_matrix_failures": 12
+      },
+      "execution_integrity_passed": true,
+      "mode": "metal32_diagnostic",
+      "process_index": 0,
+      "result": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/layout-diagnostic-v1/metal32_diagnostic-p0/result.json",
+      "returncode": 0,
+      "sha256": "6fb8558fe76b7cbe3f89f67a7324aa4ba50470b95fd351275b860202d3282cbe"
+    },
+    {
+      "command": [
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/upstream-integration-v2/mlx/runtime-env/bin/python",
+        "-I",
+        "-S",
+        "-B",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/outputs/arm64-transformer/integration/gpu-owned/run_layout_diagnostic.py",
+        "--workspace",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20",
+        "--output",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/layout-diagnostic-v1/metal32_diagnostic-p1",
+        "--mode",
+        "metal32_diagnostic",
+        "--plan",
+        "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/layout-diagnostic-v1/plan.json",
+        "--plan-sha256",
+        "c515ea6bee9115b32ee65f3f78b9aec76e1251af547d0fc7380c74490ce003fc"
+      ],
+      "diagnostic_counts": {
+        "control_matrix_failures": 0,
+        "convolution_layout_failures": 0,
+        "guard_failures": 7,
+        "matrix_cases": 76,
+        "ordinary_matrix_failures": 12
+      },
+      "execution_integrity_passed": true,
+      "mode": "metal32_diagnostic",
+      "process_index": 1,
+      "result": "/Users/logannye/Documents/Codex/2026-10-28/we-x20/work/gpu-v4-owned/layout-diagnostic-v1/metal32_diagnostic-p1/result.json",
+      "returncode": 0,
+      "sha256": "c8a2d42ad4bae33863e094d01ea092e30aead6205a85903030ac4f29dbe17a4a"
+    }
+  ]
+}

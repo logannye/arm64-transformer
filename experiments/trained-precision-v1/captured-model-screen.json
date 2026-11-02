@@ -1,0 +1,580 @@
+{
+  "schema": "trained-precision-captured-model-screen-v1",
+  "project_revision": "2c28aadc7340b3e317cba8078d7f1987986ad199",
+  "capture_sha256": "dd2edd8c773ce35ef610b7395a57ff50799e4f5c6b5cc0b6b50a377e30c1c262",
+  "runtime_identity_sha256": "5698e6f6f07655d54f249533e28aabdfa75af51f768fc9ff0c49b4ca65d2d3cd",
+  "controller_summary": {
+    "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/smoke-summary.json",
+    "sha256": "f37564d753500f5f0a3b842297dd605f0bc52a0257c4e97e269af6cbefd27642",
+    "bytes": 25509
+  },
+  "scope": "Two historical width-512 cases and one width-1024 FF1 regression per operation; not full coverage",
+  "total_cells": 24,
+  "candidate_cells": 12,
+  "candidate_cells_passed": 12,
+  "ordinary_cells": 12,
+  "ordinary_cells_passed": 1,
+  "separate_provenance_and_raw_audits": 48,
+  "records": [
+    {
+      "cell": {
+        "engine": "cpu_torch",
+        "width": 512,
+        "candidate": false,
+        "gradients": false,
+        "offset": 0,
+        "limit": 2
+      },
+      "numerics_passed": false,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/cpu_torch-512-ordinary-forward/result.json",
+        "sha256": "cd33d71d7b4418d5b532879170465f9f3c0bd464233c934e049625fbaa07d937"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-512-ordinary-forward-raw-audit.json",
+        "sha256": "cc02ddf2bca315b97a32f577b0db44cacf5fbb39bbf4fff57690c553268eea94"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-512-ordinary-forward-provenance-audit.json",
+        "sha256": "b8f6250cac59f9a4e530d0bdcce9fea78157852f82e5f2c7ae3942d340015cec"
+      }
+    },
+    {
+      "cell": {
+        "engine": "cpu_torch",
+        "width": 512,
+        "candidate": false,
+        "gradients": true,
+        "offset": 0,
+        "limit": 2
+      },
+      "numerics_passed": false,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/cpu_torch-512-ordinary-gradient/result.json",
+        "sha256": "18bb0880aa798d9e54e6429be0ec7b2c0585f4113c857cdedef52544b4f053ab"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-512-ordinary-gradient-raw-audit.json",
+        "sha256": "1742a447f71ec2a9e70ff3ed1fc8646163c0f0738da483c5813e54e280362d34"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-512-ordinary-gradient-provenance-audit.json",
+        "sha256": "16e901acf7614a4f5fdb97933b9b3bf0437e9218827e523e339ce9270a2092a5"
+      }
+    },
+    {
+      "cell": {
+        "engine": "cpu_torch",
+        "width": 512,
+        "candidate": true,
+        "gradients": false,
+        "offset": 0,
+        "limit": 2
+      },
+      "numerics_passed": true,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/cpu_torch-512-candidate-forward/result.json",
+        "sha256": "3b65d7d12c4323315ab0f07018c80c6d5d8307608e0cebe4f484317a3c303740"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-512-candidate-forward-raw-audit.json",
+        "sha256": "80774df1184ec7cae3394ebfa9db11921c105d36c52a391b9773b47d23f82b27"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-512-candidate-forward-provenance-audit.json",
+        "sha256": "a77d22809e544cb6c4fe99bd5818d429c6b88856c4e0a6d72a50461b947e0e0e"
+      }
+    },
+    {
+      "cell": {
+        "engine": "cpu_torch",
+        "width": 512,
+        "candidate": true,
+        "gradients": true,
+        "offset": 0,
+        "limit": 2
+      },
+      "numerics_passed": true,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/cpu_torch-512-candidate-gradient/result.json",
+        "sha256": "57cd7824776e5990ac81a3dcc8de5ef78b5e9fa6d81cde254e203e703c6a3f36"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-512-candidate-gradient-raw-audit.json",
+        "sha256": "8d46286431e9e2bde268c7a16a517ef91ebc81d8d0d23a66bb05885d5bd6a88c"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-512-candidate-gradient-provenance-audit.json",
+        "sha256": "bebb14af8d4f7c08c0f9c77afb38202aa32a5add0da23321e34752ec26abf0e9"
+      }
+    },
+    {
+      "cell": {
+        "engine": "cpu_torch",
+        "width": 1024,
+        "candidate": false,
+        "gradients": false,
+        "offset": 23,
+        "limit": 1
+      },
+      "numerics_passed": false,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/cpu_torch-1024-ordinary-forward/result.json",
+        "sha256": "6e34e9c764dbc8619408e8a58c83eee8e2953721b2ad12cab6fc2eb4ffea4b16"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-1024-ordinary-forward-raw-audit.json",
+        "sha256": "17a9c83ce055c25c5b0d9ed7065ab5a35983a515caea262085dc347b5ad357ae"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-1024-ordinary-forward-provenance-audit.json",
+        "sha256": "7c5b2fe60da07a966d9fc9b2fbdb7252aaa44e62693b351eb96305dee18e2ffe"
+      }
+    },
+    {
+      "cell": {
+        "engine": "cpu_torch",
+        "width": 1024,
+        "candidate": false,
+        "gradients": true,
+        "offset": 23,
+        "limit": 1
+      },
+      "numerics_passed": false,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/cpu_torch-1024-ordinary-gradient/result.json",
+        "sha256": "fcd93e1cccb03f19b2be9d691a75dfe2ca094a1ac84b3c822f8391fba778d14f"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-1024-ordinary-gradient-raw-audit.json",
+        "sha256": "532ee5d2c72aac531ba3f78c017fc95429040f4378ec42d0b532387619d133c2"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-1024-ordinary-gradient-provenance-audit.json",
+        "sha256": "3137f946fad4f2f6438eba69010d8611ad22c30ffdd305c7375bed9e8427a0a2"
+      }
+    },
+    {
+      "cell": {
+        "engine": "cpu_torch",
+        "width": 1024,
+        "candidate": true,
+        "gradients": false,
+        "offset": 23,
+        "limit": 1
+      },
+      "numerics_passed": true,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/cpu_torch-1024-candidate-forward/result.json",
+        "sha256": "337f743a0cc93eea49745576e9d5b7563287875f548bc96dfe73954190a87a40"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-1024-candidate-forward-raw-audit.json",
+        "sha256": "b16d50014957c8ed58aa8d6a78e7894ad9fc0bc3302f11b491754a07131a4d13"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-1024-candidate-forward-provenance-audit.json",
+        "sha256": "d32d9b4b316b6b364bdee40e5e61b25029f33fc3e9df398598da73dac034eed1"
+      }
+    },
+    {
+      "cell": {
+        "engine": "cpu_torch",
+        "width": 1024,
+        "candidate": true,
+        "gradients": true,
+        "offset": 23,
+        "limit": 1
+      },
+      "numerics_passed": true,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/cpu_torch-1024-candidate-gradient/result.json",
+        "sha256": "6736d0b4b60b8c4664c000d977bb851110ebe11e209e55367638e3aea04f63b7"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-1024-candidate-gradient-raw-audit.json",
+        "sha256": "457948803b8aa59827a961ef4ec92f7ae7eabf7328ba25fe10c4f3649a793184"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/cpu_torch-1024-candidate-gradient-provenance-audit.json",
+        "sha256": "524f90e33612159c8108ca92ee5968ee6a8d3aba25145977faf436e11154e52a"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mps",
+        "width": 512,
+        "candidate": false,
+        "gradients": false,
+        "offset": 0,
+        "limit": 2
+      },
+      "numerics_passed": false,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mps-512-ordinary-forward/result.json",
+        "sha256": "e7f367fa448b56bd9f1592df9944bfff256fe2f601b911c49ddad13da04e6539"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-512-ordinary-forward-raw-audit.json",
+        "sha256": "f915335dbc78bcf3c5dedd0aad2255399c5bf624a178698a9bfc496a387bbae7"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-512-ordinary-forward-provenance-audit.json",
+        "sha256": "285c5ef0c3d3419e365ee641a44404b6528b6e88a4617ca00e02c36f8cd2ded5"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mps",
+        "width": 512,
+        "candidate": false,
+        "gradients": true,
+        "offset": 0,
+        "limit": 2
+      },
+      "numerics_passed": true,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mps-512-ordinary-gradient/result.json",
+        "sha256": "2f25509330ae8721c0ef8b922a30025e1e1b956f07d190a77e0d2451ca519587"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-512-ordinary-gradient-raw-audit.json",
+        "sha256": "3f39e7f51a954db3ba29c74e48f0ade77b3088cdb44500f3908d71eb374de53f"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-512-ordinary-gradient-provenance-audit.json",
+        "sha256": "d001ca98a01466c47690b44b9753bce09eb470765a3dd2bf0cdd32456e9c26bb"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mps",
+        "width": 512,
+        "candidate": true,
+        "gradients": false,
+        "offset": 0,
+        "limit": 2
+      },
+      "numerics_passed": true,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mps-512-candidate-forward/result.json",
+        "sha256": "8f61d45efdfbe136c16def400ad637628bb056cde2f9b29fd46f1d26221a7a75"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-512-candidate-forward-raw-audit.json",
+        "sha256": "faee76268333a140131bf76bb88b8f06e541b5ae543a300a1f4c0a67baaaf475"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-512-candidate-forward-provenance-audit.json",
+        "sha256": "5f4181565cca31b5f7c40c208accae80ec2025d64d3e80ff8c3945a75dda4caa"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mps",
+        "width": 512,
+        "candidate": true,
+        "gradients": true,
+        "offset": 0,
+        "limit": 2
+      },
+      "numerics_passed": true,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mps-512-candidate-gradient/result.json",
+        "sha256": "1f453ed0b1fa77478a05b5dd912d67e182dc5b343d1fb21d621c472bb9c5d0bb"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-512-candidate-gradient-raw-audit.json",
+        "sha256": "e66d08d65ff5dd294db98a6c233b377384aafbc66dc899456f74038fd135405e"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-512-candidate-gradient-provenance-audit.json",
+        "sha256": "47381f512efe517f41bca1e19c2a99f2d4b36f0668ed5d0d03fb9c5ea62af881"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mps",
+        "width": 1024,
+        "candidate": false,
+        "gradients": false,
+        "offset": 23,
+        "limit": 1
+      },
+      "numerics_passed": false,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mps-1024-ordinary-forward/result.json",
+        "sha256": "51accbe98f492d397671db34c7baa746232f5be58b5156ef78dab62cb577fd37"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-1024-ordinary-forward-raw-audit.json",
+        "sha256": "33baf3db2539ccfa67e3afd85f7c8787bb4b010ade282f92c91866cd6d491131"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-1024-ordinary-forward-provenance-audit.json",
+        "sha256": "b09239e25e29f43f482e71f9edb2baac358c2849c08fb7130958ea28ecc4a8fb"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mps",
+        "width": 1024,
+        "candidate": false,
+        "gradients": true,
+        "offset": 23,
+        "limit": 1
+      },
+      "numerics_passed": false,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mps-1024-ordinary-gradient/result.json",
+        "sha256": "b05df966f56789a2e47bb7acb6375ee92635723ec7ffff96a18e9c3e94bc37a8"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-1024-ordinary-gradient-raw-audit.json",
+        "sha256": "d96cdb6b0b666eb3a74ffff3dcc9ac667843254091268cbb286a10bba865e41e"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-1024-ordinary-gradient-provenance-audit.json",
+        "sha256": "ec888d818115f1226303299abe96559b3712d444e71e5e20074c40b058770714"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mps",
+        "width": 1024,
+        "candidate": true,
+        "gradients": false,
+        "offset": 23,
+        "limit": 1
+      },
+      "numerics_passed": true,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mps-1024-candidate-forward/result.json",
+        "sha256": "d608dac4b99dac1ef512cad23562e0df06a1ed29aa8dc46ac7ec05728c56232c"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-1024-candidate-forward-raw-audit.json",
+        "sha256": "3f2359b9c18039b7b000afb534be3e3f7d8f0db04bde5220c0c54014d15cdf94"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-1024-candidate-forward-provenance-audit.json",
+        "sha256": "19e3b76ccca9d7246890371b41e29813ab087d57df01458ea1ced883a824a421"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mps",
+        "width": 1024,
+        "candidate": true,
+        "gradients": true,
+        "offset": 23,
+        "limit": 1
+      },
+      "numerics_passed": true,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mps-1024-candidate-gradient/result.json",
+        "sha256": "392ce6b32b6674fda83456852a77fc116416a6865199d9e305c0476af4b85e92"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-1024-candidate-gradient-raw-audit.json",
+        "sha256": "e36c4a8b23966ce4a0f919f2215440add9a74c37d6d6d864f9d5cf8117805c7f"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mps-1024-candidate-gradient-provenance-audit.json",
+        "sha256": "1a7a69926eec55716db8df7c39447670c83c510dbb26a4e4c52e6a275cb71628"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mlx",
+        "width": 512,
+        "candidate": false,
+        "gradients": false,
+        "offset": 0,
+        "limit": 2
+      },
+      "numerics_passed": false,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mlx-512-ordinary-forward/result.json",
+        "sha256": "6dfddf365ec0cfe33cd0b1b7f84b9da0f362576001aed437577850f3a31f49a9"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-512-ordinary-forward-raw-audit.json",
+        "sha256": "1eb0b5983d9999528af70afb9c1dd80872bde5b5dadb896adea0a4adc79f2033"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-512-ordinary-forward-provenance-audit.json",
+        "sha256": "d1bd19cd954b2d3e42a87ae156ea99fb5f87c6ff4d4322008fe5e8bdf09b4141"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mlx",
+        "width": 512,
+        "candidate": false,
+        "gradients": true,
+        "offset": 0,
+        "limit": 2
+      },
+      "numerics_passed": false,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mlx-512-ordinary-gradient/result.json",
+        "sha256": "59cbe3759164aa8c3fac5d842c7f6ed4b440bc50aab90b6024b8d073e0ca3108"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-512-ordinary-gradient-raw-audit.json",
+        "sha256": "44f7d4f5dee14c09d9033d421a2d47ca0149793ee311182b726ce72f40876204"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-512-ordinary-gradient-provenance-audit.json",
+        "sha256": "9d85f34b58dff0599c6ddc372183efe0d07b2a920d1c2e1bdececc812e4fe100"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mlx",
+        "width": 512,
+        "candidate": true,
+        "gradients": false,
+        "offset": 0,
+        "limit": 2
+      },
+      "numerics_passed": true,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mlx-512-candidate-forward/result.json",
+        "sha256": "4d69eae0c9c9eaa88ee5cc126d0251e227c40cb17af1a9b958188e2f6f90ce82"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-512-candidate-forward-raw-audit.json",
+        "sha256": "69197ba86dcbfdd31b516eb71cf5c9e2133a2431c1ab560b710498bb5c2f3b73"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-512-candidate-forward-provenance-audit.json",
+        "sha256": "774e369216d4b2d07135ffd1f7efed497b85dd2f4df098fa7f79f589aa6afa8a"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mlx",
+        "width": 512,
+        "candidate": true,
+        "gradients": true,
+        "offset": 0,
+        "limit": 2
+      },
+      "numerics_passed": true,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mlx-512-candidate-gradient/result.json",
+        "sha256": "4fd56cec5dfed3c46c0875ebecd58e7e9ccb81b51c89cb7ccfa1e143d35a8e3c"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-512-candidate-gradient-raw-audit.json",
+        "sha256": "5fa15922c7409dbadf8cb0656a89ed1e971b4e4b0c567d00105d812f6348345c"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-512-candidate-gradient-provenance-audit.json",
+        "sha256": "ad884e2492843172919faaeeae34cd7165dc9d159cd8c7d1c31515f91dfbd569"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mlx",
+        "width": 1024,
+        "candidate": false,
+        "gradients": false,
+        "offset": 23,
+        "limit": 1
+      },
+      "numerics_passed": false,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mlx-1024-ordinary-forward/result.json",
+        "sha256": "5ad82365dae65550c0111b3c43077338ff9ba8d5d16afdb529aa471323ea37e5"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-1024-ordinary-forward-raw-audit.json",
+        "sha256": "ec92e6c0a6e8cdc823360e99d69c8ca4ce730319c388a621e32720160e0a570d"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-1024-ordinary-forward-provenance-audit.json",
+        "sha256": "fa086660c72104797792d34c1d5c676b1d23f5caf4802f3a627a0b8411168178"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mlx",
+        "width": 1024,
+        "candidate": false,
+        "gradients": true,
+        "offset": 23,
+        "limit": 1
+      },
+      "numerics_passed": false,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mlx-1024-ordinary-gradient/result.json",
+        "sha256": "d2df71feedaafc19eb9d395f7bc9037f35c11d67a570bb8469bfb00bfb153d81"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-1024-ordinary-gradient-raw-audit.json",
+        "sha256": "3522ee6060bb088082181c5d020d926b56b0c55bbfbe437407617208509a6641"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-1024-ordinary-gradient-provenance-audit.json",
+        "sha256": "125c3f3b87e82158b32b6402ae1813f32e641c1c56a36594dce2b2eee9178c69"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mlx",
+        "width": 1024,
+        "candidate": true,
+        "gradients": false,
+        "offset": 23,
+        "limit": 1
+      },
+      "numerics_passed": true,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mlx-1024-candidate-forward/result.json",
+        "sha256": "1118e8cc511bc84d389c43a0c1b24e07760d28175b13612e3d598b41f20f1c52"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-1024-candidate-forward-raw-audit.json",
+        "sha256": "332ac4030a54ca9a2d7d07fcb25fe54d9224dabc26e5377a78286db59c66f6cb"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-1024-candidate-forward-provenance-audit.json",
+        "sha256": "bac17b5fd5085fa6f34672bd47679f69784d35ae85b12bb0a3e9948e8ae7bf0a"
+      }
+    },
+    {
+      "cell": {
+        "engine": "mlx",
+        "width": 1024,
+        "candidate": true,
+        "gradients": true,
+        "offset": 23,
+        "limit": 1
+      },
+      "numerics_passed": true,
+      "worker": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/gpu-v4-owned/captured-model-screen-v1/mlx-1024-candidate-gradient/result.json",
+        "sha256": "d43925cf79e25b17e2851492f47298916d0e9ecc1af800e36b7948d0a7f9853a"
+      },
+      "raw_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-1024-candidate-gradient-raw-audit.json",
+        "sha256": "093026612bd518222cccb1af871d5ca15f044423493f81076c33d69e2fb6eaa1"
+      },
+      "provenance_audit": {
+        "path": "/Users/logannye/Documents/ChatGPT/ARM64 Transformer/work/captured-model-screen-controller-v1/mlx-1024-candidate-gradient-provenance-audit.json",
+        "sha256": "3852a55ee3761215ef4d58df1ba0bbe6ee9430983ca787bad84c48cf420377a4"
+      }
+    }
+  ],
+  "limits": [
+    "Two historical width-512 cases and one width-1024 FF1 regression only",
+    "Custom precision models, not maintained-framework arithmetic source repairs",
+    "No all-width, full-inventory, integration, admission or performance qualification"
+  ],
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "admission_stream_opened": false
+}

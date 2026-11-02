@@ -1,0 +1,78 @@
+{
+  "schema": "pytorch-owned-half-static-validation-v2",
+  "status": "passed_static_checks_only",
+  "native_compilation": false,
+  "device_numerical_validation": false,
+  "candidate_qualified": false,
+  "formal_eligible": false,
+  "admission_stream_opened": false,
+  "source_application": "work/half-build-static-v2",
+  "checks": {
+    "stdlib_tests": 24,
+    "tested_python_versions": [
+      "3.12.13",
+      "3.14.6"
+    ],
+    "portable_original_ast_sha256": "9ba8de955cb5b0cb1c8101bde990daf8aba35b63f0fb73566ab88ae7812c672a",
+    "all_14_resulting_source_hashes_match": true,
+    "git_apply_check": true,
+    "ruff_check": true,
+    "ruff_format_check": true
+  },
+  "files": {
+    "README.md": {
+      "sha256": "1806e07156dd8e8cce283fba566721f642d8b9f1b0879d5ea32362666243032d",
+      "bytes": 3183
+    },
+    "changes.patch": {
+      "sha256": "07128b3a9bbe39f4e423ef7e038f955c52cbc562d8edb9ed28c4baac59c49b3f",
+      "bytes": 50827
+    },
+    "contract.json": {
+      "sha256": "3bed6c1c84973b2214bb9bd700a48c9ed7644044dff01ea5d7a0de91013f4a03",
+      "bytes": 14450
+    },
+    "half_probe.cpp": {
+      "sha256": "a561415a38269b4e141336660b2bf4ee51f8ef6e05d6f5b0c95704e1a9d2ed52",
+      "bytes": 3600
+    },
+    "hosted-constraints.txt": {
+      "sha256": "7c9b1f75aa5fac0701bf7d32a4e5efe174e9cc45871259a7f7f1a70075865190",
+      "bytes": 526
+    },
+    "hosted_build.py": {
+      "sha256": "b17fa1703e095d854606c0abb193a8c18f13b3fdf7921c143480925a5d6d4077",
+      "bytes": 41511
+    },
+    "requirements-full.txt": {
+      "sha256": "2af1fbabbbc2992823650e93a55b0b2d92a241226bbff2896c1d062fe94f4902",
+      "bytes": 757
+    },
+    "source_static.py": {
+      "sha256": "98a93b9022974903cc8e04a2eb13fd57e5bbe9a630fdde3bf0e39478bc96ec0b",
+      "bytes": 6631
+    },
+    "test-inventory.json": {
+      "sha256": "453e770813d31b5f45fe07421d7ab0dbbe9c7fe8ab84bb284097a3ce486511aa",
+      "bytes": 2389983
+    },
+    "test_hosted_build.py": {
+      "sha256": "3664389985ac26bee1b7f8d31e81a0f7860701b73ed8d242c6b52f9f2d304fd3",
+      "bytes": 17343
+    },
+    "verify_runtime.py": {
+      "sha256": "b30e26ba6436832862ce1e8d7b9ca1a306c281395917395a57ec6762a38055f4",
+      "bytes": 10914
+    }
+  },
+  "historical_failures": {
+    "half_run": 41099457320,
+    "layout_run": 41092391888,
+    "layout_compile_commands_sha256": "b60f195b760afe18e18240544efc7ea8b5aaa1f446b773ac88d254c7598a1133",
+    "cause": "AST serialization differs by Python release; Objective-C/Objective-C++ lacked explicit -g0"
+  },
+  "limitations": [
+    "Native header probe, full build, authoritative lint and all device tests still required",
+    "Prior runtime evidence cannot qualify the new binary"
+  ]
+}

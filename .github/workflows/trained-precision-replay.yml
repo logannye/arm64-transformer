@@ -1,0 +1,62 @@
+name: Trained precision public native replay
+on:
+  push:
+    branches: [codex/trained-state-precision]
+    paths:
+      - '.github/workflows/trained-precision-replay.yml'
+      - 'validation/trained-precision-hosted/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  replay:
+    if: github.repository == 'logannye/arm64-transformer'
+    runs-on: macos-26
+    timeout-minutes: 180
+    strategy:
+      fail-fast: false
+      matrix:
+        width: [512, 1024]
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      VECLIB_MAXIMUM_THREADS: "1"
+      PYTHONDONTWRITEBYTECODE: "1"
+      ARM64_TRANSFORMER_WIDTH: ${{ matrix.width }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          architecture: arm64
+      - name: Check bounded public-input restoration without native compilation
+        run: python -I -B -m unittest discover -s validation/trained-precision-hosted -p 'test_*.py' -v
+      - name: Install explicit replay distributions
+        run: >-
+          python -m pip install --only-binary=:all:
+          numpy==2.5.2 torch==2.14.1 pytest -e .
+      - name: Build the explicit native candidate in one reusable tree
+        run: |
+          make -C native WIDTH=$ARM64_TRANSFORMER_WIDTH PRECISION=15 PYTHON=python
+          python -B -m pytest tests/test_native_precision.py -q
+      - name: Authenticate existing public release and restore only selected tensors
+        run: >-
+          python -I -B validation/trained-precision-hosted/public_inputs.py
+          --inventory experiments/trained-precision-v1/replay-inventory.json
+          --output work/public-inputs
+      - name: Replay complete historical gradients and independently audit raw bytes
+        run: >-
+          python -B validation/trained-precision-hosted/replay.py
+          --width $ARM64_TRANSFORMER_WIDTH --inputs work/public-inputs/inputs
+          --output work/hosted-replay
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-neon-trained-replay-width-${{ matrix.width }}
+          path: |
+            work/hosted-replay/
+            work/public-inputs/inputs-receipt.json
+          compression-level: 0
+          retention-days: 7
+          if-no-files-found: error

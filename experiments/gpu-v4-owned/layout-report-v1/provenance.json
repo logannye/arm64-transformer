@@ -1,0 +1,64 @@
+{
+  "schema": "gpu-owned-development-report-provenance-v1",
+  "formal_eligible": false,
+  "formal_fits": 0,
+  "admission_stream_opened": false,
+  "raw_layout_summary_sha256": "08f98e4ea6adf7b1257d6dcf598205fd0414333d5f286c3177f64b6f81ad6f48",
+  "runtime_summary_sha256": {
+    "1": "a0df7a678c6749d7deb5d7e636c541a3537bdadd3812c5ba8b29567fde213dbb",
+    "2": "28006a5e3b52b6aaee075f180956a83e74514f757e687dcae4792b3eb26537dd",
+    "3": "3484b72f1951247c68d78b5ad167ea0d0d4355a902b20d6e60d81ad41a71e3b0",
+    "4": "f747bad17d83bf0af85fa6a8bdf73643e9c0abb989e2ff56cb7cd4525bdf9f4b"
+  },
+  "python": "3.12.13",
+  "numpy": "2.5.2",
+  "matplotlib": "3.11.2",
+  "sources": [
+    {
+      "path": "outputs/arm64-transformer/integration/gpu-owned/report_layout_diagnostic.py",
+      "sha256": "6e644e5f0ae19fb14ac7bc62c17b793fc2e4395fb601ccff88753cebeaf832b3"
+    },
+    {
+      "path": "outputs/arm64-transformer/integration/gpu-owned/audit_layout_diagnostic.py",
+      "sha256": "ae05657a8a7e8e05620a6387e32122bbc682007e729048919110199e0878624a"
+    },
+    {
+      "path": "outputs/arm64-transformer/integration/gpu-owned/test_audit_layout_diagnostic.py",
+      "sha256": "ee2b62060eb9b97028efaf47d34bdae2c2864ebd2bda687ad5acd5483bd3260a"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "array-audit.json",
+      "bytes": 534412,
+      "sha256": "7016957ac0b7805fc9af1867da9f58acf7688f7411e7b8aa7791a7c0fa2c26d6"
+    },
+    {
+      "path": "layout-cases.csv",
+      "bytes": 32067,
+      "sha256": "62417891a3b7d1ac0b8bcb3c8bbc7d97dd8f00fa0d9c572abc20bd333c5c0d3c"
+    },
+    {
+      "path": "layout-counts.csv",
+      "bytes": 334,
+      "sha256": "971f18b53d31c414e0fc7845e80ea33480772e7ca5fba175180ebb05f7aaa5cc"
+    },
+    {
+      "path": "layout-diagnostic.png",
+      "bytes": 190686,
+      "sha256": "ea8b544c2ab6cef306f93a0a9bcbc2901a57ba976121a17c1e1ea64fe81e9d2e"
+    },
+    {
+      "path": "layout-diagnostic.svg",
+      "bytes": 14921,
+      "sha256": "e79d8d2f09fabf49f716604760f6e3c4b51d28ad1a0486c03857119acc079c89"
+    },
+    {
+      "path": "receipt-catalog.json",
+      "bytes": 235441,
+      "sha256": "1bed616d98511d296435727aa8d2902a8156829ca4e6cf624fa7519f56e1e3c4"
+    }
+  ],
+  "cpu_only_negative_controls": "15 unittest cases; separate test execution is required",
+  "qualification": "Evidence audit passed; candidate binary and complete study remain unqualified"
+}
