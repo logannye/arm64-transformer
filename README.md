@@ -13,6 +13,83 @@ layout, parallel work, reduction order and arithmetic precision all affect the
 cost of the same equations. The experiment asks which choices improve complete
 training and inference, and which apparent optimizations fail under measurement.
 
+## Results at a glance
+
+Measured on one Apple M4 Max, for models of 18 thousand to 600 thousand
+parameters (widths 32–256):
+
+- **The handwritten assembly trained 2.4–2.7× faster than the study's PyTorch
+  CPU engine** and ran single-sample inference 4.0–7.5× faster, at 16–82
+  microseconds per 32-character context. That PyTorch engine is a
+  project-maintained build with extra-precision operators, not a stock release.
+  Against stock PyTorch in an
+  [earlier two-engine study](experiments/width-sweep-v6/README.md), the assembly
+  trained 1.3–1.8× faster at these widths and was slower at widths 512 and 1024.
+  [Both comparisons](#accepted-results) are set out below.
+- **The fastest engine depends on model size.** The assembly had the lowest
+  training time at widths 32–128; the custom Metal GPU kernels led at width 256.
+- **Every checkpoint was audited, not only timed.** All 120 training runs
+  passed: 1,200 cross-engine replays and 240 checkpoint audits against
+  independent 64-bit calculations, and all 60 same-engine repeat pairs matched
+  exactly.
+- **Passing loss checks did not guarantee correct gradients.** In one
+  development case outside the accepted runs, a rounding difference below one
+  millionth flipped the sign of a ReLU input. Logits and loss passed; 12 weight
+  gradients were wrong. See
+  [what the investigations revealed](#what-the-investigations-revealed).
+
+![Training time and resident batch-one latency for all five engines; lower is better](experiments/gpu-v5-library-phase1/results/performance.png)
+
+Each point is the median of six training runs; both vertical axes are
+logarithmic.
+[Full results](experiments/gpu-v5-library-phase1/results/README.md) ·
+[Numeric data](experiments/gpu-v5-library-phase1/results/measurements.csv) ·
+[Vector figure](experiments/gpu-v5-library-phase1/results/performance.svg).
+
+Widths 512 and 1024 are deferred, so 120 of the 180 planned training runs are
+complete. See [scope and remaining work](#scope-and-remaining-work).
+
+## Why this exists
+
+This follows an earlier exploration from the
+[low-latency neural decoding](https://github.com/logannye/low-latency-neural-decoding)
+project, a brain-computer interface testbed that measures streaming decoders
+against real-time deadlines. The question carried over from that work: when a
+model is small and must run inside a fixed time and memory budget, how much is
+gained by controlling the implementation down to the instruction level, and
+what does it cost in numerical trust? A one-block transformer is a small model
+that still exercises attention, normalization and a complete training loop.
+
+The model here is a character-level language model trained on public text. It
+is not a neural decoder, and these measurements make no claim about embedded or
+implanted hardware.
+
+## Quick start
+
+Requires an Apple silicon Mac, recent Xcode Command Line Tools (the assembler
+must accept SME instructions) and Python 3.11 or newer.
+
+```sh
+git clone https://github.com/logannye/arm64-transformer.git
+cd arm64-transformer
+python3 -m venv .venv && source .venv/bin/activate
+python -m pip install --only-binary=:all: -e '.[dev,report]'
+make -C native widths PYTHON=python
+ARM64_TRANSFORMER_WIDTH=64 python -m pytest -q
+ARM64_TRANSFORMER_WIDTH=64 python -m transformer.validate --runtime \
+  --output results/quickstart/width-64.json \
+  --work-dir results/quickstart/run-64
+```
+
+`make` assembles the native library and executable for all six widths in a few
+seconds, and the test suite takes under a minute on an M4 Max. The last command
+audits the assembly kernels, their gradients, the optimizer and the standalone
+native executable against independent references, then prints `"passed": true`
+with its check count. It refuses to overwrite earlier output, so give it fresh
+paths on a rerun. On chips with SME, such as the M4 family, widths 64 and above
+use the SME matrix kernels; other Apple silicon falls back to NEON.
+[Hosted CI](.github/workflows/validate.yml) runs the same steps at every width.
+
 ## How it works
 
 The model predicts the next ASCII character using one causal decoder block:
@@ -30,28 +107,44 @@ supported. The native numerical path calls no BLAS, Accelerate or external math
 library. See the [matrix dataflow](docs/sme-dataflow.png) for the detailed design.
 
 The GPU investigations explore cooperative tiles, fixed reduction trees,
-deterministic embedding gradients and operation fusion. The accepted Metal arm
-uses the **reference kernel policy**; optimized-kernel development results are
-reported separately below.
+deterministic embedding gradients and operation fusion. The accepted comparison
+runs the Metal engine on its **reference kernels**, the plain versions, with a
+precision refinement in normalization. Results for the optimized kernels are
+development measurements, reported separately below.
 
-PyTorch CPU, PyTorch MPS and MLX use **project-maintained builds with selected
-precision operators**. All model state is stored in FP32; intermediate arithmetic
-is [declared per engine](experiments/gpu-v5-library-phase1/results/summary.json).
+**The three framework engines are not stock releases.** PyTorch CPU, PyTorch MPS
+and MLX are [built from source by this project](experiments/gpu-v5-library/framework-selection.json),
+with its patches and an added precision API. In the accepted comparison they
+compute selected stages with extra precision. PyTorch CPU uses FP64
+intermediates in the first LayerNorm, the query/key/value (QKV) projection,
+attention and the first feed-forward projection (FF1). MLX uses two-float FP32
+arithmetic for the same four stages and MPS for the first three; two-float
+arithmetic carries each value as a pair of floats so that rounding error is
+kept, and assumes no GPU FP64. The protocol allows no width-specific framework
+arithmetic, so these operators run at every width. The ARM64 engine is compiled
+per width and runs its ordinary kernels, with no added refinement, at widths
+32–256.
+
+All model state is stored in FP32; the arithmetic of every engine is
+[declared in the summary](experiments/gpu-v5-library-phase1/results/summary.json).
 The frameworks also execute compiled native kernels, so this comparison measures
 complete implementations rather than isolating Python-language overhead.
 
 ## The matched experiment
 
 Pinned Tiny Shakespeare partitions contain 65,536 training targets and 8,192 each
-for validation and test. Each fit uses batch 16, eight epochs and 1,024 Adam
-updates. Three paired seeds (42–44) and two repeats give six fits per engine and
-width. Each fit selects its lowest-validation-loss checkpoint, breaking ties by
-the earliest epoch. This is a reused engineering benchmark with a fixed budget.
+for validation and test. Each fit, meaning one complete training run, uses
+batch 16, eight epochs and 1,024 Adam updates. Three paired seeds (42–44) and
+two repeats give six fits per engine and width. Each fit selects its
+lowest-validation-loss checkpoint, breaking ties by the earliest epoch. This is
+a reused engineering benchmark with a fixed budget.
 
-Qualification and admission precede fitting, and timed fits run serially.
-Both the best and last checkpoint from every fit are replayed through all five
-engines and checked against independent FP64 calculations, with frozen tolerances.
-Same-engine repeatability and predictive quality are assessed separately.
+Before any timed fit, every engine must pass a fixed set of numerical checks,
+which the protocol calls qualification and admission. Timed fits then run one
+at a time on one numerical thread. Both the best and last checkpoint from every
+fit are replayed through all five engines and checked against independent FP64
+calculations, with tolerances fixed before the runs. Same-engine repeatability
+and predictive quality are assessed separately.
 
 ## Accepted results
 
@@ -60,19 +153,15 @@ The first phase **passed all required gates and audits for 120 fits at widths
 All **1,200 engine replays, 240 independent FP64 oracles, 240 checkpoint audits
 and 60 exact repeat pairs** passed, covering 983,040 audited test-token predictions.
 
-![Training time and resident batch-one latency for all five engines; lower is better](experiments/gpu-v5-library-phase1/results/performance.png)
-
-Each point is the median of six fits; both vertical axes are logarithmic.
-Training includes forward, backward, Adam, finite checks, loss reads, validation,
-checkpoint writes, packing, synchronization and bookkeeping. Inference measures
-resident batch-one forward execution and completion, with 20 warmups and
-100 samples per fit.
-[Full results](experiments/gpu-v5-library-phase1/results/README.md) ·
-[Numeric data](experiments/gpu-v5-library-phase1/results/measurements.csv) ·
-[Vector figure](experiments/gpu-v5-library-phase1/results/performance.svg).
+In the [chart above](#results-at-a-glance), training time includes forward,
+backward, Adam, finite checks, loss reads, validation, checkpoint writes,
+packing, synchronization and bookkeeping. Inference is resident batch-one: one
+32-character context whose input is already in the engine's memory, timed
+through forward execution and completion, with 20 warmups and 100 samples per
+fit.
 
 **The CPU gains survive complete training runs.** ARM64 trained **2.38–2.70×
-faster** than the selected PyTorch CPU arm and delivered **3.99–7.52× faster
+faster** than the study's PyTorch CPU engine and delivered **3.99–7.52× faster
 resident batch-one inference**. The median paired-seed speedups are:
 
 | Width | ARM64 training speedup | ARM64 batch-one speedup |
@@ -82,11 +171,43 @@ resident batch-one inference**. The median paired-seed speedups are:
 | 128 | 2.48× | 5.16× |
 | 256 | 2.38× | 3.99× |
 
+**What that baseline is.** These speedups are over the PyTorch CPU engine as
+configured for this study: a project-maintained build on one numerical thread,
+with FP64 intermediates at four stages. They are not speedups over a stock
+PyTorch release. The earlier
+[two-engine study](experiments/width-sweep-v6/README.md) measured stock
+PyTorch 2.14.1 on an Apple M4 Max with the same model, data partitions and
+training schedule, also on one thread, under its own protocol:
+
+| Width | Training speedup | Batch-one forward speedup | Peak training memory, PyTorch → ARM64 | Numerical audit |
+|---:|---:|---:|---:|---|
+| 32 | 1.79× | 3.53× | 276 → 2.3 MiB | Passed |
+| 64 | 1.76× | 3.20× | 278 → 3.1 MiB | Passed |
+| 128 | 1.47× | 2.12× | 288 → 5.7 MiB | Passed |
+| 256 | 1.29× | 1.43× | 314 → 14.6 MiB | Passed |
+| 512 | 0.93× | 0.79× | 392 → 47 MiB | PyTorch failed |
+| 1024 | 0.72× | 0.72× | 654 → 173 MiB | Both failed |
+
+Values above 1 favor the assembly. At widths 512 and 1024 the assembly was
+slower, and neither width passed that study's numerical qualification, so
+those two rows are descriptive. Memory is the whole process's peak resident
+size, including the framework and data; it is not model memory. The two studies
+ran under different protocols and numerical gates, so their ratios should not
+be combined.
+
 **The fastest engine depends on the workload.** ARM64 had the lowest median
 training time at widths 32–128. Metal led at width 256: **3.593 s**, versus
 **3.981 s** for ARM64. ARM64 had the lowest batch-one latency at every included
-width. The selected MPS and MLX arms were slower than both CPU arms here; this
-short-context experiment does not establish a general CPU-over-GPU advantage.
+width. The study's MPS and MLX engines were slower than both CPU engines here;
+this short-context experiment does not establish a general CPU-over-GPU
+advantage.
+
+Those two engines carry a cost the other engines do not. Their selected stages
+use two-float arithmetic assembled from ordinary tensor operations, so one
+matrix product becomes a broadcast elementwise product followed by a pairwise
+compensated sum. The study did not measure how much of their time this accounts
+for, and this repository holds no accepted timing for standard MPS or MLX
+releases on this workload.
 
 Test loss and accuracy vary across engines. Passing the numerical checks does
 not imply identical training trajectories or identical final model quality.
@@ -102,10 +223,11 @@ maximum before softmax cannot recover bits already lost while forming those
 scores. ReLU adds another sensitivity: rounding across zero changes whether a
 gradient passes through at all.
 
-In one historical MLX development case, an FF1 preactivation was about
-**+3.65 × 10⁻⁷**, versus **−1.26 × 10⁻⁷** in FP64. Logit and loss checks passed,
-but 12 weight-gradient coordinates failed. A controlled gate substitution
-isolated the mismatch to that branch.
+In one historical MLX development case, a preactivation in the first
+feed-forward projection (FF1) was about **+3.65 × 10⁻⁷**, versus
+**−1.26 × 10⁻⁷** in FP64. Logit and loss checks passed, but 12 weight-gradient
+coordinates failed. A controlled gate substitution isolated the mismatch to
+that branch.
 
 ![A historical ReLU sign disagreement switches the backward multiplier from zero to one](docs/figures/precision-gate.png)
 
@@ -130,13 +252,14 @@ Separate Metal development experiments achieved **1.84–2.40× faster training
 steps** and **1.22–2.76× faster forward passes** versus the original Metal
 implementation. Parallel reductions, cooperative matrix tiles and selected
 fusion improved that workload. These are development measurements, separate
-from the reference-policy Metal arm in the accepted full-fit comparison.
+from the reference-kernel Metal engine in the accepted full-fit comparison.
 [GPU results](experiments/gpu-v2/README.md).
 
-A subsequent [144-candidate QKV search](experiments/gpu-v3-qkv/README.md) passed
-correctness for every candidate, yet **none met the frozen 3% complete-operation
-improvement threshold**. The incumbent kernels were retained. More operand reuse
-did not reliably reduce the cost of the complete operation.
+A subsequent [144-candidate search](experiments/gpu-v3-qkv/README.md) over
+kernels for the QKV projection passed correctness for every candidate, yet
+**none met the 3% complete-operation improvement threshold fixed in advance**.
+The incumbent kernels were retained. More operand reuse did not reliably reduce
+the cost of the complete operation.
 
 ## Scope and remaining work
 
@@ -157,7 +280,8 @@ energy, serving or larger-data performance claim.
 - [Accepted report, scope and evidence identities](experiments/gpu-v5-library-phase1/results/README.md).
   Public summaries link to retained evidence by hash; the full current raw
   campaign archive remains local.
-- [CPU implementation and reproduction](docs/REPRODUCE.md),
+- [Reproduction guide for the two-engine CPU study](docs/REPRODUCE.md),
+  [CPU kernel notes](native/kernel_notes.md),
   [GPU kernel design](native/metal/OPTIMIZED-KERNELS.md) and
   [QKV reproduction](experiments/gpu-v3-qkv/REPRODUCE.md).
 - [Historical CPU study](experiments/width-sweep-v6/README.md),
