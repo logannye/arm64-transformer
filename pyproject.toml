@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "arm64-transformer"
 version = "0.1.0"
-description = "A matched small-transformer comparison: PyTorch and handwritten Apple ARM64 assembly."
+description = "One small transformer in five implementations: handwritten ARM64 assembly, custom Metal kernels, PyTorch CPU, PyTorch MPS and MLX."
 requires-python = ">=3.11"
 dependencies = ["numpy>=2,<3", "torch>=2.6,<3"]
 
