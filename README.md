@@ -51,9 +51,8 @@ complete. See [scope and remaining work](#scope-and-remaining-work).
 
 ## Why this exists
 
-This follows an earlier
-[CNN-in-assembly comparison](https://github.com/logannye/low-latency-neural-decoding/blob/main/CNN_EXPERIMENT.md)
-from the [low-latency neural decoding](https://github.com/logannye/low-latency-neural-decoding)
+This follows an earlier exploration from the
+[low-latency neural decoding](https://github.com/logannye/low-latency-neural-decoding)
 project, a brain-computer interface testbed that measures streaming decoders
 against real-time deadlines. The question carried over from that work: when a
 model is small and must run inside a fixed time and memory budget, how much is
