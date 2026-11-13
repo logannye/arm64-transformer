@@ -16,7 +16,7 @@ ARM64_TRANSFORMER_WIDTH=64 python -m pytest -q
 ```
 
 The width is fixed per process, so the suite runs once per width: 32 when the
-variable is unset, or any of 64, 128, 256, 512 and 1024. One width takes under a
+variable is unset, or any of 64, 128, 256, 512 and 1024. One width takes about a
 minute on an M4 Max. [Hosted CI](../.github/workflows/validate.yml) runs all six
 widths twice, on Linux without a native build and on macOS with one.
 
@@ -41,6 +41,7 @@ Lint is separate: `python -m ruff check .` and
 | `test_library_*.py` | 31 | The driver of the accepted five-engine phase in [integration/library-study-v1](../integration/library-study-v1/README.md), the precision API in [integration/precision-library-v1](../integration/precision-library-v1/README.md), and the library models' common-state, optimizer and repeatability checks. |
 | `test_package_*.py`, `test_publish_sweep_view.py`, `test_failed_sweep_report.py`, `test_profile_native.py`, `test_graph_evidence.py`, `test_zip_evidence.py` | 8 | The [scripts](../scripts/README.md) and storage tools that package, report and archive evidence. |
 | `test_mlx_*.py`, `test_pytorch_*.py`, `test_upstream_pytorch_runtime_origins.py` | 5 | The hosted framework-build helpers under [integration/](../integration/README.md) and [validation/](../validation/README.md). |
+| `test_demo.py`, `test_native_build_identity.py` | 2 | The side-by-side [demo](../transformer/demo.py), including one real run of both engines on a tiny schedule, and the bookkeeping of the [build-identity check](../scripts/check_native_build_identity.py). |
 
 `contract_fixtures.py` holds small saved-evidence fixtures shared by the
 contract tests. There is no `conftest.py`.
@@ -58,6 +59,7 @@ A skip always means a precondition is absent, never a known failure.
 |---|---|
 | `test_native_numerical_contract` in `test_native.py` | Not macOS on arm64, or no built library for the selected width. |
 | All of `test_native_precision.py` | Not macOS, or no built library for the selected width. |
+| The real run in `test_demo.py` | Not macOS on arm64, or no built executable for the selected width. |
 | Two tests in `test_native_precision.py` | The compiled precision policy lacks that test's bit: 4 for the second LayerNorm, 8 for the first feed-forward projection. The policy is 0 in a default build and at every width below 512, so both skip. |
 | `test_gpu_frameworks.py` and `test_gpu_training_shape.py` | `ARM64_TRANSFORMER_GPU_TEST_BACKEND` is unset. |
 | Two tests in `test_gpu_metal_contract.py` | `ARM64_TRANSFORMER_GPU_TEST_BACKEND` is not `metal`. |
