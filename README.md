@@ -90,6 +90,18 @@ paths on a rerun. On chips with SME, such as the M4 family, widths 64 and above
 use the SME matrix kernels; other Apple silicon falls back to NEON.
 [Hosted CI](.github/workflows/validate.yml) runs the same steps at every width.
 
+```sh
+python -m transformer.fetch_data --output data/tinyshakespeare.txt
+python -m transformer.demo
+```
+
+These two commands download the 1.1 MB Tiny Shakespeare text, check it against
+a pinned SHA-256, then train the width-32 model once in assembly and once in
+stock PyTorch on one thread and print both training times and their ratio. It
+is an informal single run against stock PyTorch, not the accepted measurement
+reported below; `ARM64_TRANSFORMER_WIDTH` selects another width, and at 512 and
+1024 the assembly is the slower engine.
+
 ## How it works
 
 The model predicts the next ASCII character using one causal decoder block:
@@ -277,15 +289,34 @@ energy, serving or larger-data performance claim.
 
 ## Explore and reproduce
 
+**The accepted five-engine study**
+
 - [Accepted report, scope and evidence identities](experiments/gpu-v5-library-phase1/results/README.md).
   Public summaries link to retained evidence by hash; the full current raw
   campaign archive remains local.
-- [Reproduction guide for the two-engine CPU study](docs/REPRODUCE.md),
-  [CPU kernel notes](native/kernel_notes.md),
-  [GPU kernel design](native/metal/OPTIMIZED-KERNELS.md) and
-  [QKV reproduction](experiments/gpu-v3-qkv/REPRODUCE.md).
-- [Historical CPU study](experiments/width-sweep-v6/README.md),
-  [framework reproduction](experiments/upstream-integration-v2/REPRODUCTION.md)
+- [What you can check and what you can rerun](docs/REPRODUCE-five-engine.md):
+  a command that recomputes the headline ratios from the public summaries, and
+  what a full rerun of this study would need.
+
+**The earlier studies**
+
+- [Two-engine study against stock PyTorch, v6](experiments/width-sweep-v6/README.md)
+  and its [reproduction guide](docs/REPRODUCE.md), a full rerun.
+- [QKV kernel search on Metal, GPU v3](experiments/gpu-v3-qkv/README.md) and
+  its [reproduction guide](experiments/gpu-v3-qkv/REPRODUCE.md).
+- [Framework integration study](experiments/upstream-integration-v2/README.md),
+  its [reproduction guide](experiments/upstream-integration-v2/REPRODUCTION.md)
   and [public evidence catalog](experiments/upstream-integration-v2/PUBLICATION.md).
-- [Figure sources and vector downloads](docs/figures/README.md).
-  The visuals read retained summaries without rerunning the experiment.
+- [Every study in order](experiments/README.md), with its protocol and outcome.
+
+**The code and documents**
+
+- [native/](native/README.md): the assembly file by file, with the
+  [CPU kernel notes](native/kernel_notes.md) and the
+  [GPU kernel design](native/metal/OPTIMIZED-KERNELS.md).
+- One index per folder: [transformer/](transformer/README.md),
+  [tests/](tests/README.md), [scripts/](scripts/README.md),
+  [integration/](integration/README.md) and [validation/](validation/README.md).
+- [docs/](docs/README.md): every guide and figure, including the
+  [figure sources and vector downloads](docs/figures/README.md). The visuals
+  read retained summaries without rerunning the experiment.
