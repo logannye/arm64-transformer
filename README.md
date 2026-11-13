@@ -90,6 +90,18 @@ paths on a rerun. On chips with SME, such as the M4 family, widths 64 and above
 use the SME matrix kernels; other Apple silicon falls back to NEON.
 [Hosted CI](.github/workflows/validate.yml) runs the same steps at every width.
 
+```sh
+python -m transformer.fetch_data --output data/tinyshakespeare.txt
+python -m transformer.demo
+```
+
+These two commands download the 1.1 MB Tiny Shakespeare text, check it against
+a pinned SHA-256, then train the width-32 model once in assembly and once in
+stock PyTorch on one thread and print both training times and their ratio. It
+is an informal single run against stock PyTorch, not the accepted measurement
+reported below; `ARM64_TRANSFORMER_WIDTH` selects another width, and at 512 and
+1024 the assembly is the slower engine.
+
 ## How it works
 
 The model predicts the next ASCII character using one causal decoder block:
