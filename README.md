@@ -289,15 +289,34 @@ energy, serving or larger-data performance claim.
 
 ## Explore and reproduce
 
+**The accepted five-engine study**
+
 - [Accepted report, scope and evidence identities](experiments/gpu-v5-library-phase1/results/README.md).
   Public summaries link to retained evidence by hash; the full current raw
   campaign archive remains local.
-- [Reproduction guide for the two-engine CPU study](docs/REPRODUCE.md),
-  [CPU kernel notes](native/kernel_notes.md),
-  [GPU kernel design](native/metal/OPTIMIZED-KERNELS.md) and
-  [QKV reproduction](experiments/gpu-v3-qkv/REPRODUCE.md).
-- [Historical CPU study](experiments/width-sweep-v6/README.md),
-  [framework reproduction](experiments/upstream-integration-v2/REPRODUCTION.md)
+- [What you can check and what you can rerun](docs/REPRODUCE-five-engine.md):
+  a command that recomputes the headline ratios from the public summaries, and
+  what a full rerun of this study would need.
+
+**The earlier studies**
+
+- [Two-engine study against stock PyTorch, v6](experiments/width-sweep-v6/README.md)
+  and its [reproduction guide](docs/REPRODUCE.md), a full rerun.
+- [QKV kernel search on Metal, GPU v3](experiments/gpu-v3-qkv/README.md) and
+  its [reproduction guide](experiments/gpu-v3-qkv/REPRODUCE.md).
+- [Framework integration study](experiments/upstream-integration-v2/README.md),
+  its [reproduction guide](experiments/upstream-integration-v2/REPRODUCTION.md)
   and [public evidence catalog](experiments/upstream-integration-v2/PUBLICATION.md).
-- [Figure sources and vector downloads](docs/figures/README.md).
-  The visuals read retained summaries without rerunning the experiment.
+- [Every study in order](experiments/README.md), with its protocol and outcome.
+
+**The code and documents**
+
+- [native/](native/README.md): the assembly file by file, with the
+  [CPU kernel notes](native/kernel_notes.md) and the
+  [GPU kernel design](native/metal/OPTIMIZED-KERNELS.md).
+- One index per folder: [transformer/](transformer/README.md),
+  [tests/](tests/README.md), [scripts/](scripts/README.md),
+  [integration/](integration/README.md) and [validation/](validation/README.md).
+- [docs/](docs/README.md): every guide and figure, including the
+  [figure sources and vector downloads](docs/figures/README.md). The visuals
+  read retained summaries without rerunning the experiment.
